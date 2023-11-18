@@ -12,6 +12,9 @@ class DataContainer(object):
         raise NotImplementedError
 
     def __setattr__(self, key: str, value: _Any):
+        if key == "_lock":
+            super().__setattr__(key, value)
+            return
         self._lock.acquire()
         try:
             super().__setattr__(key, value)
