@@ -8,12 +8,16 @@ from dearpygui import dearpygui as dpg
 from .__version__ import __version__
 
 
+class CustomRuntimeData(RuntimeData):
+    m2_mode: int = 0
+
+
 def main(main_controller: Controller,
          srw_mode: bool = True,
          analysis_rate: float = .01,
          update_rate: float = .25) -> int:
     context = Leads(srw_mode=srw_mode)
-    rd = RuntimeData()
+    rd = CustomRuntimeData()
 
     class CustomListener(EventListener):
         def on_update(self, e: UpdateEvent):
@@ -61,7 +65,21 @@ def main(main_controller: Controller,
             with dpg.table_row():
                 dpg.bind_item_font(dpg.add_text("", tag="info"), BODY2)
                 dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=140), H1)
-                dpg.bind_item_font(dpg.add_button(label="0.0v", tag="voltage", width=-1, height=140), H1)
+                dpg.bind_item_font(m2 := dpg.add_button(label="0.0v", tag="voltage", width=-1, height=140), H1)
+
+                def switch_m2_mode():
+                    rd.m2_mode = (rd.m2_mode + 1) % 3
+                    if rd.m2_mode == 0:
+                        dpg.set_item_font(m2, H1)
+                        dpg.set_item_label(m2, "0.0v")
+                    elif rd.m2_mode == 1:
+                        dpg.set_item_font(m2, BODY)
+                        dpg.set_item_label(m2, "LAP TIME")
+                    else:
+                        dpg.set_item_font(m2, BODY)
+                        dpg.set_item_label(m2, "CUSTOM")
+
+                dpg.set_item_callback(m2, switch_m2_mode)
         with dpg.table(header_row=False):
             dpg.add_table_column()
             dpg.add_table_column()
