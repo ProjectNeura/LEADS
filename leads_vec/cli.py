@@ -26,7 +26,7 @@ def main(main_controller: Controller, srw_mode: bool = True) -> int:
                                   f"VERSION {__version__.upper()}\n\n"
                                   f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
                                   f"{rd.frame_counter // 3000} MIN {(rd.frame_counter % 3000) // 50} SEC\n\n"
-                                  f"{'SRM MODE' if srw_mode else 'DRW MODE'}")
+                                  f"{'SRW MODE' if srw_mode else 'DRW MODE'}")
             dpg.set_item_label("speed", f"{context.data().front_wheel_speed}")
 
     context.set_event_listener(CustomListener())
