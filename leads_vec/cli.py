@@ -13,18 +13,19 @@ def render():
         dpg.add_table_column()
         dpg.add_table_column()
         with dpg.table_row():
-            dpg.bind_item_font(dpg.add_text("", tag="time"), BODY2)
-            dpg.bind_item_font(dpg.add_button(label="", tag="speed", width=-1, height=200), H1)
+            dpg.bind_item_font(dpg.add_text("", tag="info"), BODY2)
+            dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=200), H1)
+            dpg.bind_item_font(dpg.add_button(label="0.0v", tag="voltage", width=-1, height=200), H1)
     with dpg.table(header_row=False):
         dpg.add_table_column()
         dpg.add_table_column()
         dpg.add_table_column()
         dpg.add_table_column()
         with dpg.table_row():
-            dpg.bind_item_font(dpg.add_button(label="DTCS ON", tag="dtcs", width=-1), H5)
-            dpg.bind_item_font(dpg.add_button(label="ABS ON", tag="abs", width=-1), H5)
-            dpg.bind_item_font(dpg.add_button(label="EBI ON", tag="ebi", width=-1), H5)
-            dpg.bind_item_font(dpg.add_button(label="ATBS ON", tag="atbs", width=-1), H5)
+            dpg.bind_item_font(dpg.add_button(label="DTCS ON", tag="dtcs", width=-1), H2)
+            dpg.bind_item_font(dpg.add_button(label="ABS ON", tag="abs", width=-1), H2)
+            dpg.bind_item_font(dpg.add_button(label="EBI ON", tag="ebi", width=-1), H2)
+            dpg.bind_item_font(dpg.add_button(label="ATBS ON", tag="atbs", width=-1), H2)
 
 
 def main(main_controller: Controller,
@@ -36,13 +37,14 @@ def main(main_controller: Controller,
 
     class CustomListener(EventListener):
         def on_update(self, e: UpdateEvent):
-            dpg.set_value("time", "LEADS for VeC\n"
-                                  f"VERSION {__version__.upper()}\n\n"
-                                  f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                                  f"{int(rd.frame_counter * analysis_rate / 60)} MIN "
-                                  f"{int((rd.frame_counter % (60 / analysis_rate)) * analysis_rate)} SEC\n\n"
-                                  f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
-                                  f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS")
+            dpg.set_value("info",
+                          "LEADS for VeC\n"
+                          f"VERSION {__version__.upper()}\n\n"
+                          f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                          f"{int(rd.frame_counter * analysis_rate / 60)} MIN "
+                          f"{int((rd.frame_counter % (60 / analysis_rate)) * analysis_rate)} SEC\n\n"
+                          f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
+                          f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS")
             dpg.set_item_label("speed", f"{context.data().front_wheel_speed}")
 
     def switch_dtcs():
