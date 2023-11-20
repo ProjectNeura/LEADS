@@ -15,8 +15,8 @@ def render():
         dpg.add_table_column()
         with dpg.table_row():
             dpg.bind_item_font(dpg.add_text("", tag="info"), BODY2)
-            dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=200), H1)
-            dpg.bind_item_font(dpg.add_button(label="0.0v", tag="voltage", width=-1, height=200), H1)
+            dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=160), H1)
+            dpg.bind_item_font(dpg.add_button(label="0.0v", tag="voltage", width=-1, height=160), H1)
     with dpg.table(header_row=False):
         dpg.add_table_column()
         dpg.add_table_column()
