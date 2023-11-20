@@ -27,6 +27,8 @@ T = _TypeVar("T")
 def start(render: _Callable,
           context: _Leads[T],
           main_controller: _Controller[T],
+          analysis_rate: float = .01,
+          update_rate: float = .5,
           runtime_data: RuntimeData = RuntimeData()):
     with _dpg.window(tag="main",
                      label="LEADS",
@@ -40,9 +42,9 @@ def start(render: _Callable,
     _dpg.set_primary_window("main", True)
     runtime_data.frame_counter = 0
     while _dpg.is_dearpygui_running():
-        _sleep(.02)
+        _sleep(analysis_rate)
         context.push(main_controller.collect_all())
-        if runtime_data.frame_counter % 25 == 0:
+        if runtime_data.frame_counter % (update_rate / analysis_rate) == 0:
             context.update()
         runtime_data.frame_counter += 1
         _dpg.render_dearpygui_frame()
