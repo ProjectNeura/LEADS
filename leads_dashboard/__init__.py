@@ -24,7 +24,7 @@ _dpg.setup_dearpygui()
 T = _TypeVar("T")
 
 
-def start(render: _Callable,
+def start(render: _Callable[[None], None],
           context: _Leads[T],
           main_controller: _Controller[T],
           analysis_rate: float = .01,
