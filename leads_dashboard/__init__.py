@@ -42,7 +42,7 @@ def start(render: _Callable,
     while _dpg.is_dearpygui_running():
         _sleep(.02)
         context.push(main_controller.collect_all())
-        if runtime_data.frame_counter % 30 == 0:
+        if runtime_data.frame_counter % 25 == 0:
             context.update()
         runtime_data.frame_counter += 1
         _dpg.render_dearpygui_frame()

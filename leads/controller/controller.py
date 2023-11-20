@@ -13,8 +13,11 @@ class Controller(Device, _Generic[T]):
         self._level: int = level
         self._devices: dict[str, Device] = {}
 
-    def attach_device(self, device: Device):
-        self._devices[device.get_tag()] = device
+    def _attach_device(self, device: Device):
+        self._devices[device.tag()] = device
+
+    def device(self, tag: str):
+        return self._devices[tag]
 
     @_abstractmethod
     def collect_all(self) -> T:

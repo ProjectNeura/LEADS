@@ -1,8 +1,14 @@
 from random import randint as _randint
-from leads.controller.controller import T
-from leads import Controller as _Controller, DefaultDataContainer as _DefaultDataContainer
+from leads import Controller as _Controller, SRWDataContainer as _SRWDataContainer, DRWDataContainer as _DRWDataContainer
 
 
-class Random(_Controller):
-    def collect_all(self) -> T:
-        return _DefaultDataContainer(_randint(10, 40))
+class SRWRandom(_Controller):
+    def collect_all(self) -> _SRWDataContainer:
+        ws = _randint(10, 40)
+        return _SRWDataContainer(ws, ws, ws)
+
+
+class DRWRandom(_Controller):
+    def collect_all(self) -> _DRWDataContainer:
+        ws = _randint(10, 40)
+        return _DRWDataContainer(ws, ws, ws, ws)

@@ -3,5 +3,5 @@ class Device(object):
         self._tag: str = tag
         self._pins: tuple[int | str] = pins
 
-    def get_tag(self) -> str:
+    def tag(self) -> str:
         return self._tag
