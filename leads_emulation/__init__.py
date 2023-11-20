@@ -5,10 +5,10 @@ from leads import Controller as _Controller, SRWDataContainer as _SRWDataContain
 class SRWRandom(_Controller):
     def collect_all(self) -> _SRWDataContainer:
         ws = _randint(10, 40)
-        return _SRWDataContainer(ws, ws, ws)
+        return _SRWDataContainer(ws, ws)
 
 
 class DRWRandom(_Controller):
     def collect_all(self) -> _DRWDataContainer:
         ws = _randint(10, 40)
-        return _DRWDataContainer(ws, ws, ws, ws)
+        return _DRWDataContainer(ws, ws, ws)
