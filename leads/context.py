@@ -37,6 +37,9 @@ class Context(_Generic[T]):
         _check_data_type(data, self.__initial_data_type)
         self._data = data
 
+    def in_srw_mode(self) -> bool:
+        return self._srw_mode
+
     def set_dtcs(self, enabled: bool):
         self._dtcs = enabled
 

@@ -1,3 +1,6 @@
+from typing import Any as _Any
+
+
 from .context import Context
 
 
@@ -20,9 +23,28 @@ class UpdateEvent(Event):
         super().__init__("UPDATE", context)
 
 
-class InterventionEvent(Event):
-    def __init__(self, context: Context):
-        super().__init__("INTERVENTION", context)
+SYSTEM_DTCS = "DTCS"
+SYSTEM_ABS = "ABS"
+SYSTEM_EBI = "EBI"
+SYSTEM_ATBS = "ATBS"
+
+
+class SystemEvent(Event):
+    def __init__(self, t: str, context: Context, system: str):
+        super().__init__(t, context)
+        self.system: str = system
+
+
+class InterventionEvent(SystemEvent):
+    def __init__(self, context: Context, system: str, *data: _Any):
+        super().__init__("INTERVENTION", context, system)
+        self.data: tuple[_Any] = data
+
+
+class SuspensionEvent(SystemEvent):
+    def __init__(self, context: Context, system: str, cause: str):
+        super().__init__("SUSPENSION", context, system)
+        self.cause: str = cause
 
 
 class EventListener(object):
@@ -33,4 +55,7 @@ class EventListener(object):
         pass
 
     def on_intervene(self, event: InterventionEvent):
+        pass
+
+    def on_suspend(self, event: SuspensionEvent):
         pass
