@@ -1,9 +1,9 @@
-from .context import Context as _Context
+from .context import Context
 
 
 class Event(object):
-    def __init__(self, t: str, context: _Context):
-        self.context: _Context = context
+    def __init__(self, t: str, context: Context):
+        self.context: Context = context
         self.t: str = t
 
     def __str__(self) -> str:
@@ -11,17 +11,17 @@ class Event(object):
 
 
 class DataPushedEvent(Event):
-    def __init__(self, context: _Context):
+    def __init__(self, context: Context):
         super().__init__("DATA PUSHED", context)
 
 
 class UpdateEvent(Event):
-    def __init__(self, context: _Context):
+    def __init__(self, context: Context):
         super().__init__("UPDATE", context)
 
 
 class InterventionEvent(Event):
-    def __init__(self, context: _Context):
+    def __init__(self, context: Context):
         super().__init__("INTERVENTION", context)
 
 
