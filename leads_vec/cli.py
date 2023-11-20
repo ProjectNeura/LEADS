@@ -1,4 +1,5 @@
 from leads import *
+from time import time
 from leads_dashboard import *
 from datetime import datetime
 from keyboard import add_hotkey
@@ -37,14 +38,16 @@ def main(main_controller: Controller,
 
     class CustomListener(EventListener):
         def on_update(self, e: UpdateEvent):
+            duration = int(time()) - rd.start_time
             dpg.set_value("info",
                           "LEADS for VeC\n"
                           f"VERSION {__version__.upper()}\n\n"
                           f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                          f"{int(rd.frame_counter * analysis_rate / 60)} MIN "
-                          f"{int((rd.frame_counter % (60 / analysis_rate)) * analysis_rate)} SEC\n\n"
+                          f"{duration // 60} MIN "
+                          f"{duration % 60} SEC\n\n"
                           f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
-                          f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS")
+                          f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS\n"
+                          f"UPDATE RATE: {int(1 / update_rate)} TPS")
             dpg.set_item_label("speed", f"{context.data().front_wheel_speed}")
 
     def switch_dtcs():
