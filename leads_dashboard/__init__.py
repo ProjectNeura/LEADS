@@ -13,7 +13,7 @@ H1 = load_font(size=100)
 H2 = load_font(size=40)
 H3 = load_font(size=30)
 H4 = load_font(size=20)
-H5 = load_font(size=10)
+H5 = load_font(size=15)
 BODY = load_font(size=10)
 BODY2 = load_font(size=6)
 
