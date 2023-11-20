@@ -53,7 +53,7 @@ class SRWDataContainer(DataContainer):
 
 class DRWDataContainer(DataContainer):
     """
-    Double Rear Wheel
+    Dual Rear Wheel
     """
 
     def __init__(self,
