@@ -34,7 +34,7 @@ def start(render: _Callable,
                      no_scrollbar=True,
                      menubar=False,
                      no_close=True,
-                     no_background=True):
+                     no_background=True, ):
         render()
     _dpg.show_viewport()
     _dpg.set_primary_window("main", True)

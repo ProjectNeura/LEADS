@@ -13,7 +13,7 @@ def render():
         dpg.add_table_column()
         with dpg.table_row():
             dpg.bind_item_font(dpg.add_text("", tag="time"), BODY2)
-            dpg.bind_item_font(dpg.add_text("", tag="speed"), H1)
+            dpg.bind_item_font(dpg.add_button(label="", tag="speed", width=-1, height=200), H1)
 
 
 def main(main_controller: Controller) -> int:
@@ -23,13 +23,12 @@ def main(main_controller: Controller) -> int:
     class CustomListener(EventListener):
         def on_update(self, e: UpdateEvent):
             d = context.data()
-            dpg.set_value("time", f"VERSION {__version__.upper()}\n\n"
+            dpg.set_value("time", "LEADS for VeC\n"
+                                  f"VERSION {__version__.upper()}\n\n"
                                   f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
                                   f"{rd.frame_counter // 3000} MIN {(rd.frame_counter % 3000) // 50} SEC")
-            dpg.set_value("speed", f"{min(d.left_front_wheel_speed, d.right_front_wheel_speed)} KM/H")
+            dpg.set_item_label("speed", f"{min(d.left_front_wheel_speed, d.right_front_wheel_speed)}")
 
     context.set_event_listener(CustomListener())
-
     start(render, context, main_controller, rd)
-
     return 0
