@@ -8,27 +8,6 @@ from dearpygui import dearpygui as dpg
 from .__version__ import __version__
 
 
-def render():
-    with dpg.table(header_row=False):
-        dpg.add_table_column()
-        dpg.add_table_column()
-        dpg.add_table_column()
-        with dpg.table_row():
-            dpg.bind_item_font(dpg.add_text("", tag="info"), BODY2)
-            dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=160), H1)
-            dpg.bind_item_font(dpg.add_button(label="0.0v", tag="voltage", width=-1, height=160), H1)
-    with dpg.table(header_row=False):
-        dpg.add_table_column()
-        dpg.add_table_column()
-        dpg.add_table_column()
-        dpg.add_table_column()
-        with dpg.table_row():
-            dpg.bind_item_font(dpg.add_button(label="DTCS ON", tag="dtcs", width=-1), H2)
-            dpg.bind_item_font(dpg.add_button(label="ABS ON", tag="abs", width=-1), H2)
-            dpg.bind_item_font(dpg.add_button(label="EBI ON", tag="ebi", width=-1), H2)
-            dpg.bind_item_font(dpg.add_button(label="ATBS ON", tag="atbs", width=-1), H2)
-
-
 def main(main_controller: Controller,
          srw_mode: bool = True,
          analysis_rate: float = .01,
@@ -73,6 +52,26 @@ def main(main_controller: Controller,
         dpg.set_item_label("atbs", f"ATBS {'OFF' if atbs_enabled else 'ON'}")
 
     add_hotkey("4", switch_atbs)
+
+    def render():
+        with dpg.table(header_row=False):
+            dpg.add_table_column()
+            dpg.add_table_column()
+            dpg.add_table_column()
+            with dpg.table_row():
+                dpg.bind_item_font(dpg.add_text("", tag="info"), BODY2)
+                dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=160), H1)
+                dpg.bind_item_font(dpg.add_button(label="0.0v", tag="voltage", width=-1, height=160), H1)
+        with dpg.table(header_row=False):
+            dpg.add_table_column()
+            dpg.add_table_column()
+            dpg.add_table_column()
+            dpg.add_table_column()
+            with dpg.table_row():
+                dpg.bind_item_font(dpg.add_button(label="DTCS ON", tag="dtcs", width=-1, callback=switch_dtcs), H2)
+                dpg.bind_item_font(dpg.add_button(label="ABS ON", tag="abs", width=-1, callback=switch_abs), H2)
+                dpg.bind_item_font(dpg.add_button(label="EBI ON", tag="ebi", width=-1, callback=switch_ebi), H2)
+                dpg.bind_item_font(dpg.add_button(label="ATBS ON", tag="atbs", width=-1, callback=switch_atbs), H2)
 
     context.set_event_listener(CustomListener())
     start(render, context, main_controller, analysis_rate, update_rate, rd)
