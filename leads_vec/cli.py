@@ -1,10 +1,11 @@
-from leads import *
-from time import time
-from leads_dashboard import *
 from datetime import datetime
-from keyboard import add_hotkey
-from dearpygui import dearpygui as dpg
+from time import time
 
+from dearpygui import dearpygui as dpg
+from keyboard import add_hotkey
+
+from leads import *
+from leads_dashboard import *
 from .__version__ import __version__
 
 
@@ -74,7 +75,7 @@ def main(main_controller: Controller,
                         dpg.set_item_label(m2, "0.0v")
                     elif rd.m2_mode == 1:
                         dpg.bind_item_font(m2, BODY)
-                        dpg.set_item_label(m2, "LAP TIME\n\nLAP1 10s\nLAP2 12s")
+                        dpg.set_item_label(m2, "LAP TIME\n\nLAP1 10s\nLAP2 12s\nLAP3 8s")
                     else:
                         dpg.bind_item_font(m2, BODY)
                         dpg.set_item_label(m2, "G Force")

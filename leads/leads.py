@@ -1,7 +1,8 @@
 from typing import TypeVar as _TypeVar, Optional as _Optional, Any as _Any
 
+from .constant import SYSTEM_DTCS
 from .context import Context
-from .event import EventListener, UpdateEvent, SuspensionEvent, InterventionEvent, SYSTEM_DTCS
+from .event import EventListener, UpdateEvent, SuspensionEvent, InterventionEvent
 
 T = _TypeVar("T")
 

@@ -1,8 +1,8 @@
 from copy import copy as _copy
 from typing import TypeVar as _TypeVar, Generic as _Generic, Optional as _Optional
 
+from .constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from .data import DataContainer, SRWDataContainer, DRWDataContainer
-
 
 T = _TypeVar("T")
 
@@ -36,6 +36,16 @@ class Context(_Generic[T]):
     def push(self, data: T):
         _check_data_type(data, self.__initial_data_type)
         self._data = data
+
+    def set_subsystem(self, system: str, enabled: bool):
+        if system == SYSTEM_DTCS:
+            self.set_dtcs(enabled)
+        elif system == SYSTEM_ABS:
+            self.set_abs(enabled)
+        elif system == SYSTEM_EBI:
+            self.set_ebi(enabled)
+        elif system == SYSTEM_ATBS:
+            self.set_atbs(enabled)
 
     def in_srw_mode(self) -> bool:
         return self._srw_mode

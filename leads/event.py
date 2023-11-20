@@ -1,6 +1,5 @@
 from typing import Any as _Any
 
-
 from .context import Context
 
 
@@ -21,12 +20,6 @@ class DataPushedEvent(Event):
 class UpdateEvent(Event):
     def __init__(self, context: Context):
         super().__init__("UPDATE", context)
-
-
-SYSTEM_DTCS = "DTCS"
-SYSTEM_ABS = "ABS"
-SYSTEM_EBI = "EBI"
-SYSTEM_ATBS = "ATBS"
 
 
 class SystemEvent(Event):
