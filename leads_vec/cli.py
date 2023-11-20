@@ -70,13 +70,13 @@ def main(main_controller: Controller,
                 def switch_m2_mode():
                     rd.m2_mode = (rd.m2_mode + 1) % 3
                     if rd.m2_mode == 0:
-                        dpg.set_item_font(m2, H1)
+                        dpg.bind_item_font(m2, H1)
                         dpg.set_item_label(m2, "0.0v")
                     elif rd.m2_mode == 1:
-                        dpg.set_item_font(m2, BODY)
+                        dpg.bind_item_font(m2, BODY)
                         dpg.set_item_label(m2, "LAP TIME\n\nLAP1 10s\nLAP2 12s")
                     else:
-                        dpg.set_item_font(m2, BODY)
+                        dpg.bind_item_font(m2, BODY)
                         dpg.set_item_label(m2, "G Force")
 
                 dpg.set_item_callback(m2, switch_m2_mode)
