@@ -32,7 +32,7 @@ def render():
 def main(main_controller: Controller,
          srw_mode: bool = True,
          analysis_rate: float = .01,
-         update_rate: float = .5) -> int:
+         update_rate: float = .25) -> int:
     context = Leads(srw_mode=srw_mode)
     rd = RuntimeData()
 

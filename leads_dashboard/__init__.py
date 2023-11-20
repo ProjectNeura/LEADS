@@ -28,7 +28,7 @@ def start(render: _Callable,
           context: _Leads[T],
           main_controller: _Controller[T],
           analysis_rate: float = .01,
-          update_rate: float = .5,
+          update_rate: float = .25,
           runtime_data: RuntimeData = RuntimeData()):
     with _dpg.window(tag="main",
                      label="LEADS",
