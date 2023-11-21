@@ -64,7 +64,7 @@ class Connection(object):
             raise IOError("An open socket is required")
         return self._socket
 
-    def receive(self, block_size: int = 512) -> bytes:
+    def receive(self, block_size: int = 512) -> bytes | None:
         if self._remainder != b"":
             if (i := self._remainder.find(b";")) != len(self._remainder) - 1:
                 msg = self._remainder[:i + 1]
@@ -82,7 +82,7 @@ class Connection(object):
                 return msg[:i]
             return msg[:len(msg) - 1]
         except IOError:
-            return b""
+            return
 
     def send(self, msg: bytes):
         self._require_open_socket().send(msg + b";")
@@ -114,8 +114,9 @@ class Entity(Service, metaclass=_ABCMeta):
 
     def _stage(self, connection: Connection):
         while True:
-            self.callback.on_receive(self, msg := connection.receive())
-            if msg == b"disconnect":
+            msg = connection.receive()
+            if msg is None or msg == b"disconnect":
                 self.callback.on_disconnect(self)
                 connection.close()
-                break
+                return
+            self.callback.on_receive(self, msg)
