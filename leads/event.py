@@ -44,11 +44,23 @@ class EventListener(object):
     def on_push(self, event: DataPushedEvent):
         pass
 
+    def post_push(self, event: DataPushedEvent):
+        pass
+
     def on_update(self, event: UpdateEvent):
+        pass
+
+    def post_update(self, event: UpdateEvent):
         pass
 
     def on_intervene(self, event: InterventionEvent):
         pass
 
+    def post_intervene(self, event: InterventionEvent):
+        pass
+
     def on_suspend(self, event: SuspensionEvent):
+        pass
+
+    def post_suspend(self, event: SuspensionEvent):
         pass

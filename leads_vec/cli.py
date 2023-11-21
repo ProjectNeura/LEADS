@@ -10,7 +10,8 @@ from .__version__ import __version__
 
 
 class CustomRuntimeData(RuntimeData):
-    m2_mode: int = 0
+    m1_mode: int = 0
+    m3_mode: int = 0
 
 
 def main(main_controller: Controller,
@@ -20,19 +21,11 @@ def main(main_controller: Controller,
     context = Leads(srw_mode=srw_mode)
     rd = CustomRuntimeData()
 
-    class CustomListener(EventListener):
-        def on_update(self, e: UpdateEvent):
-            duration = int(time()) - rd.start_time
-            dpg.set_value("info",
-                          "LEADS for VeC\n"
-                          f"VERSION {__version__.upper()}\n\n"
-                          f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                          f"{duration // 60} MIN "
-                          f"{duration % 60} SEC\n\n"
-                          f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
-                          f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS\n"
-                          f"UPDATE RATE: {int(1 / update_rate)} TPS")
-            dpg.set_item_label("speed", f"{context.data().front_wheel_speed}")
+    def switch_m1_mode():
+        rd.m1_mode = (rd.m1_mode + 1) % 2
+
+    def switch_m3_mode():
+        rd.m3_mode = (rd.m3_mode + 1) % 3
 
     def switch_dtcs():
         context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
@@ -64,33 +57,77 @@ def main(main_controller: Controller,
             dpg.add_table_column()
             dpg.add_table_column()
             with dpg.table_row():
-                dpg.bind_item_font(dpg.add_text("", tag="info"), BODY2)
-                dpg.bind_item_font(dpg.add_button(label="0", tag="speed", width=-1, height=140), H1)
-                dpg.bind_item_font(m2 := dpg.add_button(label="0.0v", tag="voltage", width=-1, height=140), H1)
-
-                def switch_m2_mode():
-                    rd.m2_mode = (rd.m2_mode + 1) % 3
-                    if rd.m2_mode == 0:
-                        dpg.bind_item_font(m2, H1)
-                        dpg.set_item_label(m2, "0.0v")
-                    elif rd.m2_mode == 1:
-                        dpg.bind_item_font(m2, BODY)
-                        dpg.set_item_label(m2, "LAP TIME\n\nLAP1 10s\nLAP2 12s\nLAP3 8s")
-                    else:
-                        dpg.bind_item_font(m2, BODY)
-                        dpg.set_item_label(m2, "G Force")
-
-                dpg.set_item_callback(m2, switch_m2_mode)
+                dpg.bind_item_font(dpg.add_button(label="", tag="m1", width=-1, height=140), BODY2)
+                dpg.set_item_callback("m1", switch_m1_mode)
+                dpg.bind_item_font(dpg.add_button(label="0", tag="m2", width=-1, height=140), H1)
+                dpg.bind_item_font(dpg.add_button(label="0.0v", tag="m3", width=-1, height=140), H1)
+                dpg.set_item_callback("m3", switch_m3_mode)
         with dpg.table(header_row=False):
             dpg.add_table_column()
             dpg.add_table_column()
             dpg.add_table_column()
             dpg.add_table_column()
             with dpg.table_row():
-                dpg.bind_item_font(dpg.add_button(label="DTCS ON", tag="dtcs", width=-1, callback=switch_dtcs), H2)
-                dpg.bind_item_font(dpg.add_button(label="ABS ON", tag="abs", width=-1, callback=switch_abs), H2)
-                dpg.bind_item_font(dpg.add_button(label="EBI ON", tag="ebi", width=-1, callback=switch_ebi), H2)
-                dpg.bind_item_font(dpg.add_button(label="ATBS ON", tag="atbs", width=-1, callback=switch_atbs), H2)
+                dpg.bind_item_font(dpg.add_button(label="DTCS ON",
+                                                  tag="dtcs",
+                                                  width=-1,
+                                                  callback=switch_dtcs), BODY)
+                dpg.bind_item_font(dpg.add_button(label="ABS ON",
+                                                  tag="abs",
+                                                  width=-1,
+                                                  callback=switch_abs), BODY)
+                dpg.bind_item_font(dpg.add_button(label="EBI ON",
+                                                  tag="ebi",
+                                                  width=-1,
+                                                  callback=switch_ebi), BODY)
+                dpg.bind_item_font(dpg.add_button(label="ATBS ON",
+                                                  tag="atbs",
+                                                  width=-1,
+                                                  callback=switch_atbs), BODY)
+            with dpg.table_row():
+                dpg.bind_item_font(dpg.add_text("DTCS READY", color=(0, 255, 0), tag="dtcs_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("ABS READY", color=(0, 255, 0), tag="abs_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("EBI READY", color=(0, 255, 0), tag="ebi_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("ATBS READY", color=(0, 255, 0), tag="atbs_status"), BODY)
+
+    class CustomListener(EventListener):
+        def on_update(self, e: UpdateEvent):
+            duration = int(time()) - rd.start_time
+            if rd.m1_mode == 0:
+                dpg.set_item_label("m1", "LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
+            elif rd.m1_mode == 1:
+                dpg.set_item_label("m1",
+                                   "LEADS for VeC\n"
+                                   f"VERSION {__version__.upper()}\n\n"
+                                   f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                                   f"{duration // 60} MIN "
+                                   f"{duration % 60} SEC\n\n"
+                                   f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
+                                   f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS\n"
+                                   f"UPDATE RATE: {int(1 / update_rate)} TPS")
+
+            if rd.m3_mode == 0:
+                dpg.bind_item_font("m3", H1)
+                dpg.set_item_label("m3", "0.0v")
+            elif rd.m3_mode == 1:
+                dpg.bind_item_font("m3", BODY)
+                dpg.set_item_label("m3", "G Force")
+            else:
+                dpg.bind_item_font("m3", BODY)
+                dpg.set_item_label("m3", "SPEED TREND")
+            dpg.set_item_label("m2", f"{context.data().front_wheel_speed}")
+
+        def on_intervene(self, e: InterventionEvent):
+            dpg.set_value(e.system + "_status", e.system + " INTERVENED")
+
+        def post_intervene(self, e: InterventionEvent):
+            dpg.set_value(e.system + "_status", e.system + " READY")
+
+        def on_suspend(self, e: SuspensionEvent):
+            dpg.set_value(e.system + "_status", e.system + " SUSPENDED")
+
+        def post_suspend(self, e: SuspensionEvent):
+            dpg.set_value(e.system + "_status", e.system + " READY")
 
     context.set_event_listener(CustomListener())
     start(render, context, main_controller, analysis_rate, update_rate, rd)

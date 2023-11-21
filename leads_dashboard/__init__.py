@@ -1,11 +1,11 @@
 from time import sleep as _sleep
-from dearpygui import dearpygui as _dpg
-from leads import Leads as _Leads, Controller as _Controller
 from typing import Callable as _Callable, TypeVar as _TypeVar
 
+from dearpygui import dearpygui as _dpg
+
+from leads import Leads as _Leads, Controller as _Controller
 from .fonts import load_font
 from .runtime import RuntimeData
-
 
 _dpg.create_context()
 
@@ -24,7 +24,7 @@ _dpg.setup_dearpygui()
 T = _TypeVar("T")
 
 
-def start(render: _Callable[[None], None],
+def start(render: _Callable[[], None],
           context: _Leads[T],
           main_controller: _Controller[T],
           analysis_rate: float = .01,
