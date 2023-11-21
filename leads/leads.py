@@ -45,7 +45,6 @@ class Leads(Context[T]):
             right_rear_wheel_speed = self._acquire_data("right_rear_wheel_speed",
                                                         SYSTEM_DTCS, SYSTEM_ATBS,
                                                         mandatory=not self.in_srw_mode())
-            intervened = [False, False, False, False]
             # DTCS
             if self.in_srw_mode():
                 if self.is_dtcs_enabled():
@@ -54,7 +53,6 @@ class Leads(Context[T]):
                                                                             SYSTEM_DTCS,
                                                                             front_wheel_speed,
                                                                             rear_wheel_speed))
-                        intervened[0] = True
             else:
                 if self.is_dtcs_enabled():
                     if left_rear_wheel_speed and front_wheel_speed < left_rear_wheel_speed:
@@ -63,21 +61,11 @@ class Leads(Context[T]):
                                                                             "l",
                                                                             front_wheel_speed,
                                                                             left_rear_wheel_speed))
-                        intervened[0] = True
                     if right_rear_wheel_speed and front_wheel_speed < rear_wheel_speed:
                         self._event_listener.on_intervene(InterventionEvent(self,
                                                                             SYSTEM_DTCS,
                                                                             "r",
                                                                             front_wheel_speed,
                                                                             right_rear_wheel_speed))
-                        intervened[0] = True
-            if not intervened[0]:
-                self._event_listener.post_intervene(InterventionEvent(self, SYSTEM_DTCS))
-            if not intervened[1]:
-                self._event_listener.post_intervene(InterventionEvent(self, SYSTEM_ABS))
-            if not intervened[2]:
-                self._event_listener.post_intervene(InterventionEvent(self, SYSTEM_EBI))
-            if not intervened[3]:
-                self._event_listener.post_intervene(InterventionEvent(self, SYSTEM_ATBS))
 
         self._event_listener.post_update(UpdateEvent(self))
