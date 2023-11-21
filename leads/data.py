@@ -1,9 +1,9 @@
 from threading import Lock as _Lock
 from typing import Self as _Self, Any as _Any
-from abc import abstractmethod as _abstractmethod
+from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 
 
-class DataContainer(object):
+class DataContainer(object, metaclass=_ABCMeta):
     def __init__(self):
         self._lock: _Lock = _Lock()
 

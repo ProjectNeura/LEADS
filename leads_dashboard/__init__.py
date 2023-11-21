@@ -27,9 +27,9 @@ T = _TypeVar("T")
 def start(render: _Callable[[], None],
           context: _Leads[T],
           main_controller: _Controller[T],
-          analysis_rate: float = .01,
-          update_rate: float = .25,
-          runtime_data: RuntimeData = RuntimeData()):
+          analysis_rate: float,
+          update_rate: float,
+          runtime_data: RuntimeData):
     with _dpg.window(tag="main",
                      label="LEADS",
                      no_title_bar=True,

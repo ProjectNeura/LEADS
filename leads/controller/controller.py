@@ -1,5 +1,5 @@
-from abc import abstractmethod as _abstractmethod
 from typing import TypeVar as _TypeVar, Generic as _Generic
+from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 
 from .device import Device
 
@@ -7,7 +7,7 @@ from .device import Device
 T = _TypeVar("T")
 
 
-class Controller(Device, _Generic[T]):
+class Controller(Device, _Generic[T], metaclass=_ABCMeta):
     def __init__(self, tag: str, level: int = 0):
         super().__init__(tag)
         self._level: int = level
