@@ -5,6 +5,7 @@ from dearpygui import dearpygui as dpg
 from keyboard import add_hotkey
 
 from leads import *
+from leads.comm import *
 from leads_dashboard import *
 from .__version__ import __version__
 
@@ -17,7 +18,16 @@ class CustomRuntimeData(RuntimeData):
 def main(main_controller: Controller,
          srw_mode: bool = True,
          analysis_rate: float = .01,
-         update_rate: float = .25) -> int:
+         update_rate: float = .25,
+         communication_server_address: str = "") -> int:
+    communication = False
+    if communication_server_address != "":
+        communication = True
+        try:
+            start_client(communication_server_address)
+        except IOError:
+            communication = False
+
     context = Leads(srw_mode=srw_mode)
     rd = CustomRuntimeData()
 
@@ -89,6 +99,7 @@ def main(main_controller: Controller,
                 dpg.bind_item_font(dpg.add_text("ABS READY", color=(0, 255, 0), tag="abs_status"), BODY)
                 dpg.bind_item_font(dpg.add_text("EBI READY", color=(0, 255, 0), tag="ebi_status"), BODY)
                 dpg.bind_item_font(dpg.add_text("ATBS READY", color=(0, 255, 0), tag="atbs_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("COMM ONLINE", color=(0, 255, 0), tag="comm_status"), BODY)
 
     class CustomListener(EventListener):
         def on_update(self, e: UpdateEvent):
@@ -97,15 +108,13 @@ def main(main_controller: Controller,
                 dpg.set_item_label("m1", "LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
             elif rd.m1_mode == 1:
                 dpg.set_item_label("m1",
-                                   "LEADS for VeC\n"
-                                   f"VERSION {__version__.upper()}\n\n"
+                                   f"VeC {__version__.upper()}\n\n"
                                    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                                   f"{duration // 60} MIN "
-                                   f"{duration % 60} SEC\n\n"
+                                   f"{duration // 60} MIN {duration % 60} SEC\n\n"
                                    f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
                                    f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS\n"
                                    f"UPDATE RATE: {int(1 / update_rate)} TPS")
-
+            dpg.set_item_label("m2", f"{context.data().front_wheel_speed}")
             if rd.m3_mode == 0:
                 dpg.bind_item_font("m3", H1)
                 dpg.set_item_label("m3", "0.0v")
@@ -115,7 +124,7 @@ def main(main_controller: Controller,
             else:
                 dpg.bind_item_font("m3", BODY)
                 dpg.set_item_label("m3", "SPEED TREND")
-            dpg.set_item_label("m2", f"{context.data().front_wheel_speed}")
+            dpg.set_value("comm_status", "COMM ONLINE" if communication else "COMM OFFLINE")
 
         def on_intervene(self, e: InterventionEvent):
             dpg.set_value(e.system + "_status", e.system + " INTERVENED")
