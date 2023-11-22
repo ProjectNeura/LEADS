@@ -13,23 +13,29 @@ from .__version__ import __version__
 class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
     m3_mode: int = 0
+    communication: Client | None = None
 
 
 def main(main_controller: Controller,
          srw_mode: bool = True,
          analysis_rate: float = .01,
          update_rate: float = .25,
-         communication_server_address: str = "") -> int:
-    communication = False
-    if communication_server_address != "":
-        communication = True
-        try:
-            start_client(communication_server_address)
-        except IOError:
-            communication = False
-
+         communication_server_address: str = "",
+         communication_server_port: int = 16400) -> int:
     context = Leads(srw_mode=srw_mode)
     rd = CustomRuntimeData()
+
+    class CustomCallback(Callback):
+        def on_fail(self, service: Service, error: Exception):
+            rd.communication = None
+
+        def on_receive(self, service: Service, msg: bytes):
+            print(msg)
+
+    if communication_server_address != "":
+        rd.communication = start_client(communication_server_address,
+                                        create_client(communication_server_port, CustomCallback()),
+                                        True)
 
     def switch_m1_mode():
         rd.m1_mode = (rd.m1_mode + 1) % 2
@@ -77,6 +83,13 @@ def main(main_controller: Controller,
             dpg.add_table_column()
             dpg.add_table_column()
             dpg.add_table_column()
+            dpg.add_table_column()
+            with dpg.table_row():
+                dpg.bind_item_font(dpg.add_text("DTCS READY", color=(0, 255, 0), tag="dtcs_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("ABS READY", color=(0, 255, 0), tag="abs_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("EBI READY", color=(0, 255, 0), tag="ebi_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("ATBS READY", color=(0, 255, 0), tag="atbs_status"), BODY)
+                dpg.bind_item_font(dpg.add_text("COMM ONLINE", tag="comm_status"), BODY)
             with dpg.table_row():
                 dpg.bind_item_font(dpg.add_button(label="DTCS ON",
                                                   tag="dtcs",
@@ -94,12 +107,6 @@ def main(main_controller: Controller,
                                                   tag="atbs",
                                                   width=-1,
                                                   callback=switch_atbs), BODY)
-            with dpg.table_row():
-                dpg.bind_item_font(dpg.add_text("DTCS READY", color=(0, 255, 0), tag="dtcs_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("ABS READY", color=(0, 255, 0), tag="abs_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("EBI READY", color=(0, 255, 0), tag="ebi_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("ATBS READY", color=(0, 255, 0), tag="atbs_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("COMM ONLINE", color=(0, 255, 0), tag="comm_status"), BODY)
 
     class CustomListener(EventListener):
         def on_update(self, e: UpdateEvent):
@@ -124,7 +131,7 @@ def main(main_controller: Controller,
             else:
                 dpg.bind_item_font("m3", BODY)
                 dpg.set_item_label("m3", "SPEED TREND")
-            dpg.set_value("comm_status", "COMM ONLINE" if communication else "COMM OFFLINE")
+            dpg.set_value("comm_status", "COMM ONLINE" if rd.communication else "COMM OFFLINE")
 
         def on_intervene(self, e: InterventionEvent):
             dpg.set_value(e.system + "_status", e.system + " INTERVENED")

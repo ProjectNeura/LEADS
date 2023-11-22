@@ -8,7 +8,7 @@ class Server(Entity):
     _threads: list[_Thread] = []
     _killed: bool = False
 
-    def _run(self, max_connection: int = 1, ):
+    def run(self, max_connection: int = 1, ):
         self._killed = False
         self._socket.bind(("127.0.0.1", self._port))
         self._socket.listen(max_connection)

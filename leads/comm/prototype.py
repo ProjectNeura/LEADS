@@ -12,8 +12,11 @@ class Service(object, metaclass=_ABCMeta):
         self._lock: _Lock = _Lock()
 
     @_abstractmethod
-    def _run(self, *args, **kwargs):
+    def run(self, *args, **kwargs):
         raise NotImplementedError
+
+    def _run(self, *args, **kwargs):
+        self.run(*args, **kwargs)
 
     def _register_process(self, *args, **kwargs):
         if self._main_thread is not None:
@@ -97,6 +100,9 @@ class Connection(object):
 
 
 class Callback(object):
+    def on_fail(self, service: Service, error: Exception):
+        pass
+
     def on_connect(self, service: Service, connection: Connection):
         pass
 
@@ -120,3 +126,9 @@ class Entity(Service, metaclass=_ABCMeta):
                 connection.close()
                 return
             self.callback.on_receive(self, msg)
+
+    def _run(self, *args, **kwargs):
+        try:
+            return super()._run(*args, **kwargs)
+        except Exception as e:
+            self.callback.on_fail(self, e)
