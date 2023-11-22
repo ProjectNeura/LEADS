@@ -1,12 +1,3 @@
-import dearpygui.dearpygui as dpg
-import dearpygui.demo as demo
+from leads import *
 
-dpg.create_context()
-dpg.create_viewport(title='Custom Title', width=600, height=600)
-
-demo.show_demo()
-
-dpg.setup_dearpygui()
-dpg.show_viewport()
-dpg.start_dearpygui()
-dpg.destroy_context()
+print(SRWDataContainer(10, 40).to_dict())

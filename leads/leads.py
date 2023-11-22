@@ -24,9 +24,9 @@ class Leads(Context[T]):
                     self._event_listener.on_suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
 
     def push(self, data: T):
-        self._event_listener.on_push(DataPushedEvent(self))
+        self._event_listener.on_push(DataPushedEvent(self, data))
         super().push(data)
-        self._event_listener.post_push(DataPushedEvent(self))
+        self._event_listener.post_push(DataPushedEvent(self, data))
 
     def update(self):
         self._event_listener.on_update(UpdateEvent(self))

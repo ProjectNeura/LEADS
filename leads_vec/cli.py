@@ -15,6 +15,10 @@ class CustomRuntimeData(RuntimeData):
     m3_mode: int = 0
     comm: Client | None = None
 
+    def notify_comm(self, d: DataContainer):
+        if self.comm is not None:
+            self.comm.send(d.encode())
+
 
 def main(main_controller: Controller,
          srw_mode: bool = True,
@@ -108,6 +112,9 @@ def main(main_controller: Controller,
                                                   callback=switch_atbs), BODY)
 
     class CustomListener(EventListener):
+        def on_push(self, e: DataPushedEvent):
+            rd.notify_comm(e.data)
+
         def on_update(self, e: UpdateEvent):
             duration = int(time()) - rd.start_time
             if rd.m1_mode == 0:
@@ -146,4 +153,5 @@ def main(main_controller: Controller,
 
     context.set_event_listener(CustomListener())
     start(render, context, main_controller, analysis_rate, update_rate, rd)
+    rd.comm.kill()
     return 0

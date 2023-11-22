@@ -1,6 +1,7 @@
+from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
+from json import dumps as _dumps
 from threading import Lock as _Lock
 from typing import Self as _Self, Any as _Any
-from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 
 
 class DataContainer(object, metaclass=_ABCMeta):
@@ -20,6 +21,23 @@ class DataContainer(object, metaclass=_ABCMeta):
             super().__setattr__(key, value)
         finally:
             self._lock.release()
+
+    def __str__(self) -> str:
+        return _dumps(self.to_dict())
+
+    def to_dict(self) -> dict:
+        attributes = dir(self)
+        r = {}
+        for n in attributes:
+            if n.startswith("_"):
+                continue
+            v = self.__getattribute__(n)
+            if type(v) in (int, float, str):
+                r[n] = v
+        return r
+
+    def encode(self) -> bytes:
+        return str(self).encode()
 
 
 class DefaultDataContainer(DataContainer):

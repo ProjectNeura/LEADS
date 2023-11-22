@@ -17,6 +17,10 @@ class Server(Entity):
             self._connections.append(connection)
             _Thread(target=self._stage, args=(connection,)).start()
 
+    def broadcast(self, msg: bytes):
+        for c in self._connections:
+            c.send(msg)
+
     def kill(self):
         self._killed = True
         self._socket.close()

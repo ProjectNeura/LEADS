@@ -1,6 +1,7 @@
 from typing import Any as _Any
 
 from .context import Context
+from .data import DataContainer
 
 
 class Event(object):
@@ -13,8 +14,9 @@ class Event(object):
 
 
 class DataPushedEvent(Event):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context, data: DataContainer):
         super().__init__("DATA PUSHED", context)
+        self.data: DataContainer = data
 
 
 class UpdateEvent(Event):
