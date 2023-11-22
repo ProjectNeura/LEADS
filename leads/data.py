@@ -1,29 +1,25 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from json import dumps as _dumps
-from threading import Lock as _Lock
-from typing import Self as _Self, Any as _Any
+from time import time as _time
+from typing import Self as _Self
 
 
 class DataContainer(object, metaclass=_ABCMeta):
     def __init__(self):
-        self._lock: _Lock = _Lock()
+        self._time_stamp: int = int(_time() * 1000)
 
     @_abstractmethod
     def __sub__(self, other: _Self) -> _Self:
         raise NotImplementedError
 
-    def __setattr__(self, key: str, value: _Any):
-        if key == "_lock":
-            super().__setattr__(key, value)
-            return
-        self._lock.acquire()
-        try:
-            super().__setattr__(key, value)
-        finally:
-            self._lock.release()
-
     def __str__(self) -> str:
         return _dumps(self.to_dict())
+
+    def reset_time_stamp(self):
+        self._time_stamp = _time() * 1000
+
+    def get_time_stamp(self) -> int:
+        return self._time_stamp
 
     def to_dict(self) -> dict:
         attributes = dir(self)

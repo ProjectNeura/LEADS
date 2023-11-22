@@ -6,10 +6,10 @@ from typing import Self as _Self
 
 class Service(object, metaclass=_ABCMeta):
     def __init__(self, port: int):
+        self._lock: _Lock = _Lock()
         self._port: int = port
         self._socket: _socket = _socket(_AF_INET, _SOCK_STREAM, proto=0)
         self._main_thread: _Thread | None = None
-        self._lock: _Lock = _Lock()
 
     @_abstractmethod
     def run(self, *args, **kwargs):
