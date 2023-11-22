@@ -13,11 +13,6 @@ from .__version__ import __version__
 class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
     m3_mode: int = 0
-    comm: Client | None = None
-
-    def notify_comm(self, d: DataContainer):
-        if self.comm is not None:
-            self.comm.send(d.encode())
 
 
 def main(main_controller: Controller,
