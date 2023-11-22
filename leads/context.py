@@ -1,5 +1,5 @@
 from copy import copy as _copy
-from typing import TypeVar as _TypeVar, Generic as _Generic, Optional as _Optional
+from typing import TypeVar as _TypeVar, Generic as _Generic
 
 from .constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from .data import DataContainer, SRWDataContainer, DRWDataContainer
@@ -13,7 +13,7 @@ def _check_data_type(data: T, superclass: type = DataContainer):
 
 
 class Context(_Generic[T]):
-    def __init__(self, srw_mode: bool = True, initial_data: _Optional[T] = None):
+    def __init__(self, srw_mode: bool = True, initial_data: T | None = None):
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data

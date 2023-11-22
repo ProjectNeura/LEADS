@@ -20,10 +20,10 @@ class Service(object, metaclass=_ABCMeta):
 
     def _register_process(self, *args, **kwargs):
         if self._main_thread is not None:
-            raise RuntimeWarning("A single `Server` instance cannot be run twice")
+            raise RuntimeWarning("A service can only run once")
         self._lock.acquire()
         try:
-            self._main_thread = _Thread(target=self._run, args=args, kwargs=kwargs)
+            self._main_thread = _Thread(name=f"service{hash(self)}", target=self._run, args=args, kwargs=kwargs)
         finally:
             self._lock.release()
 

@@ -36,7 +36,7 @@ def start(render: _Callable[[], None],
                      no_scrollbar=True,
                      menubar=False,
                      no_close=True,
-                     no_background=True, ):
+                     no_background=True):
         render()
     _dpg.show_viewport()
     _dpg.set_primary_window("main", True)
@@ -48,4 +48,19 @@ def start(render: _Callable[[], None],
             context.update()
         runtime_data.frame_counter += 1
         _dpg.render_dearpygui_frame()
+    _dpg.destroy_context()
+
+
+def start_comm(render: _Callable[[], None]):
+    with _dpg.window(tag="main",
+                     label="LEADS Comm",
+                     no_title_bar=True,
+                     no_scrollbar=True,
+                     menubar=False,
+                     no_close=True,
+                     no_background=True):
+        render()
+    _dpg.show_viewport()
+    _dpg.set_primary_window("main", True)
+    _dpg.start_dearpygui()
     _dpg.destroy_context()

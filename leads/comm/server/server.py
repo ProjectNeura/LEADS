@@ -4,7 +4,7 @@ from ..prototype import Entity, Connection
 
 
 class Server(Entity):
-    _threads: list[_Thread] = []
+    _connections: list[Connection] = []
     _killed: bool = False
 
     def run(self, max_connection: int = 1):
@@ -14,9 +14,8 @@ class Server(Entity):
         while not self._killed:
             socket, address = self._socket.accept()
             self.callback.on_connect(self, connection := Connection(self, socket, address))
-            thread = _Thread(target=self._stage, args=(connection,))
-            self._threads.append(thread)
-            thread.start()
+            self._connections.append(connection)
+            _Thread(target=self._stage, args=(connection,)).start()
 
     def kill(self):
         self._killed = True

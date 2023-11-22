@@ -1,4 +1,4 @@
-from typing import TypeVar as _TypeVar, Optional as _Optional, Any as _Any
+from typing import TypeVar as _TypeVar, Any as _Any
 
 from .constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from .context import Context
@@ -15,7 +15,7 @@ class Leads(Context[T]):
     def set_event_listener(self, event_listener: EventListener):
         self._event_listener = event_listener
 
-    def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Optional[_Any]:
+    def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
         try:
             return self.data().__getattribute__(name)
         except AttributeError:

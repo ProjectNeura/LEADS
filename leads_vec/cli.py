@@ -13,7 +13,7 @@ from .__version__ import __version__
 class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
     m3_mode: int = 0
-    communication: Client | None = None
+    comm: Client | None = None
 
 
 def main(main_controller: Controller,
@@ -26,15 +26,15 @@ def main(main_controller: Controller,
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception):
-            rd.communication = None
+            rd.comm = None
 
         def on_receive(self, service: Service, msg: bytes):
             print(msg)
 
     if communication_server_address != "":
-        rd.communication = start_client(communication_server_address,
-                                        create_client(callback=CustomCallback()),
-                                        True)
+        rd.comm = start_client(communication_server_address,
+                               create_client(callback=CustomCallback()),
+                               True)
 
     def switch_m1_mode():
         rd.m1_mode = (rd.m1_mode + 1) % 2
@@ -130,7 +130,7 @@ def main(main_controller: Controller,
             else:
                 dpg.bind_item_font("m3", BODY)
                 dpg.set_item_label("m3", "SPEED TREND")
-            dpg.set_value("comm_status", "COMM ONLINE" if rd.communication else "COMM OFFLINE")
+            dpg.set_value("comm_status", "COMM ONLINE" if rd.comm else "COMM OFFLINE")
 
         def on_intervene(self, e: InterventionEvent):
             dpg.set_value(e.system + "_status", e.system + " INTERVENED")
