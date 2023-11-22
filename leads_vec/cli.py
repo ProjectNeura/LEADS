@@ -20,8 +20,7 @@ def main(main_controller: Controller,
          srw_mode: bool = True,
          analysis_rate: float = .01,
          update_rate: float = .25,
-         communication_server_address: str = "",
-         communication_server_port: int = 16400) -> int:
+         communication_server_address: str = "") -> int:
     context = Leads(srw_mode=srw_mode)
     rd = CustomRuntimeData()
 
@@ -34,7 +33,7 @@ def main(main_controller: Controller,
 
     if communication_server_address != "":
         rd.communication = start_client(communication_server_address,
-                                        create_client(communication_server_port, CustomCallback()),
+                                        create_client(callback=CustomCallback()),
                                         True)
 
     def switch_m1_mode():

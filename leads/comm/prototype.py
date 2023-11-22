@@ -1,13 +1,13 @@
-from typing import Self as _Self
-from threading import Lock as _Lock, Thread as _Thread
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
-from socket import socket as _socket, error as _error, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM
+from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM
+from threading import Lock as _Lock, Thread as _Thread
+from typing import Self as _Self
 
 
 class Service(object, metaclass=_ABCMeta):
     def __init__(self, port: int):
         self._port: int = port
-        self._socket: _socket = _socket(_AF_INET, _SOCK_STREAM)
+        self._socket: _socket = _socket(_AF_INET, _SOCK_STREAM, proto=0)
         self._main_thread: _Thread | None = None
         self._lock: _Lock = _Lock()
 
@@ -56,11 +56,7 @@ class Connection(object):
         return self._address[0] + ":" + str(self._address[1])
 
     def closed(self) -> bool:
-        try:
-            self._socket.getpeername()
-            return False
-        except _error:
-            return True
+        return self._socket.fileno() == -1
 
     def _require_open_socket(self, mandatory: bool = True) -> _socket:
         if mandatory and self.closed():
