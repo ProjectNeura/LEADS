@@ -1,3 +1,4 @@
+from collections import deque as _deque
 from copy import copy as _copy
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
@@ -13,10 +14,11 @@ def _check_data_type(data: T, superclass: type = DataContainer):
 
 
 class Context(_Generic[T]):
-    def __init__(self, srw_mode: bool = True, initial_data: T | None = None):
+    def __init__(self, srw_mode: bool = True, initial_data: T | None = None, data_seq_size: int = 1000):
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data
+        :param data_seq_size: buffer size of previous data
         """
         self._srw_mode: bool = srw_mode
         superclass = SRWDataContainer if srw_mode else DRWDataContainer
@@ -24,18 +26,20 @@ class Context(_Generic[T]):
             initial_data = superclass()
         _check_data_type(initial_data, superclass)
         self.__initial_data_type: type = type(initial_data)
-        self._data: T = initial_data
+        if data_seq_size < 1:
+            raise ValueError("`data_seq_size` must be greater or equal to 1")
+        self._data_seq: _deque = _deque((initial_data,), maxlen=data_seq_size)
         self._dtcs: bool = True
         self._abs: bool = True
         self._ebi: bool = True
         self._atbs: bool = True
 
     def data(self) -> T:
-        return _copy(self._data)
+        return _copy(self._data_seq[-1])
 
     def push(self, data: T):
         _check_data_type(data, self.__initial_data_type)
-        self._data = data
+        self._data_seq.append(data)
 
     def set_subsystem(self, system: str, enabled: bool):
         if system == SYSTEM_DTCS:

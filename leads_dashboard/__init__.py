@@ -4,6 +4,7 @@ from typing import Callable as _Callable, TypeVar as _TypeVar
 from dearpygui import dearpygui as _dpg
 
 from leads import Leads as _Leads, Controller as _Controller
+from leads.comm import Server as _Server, create_server as _create_server
 from .fonts import load_font
 from .runtime import RuntimeData
 
@@ -51,7 +52,7 @@ def start(render: _Callable[[], None],
     _dpg.destroy_context()
 
 
-def start_comm(render: _Callable[[], None]):
+def start_comm_server(render: _Callable[[], None], server: _Server = _create_server()):
     with _dpg.window(tag="main",
                      label="LEADS Comm",
                      no_title_bar=True,
@@ -62,5 +63,6 @@ def start_comm(render: _Callable[[], None]):
         render()
     _dpg.show_viewport()
     _dpg.set_primary_window("main", True)
+    server.start(True)
     _dpg.start_dearpygui()
     _dpg.destroy_context()
