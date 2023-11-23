@@ -11,9 +11,9 @@ class RuntimeData(object):
     comm: _Client | None = None
 
     def comm_notify(self, d: _DataContainer):
-        if self.comm is not None:
+        if self.comm:
             self.comm.send(d.encode())
 
     def comm_kill(self):
-        if self.comm is not None:
+        if self.comm:
             self.comm.kill()

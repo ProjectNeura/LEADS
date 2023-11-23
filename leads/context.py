@@ -22,7 +22,7 @@ class Context(_Generic[T]):
         """
         self._srw_mode: bool = srw_mode
         superclass = SRWDataContainer if srw_mode else DRWDataContainer
-        if initial_data is None:
+        if not initial_data:
             initial_data = superclass()
         _check_data_type(initial_data, superclass)
         self.__initial_data_type: type = type(initial_data)

@@ -12,7 +12,7 @@ class Client(Entity):
         self._stage(connection)
 
     def send(self, msg: bytes):
-        if self._connection is None:
+        if not self._connection:
             raise RuntimeError("Client must be running to perform this operation")
         self._connection.send(msg)
 

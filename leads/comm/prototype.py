@@ -19,7 +19,7 @@ class Service(object, metaclass=_ABCMeta):
         self.run(*args, **kwargs)
 
     def _register_process(self, *args, **kwargs):
-        if self._main_thread is not None:
+        if self._main_thread:
             raise RuntimeWarning("A service can only run once")
         self._lock.acquire()
         try:
@@ -120,7 +120,7 @@ class Entity(Service, metaclass=_ABCMeta):
     def _stage(self, connection: Connection):
         while True:
             msg = connection.receive()
-            if msg is None or msg == b"disconnect":
+            if not msg or msg == b"disconnect":
                 self.callback.on_disconnect(self)
                 connection.close()
                 return
