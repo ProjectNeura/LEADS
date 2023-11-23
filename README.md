@@ -62,6 +62,6 @@ You can have a look on the whole schedule of each project in timeline using the
 ### Code Contributions
 
 Please fork the project into your own repository. Before your pull request, make
-sure that you have tested any possible impacts on other parts of the project.
+sure that you have tested all possible impacts on other parts of the project.
 If no certainty is assured, please reach out to our core team members to have
 official supports.
