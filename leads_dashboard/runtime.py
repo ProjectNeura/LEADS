@@ -10,6 +10,10 @@ class RuntimeData(object):
     frame_counter: int = 0
     comm: _Client | None = None
 
-    def notify_comm(self, d: _DataContainer):
+    def comm_notify(self, d: _DataContainer):
         if self.comm is not None:
             self.comm.send(d.encode())
+
+    def comm_kill(self):
+        if self.comm is not None:
+            self.comm.kill()

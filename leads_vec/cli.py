@@ -108,7 +108,7 @@ def main(main_controller: Controller,
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent):
-            rd.notify_comm(e.data)
+            rd.comm_notify(e.data)
 
         def on_update(self, e: UpdateEvent):
             duration = int(time()) - rd.start_time
@@ -148,5 +148,5 @@ def main(main_controller: Controller,
 
     context.set_event_listener(CustomListener())
     start(render, context, main_controller, analysis_rate, update_rate, rd)
-    rd.comm.kill()
+    rd.comm_kill()
     return 0
