@@ -96,6 +96,9 @@ class Connection(object):
 
 
 class Callback(object):
+    def on_initialize(self, service: Service):
+        pass
+
     def on_fail(self, service: Service, error: Exception):
         pass
 

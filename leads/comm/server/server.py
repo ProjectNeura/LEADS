@@ -11,6 +11,7 @@ class Server(Entity):
         self._killed = False
         self._socket.bind(("127.0.0.1", self._port))
         self._socket.listen(max_connection)
+        self.callback.on_initialize(self)
         while not self._killed:
             socket, address = self._socket.accept()
             self.callback.on_connect(self, connection := Connection(self, socket, address))

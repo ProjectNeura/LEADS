@@ -5,6 +5,7 @@ class Client(Entity):
     _connection: Connection | None = None
 
     def run(self, server_address: str):
+        self.callback.on_initialize(self)
         self._socket.connect((server_address, self._port))
         self.callback.on_connect(self, connection := Connection(self, self._socket, (server_address, self._port)))
         self._connection = connection
