@@ -24,9 +24,14 @@ class CustomCallback(Callback):
         dpg.set_value("speed_seq", list(self.speed_seq))
 
 
-if __name__ == '__main__':
-    def render():
-        dpg.add_text("", tag="speed")
-        dpg.add_simple_plot(label="Speed", tag="speed_seq", height=300)
+def render():
+    dpg.add_text("", tag="speed")
+    dpg.add_simple_plot(label="Speed", tag="speed_seq", height=300)
 
+
+def remote():
     start_comm_server(render, create_server(callback=CustomCallback()))
+
+
+if __name__ == '__main__':
+    remote()
