@@ -25,7 +25,7 @@ class CustomCallback(Callback):
 
 
 def render():
-    dpg.add_text("", tag="speed")
+    dpg.bind_item_font(dpg.add_text("", tag="speed"), H1)
     dpg.add_simple_plot(label="Speed", tag="speed_seq", height=300)
 
 

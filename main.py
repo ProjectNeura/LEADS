@@ -1,5 +1,5 @@
-from leads_emulation import SRWRandom
+from leads_emulation import SRWSin
 from leads_vec.cli import main
 
 if __name__ == '__main__':
-    main(SRWRandom("main", 35, 36), communication_server_address="127.0.0.1")
+    main(SRWSin("main", 20, 60, .008), communication_server_address="127.0.0.1")
