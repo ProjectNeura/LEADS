@@ -23,6 +23,34 @@ This project aims to implement the following functions:
 - EBI (Emergency Braking Intervention)
 - ATBS (Automatic Trail Braking System)
 
+## Installation
+
+Note that LEADS requires **Python >= 3.11**.
+
+```shell
+pip install leads dearpygui keyboard
+```
+
+`dearpygui` and `keyboard` are only needed for `leads_vec`. If you only want the framework, run the following.
+
+```shell
+pip install leads
+```
+
+## Quickstart
+
+### Main
+
+```shell
+python -m leads_vec
+```
+
+### Remote Server (Remote)
+
+```shell
+python -m leads_vec remote
+```
+
 ## Periodic Report
 
 See [reports](https://github.com/ProjectNeura/LEADS/tree/master/reports).
@@ -65,3 +93,7 @@ Please fork the project into your own repository. Before your pull request, make
 sure that you have tested all possible impacts on other parts of the project.
 If no certainty is assured, please reach out to our core team members to have
 official supports.
+
+#### Code Specifications
+
+All code must be type-annotated and follow the [Code Style Guide]().
