@@ -53,7 +53,7 @@ python -m leads_vec remote
 
 ## Periodic Report
 
-See [reports](https://github.com/ProjectNeura/LEADS/tree/master/reports).
+See [reports](https://github.com/ProjectNeura/LEADS/tree/master/docs/reports).
 
 ## Collaborations
 
