@@ -29,8 +29,9 @@ def render():
     dpg.add_simple_plot(label="Speed", tag="speed_seq", height=300)
 
 
-def remote():
+def remote() -> int:
     start_comm_server(render, create_server(callback=CustomCallback()))
+    return 0
 
 
 if __name__ == '__main__':
