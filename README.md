@@ -53,7 +53,7 @@ python -m leads_vec remote
 
 ## Periodic Report
 
-See [reports](https://github.com/ProjectNeura/LEADS/tree/master/docs/reports).
+See [reports](docs/reports).
 
 ## Collaborations
 
@@ -96,4 +96,4 @@ official supports.
 
 #### Code Specifications
 
-All code must be type-annotated and follow the [Code Style Guide]().
+All code must be type-annotated and follow the [Code Style Guide](docs/Code%20Style%20Guide.md).
