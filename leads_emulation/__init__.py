@@ -38,7 +38,7 @@ class _SinController(_Controller, metaclass=_ABCMeta):
 class SRWSin(_SinController):
     def collect_all(self) -> _SRWDataContainer:
         try:
-            return _SRWDataContainer(ws := int((_sin(self.counter) + .5) * self.magnitude + self.offset), ws)
+            return _SRWDataContainer(ws := (_sin(self.counter) + .5) * self.magnitude + self.offset, ws)
         finally:
             self.counter = (self.counter + self.acceleration) % _pi
 
@@ -46,6 +46,6 @@ class SRWSin(_SinController):
 class DRWSin(_SinController):
     def collect_all(self) -> _DRWDataContainer:
         try:
-            return _DRWDataContainer(ws := int((_sin(self.counter) + .5) * self.magnitude + self.offset), ws, ws)
+            return _DRWDataContainer(ws := (_sin(self.counter) + .5) * self.magnitude + self.offset, ws, ws)
         finally:
             self.counter = (self.counter + self.acceleration) % _pi

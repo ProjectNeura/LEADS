@@ -6,6 +6,25 @@ from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionE
 
 T = _TypeVar("T")
 
+_OptionalNumber = int | float | None
+
+
+def dtcs_srw(context: Context,
+             front_wheel_speed: _OptionalNumber,
+             rear_wheel_speed: _OptionalNumber) -> InterventionEvent | None:
+    if rear_wheel_speed and front_wheel_speed < rear_wheel_speed:
+        return InterventionEvent(context, SYSTEM_DTCS, front_wheel_speed, rear_wheel_speed)
+
+
+def dtcs_drw(context: Context,
+             front_wheel_speed: _OptionalNumber,
+             left_rear_wheel_speed: _OptionalNumber,
+             right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent | None:
+    if left_rear_wheel_speed and front_wheel_speed < left_rear_wheel_speed:
+        return InterventionEvent(context, SYSTEM_DTCS, "l", front_wheel_speed, left_rear_wheel_speed)
+    if right_rear_wheel_speed and front_wheel_speed < right_rear_wheel_speed:
+        return InterventionEvent(context, SYSTEM_DTCS, "r", front_wheel_speed, right_rear_wheel_speed)
+
 
 class Leads(Context[T]):
     def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs):
@@ -28,6 +47,10 @@ class Leads(Context[T]):
         super().push(data)
         self._event_listener.post_push(DataPushedEvent(self, data))
 
+    def intervene(self, event: InterventionEvent | None):
+        if event is not None:
+            self._event_listener.on_intervene(event)
+
     def update(self):
         self._event_listener.on_update(UpdateEvent(self))
 
@@ -46,26 +69,10 @@ class Leads(Context[T]):
                                                         SYSTEM_DTCS, SYSTEM_ATBS,
                                                         mandatory=not self.in_srw_mode())
             # DTCS
-            if self.in_srw_mode():
-                if self.is_dtcs_enabled():
-                    if rear_wheel_speed and front_wheel_speed < rear_wheel_speed:
-                        self._event_listener.on_intervene(InterventionEvent(self,
-                                                                            SYSTEM_DTCS,
-                                                                            front_wheel_speed,
-                                                                            rear_wheel_speed))
-            else:
-                if self.is_dtcs_enabled():
-                    if left_rear_wheel_speed and front_wheel_speed < left_rear_wheel_speed:
-                        self._event_listener.on_intervene(InterventionEvent(self,
-                                                                            SYSTEM_DTCS,
-                                                                            "l",
-                                                                            front_wheel_speed,
-                                                                            left_rear_wheel_speed))
-                    if right_rear_wheel_speed and front_wheel_speed < rear_wheel_speed:
-                        self._event_listener.on_intervene(InterventionEvent(self,
-                                                                            SYSTEM_DTCS,
-                                                                            "r",
-                                                                            front_wheel_speed,
-                                                                            right_rear_wheel_speed))
+            if self.is_dtcs_enabled():
+                if self.in_srw_mode():
+                    self.intervene(dtcs_srw(self, front_wheel_speed, rear_wheel_speed))
+                else:
+                    self.intervene(dtcs_drw(self, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed))
 
         self._event_listener.post_update(UpdateEvent(self))

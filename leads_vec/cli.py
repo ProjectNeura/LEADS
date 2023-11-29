@@ -122,7 +122,7 @@ def main(main_controller: Controller,
                                    f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
                                    f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS\n"
                                    f"UPDATE RATE: {int(1 / update_rate)} TPS")
-            dpg.set_item_label("m2", f"{context.data().front_wheel_speed}")
+            dpg.set_item_label("m2", f"{int(context.data().front_wheel_speed)}")
             if rd.m3_mode == 0:
                 dpg.bind_item_font("m3", H1)
                 dpg.set_item_label("m3", "0.0v")

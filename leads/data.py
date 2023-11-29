@@ -36,15 +36,6 @@ class DataContainer(object, metaclass=_ABCMeta):
         return str(self).encode()
 
 
-class DefaultDataContainer(DataContainer):
-    def __init__(self, wheel_speed: int | float = 0):
-        super().__init__()
-        self.wheel_speed: int | float = wheel_speed
-
-    def __sub__(self, other: _Self) -> _Self:
-        return DefaultDataContainer(self.wheel_speed - other.wheel_speed)
-
-
 class SRWDataContainer(DataContainer):
     """
     Single Rear Wheel
