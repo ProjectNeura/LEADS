@@ -135,16 +135,16 @@ def main(main_controller: Controller,
             dpg.set_value("comm_status", "COMM ONLINE" if rd.comm else "COMM OFFLINE")
 
         def on_intervene(self, e: InterventionEvent):
-            dpg.set_value(e.system + "_status", e.system + " INTERVENED")
+            dpg.set_value(e.system.lower() + "_status", e.system + " INTERVENED")
 
         def post_intervene(self, e: InterventionEvent):
-            dpg.set_value(e.system + "_status", e.system + " READY")
+            dpg.set_value(e.system.lower() + "_status", e.system + " READY")
 
         def on_suspend(self, e: SuspensionEvent):
-            dpg.set_value(e.system + "_status", e.system + " SUSPENDED")
+            dpg.set_value(e.system.lower() + "_status", e.system + " SUSPENDED")
 
         def post_suspend(self, e: SuspensionEvent):
-            dpg.set_value(e.system + "_status", e.system + " READY")
+            dpg.set_value(e.system.lower() + "_status", e.system + " READY")
 
     context.set_event_listener(CustomListener())
     start(render, context, main_controller, analysis_rate, update_rate, rd)

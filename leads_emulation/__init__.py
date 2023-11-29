@@ -6,29 +6,41 @@ from leads import Controller as _Controller, SRWDataContainer as _SRWDataContain
     DRWDataContainer as _DRWDataContainer
 
 
-class SRWRandom(_Controller):
-    def __init__(self, tag: str, minimum: int = 30, maximum: int = 40):
+class _EmulatedController(_Controller, metaclass=_ABCMeta):
+    def __init__(self,
+                 tag: str,
+                 minimum: int = 30,
+                 maximum: int = 40,
+                 skid_possibility: float = .1):
         super().__init__(tag)
         self.minimum: int = minimum
         self.maximum: int = maximum
+        self.skid_possibility: float = skid_possibility
 
+    def generate_rear_wheel_speed(self, front_wheel_speed: int | float) -> int | float:
+        return front_wheel_speed + int(_randint(1, int(1 / self.skid_possibility)) * self.skid_possibility)
+
+
+class SRWRandom(_EmulatedController):
     def collect_all(self) -> _SRWDataContainer:
-        return _SRWDataContainer(ws := _randint(self.minimum, self.maximum), ws)
+        return _SRWDataContainer(fws := _randint(self.minimum, self.maximum), self.generate_rear_wheel_speed(fws))
 
 
-class DRWRandom(_Controller):
-    def __init__(self, tag: str, minimum: int = 30, maximum: int = 40):
-        super().__init__(tag)
-        self.minimum: int = minimum
-        self.maximum: int = maximum
-
+class DRWRandom(_EmulatedController):
     def collect_all(self) -> _DRWDataContainer:
-        return _DRWDataContainer(ws := _randint(self.minimum, self.maximum), ws, ws)
+        return _DRWDataContainer(fws := _randint(self.minimum, self.maximum),
+                                 rws := self.generate_rear_wheel_speed(fws),
+                                 rws)
 
 
-class _SinController(_Controller, metaclass=_ABCMeta):
-    def __init__(self, tag: str, minimum: int = 30, maximum: int = 40, acceleration: float = .05):
-        super().__init__(tag)
+class _SinController(_EmulatedController, metaclass=_ABCMeta):
+    def __init__(self,
+                 tag: str,
+                 minimum: int = 30,
+                 maximum: int = 40,
+                 skid_possibility: float = .1,
+                 acceleration: float = .05):
+        super().__init__(tag, minimum, maximum, skid_possibility)
         self.acceleration: float = acceleration
         self.magnitude: int = int((maximum - minimum) * .5)
         self.offset: int = minimum
@@ -38,7 +50,8 @@ class _SinController(_Controller, metaclass=_ABCMeta):
 class SRWSin(_SinController):
     def collect_all(self) -> _SRWDataContainer:
         try:
-            return _SRWDataContainer(ws := (_sin(self.counter) + .5) * self.magnitude + self.offset, ws)
+            return _SRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
+                                     self.generate_rear_wheel_speed(fws))
         finally:
             self.counter = (self.counter + self.acceleration) % _pi
 
@@ -46,6 +59,8 @@ class SRWSin(_SinController):
 class DRWSin(_SinController):
     def collect_all(self) -> _DRWDataContainer:
         try:
-            return _DRWDataContainer(ws := (_sin(self.counter) + .5) * self.magnitude + self.offset, ws, ws)
+            return _DRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
+                                     rws := self.generate_rear_wheel_speed(fws),
+                                     rws)
         finally:
             self.counter = (self.counter + self.acceleration) % _pi

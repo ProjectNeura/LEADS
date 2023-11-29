@@ -8,7 +8,7 @@ if __name__ == '__main__':
     if "remote" in _argv:
         from leads_vec.remote import remote as _main
 
-        _main()
+        _exit(_main())
     else:
         from leads_vec.cli import main as _main
 
