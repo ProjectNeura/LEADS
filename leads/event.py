@@ -1,7 +1,7 @@
 from typing import Any as _Any
 
-from .context import Context
-from .data import DataContainer
+from leads.context import Context
+from leads.data import DataContainer
 
 
 class Event(object):

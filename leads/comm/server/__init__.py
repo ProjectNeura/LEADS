@@ -1,5 +1,5 @@
-from .server import Server
-from ..prototype import Callback
+from leads.comm.prototype import Callback
+from leads.comm.server.server import Server
 
 
 def create_server(port: int = 16400, callback: Callback = Callback()) -> Server:

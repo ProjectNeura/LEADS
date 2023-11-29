@@ -7,7 +7,7 @@ from keyboard import add_hotkey
 from leads import *
 from leads.comm import *
 from leads_dashboard import *
-from .__version__ import __version__
+from leads_vec.__version__ import __version__
 
 
 class CustomRuntimeData(RuntimeData):

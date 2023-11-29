@@ -1,7 +1,7 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
-from .device import Device
+from leads.controller.device import Device
 
 T = _TypeVar("T")
 

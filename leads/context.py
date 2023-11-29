@@ -2,8 +2,8 @@ from collections import deque as _deque
 from copy import copy as _copy
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
-from .constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
-from .data import DataContainer, SRWDataContainer, DRWDataContainer
+from leads.constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
+from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 
 T = _TypeVar("T")
 

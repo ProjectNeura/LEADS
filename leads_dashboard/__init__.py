@@ -5,8 +5,8 @@ from dearpygui import dearpygui as _dpg
 
 from leads import Leads as _Leads, Controller as _Controller
 from leads.comm import Server as _Server, create_server as _create_server
-from .fonts import load_font
-from .runtime import RuntimeData
+from leads_dashboard.fonts import load_font
+from leads_dashboard.runtime import RuntimeData
 
 _dpg.create_context()
 

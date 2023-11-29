@@ -1,4 +1,4 @@
-from ..prototype import Entity, Connection
+from leads.comm.prototype import Entity, Connection
 
 
 class Client(Entity):

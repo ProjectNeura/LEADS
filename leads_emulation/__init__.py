@@ -1,3 +1,4 @@
+from abc import ABCMeta as _ABCMeta
 from math import sin as _sin, pi as _pi
 from random import randint as _randint
 
@@ -25,7 +26,7 @@ class DRWRandom(_Controller):
         return _DRWDataContainer(ws := _randint(self.minimum, self.maximum), ws, ws)
 
 
-class SRWSin(_Controller):
+class _SinController(_Controller, metaclass=_ABCMeta):
     def __init__(self, tag: str, minimum: int = 30, maximum: int = 40, acceleration: float = .05):
         super().__init__(tag)
         self.acceleration: float = acceleration
@@ -33,8 +34,18 @@ class SRWSin(_Controller):
         self.offset: int = minimum
         self.counter: float = 0
 
+
+class SRWSin(_SinController):
     def collect_all(self) -> _SRWDataContainer:
         try:
             return _SRWDataContainer(ws := int((_sin(self.counter) + .5) * self.magnitude + self.offset), ws)
+        finally:
+            self.counter = (self.counter + self.acceleration) % _pi
+
+
+class DRWSin(_SinController):
+    def collect_all(self) -> _DRWDataContainer:
+        try:
+            return _DRWDataContainer(ws := int((_sin(self.counter) + .5) * self.magnitude + self.offset), ws, ws)
         finally:
             self.counter = (self.counter + self.acceleration) % _pi

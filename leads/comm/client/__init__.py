@@ -1,5 +1,5 @@
-from .client import Client
-from ..prototype import Callback
+from leads.comm.client.client import Client
+from leads.comm.prototype import Callback
 
 
 def create_client(port: int = 16400, callback: Callback = Callback()) -> Client:

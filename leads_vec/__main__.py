@@ -6,10 +6,10 @@ if __name__ == '__main__':
     except ImportError:
         raise EnvironmentError("At least one adapter has to be installed")
     if "remote" in _argv:
-        from .remote import remote as _main
+        from leads_vec.remote import remote as _main
 
         _main()
     else:
-        from .cli import main as _main
+        from leads_vec.cli import main as _main
 
         _exit(_main(Controller("main")))
