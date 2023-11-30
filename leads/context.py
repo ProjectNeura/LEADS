@@ -14,6 +14,9 @@ def _check_data_type(data: T, superclass: type = DataContainer):
 
 
 class Context(_Generic[T]):
+    """
+    `Context` manages the data and callback methods in the lifecycle.
+    """
     def __init__(self, srw_mode: bool = True, initial_data: T | None = None, data_seq_size: int = 1000):
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
@@ -35,13 +38,25 @@ class Context(_Generic[T]):
         self._atbs: bool = True
 
     def data(self) -> T:
+        """
+        :return: a copy of the current data container
+        """
         return _copy(self._data_seq[-1])
 
     def push(self, data: T):
+        """
+        Push new data into the sequence.
+        :param data: the new data
+        """
         _check_data_type(data, self.__initial_data_type)
         self._data_seq.append(data)
 
     def set_subsystem(self, system: str, enabled: bool):
+        """
+        Set a certain subsystem enabled or disabled.
+        :param system: subsystem id
+        :param enabled: True: enabled; False: disabled
+        """
         if system == SYSTEM_DTCS:
             self.set_dtcs(enabled)
         elif system == SYSTEM_ABS:

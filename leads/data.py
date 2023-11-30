@@ -5,6 +5,9 @@ from typing import Self as _Self
 
 
 class DataContainer(object, metaclass=_ABCMeta):
+    """
+    `DataContainer` is an abstract layer for data storage.
+    """
     def __init__(self):
         self._time_stamp: int = int(_time() * 1000)
 
@@ -16,12 +19,23 @@ class DataContainer(object, metaclass=_ABCMeta):
         return _dumps(self.to_dict())
 
     def reset_time_stamp(self):
+        """
+        Reset the data's time stamp to now.
+        """
         self._time_stamp = _time() * 1000
 
     def get_time_stamp(self) -> int:
+        """
+        Get the data's time stamp.
+        :return: the time stamp (ms)
+        """
         return self._time_stamp
 
     def to_dict(self) -> dict:
+        """
+        Convert the data into a dictionary.
+        :return: a dictionary that contains all custom attributes of the container
+        """
         attributes = dir(self)
         r = {}
         for n in attributes:
@@ -33,6 +47,10 @@ class DataContainer(object, metaclass=_ABCMeta):
         return r
 
     def encode(self) -> bytes:
+        """
+        Encode the data into bytes for network transaction purposes.
+        :return: JSON in bytes
+        """
         return str(self).encode()
 
 
