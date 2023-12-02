@@ -36,6 +36,10 @@ class InterventionEvent(SystemEvent):
         self.data: tuple[_Any] = data
 
 
+class InterventionExitEvent(InterventionEvent):
+    pass
+
+
 class SuspensionEvent(SystemEvent):
     def __init__(self, context: Context, system: str, cause: str):
         super().__init__("SUSPENSION", context, system)
@@ -58,7 +62,7 @@ class EventListener(object):
     def on_intervene(self, event: InterventionEvent):
         pass
 
-    def post_intervene(self, event: InterventionEvent):
+    def post_intervene(self, event: InterventionExitEvent):
         pass
 
     def on_suspend(self, event: SuspensionEvent):

@@ -2,7 +2,8 @@ from typing import TypeVar as _TypeVar, Any as _Any
 
 from leads.constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from leads.context import Context
-from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent
+from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
+    InterventionExitEvent
 
 T = _TypeVar("T")
 
@@ -11,19 +12,21 @@ _OptionalNumber = int | float | None
 
 def dtcs_srw(context: Context,
              front_wheel_speed: _OptionalNumber,
-             rear_wheel_speed: _OptionalNumber) -> InterventionEvent | None:
+             rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
     if rear_wheel_speed and front_wheel_speed < rear_wheel_speed:
         return InterventionEvent(context, SYSTEM_DTCS, front_wheel_speed, rear_wheel_speed)
+    return InterventionExitEvent(context, SYSTEM_DTCS, front_wheel_speed, rear_wheel_speed)
 
 
 def dtcs_drw(context: Context,
              front_wheel_speed: _OptionalNumber,
              left_rear_wheel_speed: _OptionalNumber,
-             right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent | None:
+             right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
     if left_rear_wheel_speed and front_wheel_speed < left_rear_wheel_speed:
         return InterventionEvent(context, SYSTEM_DTCS, "l", front_wheel_speed, left_rear_wheel_speed)
     if right_rear_wheel_speed and front_wheel_speed < right_rear_wheel_speed:
         return InterventionEvent(context, SYSTEM_DTCS, "r", front_wheel_speed, right_rear_wheel_speed)
+    return InterventionExitEvent(context, SYSTEM_DTCS, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed)
 
 
 class Leads(Context[T]):
@@ -47,8 +50,10 @@ class Leads(Context[T]):
         super().push(data)
         self._event_listener.post_push(DataPushedEvent(self, data))
 
-    def intervene(self, event: InterventionEvent | None):
-        if event is not None:
+    def intervene(self, event: InterventionEvent):
+        if isinstance(event, InterventionExitEvent):
+            self._event_listener.post_intervene(event)
+        else:
             self._event_listener.on_intervene(event)
 
     def update(self):

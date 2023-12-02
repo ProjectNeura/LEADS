@@ -31,6 +31,8 @@ Note that LEADS requires **Python >= 3.11**.
 pip install leads dearpygui keyboard
 ```
 
+`numpy` will be automatically installed with `leads`.
+
 `dearpygui` and `keyboard` are only needed for `leads_vec`. If you only want the framework, run the following.
 
 ```shell

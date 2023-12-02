@@ -2,6 +2,7 @@ from collections import deque
 from json import loads
 
 from dearpygui import dearpygui as dpg
+from numpy import trapz
 
 from leads.comm import *
 from leads_dashboard import *
@@ -20,13 +21,15 @@ class CustomCallback(Callback):
         data = loads(msg.decode())
         front_wheel_speed = data["front_wheel_speed"]
         self.speed_seq.append(front_wheel_speed)
-        dpg.set_value("speed", f"FWS: {front_wheel_speed} Km / H")
+        dpg.set_value("speed", f"FWS: {int(front_wheel_speed)} Km / H")
+        dpg.set_value("displacement", f"{int(trapz(self.speed_seq, dx=.001))} Km")
         dpg.set_value("speed_seq", list(self.speed_seq))
 
 
 def render():
-    dpg.bind_item_font(dpg.add_text("", tag="speed"), H1)
-    dpg.add_simple_plot(label="Speed", tag="speed_seq", height=300)
+    dpg.bind_item_font(dpg.add_text("", tag="speed"), H2)
+    dpg.bind_item_font(dpg.add_text("", tag="displacement"), H2)
+    dpg.add_simple_plot(label="Speed Trend", tag="speed_seq", height=300)
 
 
 def remote() -> int:

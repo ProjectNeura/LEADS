@@ -108,7 +108,12 @@ def main(main_controller: Controller,
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent):
-            rd.comm_notify(e.data)
+            try:
+                rd.comm_notify(e.data)
+            except IOError:
+                rd.comm_kill()
+                rd.comm = None
+                dpg.set_value("comm_status", "COMM OFFLINE")
 
         def on_update(self, e: UpdateEvent):
             duration = int(time()) - rd.start_time
