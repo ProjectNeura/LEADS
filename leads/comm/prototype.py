@@ -193,8 +193,7 @@ class Entity(Service, metaclass=_ABCMeta):
             msg = connection.receive()
             if not msg or msg == b"disconnect":
                 self.callback.on_disconnect(self)
-                connection.close()
-                return
+                return connection.close()
             self.callback.on_receive(self, msg)
 
     def _run(self, *args, **kwargs):
