@@ -37,7 +37,7 @@ class DataContainer(object, metaclass=_ABCMeta):
         :return: a dictionary that contains all custom attributes of the container
         """
         attributes = dir(self)
-        r = {}
+        r = {"t": self._time_stamp}
         for n in attributes:
             if n.startswith("_"):
                 continue

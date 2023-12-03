@@ -1,4 +1,5 @@
-from typing import BinaryIO as _BinaryIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
+from copy import copy as _copy
+from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
     Callable as _Callable
 
 from numpy import mean as _mean
@@ -20,14 +21,18 @@ def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
     return r
 
 
+def csv_stringifier(element: T) -> str:
+    return str(element) + ","
+
+
 class DataPersistence(_Sequence, _Generic[T]):
     def __init__(self,
-                 file: str | _BinaryIO,
+                 file: str | _TextIO,
                  max_size: int = -1,
                  chunk_scale: int = 1,
                  compressor: Compressor = mean_compressor,
-                 stringifier: Stringifier = str):
-        self._file: _BinaryIO = open(file, "ab") if isinstance(file, str) else file
+                 stringifier: Stringifier = csv_stringifier):
+        self._file: _TextIO = open(file, "a") if isinstance(file, str) else file
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
         self._compressor: Compressor = compressor
@@ -37,10 +42,25 @@ class DataPersistence(_Sequence, _Generic[T]):
         self._chunk_size: int = chunk_scale
 
     def __len__(self) -> int:
-        return len(self._data) + len(self._chunk)
+        return len(self._data)
 
     def __getitem__(self, item: slice) -> T | list[T]:
-        return (self._data + self._chunk)[item]
+        return self._data[item]
+
+    def __str__(self) -> str:
+        return str(self._data)
+
+    def close(self):
+        self._file.close()
+
+    def get_chunk_size(self) -> int:
+        return self._chunk_size
+
+    def to_list(self) -> list[T]:
+        return _copy(self._data)
+
+    def get_chunk(self) -> list[T]:
+        return _copy(self._chunk)
 
     def _push_to_data(self, element: T):
         self._data.append(element)
@@ -51,9 +71,11 @@ class DataPersistence(_Sequence, _Generic[T]):
             self._chunk_size *= 2
 
     def append(self, element: T):
-        self._file.write(self._stringifier(element).encode())
+        self._file.write(self._stringifier(element))
         if self._chunk_size == 1:
             return self._push_to_data(element)
         self._chunk.append(element)
         if len(self._chunk) >= self._chunk_size:
-            self._push_to_data(self._compressor(self._chunk, self._chunk_scale))
+            for e in self._compressor(self._chunk, self._chunk_scale):
+                self._push_to_data(e)
+            self._chunk.clear()
