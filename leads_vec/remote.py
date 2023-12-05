@@ -1,5 +1,7 @@
 from collections import deque
 from json import loads
+from os import mkdir
+from os.path import exists
 
 from dearpygui import dearpygui as dpg
 from numpy import trapz, arange
@@ -16,6 +18,9 @@ def render():
 
 
 def remote(data_dir: str = "./data") -> int:
+    if not exists(data_dir):
+        mkdir(data_dir)
+
     class CustomCallback(Callback):
         speed_seq: deque = deque(maxlen=1000)
         speed_record: DataPersistence = DataPersistence(data_dir + "/speed.csv", max_size=256)
