@@ -22,8 +22,9 @@ def remote(data_dir: str = "./data") -> int:
         mkdir(data_dir)
 
     class CustomCallback(Callback):
-        speed_seq: deque = deque(maxlen=1000)
+        speed_seq: deque = deque(maxlen=512)
         speed_record: DataPersistence = DataPersistence(data_dir + "/speed.csv", max_size=256)
+        time_stamp_record: DataPersistence = DataPersistence(data_dir + "/time_stamp.csv", max_size=256)
 
         def on_initialize(self, service: Service):
             print("Server started")
@@ -33,6 +34,7 @@ def remote(data_dir: str = "./data") -> int:
 
         def on_receive(self, service: Service, msg: bytes):
             data = loads(msg.decode())
+            self.time_stamp_record.append(data["t"])
             front_wheel_speed = data["front_wheel_speed"]
             self.speed_seq.append(front_wheel_speed)
             self.speed_record.append(front_wheel_speed)
