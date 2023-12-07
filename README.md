@@ -1,8 +1,8 @@
 # LEADS: Lightweight Embedded Assisted Driving System
 
-LEADS is a system designed for VeC.
+LEADS is a system designed for [VeC](https://www.villanovacollege.org/giving/vec-project).
 
-LEADS only supports two-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
+LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
 
 Python is generally not the best choice for writing embedded systems. We made this decision for the following reasons.
 
@@ -14,14 +14,16 @@ Python is generally not the best choice for writing embedded systems. We made th
 This project aims to implement the following functions:
 
 - A basic instrumentation system
-- A basic control system
 - A basic communication system
-- A speed recording system
-- A G force recording system
-- DTCS (Dynamic Traction Control System)
-- ABS (Anti-lock Braking System)
-- EBI (Emergency Braking Intervention)
-- ATBS (Automatic Trail Braking System)
+- A basic control system
+- A data recording system with the following components
+  - A speed recording system
+  - A G force recording system
+- A control system with the following components
+  - DTCS (Dynamic Traction Control System)
+  - ABS (Anti-lock Braking System)
+  - EBI (Emergency Braking Intervention)
+  - ATBS (Automatic Trail Braking System)
 
 ## Installation
 
