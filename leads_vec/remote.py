@@ -17,6 +17,11 @@ def render():
     dpg.add_simple_plot(label="Speed Trend", tag="speed_seq", height=300)
 
 
+def integrate_speed2displacement(x: DataPersistence, y: DataPersistence) -> float:
+    return trapz(y.to_list(), arange(len(x)) * x.get_chunk_size(), dx=.001) + trapz(c := y.get_chunk(), arange(len(c)),
+                                                                                    dx=.001)
+
+
 def remote(data_dir: str = "./data") -> int:
     if not exists(data_dir):
         mkdir(data_dir)
@@ -40,7 +45,7 @@ def remote(data_dir: str = "./data") -> int:
             self.speed_record.append(front_wheel_speed)
             dpg.set_value("speed", f"FWS: {int(front_wheel_speed)} Km / H")
             dpg.set_value("displacement",
-                          f"{int(trapz(self.speed_record.to_list(), arange(len(self.speed_record)) * self.speed_record.get_chunk_size(), dx=.001) + trapz(c := self.speed_record.get_chunk(), arange(len(c)), dx=.001))} Km")
+                          f"{int(integrate_speed2displacement(self.time_stamp_record, self.speed_record))} Km")
             dpg.set_value("speed_seq", list(self.speed_seq))
 
         def on_disconnect(self, service: Service):

@@ -19,6 +19,8 @@ This project aims to implement the following functions:
 - A data recording system with the following components
   - A speed recording system
   - A G force recording system
+  - A GPS recording system
+  - A Battery Voltage recording system
 - A control system with the following components
   - DTCS (Dynamic Traction Control System)
   - ABS (Anti-lock Braking System)
