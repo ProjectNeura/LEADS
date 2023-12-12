@@ -6,7 +6,7 @@ with open("./README.md", "r") as f:
 
 setup(
     name="leads",
-    version="0.0.5",
+    version="0.0.6",
     author="ProjectNeura",
     author_email="central@projectneura.org",
     description="Lightweight Embedded Assisted Driving System",
@@ -16,7 +16,8 @@ setup(
     url="https://github.com/ProjectNeura/LEADS",
     packages=find_packages(),
     package_data={
-        "leads_dashboard": ["_fonts/OpenSans-Regular.ttf"]
+        "leads_dashboard": ["_font/OpenSans-Regular.ttf"]
     },
+    include_package_data=True,
     install_requires=["numpy"]
 )
