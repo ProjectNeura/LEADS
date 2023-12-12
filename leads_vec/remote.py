@@ -4,7 +4,7 @@ from os import mkdir
 from os.path import exists
 
 from dearpygui import dearpygui as dpg
-from numpy import trapz, arange
+from numpy import trapz, concatenate, array
 
 from leads.comm import *
 from leads.utils import *
@@ -18,8 +18,9 @@ def render():
 
 
 def integrate_speed2displacement(x: DataPersistence, y: DataPersistence) -> float:
-    return trapz(y.to_list(), arange(len(x)) * x.get_chunk_size(), dx=.001) + trapz(c := y.get_chunk(), arange(len(c)),
-                                                                                    dx=.001)
+    return 0 if len(x) < 2 else trapz(y.to_list() + y.get_chunk(),
+                                      concatenate((array(a := x.to_list()) - a[0], array(x.get_chunk()) - a[0])) / 3600,
+                                      dx=.001)
 
 
 def remote(data_dir: str = "./data") -> int:
@@ -43,9 +44,9 @@ def remote(data_dir: str = "./data") -> int:
             front_wheel_speed = data["front_wheel_speed"]
             self.speed_seq.append(front_wheel_speed)
             self.speed_record.append(front_wheel_speed)
-            dpg.set_value("speed", f"FWS: {int(front_wheel_speed)} Km / H")
+            dpg.set_value("speed", f"FWS: {int(front_wheel_speed)} KM / H")
             dpg.set_value("displacement",
-                          f"{int(integrate_speed2displacement(self.time_stamp_record, self.speed_record))} Km")
+                          f"{int(integrate_speed2displacement(self.time_stamp_record, self.speed_record))} M")
             dpg.set_value("speed_seq", list(self.speed_seq))
 
         def on_disconnect(self, service: Service):
