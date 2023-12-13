@@ -8,7 +8,8 @@ class DataContainer(object, metaclass=_ABCMeta):
     """
     `DataContainer` is an abstract layer for data storage.
     """
-    def __init__(self):
+
+    def __init__(self) -> None:
         self._time_stamp: int = int(_time() * 1000)
 
     @_abstractmethod
@@ -18,7 +19,7 @@ class DataContainer(object, metaclass=_ABCMeta):
     def __str__(self) -> str:
         return _dumps(self.to_dict())
 
-    def reset_time_stamp(self):
+    def reset_time_stamp(self) -> None:
         """
         Reset the data's time stamp to now.
         """
@@ -62,7 +63,7 @@ class SRWDataContainer(DataContainer):
     def __init__(self,
                  front_wheel_speed: int | float = 0,
                  rear_wheel_speed: int | float = 0,
-                 ):
+                 ) -> None:
         super().__init__()
         self.front_wheel_speed: int | float = front_wheel_speed
         self.rear_wheel_speed: int | float = rear_wheel_speed
@@ -83,7 +84,7 @@ class DRWDataContainer(DataContainer):
                  front_wheel_speed: int | float = 0,
                  left_rear_wheel_speed: int | float = 0,
                  right_rear_wheel_speed: int | float = 0,
-                 ):
+                 ) -> None:
         super().__init__()
         self.front_wheel_speed: int | float = front_wheel_speed
         self.left_rear_wheel_speed: int | float = left_rear_wheel_speed

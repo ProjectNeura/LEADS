@@ -32,13 +32,13 @@ def remote(data_dir: str = "./data") -> int:
         speed_record: DataPersistence = DataPersistence(data_dir + "/speed.csv", max_size=256)
         time_stamp_record: DataPersistence = DataPersistence(data_dir + "/time_stamp.csv", max_size=256)
 
-        def on_initialize(self, service: Service):
+        def on_initialize(self, service: Service) -> None:
             print("Server started")
 
-        def on_fail(self, service: Service, error: Exception):
+        def on_fail(self, service: Service, error: Exception) -> None:
             print(error)
 
-        def on_receive(self, service: Service, msg: bytes):
+        def on_receive(self, service: Service, msg: bytes) -> None:
             data = loads(msg.decode())
             self.time_stamp_record.append(data["t"])
             front_wheel_speed = data["front_wheel_speed"]
@@ -49,7 +49,7 @@ def remote(data_dir: str = "./data") -> int:
                           f"{int(integrate_speed2displacement(self.time_stamp_record, self.speed_record))} M")
             dpg.set_value("speed_seq", list(self.speed_seq))
 
-        def on_disconnect(self, service: Service):
+        def on_disconnect(self, service: Service) -> None:
             self.speed_record.close()
 
     start_comm_server(render, create_server(callback=CustomCallback()))

@@ -9,7 +9,8 @@ class Service(object, metaclass=_ABCMeta):
     `Service` is the prototype of every network service. This abstract class implements the procedure of multithread
      tasks.
     """
-    def __init__(self, port: int):
+
+    def __init__(self, port: int) -> None:
         """
         :param port: the port on which the service listens
         """
@@ -19,7 +20,7 @@ class Service(object, metaclass=_ABCMeta):
         self._main_thread: _Thread | None = None
 
     @_abstractmethod
-    def run(self, *args, **kwargs):
+    def run(self, *args, **kwargs) -> None:
         """
         Override this method to define the specific workflow.
         :param args: args
@@ -27,7 +28,7 @@ class Service(object, metaclass=_ABCMeta):
         """
         raise NotImplementedError
 
-    def _run(self, *args, **kwargs):
+    def _run(self, *args, **kwargs) -> None:
         """
         This method is equivalent to `Service.run()`. It leaves a middle layer for possible features in subclasses.
         :param args: args passed to `Service.run()`
@@ -35,7 +36,7 @@ class Service(object, metaclass=_ABCMeta):
         """
         self.run(*args, **kwargs)
 
-    def _register_process(self, *args, **kwargs):
+    def _register_process(self, *args, **kwargs) -> None:
         """
         Register the multithread worker.
         :param args: args passed to `Service.run()`
@@ -49,7 +50,7 @@ class Service(object, metaclass=_ABCMeta):
         finally:
             self._lock.release()
 
-    def _parallel_run(self, *args, **kwargs):
+    def _parallel_run(self, *args, **kwargs) -> None:
         """
         This method is similar to `Service._run()` except that it runs the workflow in a child thread.
         :param args: args passed to `Service.run()`
@@ -75,7 +76,7 @@ class Service(object, metaclass=_ABCMeta):
                 self._run(*args, **kwargs)
 
     @_abstractmethod
-    def kill(self):
+    def kill(self) -> None:
         raise NotImplementedError
 
 
@@ -83,7 +84,9 @@ class Connection(object):
     """
     `Connection` wraps the socket and provides fundamental functions.
     """
-    def __init__(self, service: Service, socket: _socket, address: tuple[str, int], remainder_data: bytes = b""):
+
+    def __init__(self, service: Service, socket: _socket, address: tuple[str, int],
+                 remainder_data: bytes = b"") -> None:
         """
         :param service: the service to which it belongs
         :param socket: the connection socket
@@ -138,7 +141,7 @@ class Connection(object):
         except IOError:
             return
 
-    def send(self, msg: bytes):
+    def send(self, msg: bytes) -> None:
         """
         :param msg: message in bytes
         """
@@ -146,13 +149,13 @@ class Connection(object):
         if msg == b"disconnect":
             self.close()
 
-    def disconnect(self):
+    def disconnect(self) -> None:
         """
         Request disconnection.
         """
         self.send(b"disconnect")
 
-    def close(self):
+    def close(self) -> None:
         """
         Directly close the socket.
         """
@@ -160,19 +163,19 @@ class Connection(object):
 
 
 class Callback(object):
-    def on_initialize(self, service: Service):
+    def on_initialize(self, service: Service) -> None:
         pass
 
-    def on_fail(self, service: Service, error: Exception):
+    def on_fail(self, service: Service, error: Exception) -> None:
         pass
 
-    def on_connect(self, service: Service, connection: Connection):
+    def on_connect(self, service: Service, connection: Connection) -> None:
         pass
 
-    def on_receive(self, service: Service, msg: bytes):
+    def on_receive(self, service: Service, msg: bytes) -> None:
         pass
 
-    def on_disconnect(self, service: Service):
+    def on_disconnect(self, service: Service) -> None:
         pass
 
 
@@ -180,7 +183,8 @@ class Entity(Service, metaclass=_ABCMeta):
     """
     An `Entity` is a service with callback methods.
     """
-    def __init__(self, port: int, callback: Callback):
+
+    def __init__(self, port: int, callback: Callback) -> None:
         """
         :param port: the port on which the service listens
         :param callback: the callback interface
@@ -188,7 +192,7 @@ class Entity(Service, metaclass=_ABCMeta):
         super().__init__(port)
         self.callback: Callback = callback
 
-    def _stage(self, connection: Connection):
+    def _stage(self, connection: Connection) -> None:
         while True:
             msg = connection.receive()
             if not msg or msg == b"disconnect":
@@ -196,7 +200,7 @@ class Entity(Service, metaclass=_ABCMeta):
                 return connection.close()
             self.callback.on_receive(self, msg)
 
-    def _run(self, *args, **kwargs):
+    def _run(self, *args, **kwargs) -> None:
         try:
             return super()._run(*args, **kwargs)
         except Exception as e:

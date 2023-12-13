@@ -30,7 +30,7 @@ def start(render: _Callable[[], None],
           main_controller: _Controller[T],
           analysis_rate: float,
           update_rate: float,
-          runtime_data: RuntimeData):
+          runtime_data: RuntimeData) -> None:
     with _dpg.window(tag="main",
                      label="LEADS",
                      no_title_bar=True,
@@ -52,7 +52,7 @@ def start(render: _Callable[[], None],
     _dpg.destroy_context()
 
 
-def start_comm_server(render: _Callable[[], None], server: _Server = _create_server()):
+def start_comm_server(render: _Callable[[], None], server: _Server = _create_server()) -> None:
     with _dpg.window(tag="main",
                      label="LEADS Comm",
                      no_title_bar=True,

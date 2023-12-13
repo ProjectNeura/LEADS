@@ -8,7 +8,7 @@ from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 T = _TypeVar("T")
 
 
-def _check_data_type(data: T, superclass: type = DataContainer):
+def _check_data_type(data: T, superclass: type = DataContainer) -> None:
     if not isinstance(data, superclass):
         raise TypeError(f"New data must inherit from `{superclass}`")
 
@@ -17,7 +17,8 @@ class Context(_Generic[T]):
     """
     `Context` manages the data and callback methods in the lifecycle.
     """
-    def __init__(self, srw_mode: bool = True, initial_data: T | None = None, data_seq_size: int = 1000):
+
+    def __init__(self, srw_mode: bool = True, initial_data: T | None = None, data_seq_size: int = 1000) -> None:
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data
@@ -43,7 +44,7 @@ class Context(_Generic[T]):
         """
         return _copy(self._data_seq[-1])
 
-    def push(self, data: T):
+    def push(self, data: T) -> None:
         """
         Push new data into the sequence.
         :param data: the new data
@@ -51,7 +52,7 @@ class Context(_Generic[T]):
         _check_data_type(data, self.__initial_data_type)
         self._data_seq.append(data)
 
-    def set_subsystem(self, system: str, enabled: bool):
+    def set_subsystem(self, system: str, enabled: bool) -> None:
         """
         Set a certain subsystem enabled or disabled.
         :param system: subsystem id
@@ -69,25 +70,25 @@ class Context(_Generic[T]):
     def in_srw_mode(self) -> bool:
         return self._srw_mode
 
-    def set_dtcs(self, enabled: bool):
+    def set_dtcs(self, enabled: bool) -> None:
         self._dtcs = enabled
 
     def is_dtcs_enabled(self) -> bool:
         return self._dtcs
 
-    def set_abs(self, enabled: bool):
+    def set_abs(self, enabled: bool) -> None:
         self._abs = enabled
 
     def is_abs_enabled(self) -> bool:
         return self._abs
 
-    def set_ebi(self, enabled: bool):
+    def set_ebi(self, enabled: bool) -> None:
         self._ebi = enabled
 
     def is_ebi_enabled(self) -> bool:
         return self._ebi
 
-    def set_atbs(self, enabled: bool):
+    def set_atbs(self, enabled: bool) -> None:
         self._atbs = enabled
 
     def is_atbs_enabled(self) -> bool:

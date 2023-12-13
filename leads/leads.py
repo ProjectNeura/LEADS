@@ -30,11 +30,11 @@ def dtcs_drw(context: Context,
 
 
 class Leads(Context[T]):
-    def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs):
+    def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._event_listener: EventListener = event_listener
 
-    def set_event_listener(self, event_listener: EventListener):
+    def set_event_listener(self, event_listener: EventListener) -> None:
         self._event_listener = event_listener
 
     def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
@@ -45,18 +45,18 @@ class Leads(Context[T]):
                 for system in systems:
                     self._event_listener.on_suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
 
-    def push(self, data: T):
+    def push(self, data: T) -> None:
         self._event_listener.on_push(DataPushedEvent(self, data))
         super().push(data)
         self._event_listener.post_push(DataPushedEvent(self, data))
 
-    def intervene(self, event: InterventionEvent):
+    def intervene(self, event: InterventionEvent) -> None:
         if isinstance(event, InterventionExitEvent):
             self._event_listener.post_intervene(event)
         else:
             self._event_listener.on_intervene(event)
 
-    def update(self):
+    def update(self) -> None:
         self._event_listener.on_update(UpdateEvent(self))
 
         if front_wheel_speed := self._acquire_data("front_wheel_speed",

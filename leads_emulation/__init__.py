@@ -11,7 +11,7 @@ class _EmulatedController(_Controller, metaclass=_ABCMeta):
                  tag: str,
                  minimum: int = 30,
                  maximum: int = 40,
-                 skid_possibility: float = .1):
+                 skid_possibility: float = .1) -> None:
         super().__init__(tag)
         self.minimum: int = minimum
         self.maximum: int = maximum
@@ -39,7 +39,7 @@ class _SinController(_EmulatedController, metaclass=_ABCMeta):
                  minimum: int = 30,
                  maximum: int = 40,
                  skid_possibility: float = .1,
-                 acceleration: float = .05):
+                 acceleration: float = .05) -> None:
         super().__init__(tag, minimum, maximum, skid_possibility)
         self.acceleration: float = acceleration
         self.magnitude: int = int((maximum - minimum) * .5)

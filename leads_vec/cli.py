@@ -24,10 +24,10 @@ def main(main_controller: Controller,
     rd = CustomRuntimeData()
 
     class CustomCallback(Callback):
-        def on_fail(self, service: Service, error: Exception):
+        def on_fail(self, service: Service, error: Exception) -> None:
             rd.comm = None
 
-        def on_receive(self, service: Service, msg: bytes):
+        def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
 
     if communication_server_address != "":
@@ -107,7 +107,7 @@ def main(main_controller: Controller,
                                                   callback=switch_atbs), BODY)
 
     class CustomListener(EventListener):
-        def on_push(self, e: DataPushedEvent):
+        def on_push(self, e: DataPushedEvent) -> None:
             try:
                 rd.comm_notify(e.data)
             except IOError:
@@ -115,7 +115,7 @@ def main(main_controller: Controller,
                 rd.comm = None
                 dpg.set_value("comm_status", "COMM OFFLINE")
 
-        def on_update(self, e: UpdateEvent):
+        def on_update(self, e: UpdateEvent) -> None:
             duration = int(time()) - rd.start_time
             if rd.m1_mode == 0:
                 dpg.set_item_label("m1", "LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
@@ -139,16 +139,16 @@ def main(main_controller: Controller,
                 dpg.set_item_label("m3", "SPEED TREND")
             dpg.set_value("comm_status", "COMM ONLINE" if rd.comm else "COMM OFFLINE")
 
-        def on_intervene(self, e: InterventionEvent):
+        def on_intervene(self, e: InterventionEvent) -> None:
             dpg.set_value(e.system.lower() + "_status", e.system + " INTERVENED")
 
-        def post_intervene(self, e: InterventionEvent):
+        def post_intervene(self, e: InterventionEvent) -> None:
             dpg.set_value(e.system.lower() + "_status", e.system + " READY")
 
-        def on_suspend(self, e: SuspensionEvent):
+        def on_suspend(self, e: SuspensionEvent) -> None:
             dpg.set_value(e.system.lower() + "_status", e.system + " SUSPENDED")
 
-        def post_suspend(self, e: SuspensionEvent):
+        def post_suspend(self, e: SuspensionEvent) -> None:
             dpg.set_value(e.system.lower() + "_status", e.system + " READY")
 
     context.set_event_listener(CustomListener())

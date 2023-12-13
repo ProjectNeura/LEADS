@@ -7,7 +7,7 @@ class Server(Entity):
     _connections: list[Connection] = []
     _killed: bool = False
 
-    def run(self, max_connection: int = 1):
+    def run(self, max_connection: int = 1) -> None:
         self._killed = False
         self._socket.bind(("127.0.0.1", self._port))
         self._socket.listen(max_connection)
@@ -18,10 +18,10 @@ class Server(Entity):
             self._connections.append(connection)
             _Thread(target=self._stage, args=(connection,)).start()
 
-    def broadcast(self, msg: bytes):
+    def broadcast(self, msg: bytes) -> None:
         for c in self._connections:
             c.send(msg)
 
-    def kill(self):
+    def kill(self) -> None:
         self._killed = True
         self._socket.close()

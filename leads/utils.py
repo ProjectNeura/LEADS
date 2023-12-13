@@ -31,7 +31,7 @@ class DataPersistence(_Sequence, _Generic[T]):
                  max_size: int = -1,
                  chunk_scale: int = 1,
                  compressor: Compressor = mean_compressor,
-                 stringifier: Stringifier = csv_stringifier):
+                 stringifier: Stringifier = csv_stringifier) -> None:
         self._file: _TextIO = open(file, "a") if isinstance(file, str) else file
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
@@ -50,7 +50,7 @@ class DataPersistence(_Sequence, _Generic[T]):
     def __str__(self) -> str:
         return str(self._data)
 
-    def close(self):
+    def close(self) -> None:
         self._file.close()
 
     def get_chunk_size(self) -> int:
@@ -62,7 +62,7 @@ class DataPersistence(_Sequence, _Generic[T]):
     def get_chunk(self) -> list[T]:
         return _copy(self._chunk)
 
-    def _push_to_data(self, element: T):
+    def _push_to_data(self, element: T) -> None:
         self._data.append(element)
         if self._max_size < 2:
             return
@@ -70,7 +70,7 @@ class DataPersistence(_Sequence, _Generic[T]):
             self._data = self._compressor(self._data, int(len(self._data) * .5))
             self._chunk_size *= 2
 
-    def append(self, element: T):
+    def append(self, element: T) -> None:
         self._file.write(self._stringifier(element))
         if self._chunk_size == 1:
             return self._push_to_data(element)

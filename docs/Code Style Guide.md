@@ -40,10 +40,10 @@ def example_function(arg_a: int, arg_b: int) -> int:
     return arg_a + arg_b
 ```
 
-If it returns `None`, the annotation can be omitted.
+If it returns `None`, the annotation cannot be omitted.
 
 ```python
-def example_function(arg_a: int, arg_b: int):
+def example_function(arg_a: int, arg_b: int) -> None:
     print(arg_a, arg_b)
 ```
 
