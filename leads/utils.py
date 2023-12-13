@@ -44,7 +44,7 @@ class DataPersistence(_Sequence, _Generic[T]):
     def __len__(self) -> int:
         return len(self._data)
 
-    def __getitem__(self, item: slice) -> T | list[T]:
+    def __getitem__(self, item: int | slice) -> T | list[T]:
         return self._data[item]
 
     def __str__(self) -> str:
