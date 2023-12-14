@@ -19,6 +19,9 @@ class Service(object, metaclass=_ABCMeta):
         self._socket: _socket = _socket(_AF_INET, _SOCK_STREAM, proto=0)
         self._main_thread: _Thread | None = None
 
+    def port(self) -> int:
+        return self._port
+
     @_abstractmethod
     def run(self, *args, **kwargs) -> None:
         """

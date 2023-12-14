@@ -27,6 +27,7 @@ def integrate_speed2displacement(x: DataPersistence, y: DataPersistence) -> floa
 def remote(config: Config) -> int:
     if not exists(config.data_dir):
         mkdir(config.data_dir)
+        print(f"Data dir \"{config.data_dir}\" created")
 
     class CustomCallback(Callback):
         speed_seq: deque = deque(maxlen=512)
@@ -34,7 +35,7 @@ def remote(config: Config) -> int:
         time_stamp_record: DataPersistence = DataPersistence(config.data_dir + "/time_stamp.csv", max_size=256)
 
         def on_initialize(self, service: Service) -> None:
-            print("Server started")
+            print(f"Comm server started on port {service.port()}")
 
         def on_fail(self, service: Service, error: Exception) -> None:
             print(error)
