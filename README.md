@@ -54,7 +54,7 @@ python -m leads_vec
 ### Remote Server (Remote)
 
 ```shell
-python -m leads_vec remote
+python -m leads_vec --remote
 ```
 
 ## Periodic Report

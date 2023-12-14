@@ -8,6 +8,7 @@ from leads import *
 from leads.comm import *
 from leads_dashboard import *
 from leads_vec.__version__ import __version__
+from leads_vec.config import Config
 
 
 class CustomRuntimeData(RuntimeData):
@@ -15,12 +16,8 @@ class CustomRuntimeData(RuntimeData):
     m3_mode: int = 0
 
 
-def main(main_controller: Controller,
-         srw_mode: bool = True,
-         analysis_rate: float = .01,
-         update_rate: float = .25,
-         communication_server_address: str = "") -> int:
-    context = Leads(srw_mode=srw_mode)
+def main(main_controller: Controller, config: Config) -> int:
+    context = Leads(srw_mode=config.srw_mode)
     rd = CustomRuntimeData()
 
     class CustomCallback(Callback):
@@ -30,10 +27,7 @@ def main(main_controller: Controller,
         def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
 
-    if communication_server_address != "":
-        rd.comm = start_client(communication_server_address,
-                               create_client(callback=CustomCallback()),
-                               True)
+    rd.comm = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
 
     def switch_m1_mode():
         rd.m1_mode = (rd.m1_mode + 1) % 2
@@ -124,9 +118,9 @@ def main(main_controller: Controller,
                                    f"VeC {__version__.upper()}\n\n"
                                    f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
                                    f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                   f"{'SRW MODE' if srw_mode else 'DRW MODE'}\n"
-                                   f"ANALYSIS RATE: {int(1 / analysis_rate)} TPS\n"
-                                   f"UPDATE RATE: {int(1 / update_rate)} TPS")
+                                   f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
+                                   f"ANALYSIS RATE: {int(1 / config.analysis_rate)} TPS\n"
+                                   f"UPDATE RATE: {int(1 / config.update_rate)} TPS")
             dpg.set_item_label("m2", f"{int(context.data().front_wheel_speed)}")
             if rd.m3_mode == 0:
                 dpg.bind_item_font("m3", H1)
@@ -152,6 +146,6 @@ def main(main_controller: Controller,
             dpg.set_value(e.system.lower() + "_status", e.system + " READY")
 
     context.set_event_listener(CustomListener())
-    start(render, context, main_controller, analysis_rate, update_rate, rd)
+    start(render, context, main_controller, config.analysis_rate, config.update_rate, rd)
     rd.comm_kill()
     return 0

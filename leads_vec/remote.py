@@ -9,6 +9,7 @@ from numpy import trapz, concatenate, array
 from leads.comm import *
 from leads.utils import *
 from leads_dashboard import *
+from leads_vec.config import Config
 
 
 def render():
@@ -23,14 +24,14 @@ def integrate_speed2displacement(x: DataPersistence, y: DataPersistence) -> floa
                                       dx=.001)
 
 
-def remote(data_dir: str = "./data") -> int:
-    if not exists(data_dir):
-        mkdir(data_dir)
+def remote(config: Config) -> int:
+    if not exists(config.data_dir):
+        mkdir(config.data_dir)
 
     class CustomCallback(Callback):
         speed_seq: deque = deque(maxlen=512)
-        speed_record: DataPersistence = DataPersistence(data_dir + "/speed.csv", max_size=256)
-        time_stamp_record: DataPersistence = DataPersistence(data_dir + "/time_stamp.csv", max_size=256)
+        speed_record: DataPersistence = DataPersistence(config.data_dir + "/speed.csv", max_size=256)
+        time_stamp_record: DataPersistence = DataPersistence(config.data_dir + "/time_stamp.csv", max_size=256)
 
         def on_initialize(self, service: Service) -> None:
             print("Server started")
@@ -52,9 +53,5 @@ def remote(data_dir: str = "./data") -> int:
         def on_disconnect(self, service: Service) -> None:
             self.speed_record.close()
 
-    start_comm_server(render, create_server(callback=CustomCallback()))
+    start_comm_server(render, create_server(config.comm_port, CustomCallback()))
     return 0
-
-
-if __name__ == '__main__':
-    remote()
