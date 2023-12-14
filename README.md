@@ -57,6 +57,29 @@ python -m leads_vec
 python -m leads_vec --remote
 ```
 
+### Optional Arguments
+
+#### Configuration File
+
+```shell
+python -m leads_vec config=path/to/the/config/file
+```
+
+If not specified, all configurations will be default values.
+
+To learn about the configuration file, read [Configurations](#Configurations).
+
+### Configurations
+
+|                 | Type    | Usage                                               | Used By      | Default       |
+|-----------------|---------|-----------------------------------------------------|--------------|---------------|
+| `srw_mode`      | `bool`  | `True`: single rear wheel; `False`: dual rear wheel | Main, Remote | `True`        |
+| `analysis_rate` | `float` | The interval between two analysis frames in seconds | Main         | `0.01`        |
+| `update_rate`   | `float` | The interval between two render frames in seconds   | Main         | `0.25`        |
+| `comm_addr`     | `str`   | The communication server address                    | Main         | `"127.0.0.1"` |
+| `comm_port`     | `int`   | The communication system port                       | Main, Remote | `16900`       |
+| `data_dir`      | `str`   | The directory for the data recording system         | Remote       | `"./data"`    |
+
 ## Periodic Report
 
 See [reports](docs/reports).
