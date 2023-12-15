@@ -5,10 +5,6 @@ from typing import Self as _Self
 
 
 class DataContainer(object, metaclass=_ABCMeta):
-    """
-    `DataContainer` is an abstract layer for data storage.
-    """
-
     def __init__(self) -> None:
         self._time_stamp: int = int(_time() * 1000)
 
@@ -56,10 +52,6 @@ class DataContainer(object, metaclass=_ABCMeta):
 
 
 class SRWDataContainer(DataContainer):
-    """
-    Single Rear Wheel
-    """
-
     def __init__(self,
                  front_wheel_speed: int | float = 0,
                  rear_wheel_speed: int | float = 0,
@@ -76,10 +68,6 @@ class SRWDataContainer(DataContainer):
 
 
 class DRWDataContainer(DataContainer):
-    """
-    Dual Rear Wheel
-    """
-
     def __init__(self,
                  front_wheel_speed: int | float = 0,
                  left_rear_wheel_speed: int | float = 0,

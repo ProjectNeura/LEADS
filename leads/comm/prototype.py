@@ -5,11 +5,6 @@ from typing import Self as _Self
 
 
 class Service(object, metaclass=_ABCMeta):
-    """
-    `Service` is the prototype of every network service. This abstract class implements the procedure of multithread
-     tasks.
-    """
-
     def __init__(self, port: int) -> None:
         """
         :param port: the port on which the service listens
@@ -84,10 +79,6 @@ class Service(object, metaclass=_ABCMeta):
 
 
 class Connection(object):
-    """
-    `Connection` wraps the socket and provides fundamental functions.
-    """
-
     def __init__(self, service: Service, socket: _socket, address: tuple[str, int],
                  remainder_data: bytes = b"") -> None:
         """
@@ -183,10 +174,6 @@ class Callback(object):
 
 
 class Entity(Service, metaclass=_ABCMeta):
-    """
-    An `Entity` is a service with callback methods.
-    """
-
     def __init__(self, port: int, callback: Callback) -> None:
         """
         :param port: the port on which the service listens

@@ -4,6 +4,9 @@ from typing import TextIO as _TextIO, Any as _Any
 
 class Config(object):
     def __init__(self, base: dict[str, _Any]) -> None:
+        """
+        :param base: base dictionary
+        """
         self._d: dict[str, _Any] = base
         self.srw_mode: bool = True
         self.analysis_rate: float = .01

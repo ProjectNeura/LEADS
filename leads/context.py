@@ -14,10 +14,6 @@ def _check_data_type(data: T, superclass: type = DataContainer) -> None:
 
 
 class Context(_Generic[T]):
-    """
-    `Context` manages the data and callback methods in the lifecycle.
-    """
-
     def __init__(self, srw_mode: bool = True, initial_data: T | None = None, data_seq_size: int = 1000) -> None:
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
