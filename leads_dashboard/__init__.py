@@ -66,3 +66,4 @@ def start_comm_server(render: _Callable[[], None], server: _Server = _create_ser
     server.start(True)
     _dpg.start_dearpygui()
     _dpg.destroy_context()
+    server.kill()

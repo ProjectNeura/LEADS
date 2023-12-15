@@ -11,6 +11,12 @@ Stringifier = _Callable[[T], str]
 
 
 def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
+    """
+    A compression method that reduces data memory usage by averaging adjacent numbers and merging them.
+    :param sequence: the sequence to compress
+    :param target_size: expected size
+    :return: the compressed sequence
+    """
     chunk_size = int(len(sequence) / target_size)
     if chunk_size < 2:
         return sequence
@@ -22,6 +28,11 @@ def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
 
 
 def csv_stringifier(element: T) -> str:
+    """
+    Dump an element as a CSV string.
+    :param element: the element to stringify
+    :return: CSV string
+    """
     return str(element) + ","
 
 
@@ -32,6 +43,13 @@ class DataPersistence(_Sequence, _Generic[T]):
                  chunk_scale: int = 1,
                  compressor: Compressor = mean_compressor,
                  stringifier: Stringifier = csv_stringifier) -> None:
+        """
+        :param file: the file into which the data is written
+        :param max_size: maximum cached size
+        :param chunk_scale: chunk scaling factor (compression)
+        :param compressor: compressor interface
+        :param stringifier: stringifier interface
+        """
         self._file: _TextIO = open(file, "a") if isinstance(file, str) else file
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
