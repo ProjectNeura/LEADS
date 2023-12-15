@@ -13,8 +13,8 @@ from leads_vec.config import Config
 
 
 def render():
-    dpg.bind_item_font(dpg.add_text("", tag="speed"), H2)
-    dpg.bind_item_font(dpg.add_text("", tag="displacement"), H2)
+    dpg.bind_item_font(dpg.add_text(tag="speed"), H2)
+    dpg.bind_item_font(dpg.add_text(tag="displacement"), H2)
     dpg.add_simple_plot(label="Speed Trend", tag="speed_seq", height=300)
 
 

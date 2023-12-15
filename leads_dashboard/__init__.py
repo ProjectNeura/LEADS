@@ -15,7 +15,7 @@ H2 = load_font(size=60)
 H3 = load_font(size=40)
 H4 = load_font(size=30)
 H5 = load_font(size=20)
-BODY = load_font(size=10)
+BODY = load_font()
 BODY2 = load_font(size=6)
 
 _dpg.create_viewport(title="LEADS")
@@ -35,7 +35,6 @@ def start(render: _Callable[[], None],
                      label="LEADS",
                      no_title_bar=True,
                      no_scrollbar=True,
-                     menubar=False,
                      no_close=True,
                      no_background=True):
         render()
@@ -57,7 +56,6 @@ def start_comm_server(render: _Callable[[], None], server: _Server = _create_ser
                      label="LEADS Comm",
                      no_title_bar=True,
                      no_scrollbar=True,
-                     menubar=False,
                      no_close=True,
                      no_background=True):
         render()
