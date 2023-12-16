@@ -1,3 +1,8 @@
+from importlib.util import find_spec as _find_spec
+
+if not _find_spec("dearpygui"):
+    raise ImportError("Please install `dearpygui` to run this module\n>>> pip install dearpygui")
+
 from time import sleep as _sleep
 from typing import Callable as _Callable, TypeVar as _TypeVar
 
@@ -20,7 +25,6 @@ BODY2 = load_font(size=6)
 
 _dpg.create_viewport(title="LEADS")
 _dpg.setup_dearpygui()
-
 
 T = _TypeVar("T")
 

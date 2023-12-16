@@ -10,7 +10,3 @@ class Output(Device, _Generic[T], metaclass=_ABCMeta):
     @_abstractmethod
     def write(self, payload: T) -> None:
         raise NotImplementedError
-
-
-class Motor(Output[T], metaclass=_ABCMeta):
-    pass

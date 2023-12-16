@@ -32,12 +32,14 @@ This project aims to implement the following functions:
 Note that LEADS requires **Python >= 3.11**.
 
 ```shell
-pip install leads dearpygui keyboard
+pip install dearpygui keyboard pyserial leads
 ```
 
 `numpy` will be automatically installed with `leads`.
 
-`dearpygui` and `keyboard` are only needed for `leads_vec`. If you only want the framework, run the following.
+`dearpygui`, `keyboard`, and `pyserial` are optional.
+
+If you need only the skeleton, run the following.
 
 ```shell
 pip install leads

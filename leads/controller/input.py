@@ -14,11 +14,3 @@ class Input(Device, _Generic[T], metaclass=_ABCMeta):
 
 class Sensor(Input[T], metaclass=_ABCMeta):
     pass
-
-
-class WheelSpeedSensor(Sensor[float], metaclass=_ABCMeta):
-    pass
-
-
-class Camera(Sensor[bytes], metaclass=_ABCMeta):
-    pass
