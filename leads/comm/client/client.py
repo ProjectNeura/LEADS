@@ -13,7 +13,7 @@ class Client(Entity):
 
     def send(self, msg: bytes) -> None:
         if not self._connection:
-            raise RuntimeError("Client must be running to perform this operation")
+            raise IOError("Client must be running to perform this operation")
         self._connection.send(msg)
 
     def kill(self) -> None:
