@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import time
+from tkinter import Button, Label
 
-from dearpygui import dearpygui as dpg
 from keyboard import add_hotkey
 
 from leads import *
@@ -18,134 +18,115 @@ class CustomRuntimeData(RuntimeData):
 
 def main(main_controller: Controller, config: Config) -> int:
     context = Leads(srw_mode=config.srw_mode)
-    rd = CustomRuntimeData()
+
+    def render(manager: ContextManager):
+        def switch_m1_mode():
+            manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 2
+
+        def switch_m3_mode():
+            manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
+
+        manager["m1"] = Button(manager.root(), command=switch_m1_mode)
+        manager["m1"].grid(row=0, column=0, rowspan=2, columnspan=20, sticky="NSEW")
+        manager["m2"] = Button(manager.root())
+        manager["m2"].grid(row=0, column=20, rowspan=2, columnspan=20, sticky="NSEW")
+        manager["m3"] = Button(manager.root(), command=switch_m3_mode)
+        manager["m3"].grid(row=0, column=40, rowspan=2, columnspan=20, sticky="NSEW")
+        manager["dtcs_status"] = Label(manager.root(), text="DTCS READY", foreground="green")
+        manager["dtcs_status"].grid(row=3, column=0, columnspan=12)
+        manager["abs_status"] = Label(manager.root(), text="ABS READY", foreground="green")
+        manager["abs_status"].grid(row=3, column=12, columnspan=12)
+        manager["ebi_status"] = Label(manager.root(), text="EBI READY", foreground="green")
+        manager["ebi_status"].grid(row=3, column=24, columnspan=12)
+        manager["atbs_status"] = Label(manager.root(), text="ATBS READY", foreground="green")
+        manager["atbs_status"].grid(row=3, column=36, columnspan=12)
+        manager["comm_status"] = Label(manager.root(), text="COMM READY", foreground="white")
+        manager["comm_status"].grid(row=3, column=48, columnspan=12)
+
+        def switch_dtcs():
+            context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
+            manager["dtcs"].config(text=f"DTCS {'OFF' if dtcs_enabled else 'ON'}")
+
+        add_hotkey("1", switch_dtcs)
+
+        def switch_abs():
+            context.set_abs(not (abs_enabled := context.is_abs_enabled()))
+            manager["abs"].config(text=f"ABS {'OFF' if abs_enabled else 'ON'}")
+
+        add_hotkey("2", switch_abs)
+
+        def switch_ebi():
+            context.set_ebi(not (ebi_enabled := context.is_ebi_enabled()))
+            manager["ebi"].config(text=f"EBI {'OFF' if ebi_enabled else 'ON'}")
+
+        add_hotkey("3", switch_ebi)
+
+        def switch_atbs():
+            context.set_atbs(not (atbs_enabled := context.is_atbs_enabled()))
+            manager["atbs"].config(text=f"ATBS {'OFF' if atbs_enabled else 'ON'}")
+
+        add_hotkey("4", switch_atbs)
+
+        manager["dtcs"] = Button(manager.root(), text="DTCS ON", command=switch_dtcs)
+        manager["dtcs"].grid(row=4, column=0, columnspan=15)
+        manager["abs"] = Button(manager.root(), text="ABS ON", command=switch_abs)
+        manager["abs"].grid(row=4, column=15, columnspan=15)
+        manager["ebi"] = Button(manager.root(), text="EBI ON", command=switch_ebi)
+        manager["ebi"].grid(row=4, column=30, columnspan=15)
+        manager["atbs"] = Button(manager.root(), text="ATBS ON", command=switch_atbs)
+        manager["atbs"].grid(row=4, column=45, columnspan=15)
+
+    uim = initialize(Window(1920, 1080, config.refresh_rate, CustomRuntimeData()), render, context, main_controller)
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
-            rd.comm = None
+            uim.rd().comm = None
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
 
-    rd.comm = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
-
-    def switch_m1_mode():
-        rd.m1_mode = (rd.m1_mode + 1) % 2
-
-    def switch_m3_mode():
-        rd.m3_mode = (rd.m3_mode + 1) % 3
-
-    def switch_dtcs():
-        context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
-        dpg.set_item_label("dtcs", f"DTCS {'OFF' if dtcs_enabled else 'ON'}")
-
-    add_hotkey("1", switch_dtcs)
-
-    def switch_abs():
-        context.set_abs(not (abs_enabled := context.is_abs_enabled()))
-        dpg.set_item_label("abs", f"ABS {'OFF' if abs_enabled else 'ON'}")
-
-    add_hotkey("2", switch_abs)
-
-    def switch_ebi():
-        context.set_ebi(not (ebi_enabled := context.is_ebi_enabled()))
-        dpg.set_item_label("ebi", f"EBI {'OFF' if ebi_enabled else 'ON'}")
-
-    add_hotkey("3", switch_ebi)
-
-    def switch_atbs():
-        context.set_atbs(not (atbs_enabled := context.is_atbs_enabled()))
-        dpg.set_item_label("atbs", f"ATBS {'OFF' if atbs_enabled else 'ON'}")
-
-    add_hotkey("4", switch_atbs)
-
-    def render():
-        with dpg.table(header_row=False):
-            dpg.add_table_column()
-            dpg.add_table_column()
-            dpg.add_table_column()
-            with dpg.table_row():
-                dpg.bind_item_font(dpg.add_button(label="", tag="m1", width=-1, height=140), BODY2)
-                dpg.set_item_callback("m1", switch_m1_mode)
-                dpg.bind_item_font(dpg.add_button(label="0", tag="m2", width=-1, height=140), H1)
-                dpg.bind_item_font(dpg.add_button(label="0.0v", tag="m3", width=-1, height=140), H1)
-                dpg.set_item_callback("m3", switch_m3_mode)
-        with dpg.table(header_row=False):
-            dpg.add_table_column()
-            dpg.add_table_column()
-            dpg.add_table_column()
-            dpg.add_table_column()
-            dpg.add_table_column()
-            with dpg.table_row():
-                dpg.bind_item_font(dpg.add_text("DTCS READY", color=(0, 255, 0), tag="dtcs_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("ABS READY", color=(0, 255, 0), tag="abs_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("EBI READY", color=(0, 255, 0), tag="ebi_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("ATBS READY", color=(0, 255, 0), tag="atbs_status"), BODY)
-                dpg.bind_item_font(dpg.add_text("COMM ONLINE", tag="comm_status"), BODY)
-            with dpg.table_row():
-                dpg.bind_item_font(dpg.add_button(label="DTCS ON",
-                                                  tag="dtcs",
-                                                  width=-1,
-                                                  callback=switch_dtcs), BODY)
-                dpg.bind_item_font(dpg.add_button(label="ABS ON",
-                                                  tag="abs",
-                                                  width=-1,
-                                                  callback=switch_abs), BODY)
-                dpg.bind_item_font(dpg.add_button(label="EBI ON",
-                                                  tag="ebi",
-                                                  width=-1,
-                                                  callback=switch_ebi), BODY)
-                dpg.bind_item_font(dpg.add_button(label="ATBS ON",
-                                                  tag="atbs",
-                                                  width=-1,
-                                                  callback=switch_atbs), BODY)
+    uim.rd().comm = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
             try:
-                rd.comm_notify(e.data)
+                uim.rd().comm_notify(e.data)
             except IOError:
-                rd.comm_kill()
-                rd.comm = None
-                dpg.set_value("comm_status", "COMM OFFLINE")
+                uim.rd().comm_kill()
+                uim.rd().comm = None
+                uim["comm_status"].config(text="COMM OFFLINE", foreground="gray")
 
         def on_update(self, e: UpdateEvent) -> None:
-            duration = int(time()) - rd.start_time
-            if rd.m1_mode == 0:
-                dpg.set_item_label("m1", "LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
-            elif rd.m1_mode == 1:
-                dpg.set_item_label("m1",
-                                   f"VeC {__version__.upper()}\n\n"
-                                   f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                                   f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                   f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
-                                   f"ANALYSIS RATE: {int(1 / config.analysis_rate)} TPS\n"
-                                   f"UPDATE RATE: {int(1 / config.update_rate)} TPS")
-            dpg.set_item_label("m2", f"{int(context.data().front_wheel_speed)}")
-            if rd.m3_mode == 0:
-                dpg.bind_item_font("m3", H1)
-                dpg.set_item_label("m3", "0.0v")
-            elif rd.m3_mode == 1:
-                dpg.bind_item_font("m3", BODY)
-                dpg.set_item_label("m3", "G Force")
+            duration = int(time()) - uim.rd().start_time
+            if uim.rd().m1_mode == 0:
+                uim["m1"].config(text="LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
+            elif uim.rd().m1_mode == 1:
+                uim["m1"].config(text=f"VeC {__version__.upper()}\n\n"
+                                      f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                                      f"{duration // 60} MIN {duration % 60} SEC\n\n"
+                                      f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
+                                      f"REFRESH RATE: {int(1 / config.refresh_rate)} FPS")
+            uim["m2"].config(text=f"{int(context.data().front_wheel_speed)}")
+            if uim.rd().m3_mode == 0:
+                uim["m3"].config(text="0.0V")
+            elif uim.rd().m3_mode == 1:
+                uim["m3"].config(text="G Force")
             else:
-                dpg.bind_item_font("m3", BODY)
-                dpg.set_item_label("m3", "SPEED TREND")
-            dpg.set_value("comm_status", "COMM ONLINE" if rd.comm else "COMM OFFLINE")
+                uim["m3"].config(text="Speed Trend")
 
         def on_intervene(self, e: InterventionEvent) -> None:
-            dpg.set_value(e.system.lower() + "_status", e.system + " INTERVENED")
+            uim[e.system.lower() + "_status"].config(text=e.system + " INTERVENED", foreground="purple")
 
         def post_intervene(self, e: InterventionEvent) -> None:
-            dpg.set_value(e.system.lower() + "_status", e.system + " READY")
+            uim[e.system.lower() + "_status"].config(text=e.system + " READY", foreground="green")
 
         def on_suspend(self, e: SuspensionEvent) -> None:
-            dpg.set_value(e.system.lower() + "_status", e.system + " SUSPENDED")
+            uim[e.system.lower() + "_status"].config(text=e.system + " SUSPENDED", foreground="red")
 
         def post_suspend(self, e: SuspensionEvent) -> None:
-            dpg.set_value(e.system.lower() + "_status", e.system + " READY")
+            uim[e.system.lower() + "_status"].config(text=e.system + " READY", foreground="green")
 
     context.set_event_listener(CustomListener())
-    start(render, context, main_controller, config.analysis_rate, config.update_rate, rd)
-    rd.comm_kill()
+    uim.show()
+    uim.rd().comm_kill()
     return 0

@@ -9,8 +9,7 @@ class Config(object):
         """
         self._d: dict[str, _Any] = base
         self.srw_mode: bool = True
-        self.analysis_rate: float = .01
-        self.update_rate: float = .25
+        self.refresh_rate: int = 60
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
         self.data_dir: str = "./data"

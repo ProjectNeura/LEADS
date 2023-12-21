@@ -3,69 +3,40 @@ from importlib.util import find_spec as _find_spec
 if not _find_spec("dearpygui"):
     raise ImportError("Please install `dearpygui` to run this module\n>>> pip install dearpygui")
 
-from time import sleep as _sleep
 from typing import Callable as _Callable, TypeVar as _TypeVar
-
-from dearpygui import dearpygui as _dpg
 
 from leads import Leads as _Leads, Controller as _Controller
 from leads.comm import Server as _Server, create_server as _create_server
-from leads_dashboard.fonts import load_font
-from leads_dashboard.runtime import RuntimeData
-
-_dpg.create_context()
-
-H1 = load_font(size=100)
-H2 = load_font(size=60)
-H3 = load_font(size=40)
-H4 = load_font(size=30)
-H5 = load_font(size=20)
-BODY = load_font()
-BODY2 = load_font(size=6)
-
-_dpg.create_viewport(title="LEADS")
-_dpg.setup_dearpygui()
+from leads_dashboard.prototype import *
+from leads_dashboard.runtime import *
 
 T = _TypeVar("T")
 
 
-def start(render: _Callable[[], None],
-          context: _Leads[T],
-          main_controller: _Controller[T],
-          analysis_rate: float,
-          update_rate: float,
-          runtime_data: RuntimeData) -> None:
-    with _dpg.window(tag="main",
-                     label="LEADS",
-                     no_title_bar=True,
-                     no_scrollbar=True,
-                     no_close=True,
-                     no_background=True):
-        render()
-    _dpg.show_viewport()
-    _dpg.set_primary_window("main", True)
-    runtime_data.frame_counter = 0
-    while _dpg.is_dearpygui_running():
-        _sleep(analysis_rate)
-        context.push(main_controller.collect_all())
-        if runtime_data.frame_counter % (update_rate / analysis_rate) == 0:
-            context.update()
-        runtime_data.frame_counter += 1
-        _dpg.render_dearpygui_frame()
-    _dpg.destroy_context()
+def initialize(window: Window,
+               render: _Callable[[ContextManager], None],
+               leads: _Leads[T],
+               main_controller: _Controller[T]) -> ContextManager:
+    ctx = ContextManager(window)
+    render(ctx)
+    window.runtime_data().frame_counter = 0
+
+    def on_refresh(_):
+        leads.push(main_controller.collect_all())
+        leads.update()
+
+    window.set_on_refresh(on_refresh)
+    return ctx
 
 
-def start_comm_server(render: _Callable[[], None], server: _Server = _create_server()) -> None:
-    with _dpg.window(tag="main",
-                     label="LEADS Comm",
-                     no_title_bar=True,
-                     no_scrollbar=True,
-                     no_close=True,
-                     no_background=True):
-        render()
-    _dpg.show_viewport()
-    _dpg.set_primary_window("main", True)
+def initialize_comm_server(window: Window,
+                           render: _Callable[[ContextManager], None],
+                           server: _Server = _create_server()) -> None:
+    ctx = ContextManager(window)
+    render(ctx)
     server.start(True)
-    _dpg.start_dearpygui()
-    _dpg.destroy_context()
-    server.kill()
+
+    def on_close(_):
+        server.kill()
+
+    window.set_on_close(on_close)
