@@ -12,6 +12,13 @@ from leads_dashboard.runtime import *
 
 T = _TypeVar("T")
 
+H1 = ("Arial", 24)
+H2 = ("Arial", 22)
+H3 = ("Arial", 20)
+H4 = ("Arial", 18)
+H5 = ("Arial", 16)
+BODY = ("Arial", 12)
+
 
 def initialize(window: Window,
                render: _Callable[[ContextManager], None],

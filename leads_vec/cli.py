@@ -26,11 +26,22 @@ def main(main_controller: Controller, config: Config) -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = Button(manager.root(), command=switch_m1_mode)
+        manager["m1"] = Button(manager.root(),
+                               font=H1,
+                               command=switch_m1_mode,
+                               width=int(manager.window().width() * .33 / H1[1]),
+                               height=7)
         manager["m1"].grid(row=0, column=0, rowspan=2, columnspan=20, sticky="NSEW")
-        manager["m2"] = Button(manager.root())
+        manager["m2"] = Button(manager.root(),
+                               font=H1,
+                               width=int(manager.window().width() * .33 / H1[1]),
+                               height=7)
         manager["m2"].grid(row=0, column=20, rowspan=2, columnspan=20, sticky="NSEW")
-        manager["m3"] = Button(manager.root(), command=switch_m3_mode)
+        manager["m3"] = Button(manager.root(),
+                               font=H1,
+                               command=switch_m3_mode,
+                               width=int(manager.window().width() * .33 / H1[1]),
+                               height=7)
         manager["m3"].grid(row=0, column=40, rowspan=2, columnspan=20, sticky="NSEW")
         manager["dtcs_status"] = Label(manager.root(), text="DTCS READY", foreground="green")
         manager["dtcs_status"].grid(row=3, column=0, columnspan=12)
@@ -40,7 +51,7 @@ def main(main_controller: Controller, config: Config) -> int:
         manager["ebi_status"].grid(row=3, column=24, columnspan=12)
         manager["atbs_status"] = Label(manager.root(), text="ATBS READY", foreground="green")
         manager["atbs_status"].grid(row=3, column=36, columnspan=12)
-        manager["comm_status"] = Label(manager.root(), text="COMM READY", foreground="white")
+        manager["comm_status"] = Label(manager.root(), text="COMM ONLINE", foreground="white")
         manager["comm_status"].grid(row=3, column=48, columnspan=12)
 
         def switch_dtcs():
@@ -81,6 +92,7 @@ def main(main_controller: Controller, config: Config) -> int:
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
             uim.rd().comm = None
+            uim["comm_status"].config(text="COMM OFFLINE", foreground="gray")
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
@@ -99,20 +111,20 @@ def main(main_controller: Controller, config: Config) -> int:
         def on_update(self, e: UpdateEvent) -> None:
             duration = int(time()) - uim.rd().start_time
             if uim.rd().m1_mode == 0:
-                uim["m1"].config(text="LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
+                uim["m1"].config(font=H5, text="LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
             elif uim.rd().m1_mode == 1:
-                uim["m1"].config(text=f"VeC {__version__.upper()}\n\n"
-                                      f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                                      f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                      f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
-                                      f"REFRESH RATE: {int(1 / config.refresh_rate)} FPS")
+                uim["m1"].config(font=BODY, text=f"VeC {__version__.upper()}\n\n"
+                                                 f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                                                 f"{duration // 60} MIN {duration % 60} SEC\n\n"
+                                                 f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
+                                                 f"REFRESH RATE: {config.refresh_rate} FPS")
             uim["m2"].config(text=f"{int(context.data().front_wheel_speed)}")
             if uim.rd().m3_mode == 0:
-                uim["m3"].config(text="0.0V")
+                uim["m3"].config(font=H1, text="0.0V")
             elif uim.rd().m3_mode == 1:
-                uim["m3"].config(text="G Force")
+                uim["m3"].config(font=H5, text="G Force")
             else:
-                uim["m3"].config(text="Speed Trend")
+                uim["m3"].config(font=H5, text="Speed Trend")
 
         def on_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].config(text=e.system + " INTERVENED", foreground="purple")

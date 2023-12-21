@@ -30,7 +30,6 @@ class Window(_Generic[T]):
                  title: str = "LEADS") -> None:
         self._root: _Tk = _Tk()
         self._root.title(title)
-        self._root.columnconfigure(20, weight=1)
         width = self._root.winfo_screenwidth() if width < 0 else width
         height = self._root.winfo_screenheight() if height < 0 else height
         self._root.geometry(f"{width}x{height}")
