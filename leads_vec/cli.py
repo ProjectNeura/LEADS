@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import time
-from tkinter import Button, Label
 
+from PySimpleGUI import Button, Text
 from keyboard import add_hotkey
 
 from leads import *
@@ -26,73 +26,54 @@ def main(main_controller: Controller, config: Config) -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = Button(manager.root(),
-                               font=H1,
-                               command=switch_m1_mode,
-                               width=int(manager.window().width() * .33 / H1[1]),
-                               height=7)
-        manager["m1"].grid(row=0, column=0, rowspan=2, columnspan=20, sticky="NSEW")
-        manager["m2"] = Button(manager.root(),
-                               font=H1,
-                               width=int(manager.window().width() * .33 / H1[1]),
-                               height=7)
-        manager["m2"].grid(row=0, column=20, rowspan=2, columnspan=20, sticky="NSEW")
-        manager["m3"] = Button(manager.root(),
-                               font=H1,
-                               command=switch_m3_mode,
-                               width=int(manager.window().width() * .33 / H1[1]),
-                               height=7)
-        manager["m3"].grid(row=0, column=40, rowspan=2, columnspan=20, sticky="NSEW")
-        manager["dtcs_status"] = Label(manager.root(), text="DTCS READY", foreground="green")
-        manager["dtcs_status"].grid(row=3, column=0, columnspan=12)
-        manager["abs_status"] = Label(manager.root(), text="ABS READY", foreground="green")
-        manager["abs_status"].grid(row=3, column=12, columnspan=12)
-        manager["ebi_status"] = Label(manager.root(), text="EBI READY", foreground="green")
-        manager["ebi_status"].grid(row=3, column=24, columnspan=12)
-        manager["atbs_status"] = Label(manager.root(), text="ATBS READY", foreground="green")
-        manager["atbs_status"].grid(row=3, column=36, columnspan=12)
-        manager["comm_status"] = Label(manager.root(), text="COMM ONLINE", foreground="white")
-        manager["comm_status"].grid(row=3, column=48, columnspan=12)
+        manager["m1"] = Button(font=BODY, key=switch_m1_mode, size=(36, 12))
+        manager["m2"] = Button(font=H1, size=(12, 4))
+        manager["m3"] = Button(font=H1, key=switch_m3_mode, size=(12, 4))
+        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green")
+        manager["abs_status"] = Text(text="ABS READY", text_color="green")
+        manager["ebi_status"] = Text(text="EBI READY", text_color="green")
+        manager["atbs_status"] = Text(text="ATBS READY", text_color="green")
+        manager["comm_status"] = Text(text="COMM ONLINE", text_color="white")
 
         def switch_dtcs():
             context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
-            manager["dtcs"].config(text=f"DTCS {'OFF' if dtcs_enabled else 'ON'}")
+            manager["dtcs"].update(f"DTCS {'OFF' if dtcs_enabled else 'ON'}")
 
         add_hotkey("1", switch_dtcs)
 
         def switch_abs():
             context.set_abs(not (abs_enabled := context.is_abs_enabled()))
-            manager["abs"].config(text=f"ABS {'OFF' if abs_enabled else 'ON'}")
+            manager["abs"].update(f"ABS {'OFF' if abs_enabled else 'ON'}")
 
         add_hotkey("2", switch_abs)
 
         def switch_ebi():
             context.set_ebi(not (ebi_enabled := context.is_ebi_enabled()))
-            manager["ebi"].config(text=f"EBI {'OFF' if ebi_enabled else 'ON'}")
+            manager["ebi"].update(f"EBI {'OFF' if ebi_enabled else 'ON'}")
 
         add_hotkey("3", switch_ebi)
 
         def switch_atbs():
             context.set_atbs(not (atbs_enabled := context.is_atbs_enabled()))
-            manager["atbs"].config(text=f"ATBS {'OFF' if atbs_enabled else 'ON'}")
+            manager["atbs"].update(f"ATBS {'OFF' if atbs_enabled else 'ON'}")
 
         add_hotkey("4", switch_atbs)
 
-        manager["dtcs"] = Button(manager.root(), text="DTCS ON", command=switch_dtcs)
-        manager["dtcs"].grid(row=4, column=0, columnspan=15)
-        manager["abs"] = Button(manager.root(), text="ABS ON", command=switch_abs)
-        manager["abs"].grid(row=4, column=15, columnspan=15)
-        manager["ebi"] = Button(manager.root(), text="EBI ON", command=switch_ebi)
-        manager["ebi"].grid(row=4, column=30, columnspan=15)
-        manager["atbs"] = Button(manager.root(), text="ATBS ON", command=switch_atbs)
-        manager["atbs"].grid(row=4, column=45, columnspan=15)
+        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs)
+        manager["abs"] = Button(button_text="ABS ON", key=switch_abs)
+        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi)
+        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs)
 
-    uim = initialize(Window(1920, 1080, config.refresh_rate, CustomRuntimeData()), render, context, main_controller)
+    uim = initialize(Window(1920, 1080,
+                            config.refresh_rate,
+                            CustomRuntimeData(),
+                            fullscreen=False,
+                            no_title_bar=False), render, context, main_controller)
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
             uim.rd().comm = None
-            uim["comm_status"].config(text="COMM OFFLINE", foreground="gray")
+            uim["comm_status"].update("COMM OFFLINE", text_color="gray")
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
@@ -106,39 +87,44 @@ def main(main_controller: Controller, config: Config) -> int:
             except IOError:
                 uim.rd().comm_kill()
                 uim.rd().comm = None
-                uim["comm_status"].config(text="COMM OFFLINE", foreground="gray")
+                uim["comm_status"].update("COMM OFFLINE", text_color="gray")
 
         def on_update(self, e: UpdateEvent) -> None:
             duration = int(time()) - uim.rd().start_time
             if uim.rd().m1_mode == 0:
-                uim["m1"].config(font=H5, text="LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
+                uim["m1"].update("LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
             elif uim.rd().m1_mode == 1:
-                uim["m1"].config(font=BODY, text=f"VeC {__version__.upper()}\n\n"
-                                                 f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                                                 f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                                 f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
-                                                 f"REFRESH RATE: {config.refresh_rate} FPS")
-            uim["m2"].config(text=f"{int(context.data().front_wheel_speed)}")
+                uim["m1"].update(f"VeC {__version__.upper()}\n\n"
+                                 f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                                 f"{duration // 60} MIN {duration % 60} SEC\n\n"
+                                 f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
+                                 f"REFRESH RATE: {config.refresh_rate} FPS")
+            uim["m2"].update(f"{int(context.data().front_wheel_speed)}")
             if uim.rd().m3_mode == 0:
-                uim["m3"].config(font=H1, text="0.0V")
+                uim["m3"].update("0.0V")
             elif uim.rd().m3_mode == 1:
-                uim["m3"].config(font=H5, text="G Force")
+                uim["m3"].update("G Force")
             else:
-                uim["m3"].config(font=H5, text="Speed Trend")
+                uim["m3"].update("Speed Trend")
 
         def on_intervene(self, e: InterventionEvent) -> None:
-            uim[e.system.lower() + "_status"].config(text=e.system + " INTERVENED", foreground="purple")
+            uim[e.system.lower() + "_status"].update(e.system + " INTERVENED", text_color="purple")
 
         def post_intervene(self, e: InterventionEvent) -> None:
-            uim[e.system.lower() + "_status"].config(text=e.system + " READY", foreground="green")
+            uim[e.system.lower() + "_status"].update(e.system + " READY", text_color="green")
 
         def on_suspend(self, e: SuspensionEvent) -> None:
-            uim[e.system.lower() + "_status"].config(text=e.system + " SUSPENDED", foreground="red")
+            uim[e.system.lower() + "_status"].update(e.system + " SUSPENDED", text_color="red")
 
         def post_suspend(self, e: SuspensionEvent) -> None:
-            uim[e.system.lower() + "_status"].config(text=e.system + " READY", foreground="green")
+            uim[e.system.lower() + "_status"].update(e.system + " READY", text_color="green")
 
     context.set_event_listener(CustomListener())
+    uim.layout([
+        ["m1", "m2", "m3"],
+        ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
+        ["dtcs", "abs", "ebi", "atbs"]
+    ])
     uim.show()
     uim.rd().comm_kill()
     return 0

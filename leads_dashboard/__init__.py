@@ -1,7 +1,7 @@
 from importlib.util import find_spec as _find_spec
 
-if not _find_spec("dearpygui"):
-    raise ImportError("Please install `dearpygui` to run this module\n>>> pip install dearpygui")
+if not _find_spec("PySimpleGUI"):
+    raise ImportError("Please install `pysimplegui` to run this module\n>>>pip install pysimplegui")
 
 from typing import Callable as _Callable, TypeVar as _TypeVar
 
@@ -17,7 +17,7 @@ H2 = ("Arial", 22)
 H3 = ("Arial", 20)
 H4 = ("Arial", 18)
 H5 = ("Arial", 16)
-BODY = ("Arial", 12)
+BODY = ("Arial", 8)
 
 
 def initialize(window: Window,

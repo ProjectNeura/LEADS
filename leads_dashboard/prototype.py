@@ -1,6 +1,8 @@
-from tkinter import Tk as _Tk
-from tkinter import Widget as _Widget
-from typing import Any as _Any, Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
+from threading import Thread as _Thread
+from time import sleep as _sleep
+from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
+
+from PySimpleGUI import Window as _Window, Element as _Element, WINDOW_CLOSED as _WINDOW_CLOSED
 
 from leads_dashboard.runtime import RuntimeData
 
@@ -13,7 +15,7 @@ def default_on_kill() -> None:
     pass
 
 
-Widget = _Widget | _Any
+Widget = _Element
 
 T = _TypeVar("T", bound=RuntimeData)
 
@@ -24,26 +26,28 @@ class Window(_Generic[T]):
                  height: int,
                  refresh_rate: int,
                  runtime_data: T,
-                 fullscreen: bool = False,
                  on_refresh: _Callable[[_Self], None] = default_on_refresh,
                  on_kill: _Callable[[_Self], None] = default_on_kill,
-                 title: str = "LEADS") -> None:
-        self._root: _Tk = _Tk()
-        self._root.title(title)
-        width = self._root.winfo_screenwidth() if width < 0 else width
-        height = self._root.winfo_screenheight() if height < 0 else height
-        self._root.geometry(f"{width}x{height}")
+                 title: str = "LEADS",
+                 fullscreen: bool = True,
+                 no_title_bar: bool = True) -> None:
+        self._root: _Window = _Window(title,
+                                      size=(None if width < 0 else width, None if height < 0 else height),
+                                      no_titlebar=no_title_bar,
+                                      disable_minimize=True)
         self._width: int = width
         self._height: int = height
-        if fullscreen:
-            self._root.attributes("-fullscreen", True)
+        self._fullscreen: bool = fullscreen
         self._refresh_rate: int = refresh_rate
-        self._refresh_interval: int = int(1000 / refresh_rate)
+        self._refresh_interval: float = float(1 / refresh_rate)
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[_Self], None] = on_refresh
         self._on_kill: _Callable[[_Self], None] = on_kill
 
-    def root(self) -> _Tk:
+        self._active: bool = True
+        self._refresher_thread: _Thread | None = None
+
+    def root(self) -> _Window:
         return self._root
 
     def width(self) -> int:
@@ -52,7 +56,7 @@ class Window(_Generic[T]):
     def height(self) -> int:
         return self._height
 
-    def refresh_interval(self) -> int:
+    def refresh_interval(self) -> float:
         return self._refresh_interval
 
     def refresh_rate(self) -> int:
@@ -67,17 +71,30 @@ class Window(_Generic[T]):
     def set_on_close(self, on_close: _Callable[[_Self], None]) -> None:
         self._on_kill = on_close
 
-    def show(self) -> None:
-        def refresh():
-            self._on_refresh(self)
+    def refresher(self) -> None:
+        while self._active:
+            self._root.write_event_value("refresher", None)
             self._runtime_data.frame_counter += 1
-            self._root.after(self._refresh_interval, refresh)
+            _sleep(self._refresh_interval)
 
-        self._root.after(self._refresh_interval, refresh)
-        self._root.mainloop()
+    def show(self) -> None:
+        self._root.finalize()
+        if self._fullscreen:
+            self._root.maximize()
+        self._refresher_thread = _Thread(name="refresher", target=self.refresher)
+        self._refresher_thread.start()
+        while self._active:
+            event, values = self._root.read()
+            if not event or event == _WINDOW_CLOSED:
+                self._active = False
+            elif event == "refresher":
+                self._on_refresh(self)
+            elif callable(event):
+                event()
 
     def kill(self) -> None:
-        self._root.destroy()
+        self._active = False
+        self._root.close()
 
 
 class ContextManager(object):
@@ -86,16 +103,27 @@ class ContextManager(object):
         self._widgets: dict[str, Widget] = {}
 
     def __setitem__(self, key: str, widget: Widget) -> None:
-        self.set(key, widget)
-
-    def __getitem__(self, key: str) -> Widget:
-        return self.get(key)
-
-    def set(self, key: str, widget: Widget) -> None:
         self._widgets[key] = widget
 
-    def get(self, key: str) -> Widget:
+    def __getitem__(self, key: str) -> Widget:
         return self._widgets[key]
+
+    def set(self, key: str, widget: Widget) -> None:
+        self[key] = widget
+
+    def get(self, key: str) -> Widget:
+        return self[key]
+
+    def parse_layout(self, layout: list[list[str | Widget]]) -> list[list[Widget]]:
+        for i in range(len(layout)):
+            for j in range(len(layout[i])):
+                e = layout[i][j]
+                if isinstance(e, str):
+                    layout[i][j] = self[e]
+        return layout
+
+    def layout(self, layout: list[list[str | Widget]]) -> None:
+        self._window.root().layout(self.parse_layout(layout))
 
     def window(self) -> Window:
         return self._window
@@ -103,7 +131,7 @@ class ContextManager(object):
     def rd(self) -> T:
         return self._window.runtime_data()
 
-    def root(self) -> _Tk:
+    def root(self) -> _Window:
         return self._window.root()
 
     def show(self) -> None:
