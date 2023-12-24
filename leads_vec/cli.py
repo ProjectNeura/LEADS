@@ -26,9 +26,9 @@ def main(main_controller: Controller, config: Config) -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = Button(font=BODY, key=switch_m1_mode, size=(36, 12))
-        manager["m2"] = Button(font=H1, size=(12, 4))
-        manager["m3"] = Button(font=H1, key=switch_m3_mode, size=(12, 4))
+        manager["m1"] = Button(font=BODY, key=switch_m1_mode, size=(96, 12))
+        manager["m2"] = Button(font=H1, size=(32, 4))
+        manager["m3"] = Button(font=H1, key=switch_m3_mode, size=(32, 4))
         manager["dtcs_status"] = Text(text="DTCS READY", text_color="green")
         manager["abs_status"] = Text(text="ABS READY", text_color="green")
         manager["ebi_status"] = Text(text="EBI READY", text_color="green")

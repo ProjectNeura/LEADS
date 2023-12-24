@@ -85,7 +85,7 @@ class Window(_Generic[T]):
         self._refresher_thread.start()
         while self._active:
             event, values = self._root.read()
-            if not event or event == _WINDOW_CLOSED:
+            if event == _WINDOW_CLOSED:
                 self._active = False
             elif event == "refresher":
                 self._on_refresh(self)
