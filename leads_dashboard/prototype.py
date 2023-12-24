@@ -2,7 +2,7 @@ from threading import Thread as _Thread
 from time import sleep as _sleep
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
-from PySimpleGUI import Window as _Window, Element as _Element, WINDOW_CLOSED as _WINDOW_CLOSED
+from PySimpleGUI import Window as _Window, Element as _Element, WINDOW_CLOSED as _WINDOW_CLOSED, theme as _theme
 
 from leads_dashboard.runtime import RuntimeData
 
@@ -31,8 +31,10 @@ class Window(_Generic[T]):
                  title: str = "LEADS",
                  fullscreen: bool = True,
                  no_title_bar: bool = True) -> None:
+        _theme("Default1")
         self._root: _Window = _Window(title,
                                       size=(None if width < 0 else width, None if height < 0 else height),
+                                      text_justification="center",
                                       no_titlebar=no_title_bar,
                                       disable_minimize=True)
         self._width: int = width

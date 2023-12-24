@@ -26,14 +26,19 @@ def main(main_controller: Controller, config: Config) -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = Button(font=BODY, key=switch_m1_mode, size=(96, 12))
-        manager["m2"] = Button(font=H1, size=(32, 4))
-        manager["m3"] = Button(font=H1, key=switch_m3_mode, size=(32, 4))
-        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green")
-        manager["abs_status"] = Text(text="ABS READY", text_color="green")
-        manager["ebi_status"] = Text(text="EBI READY", text_color="green")
-        manager["atbs_status"] = Text(text="ATBS READY", text_color="green")
-        manager["comm_status"] = Text(text="COMM ONLINE", text_color="white")
+        manager["m1"] = Button(font=BODY, key=switch_m1_mode, size=(round(manager.window().width() / 19.393939), 12))
+        manager["m2"] = Button(font=H1, size=(round(manager.window().width() / 60), 4))
+        manager["m3"] = Button(font=H1, key=switch_m3_mode, size=(round(manager.window().width() / 64), 4))
+        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green", font=BODY,
+                                      size=(round(manager.window().width() / 32.323232), None))
+        manager["abs_status"] = Text(text="ABS READY", text_color="green", font=BODY,
+                                     size=(round(manager.window().width() / 32.323232), None))
+        manager["ebi_status"] = Text(text="EBI READY", text_color="green", font=BODY,
+                                     size=(round(manager.window().width() / 32.323232), None))
+        manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=BODY,
+                                      size=(round(manager.window().width() / 32.323232), None))
+        manager["comm_status"] = Text(text="COMM ONLINE", text_color="white", font=BODY,
+                                      size=(round(manager.window().width() / 32.323232), None))
 
         def switch_dtcs():
             context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
@@ -59,12 +64,16 @@ def main(main_controller: Controller, config: Config) -> int:
 
         add_hotkey("4", switch_atbs)
 
-        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs)
-        manager["abs"] = Button(button_text="ABS ON", key=switch_abs)
-        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi)
-        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs)
+        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=BODY,
+                                 size=(round(manager.window().width() / 25.858585), None))
+        manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=BODY,
+                                size=(round(manager.window().width() / 25.858585), None))
+        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=BODY,
+                                size=(round(manager.window().width() / 25.858585), None))
+        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=BODY,
+                                 size=(round(manager.window().width() / 25.858585), None))
 
-    uim = initialize(Window(1920, 1080,
+    uim = initialize(Window(1080, 720,
                             config.refresh_rate,
                             CustomRuntimeData(),
                             fullscreen=False,
