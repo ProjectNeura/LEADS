@@ -75,9 +75,7 @@ def main(main_controller: Controller, config: Config) -> int:
 
     uim = initialize(Window(1080, 720,
                             config.refresh_rate,
-                            CustomRuntimeData(),
-                            fullscreen=False,
-                            no_title_bar=False), render, context, main_controller)
+                            CustomRuntimeData()), render, context, main_controller)
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
@@ -134,6 +132,7 @@ def main(main_controller: Controller, config: Config) -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         ["dtcs", "abs", "ebi", "atbs"]
     ])
+    add_hotkey("ctrl+e", uim.kill)
     uim.show()
     uim.rd().comm_kill()
     return 0

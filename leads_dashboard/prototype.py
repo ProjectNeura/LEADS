@@ -37,8 +37,8 @@ class Window(_Generic[T]):
                                       text_justification="center",
                                       no_titlebar=no_title_bar,
                                       disable_minimize=True)
-        self._width: int = width
-        self._height: int = height
+        self._width: int = _Window.get_screen_size()[0] if fullscreen else width
+        self._height: int = _Window.get_screen_size()[1] if fullscreen else height
         self._fullscreen: bool = fullscreen
         self._refresh_rate: int = refresh_rate
         self._refresh_interval: float = float(1 / refresh_rate)
@@ -138,3 +138,6 @@ class ContextManager(object):
 
     def show(self) -> None:
         self._window.show()
+
+    def kill(self) -> None:
+        self._window.kill()
