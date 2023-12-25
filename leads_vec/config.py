@@ -9,6 +9,9 @@ class Config(object):
         """
         self._d: dict[str, _Any] = base
         self.srw_mode: bool = True
+        self.width: int = 720
+        self.height: int = 480
+        self.fullscreen: bool = False
         self.refresh_rate: int = 30
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900

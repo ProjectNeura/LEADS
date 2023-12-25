@@ -1,5 +1,5 @@
 from datetime import datetime
-from time import time
+from time import time, sleep
 
 from PySimpleGUI import Button, Text
 from keyboard import add_hotkey
@@ -73,17 +73,25 @@ def main(main_controller: Controller, config: Config) -> int:
         manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=BODY,
                                  size=(round(manager.window().width() / 25.858585), None))
 
-    uim = initialize(Window(720, 480,
-                            config.refresh_rate,
-                            CustomRuntimeData(),
-                            fullscreen=False,
-                            no_title_bar=False), render, context, main_controller)
+    uim = initialize(
+        Window(config.width,
+               config.height,
+               config.refresh_rate,
+               CustomRuntimeData(),
+               fullscreen=config.fullscreen,
+               no_title_bar=False),
+        render,
+        context,
+        main_controller)
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
             uim.rd().comm = None
-            if uim.active():
-                uim["comm_status"].update("COMM OFFLINE", text_color="gray")
+            for _ in range(30):
+                if uim.active():
+                    break
+                sleep(.1)
+            uim["comm_status"].update("COMM OFFLINE", text_color="gray")
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
@@ -135,7 +143,6 @@ def main(main_controller: Controller, config: Config) -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         ["dtcs", "abs", "ebi", "atbs"]
     ])
-    add_hotkey("ctrl+e", uim.kill)
     uim.show()
     uim.rd().comm_kill()
     return 0
