@@ -32,12 +32,12 @@ This project aims to implement the following functions:
 Note that LEADS requires **Python >= 3.11**.
 
 ```shell
-pip install dearpygui keyboard pyserial leads
+pip install pysimplegui keyboard pyserial leads
 ```
 
 `numpy` will be automatically installed with `leads`.
 
-`dearpygui`, `keyboard`, and `pyserial` are optional.
+`pysimplegui`, `keyboard`, and `pyserial` are optional.
 
 If you need only the skeleton, run the following.
 
