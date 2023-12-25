@@ -73,9 +73,11 @@ def main(main_controller: Controller, config: Config) -> int:
         manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=BODY,
                                  size=(round(manager.window().width() / 25.858585), None))
 
-    uim = initialize(Window(1080, 720,
+    uim = initialize(Window(720, 480,
                             config.refresh_rate,
-                            CustomRuntimeData()), render, context, main_controller)
+                            CustomRuntimeData(),
+                            fullscreen=False,
+                            no_title_bar=False), render, context, main_controller)
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
