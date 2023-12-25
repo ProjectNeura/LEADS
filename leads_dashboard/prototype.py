@@ -35,8 +35,7 @@ class Window(_Generic[T]):
         self._root: _Window = _Window(title,
                                       size=(None if width < 0 else width, None if height < 0 else height),
                                       text_justification="center",
-                                      no_titlebar=no_title_bar,
-                                      disable_minimize=True)
+                                      no_titlebar=no_title_bar)
         self._width: int = _Window.get_screen_size()[0] if fullscreen else width
         self._height: int = _Window.get_screen_size()[1] if fullscreen else height
         self._fullscreen: bool = fullscreen
