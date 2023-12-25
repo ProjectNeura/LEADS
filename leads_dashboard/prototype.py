@@ -45,7 +45,7 @@ class Window(_Generic[T]):
         self._on_refresh: _Callable[[_Self], None] = on_refresh
         self._on_kill: _Callable[[_Self], None] = on_kill
 
-        self._active: bool = True
+        self._active: bool = False
         self._refresher_thread: _Thread | None = None
 
     def root(self) -> _Window:
@@ -72,6 +72,9 @@ class Window(_Generic[T]):
     def set_on_close(self, on_close: _Callable[[_Self], None]) -> None:
         self._on_kill = on_close
 
+    def active(self) -> bool:
+        return self._active
+
     def refresher(self) -> None:
         while self._active:
             self._root.write_event_value("refresher", None)
@@ -82,6 +85,7 @@ class Window(_Generic[T]):
         self._root.finalize()
         if self._fullscreen:
             self._root.maximize()
+        self._active = True
         self._refresher_thread = _Thread(name="refresher", target=self.refresher)
         self._refresher_thread.start()
         while self._active:
@@ -131,6 +135,9 @@ class ContextManager(object):
 
     def rd(self) -> T:
         return self._window.runtime_data()
+
+    def active(self) -> bool:
+        return self._window.active()
 
     def root(self) -> _Window:
         return self._window.root()

@@ -80,7 +80,8 @@ def main(main_controller: Controller, config: Config) -> int:
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
             uim.rd().comm = None
-            uim["comm_status"].update("COMM OFFLINE", text_color="gray")
+            if uim.active():
+                uim["comm_status"].update("COMM OFFLINE", text_color="gray")
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             print(msg)
