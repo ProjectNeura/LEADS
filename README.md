@@ -53,12 +53,6 @@ pip install leads
 python -m leads_vec
 ```
 
-### Remote Server (Remote)
-
-```shell
-python -m leads_vec --remote
-```
-
 ### Optional Arguments
 
 #### Configuration File
