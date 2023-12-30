@@ -5,6 +5,7 @@ from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Ge
 from PySimpleGUI import Window as _Window, Element as _Element, WINDOW_CLOSED as _WINDOW_CLOSED, theme as _theme
 
 from leads_dashboard.runtime import RuntimeData
+from leads_dashboard.system import get_system_platform
 
 
 def default_on_refresh() -> None:
@@ -107,12 +108,16 @@ class ContextManager(object):
     def __init__(self, window: Window) -> None:
         self._window: Window = window
         self._widgets: dict[str, Widget] = {}
+        self._system_platform: str = get_system_platform()
 
     def __setitem__(self, key: str, widget: Widget) -> None:
         self._widgets[key] = widget
 
     def __getitem__(self, key: str) -> Widget:
         return self._widgets[key]
+
+    def system_platform(self) -> str:
+        return self._system_platform
 
     def set(self, key: str, widget: Widget) -> None:
         self[key] = widget

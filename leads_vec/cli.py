@@ -130,13 +130,13 @@ def main(main_controller: Controller, config: Config) -> int:
                 uim["m3"].update("Speed Trend")
 
         def on_intervene(self, e: InterventionEvent) -> None:
-            uim[e.system.lower() + "_status"].update(e.system + " INTERVENED", text_color="purple")
+            uim[e.system.lower() + "_status"].update(e.system + " INTEV", text_color="purple")
 
         def post_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].update(e.system + " READY", text_color="green")
 
         def on_suspend(self, e: SuspensionEvent) -> None:
-            uim[e.system.lower() + "_status"].update(e.system + " SUSPENDED", text_color="red")
+            uim[e.system.lower() + "_status"].update(e.system + " SUSPD", text_color="red")
 
         def post_suspend(self, e: SuspensionEvent) -> None:
             uim[e.system.lower() + "_status"].update(e.system + " READY", text_color="green")
