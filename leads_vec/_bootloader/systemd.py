@@ -11,7 +11,7 @@ def create_service() -> None:
         After=default.target
         
         [Service]
-        ExecStart={script}
+        ExecStart=/bin/bash {script}
         
         [Install]
         WantedBy=default.target
