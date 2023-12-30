@@ -27,21 +27,21 @@ def main(main_controller: Controller, config: Config) -> int:
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
         manager["m1"] = Button(font=("Arial", config.font_size_small), key=switch_m1_mode,
-                               size=(round(manager.window().width() / 21), 13))
+                               size=(round(manager.window().width() * config.scaling_factor / 21), 13))
         manager["m2"] = Button(font=("Arial", config.font_size_x_large),
-                               size=(round(manager.window().width() / 126), 2))
+                               size=(round(manager.window().width() * config.scaling_factor / 126), 2))
         manager["m3"] = Button(font=("Arial", config.font_size_medium), key=switch_m3_mode,
-                               size=(round(manager.window().width() / 42), 7))
+                               size=(round(manager.window().width() * config.scaling_factor / 42), 7))
         manager["dtcs_status"] = Text(text="DTCS READY", text_color="green", font=("Arial", config.font_size_small),
-                                      size=(round(manager.window().width() / 40), None))
+                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
         manager["abs_status"] = Text(text="ABS READY", text_color="green", font=("Arial", config.font_size_small),
-                                     size=(round(manager.window().width() / 40), None))
+                                     size=(round(manager.window().width() * config.scaling_factor / 40), None))
         manager["ebi_status"] = Text(text="EBI READY", text_color="green", font=("Arial", config.font_size_small),
-                                     size=(round(manager.window().width() / 40), None))
+                                     size=(round(manager.window().width() * config.scaling_factor / 40), None))
         manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=("Arial", config.font_size_small),
-                                      size=(round(manager.window().width() / 40), None))
+                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
         manager["comm_status"] = Text(text="COMM ONLINE", text_color="white", font=("Arial", config.font_size_small),
-                                      size=(round(manager.window().width() / 40), None))
+                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
 
         def switch_dtcs():
             context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
@@ -68,13 +68,13 @@ def main(main_controller: Controller, config: Config) -> int:
         add_hotkey("4", switch_atbs)
 
         manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=("Arial", config.font_size_small),
-                                 size=(round(manager.window().width() / 35), None))
+                                 size=(round(manager.window().width() * config.scaling_factor / 35), None))
         manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=("Arial", config.font_size_small),
-                                size=(round(manager.window().width() / 35), None))
+                                size=(round(manager.window().width() * config.scaling_factor / 35), None))
         manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=("Arial", config.font_size_small),
-                                size=(round(manager.window().width() / 35), None))
+                                size=(round(manager.window().width() * config.scaling_factor / 35), None))
         manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=("Arial", config.font_size_small),
-                                 size=(round(manager.window().width() / 35), None))
+                                 size=(round(manager.window().width() * config.scaling_factor / 35), None))
 
     uim = initialize(
         Window(config.width,
