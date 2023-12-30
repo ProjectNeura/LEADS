@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import time, sleep
 
-from PySimpleGUI import Button, Text
+from PySimpleGUI import Button, Text, Column
 from keyboard import add_hotkey
 
 from leads import *
@@ -26,19 +26,22 @@ def main(main_controller: Controller, config: Config) -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = Button(font=BODY, key=switch_m1_mode, size=(round(manager.window().width() / 19.393939), 12))
-        manager["m2"] = Button(font=H1, size=(round(manager.window().width() / 60), 4))
-        manager["m3"] = Button(font=H1, key=switch_m3_mode, size=(round(manager.window().width() / 64), 4))
-        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green", font=BODY,
-                                      size=(round(manager.window().width() / 32.323232), None))
-        manager["abs_status"] = Text(text="ABS READY", text_color="green", font=BODY,
-                                     size=(round(manager.window().width() / 32.323232), None))
-        manager["ebi_status"] = Text(text="EBI READY", text_color="green", font=BODY,
-                                     size=(round(manager.window().width() / 32.323232), None))
-        manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=BODY,
-                                      size=(round(manager.window().width() / 32.323232), None))
-        manager["comm_status"] = Text(text="COMM ONLINE", text_color="white", font=BODY,
-                                      size=(round(manager.window().width() / 32.323232), None))
+        manager["m1"] = Button(font=("Arial", config.font_size_small), key=switch_m1_mode,
+                               size=(round(manager.window().width() / 21), 13))
+        manager["m2"] = Button(font=("Arial", config.font_size_x_large),
+                               size=(round(manager.window().width() / 126), 2))
+        manager["m3"] = Button(font=("Arial", config.font_size_medium), key=switch_m3_mode,
+                               size=(round(manager.window().width() / 42), 7))
+        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green", font=("Arial", config.font_size_small),
+                                      size=(round(manager.window().width() / 40), None))
+        manager["abs_status"] = Text(text="ABS READY", text_color="green", font=("Arial", config.font_size_small),
+                                     size=(round(manager.window().width() / 40), None))
+        manager["ebi_status"] = Text(text="EBI READY", text_color="green", font=("Arial", config.font_size_small),
+                                     size=(round(manager.window().width() / 40), None))
+        manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=("Arial", config.font_size_small),
+                                      size=(round(manager.window().width() / 40), None))
+        manager["comm_status"] = Text(text="COMM ONLINE", text_color="white", font=("Arial", config.font_size_small),
+                                      size=(round(manager.window().width() / 40), None))
 
         def switch_dtcs():
             context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
@@ -64,14 +67,14 @@ def main(main_controller: Controller, config: Config) -> int:
 
         add_hotkey("4", switch_atbs)
 
-        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=BODY,
-                                 size=(round(manager.window().width() / 25.858585), None))
-        manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=BODY,
-                                size=(round(manager.window().width() / 25.858585), None))
-        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=BODY,
-                                size=(round(manager.window().width() / 25.858585), None))
-        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=BODY,
-                                 size=(round(manager.window().width() / 25.858585), None))
+        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=("Arial", config.font_size_small),
+                                 size=(round(manager.window().width() / 35), None))
+        manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=("Arial", config.font_size_small),
+                                size=(round(manager.window().width() / 35), None))
+        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=("Arial", config.font_size_small),
+                                size=(round(manager.window().width() / 35), None))
+        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=("Arial", config.font_size_small),
+                                 size=(round(manager.window().width() / 35), None))
 
     uim = initialize(
         Window(config.width,
@@ -139,9 +142,24 @@ def main(main_controller: Controller, config: Config) -> int:
 
     context.set_event_listener(CustomListener())
     uim.layout([
-        ["m1", "m2", "m3"],
-        ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
-        ["dtcs", "abs", "ebi", "atbs"]
+        [
+            Column([[uim["m1"]]], element_justification='c', expand_x=True),
+            Column([[uim["m2"]]], element_justification='c', expand_x=True),
+            Column([[uim["m3"]]], element_justification='c', expand_x=True)
+        ],
+        [
+            Column([[uim["dtcs_status"]]], element_justification='c', expand_x=True),
+            Column([[uim["abs_status"]]], element_justification='c', expand_x=True),
+            Column([[uim["ebi_status"]]], element_justification='c', expand_x=True),
+            Column([[uim["atbs_status"]]], element_justification='c', expand_x=True),
+            Column([[uim["comm_status"]]], element_justification='c', expand_x=True)
+        ],
+        [
+            Column([[uim["dtcs"]]], element_justification='c', expand_x=True),
+            Column([[uim["abs"]]], element_justification='c', expand_x=True),
+            Column([[uim["ebi"]]], element_justification='c', expand_x=True),
+            Column([[uim["atbs"]]], element_justification='c', expand_x=True)
+        ]
     ])
     uim.show()
     uim.rd().comm_kill()

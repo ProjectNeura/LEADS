@@ -13,6 +13,10 @@ class Config(object):
         self.height: int = 480
         self.fullscreen: bool = False
         self.refresh_rate: int = 30
+        self.font_size_small: int = 8
+        self.font_size_medium: int = 16
+        self.font_size_large: int = 32
+        self.font_size_x_large: int = 48
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
         self.data_dir: str = "./data"

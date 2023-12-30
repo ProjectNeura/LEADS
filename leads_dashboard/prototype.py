@@ -92,6 +92,7 @@ class Window(_Generic[T]):
             event, values = self._root.read()
             if event == _WINDOW_CLOSED:
                 self._active = False
+                break
             elif event == "refresher":
                 self._on_refresh(self)
             elif callable(event):
