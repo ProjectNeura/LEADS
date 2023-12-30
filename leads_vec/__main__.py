@@ -24,7 +24,7 @@ if __name__ == '__main__':
         _exit()
     if args.register == "systemd":
         if _get_system_platform() != "linux":
-            _exit("ERROR: Unsupported operating system")
+            _exit("Error: Unsupported operating system")
         from ._bootloader import create_service
 
         if not _exists("/usr/local/leads/config.json"):
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         if _exists("config.json"):
             r = input("\"config.json\" already exists. Overwrite? (y/N) >>>").lower()
             if r.lower() != "y":
-                _exit("ERROR: Aborted")
+                _exit("Error: Aborted")
         with open("config.json", "w") as f:
             f.write(str(_DEFAULT_CONFIG))
         print("Configuration file saved to \"config.json\"")

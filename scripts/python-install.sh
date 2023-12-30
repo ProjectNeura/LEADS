@@ -1,6 +1,6 @@
 if ! sudo -v &>/dev/null;
 then
-  echo "the script requires sudo"
+  echo "Error: This script requires root permission"
   exit 1
 fi
 sudo su
