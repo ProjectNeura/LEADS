@@ -1,4 +1,5 @@
 from argparse import ArgumentParser as _ArgumentParser
+from os import mkdir as _mkdir
 from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
@@ -26,6 +27,12 @@ if __name__ == '__main__':
             _exit("ERROR: Unsupported operating system")
         from ._bootloader import create_service
 
+        if not _exists("/usr/local/leads/config.json"):
+            print("Config file not found. Creating \"/usr/local/leads/config.json\"...")
+            _mkdir("/usr/local/leads")
+            with open("/usr/local/leads/config.json", "w") as f:
+                f.write(str(_DEFAULT_CONFIG))
+            print("Using \"/usr/local/leads/config.json\"")
         create_service()
         print("Service registered")
     elif args.register == "config":

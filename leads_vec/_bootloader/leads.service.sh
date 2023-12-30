@@ -1,1 +1,1 @@
-python3.11 -m leads_vec
+python3.11 -m leads_vec -c /usr/local/leads/config.json run
