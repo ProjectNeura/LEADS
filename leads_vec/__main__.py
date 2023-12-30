@@ -7,7 +7,7 @@ if __name__ == '__main__':
     parser = _ArgumentParser(prog="LEADS",
                              description="Lightweight Embedded Assisted Driving System",
                              epilog="GitHub: https://github.com/ProjectNeura/LEADS")
-    parser.add_argument("-c", "--config", nargs=1, default=None, help="configuration file")
+    parser.add_argument("-c", "--config", default=None, help="configuration file")
     try:
         from leads_emulation import SRWRandom as _Controller
     except ImportError:
