@@ -82,7 +82,7 @@ def main(main_controller: Controller, config: Config) -> int:
                config.refresh_rate,
                CustomRuntimeData(),
                fullscreen=config.fullscreen,
-               no_title_bar=False),
+               no_title_bar=config.no_title_bar),
         render,
         context,
         main_controller)

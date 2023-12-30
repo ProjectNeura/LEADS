@@ -79,6 +79,7 @@ To learn about the configuration file, read [Configurations](#Configurations).
 | `width`             | `int`   | Window width                                        | Main         | `720`         |
 | `height`            | `int`   | Window height                                       | Main         | `480`         |
 | `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode         | Main         | `False`       |
+| `no_title_bar`      | `bool`  | `True`: no title bar; `False`: default title bar    | Main         | `False`       |
 | `refresh_rate`      | `int`   | GUI frame per second                                | Main         | `30`          |
 | `font_size_small`   | `int`   | Small font size                                     | Main         | `8`           |
 | `font_size_medium`  | `int`   | Medium font size                                    | Main         | `16`          |
