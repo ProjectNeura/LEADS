@@ -67,14 +67,21 @@ To learn about the configuration file, read [Configurations](#Configurations).
 
 ### Configurations
 
-|                 | Type    | Usage                                               | Used By      | Default       |
-|-----------------|---------|-----------------------------------------------------|--------------|---------------|
-| `srw_mode`      | `bool`  | `True`: single rear wheel; `False`: dual rear wheel | Main, Remote | `True`        |
-| `analysis_rate` | `float` | The interval between two analysis frames in seconds | Main         | `0.01`        |
-| `update_rate`   | `float` | The interval between two render frames in seconds   | Main         | `0.25`        |
-| `comm_addr`     | `str`   | The communication server address                    | Main         | `"127.0.0.1"` |
-| `comm_port`     | `int`   | The communication system port                       | Main, Remote | `16900`       |
-| `data_dir`      | `str`   | The directory for the data recording system         | Remote       | `"./data"`    |
+|                     | Type    | Usage                                               | Used By      | Default       |
+|---------------------|---------|-----------------------------------------------------|--------------|---------------|
+| `srw_mode`          | `bool`  | `True`: single rear wheel; `False`: dual rear wheel | Main, Remote | `True`        |
+| `width`             | `int`   | Window width                                        | Main         | `720`         |
+| `height`            | `int`   | Window height                                       | Main         | `480`         |
+| `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode         | Main         | `False`       |
+| `refresh_rate`      | `int`   | GUI frame per second                                | Main         | `30`          |
+| `font_size_small`   | `int`   | Small font size                                     | Main         | `8`           |
+| `font_size_medium`  | `int`   | Medium font size                                    | Main         | `16`          |
+| `font_size_large`   | `int`   | Large font size                                     | Main         | `32`          |
+| `font_size_x_large` | `int`   | Extra large font size                               | Main         | `48`          |
+| `scaling_factor`    | `float` | A factor used to scale every component              | Main         | `1`           |
+| `comm_addr`         | `str`   | Communication server address                        | Main         | `"127.0.0.1"` |
+| `comm_port`         | `int`   | The port on which the communication system runs on  | Main, Remote | `16900`       |
+| `data_dir`          | `str`   | The directory for the data recording system         | Remote       | `"./data"`    |
 
 ## Periodic Report
 
