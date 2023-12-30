@@ -58,7 +58,7 @@ python -m leads_vec
 #### Configuration File
 
 ```shell
-python -m leads_vec config=path/to/the/config/file
+python -m leads_vec -c path/to/the/config/file
 ```
 
 If not specified, all configurations will be default values.
