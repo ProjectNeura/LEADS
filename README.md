@@ -45,12 +45,18 @@ If you need only the skeleton, run the following.
 pip install leads
 ```
 
+### Verify
+
+```shell
+python -m leads_vec info
+```
+
 ## Quickstart
 
 ### Main
 
 ```shell
-python -m leads_vec
+python -m leads_vec run
 ```
 
 ### Optional Arguments
@@ -58,7 +64,7 @@ python -m leads_vec
 #### Configuration File
 
 ```shell
-python -m leads_vec -c path/to/the/config/file
+python -m leads_vec -c path/to/the/config/file run
 ```
 
 If not specified, all configurations will be default values.
