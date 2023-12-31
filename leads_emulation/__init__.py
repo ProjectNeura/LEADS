@@ -22,12 +22,12 @@ class _EmulatedController(_Controller, metaclass=_ABCMeta):
 
 
 class SRWRandom(_EmulatedController):
-    def collect_all(self) -> _SRWDataContainer:
+    def read(self) -> _SRWDataContainer:
         return _SRWDataContainer(fws := _randint(self.minimum, self.maximum), self.generate_rear_wheel_speed(fws))
 
 
 class DRWRandom(_EmulatedController):
-    def collect_all(self) -> _DRWDataContainer:
+    def read(self) -> _DRWDataContainer:
         return _DRWDataContainer(fws := _randint(self.minimum, self.maximum),
                                  rws := self.generate_rear_wheel_speed(fws),
                                  rws)
@@ -48,7 +48,7 @@ class _SinController(_EmulatedController, metaclass=_ABCMeta):
 
 
 class SRWSin(_SinController):
-    def collect_all(self) -> _SRWDataContainer:
+    def read(self) -> _SRWDataContainer:
         try:
             return _SRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
                                      self.generate_rear_wheel_speed(fws))
@@ -57,7 +57,7 @@ class SRWSin(_SinController):
 
 
 class DRWSin(_SinController):
-    def collect_all(self) -> _DRWDataContainer:
+    def read(self) -> _DRWDataContainer:
         try:
             return _DRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
                                      rws := self.generate_rear_wheel_speed(fws),

@@ -1,5 +1,5 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
-from typing import TypeVar as _TypeVar, Generic as _Generic
+from typing import TypeVar as _TypeVar, Generic as _Generic, Any as _Any
 
 from leads.controller.device import Device
 
@@ -19,5 +19,8 @@ class Controller(Device, _Generic[T], metaclass=_ABCMeta):
         return self._devices[tag]
 
     @_abstractmethod
-    def collect_all(self) -> T:
+    def read(self) -> T:
+        raise NotImplementedError
+
+    def write(self, payload: _Any) -> None:
         raise NotImplementedError
