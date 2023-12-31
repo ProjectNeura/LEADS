@@ -15,7 +15,8 @@ setup(
     url="https://github.com/ProjectNeura/LEADS",
     packages=find_packages(),
     package_data={
-        "leads_vec": ["_bootloader/leads_vec.service.sh"]
+        "leads_vec": ["_bootloader/leads_vec.service.sh"],
+        "leads_vec_rc": ["_bootloader/leads_vec_rc.service.sh"]
     },
     include_package_data=True,
     install_requires=["numpy"]
