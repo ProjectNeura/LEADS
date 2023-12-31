@@ -1,7 +1,7 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM
 from threading import Lock as _Lock, Thread as _Thread
-from typing import Self as _Self
+from typing import Self as _Self, Callable as _Callable
 
 
 class Service(object, metaclass=_ABCMeta):
@@ -78,9 +78,14 @@ class Service(object, metaclass=_ABCMeta):
         raise NotImplementedError
 
 
+def _default_connection_on_close(_):
+    pass
+
+
 class Connection(object):
     def __init__(self, service: Service, socket: _socket, address: tuple[str, int],
-                 remainder_data: bytes = b"") -> None:
+                 remainder_data: bytes = b"",
+                 on_close: _Callable[[_Self], None] = _default_connection_on_close) -> None:
         """
         :param service: the service to which it belongs
         :param socket: the connection socket
@@ -91,6 +96,7 @@ class Connection(object):
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
         self._remainder: bytes = remainder_data
+        self._on_close: _Callable[[_Self], None] = on_close
 
     def __str__(self) -> str:
         return self._address[0] + ":" + str(self._address[1])
@@ -141,6 +147,7 @@ class Connection(object):
         """
         self._require_open_socket().send(msg + b";")
         if msg == b"disconnect":
+            self._on_close(self)
             self.close()
 
     def disconnect(self) -> None:
@@ -153,6 +160,7 @@ class Connection(object):
         """
         Directly close the socket.
         """
+        self._on_close(self)
         self._require_open_socket(False).close()
 
 
@@ -169,7 +177,7 @@ class Callback(object):
     def on_receive(self, service: Service, msg: bytes) -> None:
         pass
 
-    def on_disconnect(self, service: Service) -> None:
+    def on_disconnect(self, service: Service, connection: Connection) -> None:
         pass
 
 
@@ -186,7 +194,7 @@ class Entity(Service, metaclass=_ABCMeta):
         while True:
             msg = connection.receive()
             if not msg or msg == b"disconnect":
-                self.callback.on_disconnect(self)
+                self.callback.on_disconnect(self, connection)
                 return connection.close()
             self.callback.on_receive(self, msg)
 

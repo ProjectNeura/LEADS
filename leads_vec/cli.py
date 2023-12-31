@@ -1,5 +1,5 @@
 from datetime import datetime
-from time import time, sleep
+from time import time
 
 from PySimpleGUI import Button, Text, Column
 from keyboard import add_hotkey
@@ -40,7 +40,7 @@ def main(main_controller: Controller, config: Config) -> int:
                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
         manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=("Arial", config.font_size_small),
                                       size=(round(manager.window().width() * config.scaling_factor / 40), None))
-        manager["comm_status"] = Text(text="COMM ONLINE", text_color="white", font=("Arial", config.font_size_small),
+        manager["comm_status"] = Text(text="COMM OFFLINE", text_color="gray", font=("Arial", config.font_size_small),
                                       size=(round(manager.window().width() * config.scaling_factor / 40), None))
 
         def switch_dtcs():
@@ -88,27 +88,14 @@ def main(main_controller: Controller, config: Config) -> int:
         main_controller)
 
     class CustomCallback(Callback):
-        def on_fail(self, service: Service, error: Exception) -> None:
-            uim.rd().comm = None
-            for _ in range(30):
-                if uim.active():
-                    break
-                sleep(.1)
-            uim["comm_status"].update("COMM OFFLINE", text_color="gray")
+        def on_connect(self, service: Service, connection: Connection) -> None:
+            uim["comm_status"].update("COMM ONLINE", text_color="black")
 
-        def on_receive(self, service: Service, msg: bytes) -> None:
-            print(msg)
-
-    uim.rd().comm = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
+    uim.rd().comm = start_server(create_server(config.comm_port, CustomCallback()), True)
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
-            try:
-                uim.rd().comm_notify(e.data)
-            except IOError:
-                uim.rd().comm_kill()
-                uim.rd().comm = None
-                uim["comm_status"].update("COMM OFFLINE", text_color="gray")
+            uim.rd().comm_notify(e.data)
 
         def on_update(self, e: UpdateEvent) -> None:
             duration = int(time()) - uim.rd().start_time
@@ -128,6 +115,8 @@ def main(main_controller: Controller, config: Config) -> int:
                 uim["m3"].update("G Force")
             else:
                 uim["m3"].update("Speed Trend")
+            if uim.rd().comm.num_connections() < 1:
+                uim["comm_status"].update("COMM OFFLINE", text_color="gray")
 
         def on_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].update(e.system + " INTEV", text_color="purple")

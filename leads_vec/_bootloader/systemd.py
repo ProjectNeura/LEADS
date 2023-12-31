@@ -8,7 +8,6 @@ def create_service() -> None:
         f.write(f"""
         [Unit]
         Description=LEADS
-        After=default.target
         
         [Service]
         ExecStart=/bin/bash {script}
