@@ -61,7 +61,13 @@ python -m leads_vec run
 
 ### Optional Arguments
 
-#### Configuration File
+Run the following to get a list of all the supported arguments.
+
+```shell
+python -m leads_vec -h
+```
+
+#### Specify a Configuration File
 
 ```shell
 python -m leads_vec -c path/to/the/config/file run
@@ -70,6 +76,29 @@ python -m leads_vec -c path/to/the/config/file run
 If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#Configurations).
+
+#### Generate a Configuration File
+
+```shell
+python -m leads_vec -r config run
+```
+
+This will generate a default `config.json` file under the current directory.
+
+#### Register as a Systemd Service
+
+```shell
+python -m leads_vec -r systemd run
+```
+
+This will register a system service to start the program.
+
+To enable auto-start at boot, run the following.
+
+```shell
+systemctl daemon-reload
+systemctl enable leads
+```
 
 ### Configurations
 
@@ -101,9 +130,8 @@ See [reports](docs/reports).
 #### Issues
 
 Our team management completely relies on GitHub. Tasks are published and assigned
-as [issues](https://github.com/ProjectNeura/LEADS/issues). You will be notified if
-you are assigned to certain tasks. However, you may also choose to join other
-discussions for which you are not responsible.
+as [issues](https://github.com/ProjectNeura/LEADS/issues). You will be notified if you are assigned to certain tasks.
+However, you may also join other discussions for which you are not responsible.
 
 There are a few labels that classify the issues.
 
@@ -123,15 +151,14 @@ Label your issue with at least one of the labels above before you submit.
 
 #### Projects
 
-You can have a look on the whole schedule of each project in timeline using the
-[projects](https://github.com/orgs/ProjectNeura/projects/) feature.
+You can have a look at the whole schedule of each project in a timeline using
+the [projects](https://github.com/orgs/ProjectNeura/projects/) feature.
 
 ### Code Contributions
 
-Please fork the project into your own repository. Before your pull request, make
-sure that you have tested all possible impacts on other parts of the project.
-If no certainty is assured, please reach out to our core team members to have
-official supports.
+Please fork the project into your repository. Before your pull request, make sure that you have tested all possible
+impacts on other parts of the project. If no certainty is assured, please reach out to our core team members to have
+official support.
 
 #### Code Specifications
 

@@ -10,7 +10,7 @@ if __name__ == '__main__':
     parser = _ArgumentParser(prog="LEADS",
                              description="Lightweight Embedded Assisted Driving System",
                              epilog="GitHub: https://github.com/ProjectNeura/LEADS")
-    parser.add_argument("action", choices=("info", "run"), default=None)
+    parser.add_argument("action", choices=("info", "run"))
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="service to register")
     parser.add_argument("-c", "--config", default=None, help="specified configuration file")
     args = parser.parse_args()
