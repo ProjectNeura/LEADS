@@ -7,7 +7,7 @@ from leads_dashboard import get_system_platform as _get_system_platform, load_co
     DEFAULT_CONFIG as _DEFAULT_CONFIG
 
 if __name__ == '__main__':
-    parser = _ArgumentParser(prog="LEADS",
+    parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System",
                              epilog="GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "run"))
