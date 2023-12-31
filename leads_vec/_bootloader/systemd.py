@@ -14,5 +14,5 @@ def create_service() -> None:
         ExecStart=/bin/bash {script}
         
         [Install]
-        WantedBy=default.target
+        WantedBy=graphical-session.target
         """)

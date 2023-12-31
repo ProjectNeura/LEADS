@@ -1,5 +1,5 @@
 from argparse import ArgumentParser as _ArgumentParser
-from os import mkdir as _mkdir, environ as _environ
+from os import mkdir as _mkdir
 from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
@@ -50,7 +50,4 @@ if __name__ == '__main__':
     config = _load_config(args.config) if args.config else _DEFAULT_CONFIG
     from leads_vec.cli import main
 
-    if not _environ.get("DISPLAY", None):
-        print("No display environment found. Using \":0.0\"...")
-        _environ["DISPLAY"] = ":0.0"
     _exit(main(_Controller("main"), config))
