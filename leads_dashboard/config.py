@@ -1,7 +1,7 @@
 from json import load as _load, dumps as _dumps
 from typing import TextIO as _TextIO, Any as _Any
 
-from leads_dashboard import get_system_platform as _get_system_platform
+from leads_dashboard.system import get_system_platform
 
 
 class Config(object):
@@ -20,7 +20,7 @@ class Config(object):
         self.font_size_medium: int = 16
         self.font_size_large: int = 32
         self.font_size_x_large: int = 48
-        self.scaling_factor: float = .8 if _get_system_platform() == "linux" else 1
+        self.scaling_factor: float = .8 if get_system_platform() == "linux" else 1
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
         self.data_dir: str = "./data"

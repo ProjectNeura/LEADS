@@ -3,8 +3,8 @@ from os import mkdir as _mkdir
 from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
-from leads_dashboard import get_system_platform as _get_system_platform
-from leads_vec.config import load_config, DEFAULT_CONFIG
+from leads_dashboard import get_system_platform as _get_system_platform, load_config as _load_config, \
+    DEFAULT_CONFIG as _DEFAULT_CONFIG
 
 if __name__ == '__main__':
     parser = _ArgumentParser(prog="LEADS",
@@ -31,7 +31,7 @@ if __name__ == '__main__':
             print("Config file not found. Creating \"/usr/local/leads/config.json\"...")
             _mkdir("/usr/local/leads")
             with open("/usr/local/leads/config.json", "w") as f:
-                f.write(str(DEFAULT_CONFIG))
+                f.write(str(_DEFAULT_CONFIG))
             print("Using \"/usr/local/leads/config.json\"")
         create_service()
         print("Service registered")
@@ -41,13 +41,13 @@ if __name__ == '__main__':
             if r.lower() != "y":
                 _exit("Error: Aborted")
         with open("config.json", "w") as f:
-            f.write(str(DEFAULT_CONFIG))
+            f.write(str(_DEFAULT_CONFIG))
         print("Configuration file saved to \"config.json\"")
     try:
         from leads_emulation import SRWRandom as _Controller
     except ImportError:
         raise ImportError("At least one adapter has to be installed")
-    config = load_config(args.config) if args.config else DEFAULT_CONFIG
+    config = _load_config(args.config) if args.config else _DEFAULT_CONFIG
     from leads_vec.cli import main
 
     _exit(main(_Controller("main"), config))

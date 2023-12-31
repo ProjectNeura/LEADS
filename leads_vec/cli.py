@@ -8,7 +8,6 @@ from leads import *
 from leads.comm import *
 from leads_dashboard import *
 from leads_vec.__version__ import __version__
-from leads_vec.config import Config
 
 
 class CustomRuntimeData(RuntimeData):
