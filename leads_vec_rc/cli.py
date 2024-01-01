@@ -34,7 +34,7 @@ class CustomCallback(Callback):
         speed_record.close()
 
 
-client = start_client("127.0.0.1", create_client(), True)
+client = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
 
 app = FastAPI(title="LEADS VeC Remote Controller")
 
