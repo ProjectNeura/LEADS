@@ -106,6 +106,8 @@ systemctl enable leads_vec
 python -m leads_vec_rc
 ```
 
+Go to the online dashboard https://leads-vec-rc.projectneura.org.
+
 ### Configurations
 
 |                     | Type    | Usage                                               | Used By      | Default       |
