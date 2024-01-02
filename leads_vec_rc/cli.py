@@ -1,6 +1,7 @@
 from json import loads
 from os import mkdir
 from os.path import abspath, exists
+from typing import Any
 
 from fastapi import FastAPI
 
@@ -42,6 +43,11 @@ app = FastAPI(title="LEADS VeC Remote Controller")
 @app.get("/")
 async def index() -> str:
     return "LEADS VeC Remote Controller"
+
+
+@app.get("/current")
+async def current() -> dict[str, Any]:
+    return {"t": time_stamp_record[-1], "speed": speed_record[-1]}
 
 
 @app.get("/time_stamp")
