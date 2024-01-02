@@ -59,7 +59,7 @@ python -m leads_vec info
 python -m leads_vec run
 ```
 
-### Optional Arguments
+#### Optional Arguments
 
 Run the following to get a list of all the supported arguments.
 
@@ -67,7 +67,7 @@ Run the following to get a list of all the supported arguments.
 python -m leads_vec -h
 ```
 
-#### Specify a Configuration File
+##### Specify a Configuration File
 
 ```shell
 python -m leads_vec -c path/to/the/config/file run
@@ -77,7 +77,7 @@ If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#Configurations).
 
-#### Generate a Configuration File
+##### Generate a Configuration File
 
 ```shell
 python -m leads_vec -r config run
@@ -85,7 +85,7 @@ python -m leads_vec -r config run
 
 This will generate a default `config.json` file under the current directory.
 
-#### Register as a Systemd Service
+##### Register as a Systemd Service
 
 ```shell
 python -m leads_vec -r systemd run
@@ -98,6 +98,12 @@ To enable auto-start at boot, run the following.
 ```shell
 systemctl daemon-reload
 systemctl enable leads_vec
+```
+
+### Remote Controller
+
+```shell
+python -m leads_vec_rc
 ```
 
 ### Configurations
@@ -115,7 +121,7 @@ systemctl enable leads_vec
 | `font_size_large`   | `int`   | Large font size                                     | Main         | `32`          |
 | `font_size_x_large` | `int`   | Extra large font size                               | Main         | `48`          |
 | `scaling_factor`    | `float` | A factor used to scale every component              | Main         | `1`           |
-| `comm_addr`         | `str`   | Communication server address                        | Main         | `"127.0.0.1"` |
+| `comm_addr`         | `str`   | Communication server address                        | Remote       | `"127.0.0.1"` |
 | `comm_port`         | `int`   | The port on which the communication system runs on  | Main, Remote | `16900`       |
 | `data_dir`          | `str`   | The directory for the data recording system         | Remote       | `"./data"`    |
 
