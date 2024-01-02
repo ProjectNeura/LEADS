@@ -5,7 +5,7 @@ with open("./README.md") as f:
 
 setup(
     name="leads",
-    version="0.1.16",
+    version="0.1.17",
     author="ProjectNeura",
     author_email="central@projectneura.org",
     description="Lightweight Embedded Assisted Driving System",
