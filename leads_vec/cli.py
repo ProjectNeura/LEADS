@@ -67,13 +67,13 @@ def main(main_controller: Controller, config: Config) -> int:
         add_hotkey("4", switch_atbs)
 
         manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=("Arial", config.font_size_small),
-                                 size=(round(manager.window().width() * config.scaling_factor / 35), None))
+                                 size=(round(manager.window().width() * config.scaling_factor / 35), 1))
         manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=("Arial", config.font_size_small),
-                                size=(round(manager.window().width() * config.scaling_factor / 35), None))
+                                size=(round(manager.window().width() * config.scaling_factor / 35), 1))
         manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=("Arial", config.font_size_small),
-                                size=(round(manager.window().width() * config.scaling_factor / 35), None))
+                                size=(round(manager.window().width() * config.scaling_factor / 35), 1))
         manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=("Arial", config.font_size_small),
-                                 size=(round(manager.window().width() * config.scaling_factor / 35), None))
+                                 size=(round(manager.window().width() * config.scaling_factor / 35), 1))
 
     uim = initialize(
         Window(config.width,
