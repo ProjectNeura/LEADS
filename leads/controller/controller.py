@@ -15,8 +15,11 @@ class Controller(Device, _Generic[T], metaclass=_ABCMeta):
     def _attach_device(self, device: Device) -> None:
         self._devices[device.tag()] = device
 
-    def device(self, tag: str) -> [Device]:
-        return self._devices[tag]
+    def device(self, tag: str, device: Device | None = None) -> Device | None:
+        if device:
+            self._devices[tag] = device
+        else:
+            return self._devices[tag]
 
     @_abstractmethod
     def read(self) -> T:
