@@ -87,6 +87,9 @@ def main(main_controller: Controller, config: Config) -> int:
         main_controller)
 
     class CustomCallback(Callback):
+        def on_fail(self, service: Service, error: Exception) -> None:
+            print("Server failed to start")
+
         def on_connect(self, service: Service, connection: Connection) -> None:
             uim["comm_status"].update("COMM ONLINE", text_color="black")
 
