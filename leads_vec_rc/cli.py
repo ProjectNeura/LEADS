@@ -4,6 +4,7 @@ from os.path import abspath, exists
 from typing import Any
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from leads.comm import *
 from leads.utils import *
@@ -38,6 +39,14 @@ class CustomCallback(Callback):
 client = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
 
 app = FastAPI(title="LEADS VeC Remote Controller")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
