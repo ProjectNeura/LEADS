@@ -8,7 +8,7 @@ from leads_dashboard import get_system_platform as _get_system_platform, load_co
 
 if __name__ == '__main__':
     parser = _ArgumentParser(prog="LEADS VeC",
-                             description="Lightweight Embedded Assisted Driving System",
+                             description="Lightweight Embedded Assisted Driving System VeC",
                              epilog="GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "run"))
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="service to register")
@@ -25,14 +25,14 @@ if __name__ == '__main__':
     if args.register == "systemd":
         if _get_system_platform() != "linux":
             _exit("Error: Unsupported operating system")
-        from ._bootloader import create_service
-
         if not _exists("/usr/local/leads/config.json"):
             print("Config file not found. Creating \"/usr/local/leads/config.json\"...")
             _mkdir("/usr/local/leads")
             with open("/usr/local/leads/config.json", "w") as f:
                 f.write(str(_DEFAULT_CONFIG))
             print("Using \"/usr/local/leads/config.json\"")
+        from ._bootloader import create_service
+
         create_service()
         print("Service registered")
     elif args.register == "config":

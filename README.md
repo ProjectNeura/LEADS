@@ -106,6 +106,12 @@ systemctl enable leads_vec
 python -m leads_vec_rc
 ```
 
+#### Register as a Systemd Service
+
+```shell
+python -m leads_vec_rc -r systemd
+```
+
 Go to the online dashboard https://leads-vec-rc.projectneura.org.
 
 ### Configurations
