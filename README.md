@@ -11,7 +11,7 @@ Python is generally not the best choice for writing embedded systems. We made th
 - Official support for Raspberry Pi
 - Low difficulty in getting started for team members
 
-This project aims to implement the following functions:
+This project aims to implement the following features:
 
 - A basic instrumentation system
 - A basic communication system
