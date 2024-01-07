@@ -1,4 +1,4 @@
-from leads.utils import DataPersistence
+from leads.data_persistence import DataPersistence
 
 fh = open("./test_data.csv", "a")
 dp = DataPersistence(fh, max_size=4)
