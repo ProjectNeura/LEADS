@@ -72,4 +72,7 @@ DEFAULT_CONFIG = Config({})
 
 
 def load_config(file: str | _TextIO) -> Config:
-    return Config(_load(open(file)) if isinstance(file, str) else _load(file))
+    if isinstance(file, str):
+        with open(file) as f:
+            return Config(_load(f))
+    return Config(_load(file))
