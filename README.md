@@ -27,6 +27,15 @@ This project aims to implement the following features:
   - EBI (Emergency Braking Intervention)
   - ATBS (Automatic Trail Braking System)
 
+The codes are never designed for average high school students to understand. You may find it hard to read the codes if
+you do not satisfy the following requirements of skills and knowledge.
+
+- Advanced Python knowledge (you should be familiar with everything and even programming philosophy in Python)
+- Solid knowledge of Physics (you should understand how a car moves in reality)
+- Basic embedded development experience (Raspberry Pi, serial communication, PWM)
+- Rich experience in Web development (React, NextJS, FastAPI, TCP/IP, sockets)
+- Basic machine learning knowledge (linear regression, polynomial regression)
+
 ## Installation
 
 Note that LEADS requires **Python >= 3.11**.
