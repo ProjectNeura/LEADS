@@ -1,5 +1,7 @@
 # LEADS: Lightweight Embedded Assisted Driving System
 
+<img src="docs/assets/logo.png" alt="logo" style="zoom:25%;" />
+
 LEADS is a system designed for [VeC](https://www.villanovacollege.org/giving/vec-project).
 
 LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
@@ -115,13 +117,22 @@ systemctl enable leads_vec
 python -m leads_vec_rc
 ```
 
+Go to the online dashboard https://leads-vec-rc.projectneura.org.
+
 #### Register as a Systemd Service
 
 ```shell
 python -m leads_vec_rc -r systemd
 ```
 
-Go to the online dashboard https://leads-vec-rc.projectneura.org.
+This will register a system service to start the program.
+
+To enable auto-start at boot, run the following.
+
+```shell
+systemctl daemon-reload
+systemctl enable leads_vec
+```
 
 ### Configurations
 
@@ -146,6 +157,12 @@ Go to the online dashboard https://leads-vec-rc.projectneura.org.
 ## Periodic Report
 
 See [reports](docs/reports).
+
+## Architecture
+
+### Remote Controller
+
+![comm-flowchart](docs/assets/comm-flowchart.png)
 
 ## Collaborations
 
