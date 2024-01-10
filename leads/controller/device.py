@@ -4,14 +4,17 @@ from typing import Any as _Any
 
 
 class Device(object, metaclass=_ABCMeta):
-    def __init__(self, tag: str, *pins: int | str) -> None:
-        self._tag: str = tag
+    def __init__(self, *pins: int | str) -> None:
+        self._tag: str = ""
         self._pins: tuple[int | str, ...] = pins
 
-    def tag(self) -> str:
-        return self._tag
+    def tag(self, tag: str | None = None) -> str | None:
+        if tag:
+            self._tag = tag
+        else:
+            return self._tag
 
-    def initialize(self) -> None:
+    async def initialize(self) -> None:
         pass
 
     @_abstractmethod
@@ -24,8 +27,8 @@ class Device(object, metaclass=_ABCMeta):
 
 
 class ShadowDevice(Device, metaclass=_ABCMeta):
-    def __init__(self, tag: str, *pins: int | str) -> None:
-        super().__init__(tag, *pins)
+    def __init__(self, *pins: int | str) -> None:
+        super().__init__(*pins)
         self._shadow_thread: _Thread | None = None
 
     @_abstractmethod
@@ -36,6 +39,6 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
         while True:
             self.loop()
 
-    def initialize(self) -> None:
-        self._shadow_thread = _Thread(name=f"{self._tag} shadow", target=self.run)
+    async def initialize(self) -> None:
+        self._shadow_thread = _Thread(name=f"{id(self)} shadow", target=self.run)
         self._shadow_thread.start()

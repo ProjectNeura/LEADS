@@ -50,4 +50,4 @@ if __name__ == '__main__':
     config = _load_config(args.config) if args.config else _DEFAULT_CONFIG
     from leads_vec.cli import main
 
-    _exit(main(_Controller("main"), config))
+    _exit(main(_Controller(), config))

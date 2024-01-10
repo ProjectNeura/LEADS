@@ -8,11 +8,10 @@ from leads import Controller as _Controller, SRWDataContainer as _SRWDataContain
 
 class _EmulatedController(_Controller, metaclass=_ABCMeta):
     def __init__(self,
-                 tag: str,
                  minimum: int = 30,
                  maximum: int = 40,
                  skid_possibility: float = .1) -> None:
-        super().__init__(tag)
+        super().__init__()
         self.minimum: int = minimum
         self.maximum: int = maximum
         self.skid_possibility: float = skid_possibility
@@ -35,12 +34,11 @@ class DRWRandom(_EmulatedController):
 
 class _SinController(_EmulatedController, metaclass=_ABCMeta):
     def __init__(self,
-                 tag: str,
                  minimum: int = 30,
                  maximum: int = 40,
                  skid_possibility: float = .1,
                  acceleration: float = .05) -> None:
-        super().__init__(tag, minimum, maximum, skid_possibility)
+        super().__init__(minimum, maximum, skid_possibility)
         self.acceleration: float = acceleration
         self.magnitude: int = int((maximum - minimum) * .5)
         self.offset: int = minimum

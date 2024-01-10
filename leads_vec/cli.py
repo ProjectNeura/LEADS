@@ -15,8 +15,8 @@ class CustomRuntimeData(RuntimeData):
     m3_mode: int = 0
 
 
-def main(main_controller: Controller, config: Config) -> int:
-    context = Leads(srw_mode=config.srw_mode)
+def main(main_controller: Controller, cfg: Config) -> int:
+    context = Leads(srw_mode=cfg.srw_mode)
 
     def render(manager: ContextManager):
         def switch_m1_mode():
@@ -25,22 +25,22 @@ def main(main_controller: Controller, config: Config) -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = Button(font=("Arial", config.font_size_small), key=switch_m1_mode,
-                               size=(round(manager.window().width() * config.scaling_factor / 21), 13))
-        manager["m2"] = Button(font=("Arial", config.font_size_x_large),
-                               size=(round(manager.window().width() * config.scaling_factor / 126), 2))
-        manager["m3"] = Button(font=("Arial", config.font_size_medium), key=switch_m3_mode,
-                               size=(round(manager.window().width() * config.scaling_factor / 42), 7))
-        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green", font=("Arial", config.font_size_small),
-                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
-        manager["abs_status"] = Text(text="ABS READY", text_color="green", font=("Arial", config.font_size_small),
-                                     size=(round(manager.window().width() * config.scaling_factor / 40), None))
-        manager["ebi_status"] = Text(text="EBI READY", text_color="green", font=("Arial", config.font_size_small),
-                                     size=(round(manager.window().width() * config.scaling_factor / 40), None))
-        manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=("Arial", config.font_size_small),
-                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
-        manager["comm_status"] = Text(text="COMM OFFLINE", text_color="gray", font=("Arial", config.font_size_small),
-                                      size=(round(manager.window().width() * config.scaling_factor / 40), None))
+        manager["m1"] = Button(font=("Arial", cfg.font_size_small), key=switch_m1_mode,
+                               size=(round(manager.window().width() * cfg.scaling_factor / 21), 13))
+        manager["m2"] = Button(font=("Arial", cfg.font_size_x_large),
+                               size=(round(manager.window().width() * cfg.scaling_factor / 126), 2))
+        manager["m3"] = Button(font=("Arial", cfg.font_size_medium), key=switch_m3_mode,
+                               size=(round(manager.window().width() * cfg.scaling_factor / 42), 7))
+        manager["dtcs_status"] = Text(text="DTCS READY", text_color="green", font=("Arial", cfg.font_size_small),
+                                      size=(round(manager.window().width() * cfg.scaling_factor / 40), None))
+        manager["abs_status"] = Text(text="ABS READY", text_color="green", font=("Arial", cfg.font_size_small),
+                                     size=(round(manager.window().width() * cfg.scaling_factor / 40), None))
+        manager["ebi_status"] = Text(text="EBI READY", text_color="green", font=("Arial", cfg.font_size_small),
+                                     size=(round(manager.window().width() * cfg.scaling_factor / 40), None))
+        manager["atbs_status"] = Text(text="ATBS READY", text_color="green", font=("Arial", cfg.font_size_small),
+                                      size=(round(manager.window().width() * cfg.scaling_factor / 40), None))
+        manager["comm_status"] = Text(text="COMM OFFLINE", text_color="gray", font=("Arial", cfg.font_size_small),
+                                      size=(round(manager.window().width() * cfg.scaling_factor / 40), None))
 
         def switch_dtcs():
             context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
@@ -66,22 +66,22 @@ def main(main_controller: Controller, config: Config) -> int:
 
         add_hotkey("4", switch_atbs)
 
-        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=("Arial", config.font_size_small),
-                                 size=(round(manager.window().width() * config.scaling_factor / 35), 1))
-        manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=("Arial", config.font_size_small),
-                                size=(round(manager.window().width() * config.scaling_factor / 35), 1))
-        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=("Arial", config.font_size_small),
-                                size=(round(manager.window().width() * config.scaling_factor / 35), 1))
-        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=("Arial", config.font_size_small),
-                                 size=(round(manager.window().width() * config.scaling_factor / 35), 1))
+        manager["dtcs"] = Button(button_text="DTCS ON", key=switch_dtcs, font=("Arial", cfg.font_size_small),
+                                 size=(round(manager.window().width() * cfg.scaling_factor / 35), 1))
+        manager["abs"] = Button(button_text="ABS ON", key=switch_abs, font=("Arial", cfg.font_size_small),
+                                size=(round(manager.window().width() * cfg.scaling_factor / 35), 1))
+        manager["ebi"] = Button(button_text="EBI ON", key=switch_ebi, font=("Arial", cfg.font_size_small),
+                                size=(round(manager.window().width() * cfg.scaling_factor / 35), 1))
+        manager["atbs"] = Button(button_text="ATBS ON", key=switch_atbs, font=("Arial", cfg.font_size_small),
+                                 size=(round(manager.window().width() * cfg.scaling_factor / 35), 1))
 
     uim = initialize(
-        Window(config.width,
-               config.height,
-               config.refresh_rate,
+        Window(cfg.width,
+               cfg.height,
+               cfg.refresh_rate,
                CustomRuntimeData(),
-               fullscreen=config.fullscreen,
-               no_title_bar=config.no_title_bar),
+               fullscreen=cfg.fullscreen,
+               no_title_bar=cfg.no_title_bar),
         render,
         context,
         main_controller)
@@ -93,7 +93,7 @@ def main(main_controller: Controller, config: Config) -> int:
         def on_connect(self, service: Service, connection: Connection) -> None:
             uim["comm_status"].update("COMM ONLINE", text_color="black")
 
-    uim.rd().comm = start_server(create_server(config.comm_port, CustomCallback()), True)
+    uim.rd().comm = start_server(create_server(cfg.comm_port, CustomCallback()), True)
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
@@ -107,9 +107,9 @@ def main(main_controller: Controller, config: Config) -> int:
                 uim["m1"].update(f"VeC {__version__.upper()}\n\n"
                                  f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
                                  f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                 f"{'SRW MODE' if config.srw_mode else 'DRW MODE'}\n"
-                                 f"REFRESH RATE: {config.refresh_rate} FPS")
-            if uim.rd().frame_counter % int(config.refresh_rate / 4) == 0:
+                                 f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
+                                 f"REFRESH RATE: {cfg.refresh_rate} FPS")
+            if uim.rd().frame_counter % int(cfg.refresh_rate / 4) == 0:
                 uim["m2"].update(f"{int(context.data().front_wheel_speed)}")
             if uim.rd().m3_mode == 0:
                 uim["m3"].update("0.0V")

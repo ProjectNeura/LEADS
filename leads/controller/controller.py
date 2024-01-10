@@ -7,17 +7,19 @@ T = _TypeVar("T")
 
 
 class Controller(Device, _Generic[T], metaclass=_ABCMeta):
-    def __init__(self, tag: str, level: int = 0) -> None:
-        super().__init__(tag)
+    def __init__(self, level: int = 0) -> None:
+        super().__init__()
         self._level: int = level
         self._devices: dict[str, Device] = {}
 
-    def _attach_device(self, device: Device) -> None:
-        self._devices[device.tag()] = device
+    async def _attach_device(self, tag: str, device: Device) -> None:
+        self._devices[tag] = device
+        device.tag(tag)
+        await device.initialize()
 
     def device(self, tag: str, device: Device | None = None) -> Device | None:
         if device:
-            self._devices[tag] = device
+            self._attach_device(tag, device)
         else:
             return self._devices[tag]
 
