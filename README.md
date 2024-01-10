@@ -11,7 +11,7 @@ Python is generally not the best choice for writing embedded systems. We made th
 - Official support for Raspberry Pi
 - Low difficulty in getting started for team members
 
-This project aims to implement the following functions:
+This project aims to implement the following features:
 
 - A basic instrumentation system
 - A basic communication system
@@ -26,6 +26,15 @@ This project aims to implement the following functions:
   - ABS (Anti-lock Braking System)
   - EBI (Emergency Braking Intervention)
   - ATBS (Automatic Trail Braking System)
+
+The codes are never designed for average high school students to understand. You may find it hard to read the codes if
+you do not satisfy the following requirements of skills and knowledge.
+
+- Advanced Python knowledge (you should be familiar with everything and even programming philosophy in Python)
+- Solid knowledge of Physics (you should understand how a car moves in reality)
+- Basic embedded development experience (Raspberry Pi, serial communication, PWM)
+- Rich experience in Web development (React, NextJS, FastAPI, TCP/IP, sockets)
+- Basic machine learning knowledge (linear regression, polynomial regression)
 
 ## Installation
 
@@ -116,22 +125,23 @@ Go to the online dashboard https://leads-vec-rc.projectneura.org.
 
 ### Configurations
 
-|                     | Type    | Usage                                               | Used By      | Default       |
-|---------------------|---------|-----------------------------------------------------|--------------|---------------|
-| `srw_mode`          | `bool`  | `True`: single rear wheel; `False`: dual rear wheel | Main, Remote | `True`        |
-| `width`             | `int`   | Window width                                        | Main         | `720`         |
-| `height`            | `int`   | Window height                                       | Main         | `480`         |
-| `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode         | Main         | `False`       |
-| `no_title_bar`      | `bool`  | `True`: no title bar; `False`: default title bar    | Main         | `False`       |
-| `refresh_rate`      | `int`   | GUI frame per second                                | Main         | `30`          |
-| `font_size_small`   | `int`   | Small font size                                     | Main         | `8`           |
-| `font_size_medium`  | `int`   | Medium font size                                    | Main         | `16`          |
-| `font_size_large`   | `int`   | Large font size                                     | Main         | `32`          |
-| `font_size_x_large` | `int`   | Extra large font size                               | Main         | `48`          |
-| `scaling_factor`    | `float` | A factor used to scale every component              | Main         | `1`           |
-| `comm_addr`         | `str`   | Communication server address                        | Remote       | `"127.0.0.1"` |
-| `comm_port`         | `int`   | The port on which the communication system runs on  | Main, Remote | `16900`       |
-| `data_dir`          | `str`   | The directory for the data recording system         | Remote       | `"./data"`    |
+|                           | Type    | Usage                                                              | Used By      | Default       |
+|---------------------------|---------|--------------------------------------------------------------------|--------------|---------------|
+| `srw_mode`                | `bool`  | `True`: single rear wheel; `False`: dual rear wheel                | Main, Remote | `True`        |
+| `width`                   | `int`   | Window width                                                       | Main         | `720`         |
+| `height`                  | `int`   | Window height                                                      | Main         | `480`         |
+| `fullscreen`              | `bool`  | `True`: auto maximize; `False`: window mode                        | Main         | `False`       |
+| `no_title_bar`            | `bool`  | `True`: no title bar; `False`: default title bar                   | Main         | `False`       |
+| `refresh_rate`            | `int`   | GUI frame per second                                               | Main         | `30`          |
+| `font_size_small`         | `int`   | Small font size                                                    | Main         | `8`           |
+| `font_size_medium`        | `int`   | Medium font size                                                   | Main         | `16`          |
+| `font_size_large`         | `int`   | Large font size                                                    | Main         | `32`          |
+| `font_size_x_large`       | `int`   | Extra large font size                                              | Main         | `48`          |
+| `scaling_factor`          | `float` | A factor used to scale every component                             | Main         | `1`           |
+| `comm_addr`               | `str`   | Communication server address                                       | Remote       | `"127.0.0.1"` |
+| `comm_port`               | `int`   | The port on which the communication system runs on                 | Main, Remote | `16900`       |
+| `data_dir`                | `str`   | The directory for the data recording system                        | Remote       | `"./data"`    |
+| `enable_data_persistence` | `bool`  | `True`: enable data persistence; `False`: disable data persistence | Remote       | `True`        |
 
 ## Periodic Report
 

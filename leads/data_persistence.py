@@ -36,9 +36,68 @@ def csv_stringifier(element: T) -> str:
     return str(element) + ","
 
 
+class _File(_TextIO):
+    def __enter__(self):
+        pass
+
+    def close(self):
+        pass
+
+    def fileno(self):
+        pass
+
+    def flush(self):
+        pass
+
+    def isatty(self):
+        pass
+
+    def read(self, __n=-1):
+        pass
+
+    def readable(self):
+        pass
+
+    def readline(self, __limit=-1):
+        pass
+
+    def readlines(self, __hint=-1):
+        pass
+
+    def seek(self, __offset, __whence=0):
+        pass
+
+    def seekable(self):
+        pass
+
+    def tell(self):
+        pass
+
+    def truncate(self, __size=None):
+        pass
+
+    def writable(self):
+        pass
+
+    def write(self, __s):
+        pass
+
+    def writelines(self, __lines):
+        pass
+
+    def __next__(self):
+        pass
+
+    def __iter__(self):
+        pass
+
+    def __exit__(self, __type, __value, __traceback):
+        pass
+
+
 class DataPersistence(_Sequence, _Generic[T]):
     def __init__(self,
-                 file: str | _TextIO,
+                 file: str | _TextIO | None,
                  max_size: int = -1,
                  chunk_scale: int = 1,
                  compressor: Compressor = mean_compressor,
@@ -50,7 +109,7 @@ class DataPersistence(_Sequence, _Generic[T]):
         :param compressor: compressor interface
         :param stringifier: stringifier interface
         """
-        self._file: _TextIO = open(file, "a") if isinstance(file, str) else file
+        self._file: _TextIO = (open(file, "a") if isinstance(file, str) else file) if file else _File()
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
         self._compressor: Compressor = compressor

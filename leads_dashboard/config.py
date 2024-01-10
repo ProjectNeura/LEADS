@@ -24,6 +24,7 @@ class Config(object):
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
         self.data_dir: str = "./data"
+        self.enable_data_persistence: bool = True
         self.refresh()
 
     def __getitem__(self, name: str) -> _Any | None:
@@ -71,4 +72,7 @@ DEFAULT_CONFIG = Config({})
 
 
 def load_config(file: str | _TextIO) -> Config:
-    return Config(_load(open(file)) if isinstance(file, str) else _load(file))
+    if isinstance(file, str):
+        with open(file) as f:
+            return Config(_load(f))
+    return Config(_load(file))

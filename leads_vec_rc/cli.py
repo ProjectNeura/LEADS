@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from leads.comm import *
-from leads.utils import *
+from leads.data_persistence import *
 from leads_dashboard import *
 
 config = load_config(abspath(__file__)[:-6] + "config.json")
@@ -15,8 +15,10 @@ if not exists(config.data_dir):
     mkdir(config.data_dir)
     print(f"Data dir \"{config.data_dir}\" created")
 
-time_stamp_record = DataPersistence[int](config.data_dir + "/time_stamp.csv", max_size=2000)
-speed_record = DataPersistence[float](config.data_dir + "/speed.csv", max_size=2000)
+time_stamp_record = DataPersistence[int](
+    config.data_dir + "/time_stamp.csv" if config.enable_data_persistence else None, max_size=2000)
+speed_record = DataPersistence[float](config.data_dir + "/speed.csv" if config.enable_data_persistence else None,
+                                      max_size=2000)
 
 
 class CustomCallback(Callback):
