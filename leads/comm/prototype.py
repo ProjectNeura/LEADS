@@ -78,7 +78,7 @@ class Service(object, metaclass=_ABCMeta):
         raise NotImplementedError
 
 
-def _default_connection_on_close(_):
+def _default_connection_on_close(_) -> None:
     pass
 
 

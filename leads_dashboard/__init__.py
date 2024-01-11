@@ -22,7 +22,7 @@ def initialize(window: Window,
     render(ctx)
     window.runtime_data().frame_counter = 0
 
-    def on_refresh(_):
+    def on_refresh(_) -> None:
         leads.push(main_controller.read())
         leads.update()
 
