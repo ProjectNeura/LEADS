@@ -10,21 +10,13 @@ def controller(tag: str,
                parent: str | None = None,
                args: tuple[_Any] = (),
                kwargs: dict[str, _Any] | None = None) -> _Callable[[type], None]:
-    if tag in _controllers:
-        raise RuntimeError(f"Cannot register: tag \"{tag}\" is already used")
-    if parent:
-        p = _controllers[parent]
     if not kwargs:
         kwargs = {}
 
     def _(target: type) -> None:
         if not issubclass(target, Controller):
             raise TypeError("Controllers must inherit from `Controller`")
-        instance = target(*args, **kwargs)
-        instance.tag(tag)
-        _controllers[tag] = instance
-        if parent:
-            p.device(tag, instance)
+        register_controller(tag, target(*args, **kwargs), parent)
 
     return _
 
@@ -62,11 +54,13 @@ def device(tag: str | _Sequence[str],
     return _
 
 
+def register_controller(tag: str, c: Controller, parent: str | None = None) -> None:
+    if tag in _controllers:
+        raise RuntimeError(f"Cannot register: tag \"{tag}\" is already used")
+    if parent:
+        _controllers[parent].device(tag, c)
+    _controllers[tag] = c
+
+
 def get_controller(tag: str) -> Controller:
     return _controllers[tag]
-
-
-@controller("main", args=(1,))
-class A(Controller[str]):
-    def read(self) -> str:
-        return ""

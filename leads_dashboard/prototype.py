@@ -16,7 +16,7 @@ def default_on_kill() -> None:
     pass
 
 
-Widget = _Element
+Widget: type = _Element
 
 T = _TypeVar("T", bound=RuntimeData)
 

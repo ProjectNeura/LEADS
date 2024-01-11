@@ -3,7 +3,7 @@ from importlib.util import find_spec as _find_spec
 if not _find_spec("PySimpleGUI"):
     raise ImportError("Please install `pysimplegui` to run this module\n>>>pip install pysimplegui")
 
-from typing import Callable as _Callable, TypeVar as _TypeVar
+from typing import Callable as _Callable, Any as _Any
 
 from leads import Leads as _Leads, Controller as _Controller
 from leads.comm import Server as _Server, create_server as _create_server
@@ -11,13 +11,11 @@ from leads_dashboard.prototype import *
 from leads_dashboard.runtime import *
 from leads_dashboard.config import *
 
-T = _TypeVar("T")
-
 
 def initialize(window: Window,
                render: _Callable[[ContextManager], None],
-               leads: _Leads[T],
-               main_controller: _Controller[T]) -> ContextManager:
+               leads: _Leads[_Any],
+               main_controller: _Controller) -> ContextManager:
     ctx = ContextManager(window)
     render(ctx)
     window.runtime_data().frame_counter = 0

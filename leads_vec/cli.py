@@ -15,7 +15,7 @@ class CustomRuntimeData(RuntimeData):
     m3_mode: int = 0
 
 
-def main(main_controller: Controller, cfg: Config) -> int:
+def main(cfg: Config) -> int:
     context = Leads(srw_mode=cfg.srw_mode)
 
     def render(manager: ContextManager):
@@ -84,7 +84,7 @@ def main(main_controller: Controller, cfg: Config) -> int:
                no_title_bar=cfg.no_title_bar),
         render,
         context,
-        main_controller)
+        get_controller(MAIN_CONTROLLER))
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:

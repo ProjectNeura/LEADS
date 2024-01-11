@@ -68,7 +68,7 @@ class Config(object):
                 self.__setattr__(name, v)
 
 
-DEFAULT_CONFIG = Config({})
+DEFAULT_CONFIG: Config = Config({})
 
 
 def load_config(file: str | _TextIO) -> Config:

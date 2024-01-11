@@ -1,6 +1,6 @@
-from leads import Sensor as _Sensor, T
+from leads import ShadowDevice as _ShadowDevice
 
 
-class GPSReceiver(_Sensor[[float, float]]):
-    def read(self) -> T:
+class GPSReceiver(_ShadowDevice):
+    def read(self) -> [float, float]:
         return [.0, .0]
