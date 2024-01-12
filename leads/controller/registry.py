@@ -33,18 +33,21 @@ def _register_device(prototype: type,
 
 
 def device(tag: str | _Sequence[str],
-           parent: str,
+           parent: str | _Sequence[str],
            args: tuple[_Any] | list[tuple[_Any]] = (),
            kwargs: dict[str, _Any] | list[dict[str, _Any]] | None = None) -> _Callable[[type], None]:
     if isinstance(tag, str):
         tag = [tag]
     p = _controllers[parent]
+    n = len(tag)
+    if isinstance(parent, str):
+        p = [parent] * n
     if isinstance(args, tuple):
-        args = [args]
+        args = [args] * n
     if not kwargs:
-        kwargs = [{}]
+        kwargs = [{}] * n
     elif isinstance(kwargs, dict):
-        kwargs = [kwargs]
+        kwargs = [kwargs] * n
 
     def _(target: type) -> None:
         if not issubclass(target, Device):
