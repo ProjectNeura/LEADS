@@ -5,7 +5,7 @@ from leads import Controller as _Controller, controller as _controller, MAIN_CON
 
 @_controller(_MAIN_CONTROLLER)
 class RaspberryPi4B(_Controller):
-    async def initialize(self) -> None:
+    async def initialize(self, *parent_tags: str) -> None:
         _GPIO.setmode(_GPIO.BCM)
 
     def read(self) -> None:

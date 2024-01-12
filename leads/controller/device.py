@@ -48,6 +48,6 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
         while True:
             self.loop()
 
-    async def initialize(self) -> None:
+    async def initialize(self, *parent_tags: str) -> None:
         self._shadow_thread = _Thread(name=f"{id(self)} shadow", target=self.run)
         self._shadow_thread.start()
