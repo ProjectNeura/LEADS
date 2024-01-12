@@ -5,19 +5,21 @@ from leads.controller.device import Device
 
 
 class Controller(Device, metaclass=_ABCMeta):
-    def __init__(self, level: int = 0) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self._level: int = level
         self._devices: dict[str, Device] = {}
+
+    def level(self) -> int:
+        return len(self.parent_tags())
 
     async def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
         device.tag(tag)
         await device.initialize()
 
-    def device(self, tag: str, device: Device | None = None) -> Device | None:
+    async def device(self, tag: str, device: Device | None = None) -> Device | None:
         if device:
-            self._attach_device(tag, device)
+            await self._attach_device(tag, device)
         else:
             return self._devices[tag]
 

@@ -28,6 +28,7 @@ def _register_device(prototype: type,
                      kwargs: dict[str, _Any]) -> None:
     instance = prototype(*args, **kwargs)
     instance.tag(tag)
+    parent.parent_tags(parent.parent_tags())
     parent.device(tag, instance)
 
 
@@ -58,7 +59,9 @@ def register_controller(tag: str, c: Controller, parent: str | None = None) -> N
     if tag in _controllers:
         raise RuntimeError(f"Cannot register: tag \"{tag}\" is already used")
     if parent:
-        _controllers[parent].device(tag, c)
+        c.parent_tags((p := _controllers[parent]).parent_tags() + c.parent_tags())
+        p.device(tag, c)
+
     _controllers[tag] = c
 
 

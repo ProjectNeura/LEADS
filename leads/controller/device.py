@@ -6,6 +6,7 @@ from typing import Any as _Any
 class Device(object, metaclass=_ABCMeta):
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""
+        self._parent_tags: list[str] = []
         self._pins: tuple[int | str, ...] = pins
 
     def tag(self, tag: str | None = None) -> str | None:
@@ -13,6 +14,14 @@ class Device(object, metaclass=_ABCMeta):
             self._tag = tag
         else:
             return self._tag
+
+    def parent_tags(self, parent_tags: list[str] | None = None) -> list[str] | None:
+        if parent_tags:
+            if len(self._parent_tags) > 0:
+                raise RuntimeError("Duplicated initialization")
+            self._parent_tags = parent_tags
+        else:
+            return self._parent_tags
 
     async def initialize(self) -> None:
         pass
