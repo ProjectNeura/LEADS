@@ -15,10 +15,10 @@ if not exists(config.data_dir):
     mkdir(config.data_dir)
     print(f"Data dir \"{config.data_dir}\" created")
 
-time_stamp_record = DataPersistence[int](
-    config.data_dir + "/time_stamp.csv" if config.enable_data_persistence else None, max_size=2000)
-speed_record = DataPersistence[float](config.data_dir + "/speed.csv" if config.enable_data_persistence else None,
-                                      max_size=2000)
+time_stamp_record = DataPersistence(config.data_dir + "/time_stamp.csv", persistence=config.enable_data_persistence,
+                                    max_size=2000)
+speed_record = DataPersistence(config.data_dir + "/speed.csv", persistence=config.enable_data_persistence,
+                               max_size=2000)
 
 
 class CustomCallback(Callback):
