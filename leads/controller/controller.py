@@ -10,12 +10,12 @@ class Controller(Device, metaclass=_ABCMeta):
         self._devices: dict[str, Device] = {}
 
     def level(self) -> int:
-        return len(self.parent_tags())
+        return len(self._parent_tags)
 
     async def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
         device.tag(tag)
-        await device.initialize()
+        await device.initialize(*tuple(self._parent_tags), self._tag)
 
     async def device(self, tag: str, device: Device | None = None) -> Device | None:
         if device:

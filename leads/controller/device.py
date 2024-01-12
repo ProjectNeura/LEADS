@@ -21,9 +21,9 @@ class Device(object, metaclass=_ABCMeta):
                 raise RuntimeError("Duplicated initialization")
             self._parent_tags = parent_tags
         else:
-            return self._parent_tags
+            return self._parent_tags[:]
 
-    async def initialize(self) -> None:
+    async def initialize(self, *parent_tags: str) -> None:
         pass
 
     @_abstractmethod

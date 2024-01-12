@@ -2,6 +2,7 @@ from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence
 
 from leads.controller.controller import Controller
 from leads.controller.device import Device
+from leads.controller.predefined_tags import MAIN_CONTROLLER
 
 _controllers: dict[str, Controller] = {}
 
@@ -70,3 +71,7 @@ def register_controller(tag: str, c: Controller, parent: str | None = None) -> N
 
 def get_controller(tag: str) -> Controller:
     return _controllers[tag]
+
+
+def initialize_main() -> None:
+    get_controller(MAIN_CONTROLLER).initialize()
