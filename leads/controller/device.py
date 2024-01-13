@@ -36,6 +36,9 @@ class Device(object):
     def write(self, payload: _Any) -> None:
         raise NotImplementedError
 
+    def close(self) -> None:
+        pass
+
 
 class ShadowDevice(Device, metaclass=_ABCMeta):
     def __init__(self, *pins: int | str) -> None:

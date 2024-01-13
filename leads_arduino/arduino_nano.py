@@ -18,3 +18,6 @@ class ArduinoNano(_Controller):
 
     def write(self, payload: bytes) -> None:
         self._serial.write(payload)
+
+    def close(self) -> None:
+        self._serial.close()
