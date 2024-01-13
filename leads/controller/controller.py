@@ -1,5 +1,3 @@
-from typing import Any as _Any
-
 from leads.controller.device import Device
 
 
@@ -21,9 +19,3 @@ class Controller(Device):
             await self._attach_device(tag, device)
         else:
             return self._devices[tag]
-
-    def read(self) -> _Any:
-        raise NotImplementedError
-
-    def write(self, payload: _Any) -> None:
-        raise NotImplementedError
