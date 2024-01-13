@@ -43,12 +43,12 @@ you do not satisfy the following requirements of skills and knowledge.
 Note that LEADS requires **Python >= 3.11**.
 
 ```shell
-pip install pysimplegui keyboard pyserial leads
+pip install pysimplegui keyboard RPi.GPIO pyserial leads
 ```
 
 `numpy` will be automatically installed with `leads`.
 
-`pysimplegui`, `keyboard`, and `pyserial` are optional.
+`pysimplegui`, `keyboard`, `RPi.GPIO`, and `pyserial` are optional.
 
 If you need only the skeleton, run the following.
 
