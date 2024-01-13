@@ -131,7 +131,7 @@ To enable auto-start at boot, run the following.
 
 ```shell
 systemctl daemon-reload
-systemctl enable leads_vec
+systemctl enable leads_vec_rc
 ```
 
 ### Configurations
