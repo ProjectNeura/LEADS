@@ -3,7 +3,7 @@ from threading import Thread as _Thread
 from typing import Any as _Any
 
 
-class Device(object, metaclass=_ABCMeta):
+class Device(object):
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""
         self._parent_tags: list[str] = []
@@ -30,11 +30,9 @@ class Device(object, metaclass=_ABCMeta):
     async def initialize(self, *parent_tags: str) -> None:
         pass
 
-    @_abstractmethod
     def read(self) -> _Any:
         raise NotImplementedError
 
-    @_abstractmethod
     def write(self, payload: _Any) -> None:
         raise NotImplementedError
 

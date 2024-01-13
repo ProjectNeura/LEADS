@@ -1,12 +1,12 @@
 from RPi import GPIO as _GPIO
 
-from leads import Controller as _Controller, controller as _controller, MAIN_CONTROLLER as _MAIN_CONTROLLER
+from leads import Controller as _Controller
 
 
-@_controller(_MAIN_CONTROLLER)
 class RaspberryPi4B(_Controller):
+    def __init__(self, srw_mode: bool = True) -> None:
+        super().__init__()
+        self._srw_mode: bool = srw_mode
+
     async def initialize(self, *parent_tags: str) -> None:
         _GPIO.setmode(_GPIO.BCM)
-
-    def read(self) -> None:
-        return None

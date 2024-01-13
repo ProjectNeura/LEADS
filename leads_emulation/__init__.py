@@ -1,4 +1,3 @@
-from abc import ABCMeta as _ABCMeta
 from math import sin as _sin, pi as _pi
 from random import randint as _randint
 
@@ -6,7 +5,7 @@ from leads import Controller as _Controller, SRWDataContainer as _SRWDataContain
     DRWDataContainer as _DRWDataContainer
 
 
-class _EmulatedController(_Controller, metaclass=_ABCMeta):
+class _EmulatedController(_Controller):
     def __init__(self,
                  minimum: int = 30,
                  maximum: int = 40,
@@ -32,7 +31,7 @@ class DRWRandom(_EmulatedController):
                                  rws)
 
 
-class _SinController(_EmulatedController, metaclass=_ABCMeta):
+class _SinController(_EmulatedController):
     def __init__(self,
                  minimum: int = 30,
                  maximum: int = 40,

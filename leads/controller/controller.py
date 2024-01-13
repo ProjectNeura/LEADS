@@ -1,10 +1,9 @@
-from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from typing import Any as _Any
 
 from leads.controller.device import Device
 
 
-class Controller(Device, metaclass=_ABCMeta):
+class Controller(Device):
     def __init__(self) -> None:
         super().__init__()
         self._devices: dict[str, Device] = {}
@@ -23,7 +22,6 @@ class Controller(Device, metaclass=_ABCMeta):
         else:
             return self._devices[tag]
 
-    @_abstractmethod
     def read(self) -> _Any:
         raise NotImplementedError
 

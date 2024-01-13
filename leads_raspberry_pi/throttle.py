@@ -4,8 +4,8 @@ from leads import ShadowDevice as _ShadowDevice
 
 
 class Throttle(_ShadowDevice):
-    def read(self) -> _Any:
+    def loop(self) -> None:
         pass
 
-    def loop(self) -> None:
+    def read(self) -> _Any:
         pass
