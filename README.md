@@ -1,6 +1,6 @@
 # LEADS: Lightweight Embedded Assisted Driving System
 
-<img src="docs/assets/logo.png" alt="logo" style="zoom:25%;" />
+<img src="https://projectneura.org/img/logo.png" alt="logo" style="zoom:25%;" />
 
 LEADS is a system designed for [VeC](https://www.villanovacollege.org/giving/vec-project).
 
