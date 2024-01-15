@@ -13,7 +13,7 @@ class CustomCallback(Callback):
     def on_receive(self, service: Service, msg: bytes):
         print(msg)
 
-    def on_disconnect(self, service: Service):
+    def on_disconnect(self, service: Service, connection: Connection) -> None:
         print("Disconnected")
 
 
