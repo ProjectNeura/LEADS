@@ -1,5 +1,5 @@
 from leads_arduino.arduino_proto import ArduinoProto
 
 
-class ArduinoNano(ArduinoProto):
+class ArduinoMicro(ArduinoProto):
     pass
