@@ -14,9 +14,9 @@ void setup() {
 }
 
 boolean pulse(int pin) {
-  return digitalRead(pin) == LOW
+  return digitalRead(pin) == LOW;
 }
 
 void loop() {
-  if (pulse(PIN_LFWSS) Serial.println("A");
+  if (pulse(PIN_LFWSS)) Serial.println("A");
 }
