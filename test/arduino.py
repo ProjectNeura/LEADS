@@ -15,5 +15,4 @@ class CustomCallback(Callback):
 
 controller = ArduinoMicro("COM3", CustomCallback())
 controller.initialize()
-print(controller.write(b"a"))
 controller.close()

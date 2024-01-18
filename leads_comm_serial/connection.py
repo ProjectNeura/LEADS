@@ -17,13 +17,13 @@ class SerialConnection(_Connection):
             raise IOError("An open serial is required")
         return self._serial
 
-    def receive(self, chunk_size: int = 512) -> bytes | None:
+    def receive(self, chunk_size: int = 128) -> bytes | None:
         if self._remainder != b"":
             return self.use_remainder()
         try:
-            msg = b""
-            while not msg.endswith(b";"):
-                msg += self._require_open_serial().read(chunk_size)
+            msg = chunk = b""
+            while b";" not in chunk:
+                msg += (chunk := self._require_open_serial().read(chunk_size))
             return self.with_remainder(msg)
         except IOError:
             return
@@ -32,9 +32,6 @@ class SerialConnection(_Connection):
         self._require_open_serial().write(msg + b";")
         if msg == b"disconnect":
             self.close()
-
-    def disconnect(self) -> None:
-        self.send(b"disconnect")
 
     def close(self) -> None:
         self._require_open_serial(False).close()

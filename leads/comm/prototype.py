@@ -92,11 +92,14 @@ class ConnectionBase(metaclass=_ABCMeta):
         self._remainder: bytes = remainder
 
     def use_remainder(self) -> bytes:
-        if (i := self._remainder.find(b";")) != len(self._remainder) - 1:
-            msg = self._remainder[:i + 1]
-            self._remainder = self._remainder[i:]
-        else:
+        if (i := self._remainder.find(b";")) < 0:
+            msg = self._remainder
+            self._remainder = b""
+        elif i != len(self._remainder) - 1:
             msg = self._remainder[:i]
+            self._remainder = self._remainder[i + 1:]
+        else:
+            msg = self._remainder[:-1]
             self._remainder = b""
         return msg
 
@@ -127,12 +130,11 @@ class ConnectionBase(metaclass=_ABCMeta):
         """
         raise NotImplementedError
 
-    @_abstractmethod
     def disconnect(self) -> None:
         """
         Request disconnection.
         """
-        raise NotImplementedError
+        self.send(b"disconnect")
 
     @_abstractmethod
     def close(self) -> None:
@@ -174,9 +176,9 @@ class Connection(ConnectionBase):
         if self._remainder != b"":
             return self.use_remainder()
         try:
-            msg = b""
-            while not msg.endswith(b";"):
-                msg += self._require_open_socket().recv(chunk_size)
+            msg = chunk = b""
+            while b";" not in chunk:
+                msg += (chunk := self._require_open_socket().recv(chunk_size))
             return self.with_remainder(msg)
         except IOError:
             return
@@ -185,9 +187,6 @@ class Connection(ConnectionBase):
         self._require_open_socket().send(msg + b";")
         if msg == b"disconnect":
             self.close()
-
-    def disconnect(self) -> None:
-        self.send(b"disconnect")
 
     def close(self) -> None:
         self._on_close(self)
