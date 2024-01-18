@@ -12,7 +12,7 @@ public:
     ArrayList(int initialCapacity);
     ArrayList(E *initialArray);
     int size();
-    E *toArray();
+    E *const &toArray();
 };
 
 
