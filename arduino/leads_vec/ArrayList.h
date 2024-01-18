@@ -1,24 +1,19 @@
+#ifndef ARRAYLIST_H
+#define ARRAYLIST_H
+
+
 template<typename E>
 class ArrayList {
 private:
-  static const int DEFAULT_CAPACITY = 10;
-  E* elementData;
-  int _size;
-  static int calculateCapacity(E* elementData, int minCapacity);
-  void ensureCapacityInternal(int minCapacity);
-  void grow(int minCapacity);
+    E *_array = {};
+
 public:
-  ArrayList(int initialCapacity);
-  ArrayList();
-  ArrayList(E* c);
-  int size();
-  bool isEmpty();
-  bool contains(E o);
-  int indexOf(E o);
-  int indexOfRange(E o, int start, int end);
-  int lastIndexOf(E o);
-  int lastIndexOfRange(E o, int start, int end);
-  E* toArray();
-  E get();
-  void add(E o);
+    ArrayList();
+    ArrayList(int initialCapacity);
+    ArrayList(E *initialArray);
+    int size();
+    E *toArray();
 };
+
+
+#endif // ARRAYLIST_H
