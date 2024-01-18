@@ -3,7 +3,7 @@ class ArrayList {
 private:
   static const int DEFAULT_CAPACITY = 10;
   E* elementData;
-  int s;
+  int _size;
   static int calculateCapacity(E* elementData, int minCapacity);
   void ensureCapacityInternal(int minCapacity);
   void grow(int minCapacity);

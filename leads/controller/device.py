@@ -25,7 +25,7 @@ class Device(object):
 
     def pins_check(self, required_num: int) -> None:
         if len(self._pins) != required_num:
-            raise ValueError(f"`{self.__class__.__name__}` only takes in {required_num} pin")
+            raise ValueError(f"`{self.__class__.__name__}` only takes in {required_num} pins")
 
     def initialize(self, *parent_tags: str) -> None:
         pass
