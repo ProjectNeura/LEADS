@@ -38,3 +38,5 @@ class Server(Entity):
     def kill(self) -> None:
         self._killed = True
         self._socket.close()
+        for connection in self._connections:
+            connection.close()

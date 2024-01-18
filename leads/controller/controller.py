@@ -9,13 +9,13 @@ class Controller(Device):
     def level(self) -> int:
         return len(self._parent_tags)
 
-    async def _attach_device(self, tag: str, device: Device) -> None:
+    def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
         device.tag(tag)
-        await device.initialize(*tuple(self._parent_tags), self._tag)
+        device.initialize(*tuple(self._parent_tags), self._tag)
 
-    async def device(self, tag: str, device: Device | None = None) -> Device | None:
+    def device(self, tag: str, device: Device | None = None) -> Device | None:
         if device:
-            await self._attach_device(tag, device)
+            self._attach_device(tag, device)
         else:
             return self._devices[tag]
