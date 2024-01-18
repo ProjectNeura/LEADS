@@ -82,29 +82,78 @@ def _default_connection_on_close(_) -> None:
     pass
 
 
-class Connection(object):
-    def __init__(self, service: Service, socket: _socket, address: tuple[str, int],
-                 remainder_data: bytes = b"",
-                 on_close: _Callable[[_Self], None] = _default_connection_on_close) -> None:
+class ConnectionBase(metaclass=_ABCMeta):
+    def __init__(self, service: Service, remainder: bytes) -> None:
         """
         :param service: the service to which it belongs
-        :param socket: the connection socket
-        :param address: peer address
-        :param remainder_data: message remain from last connection
+        :param remainder: message remain from last connection
         """
         self._service: Service = service
+        self._remainder: bytes = remainder
+
+    def use_remainder(self) -> bytes:
+        if (i := self._remainder.find(b";")) != len(self._remainder) - 1:
+            msg = self._remainder[:i + 1]
+            self._remainder = self._remainder[i:]
+        else:
+            msg = self._remainder[:i]
+            self._remainder = b""
+        return msg
+
+    def with_remainder(self, msg: bytes) -> bytes:
+        if (i := msg.find(b";")) != len(msg) - 1:
+            self._remainder = msg[i + 1:]
+            return msg[:i]
+        return msg[:len(msg) - 1]
+
+    @_abstractmethod
+    def closed(self) -> bool:
+        """
+        :return: True: the socket is closed; False: the socket is active
+        """
+        raise NotImplementedError
+
+    @_abstractmethod
+    def receive(self) -> bytes | None:
+        """
+        :return: message in bytes or None
+        """
+        raise NotImplementedError
+
+    @_abstractmethod
+    def send(self, msg: bytes) -> None:
+        """
+        :param msg: message in bytes
+        """
+        raise NotImplementedError
+
+    @_abstractmethod
+    def disconnect(self) -> None:
+        """
+        Request disconnection.
+        """
+        raise NotImplementedError
+
+    @_abstractmethod
+    def close(self) -> None:
+        """
+        Directly close the socket.
+        """
+        raise NotImplementedError
+
+
+class Connection(ConnectionBase):
+    def __init__(self, service: Service, socket: _socket, address: tuple[str, int], remainder: bytes = b"",
+                 on_close: _Callable[[_Self], None] = _default_connection_on_close) -> None:
+        super().__init__(service, remainder)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
-        self._remainder: bytes = remainder_data
         self._on_close: _Callable[[_Self], None] = on_close
 
     def __str__(self) -> str:
         return self._address[0] + ":" + str(self._address[1])
 
     def closed(self) -> bool:
-        """
-        :return: True: the socket is closed; False: the socket is active
-        """
         return self._socket.fileno() == -1
 
     def _require_open_socket(self, mandatory: bool = True) -> _socket:
@@ -123,43 +172,24 @@ class Connection(object):
         :return: message in bytes or None
         """
         if self._remainder != b"":
-            if (i := self._remainder.find(b";")) != len(self._remainder) - 1:
-                msg = self._remainder[:i + 1]
-                self._remainder = self._remainder[i:]
-            else:
-                msg = self._remainder[:i]
-                self._remainder = b""
-            return msg
+            return self.use_remainder()
         try:
             msg = b""
             while not msg.endswith(b";"):
                 msg += self._require_open_socket().recv(chunk_size)
-            if (i := msg.find(b";")) != len(msg) - 1:
-                self._remainder = msg[i + 1:]
-                return msg[:i]
-            return msg[:len(msg) - 1]
+            return self.with_remainder(msg)
         except IOError:
             return
 
     def send(self, msg: bytes) -> None:
-        """
-        :param msg: message in bytes
-        """
         self._require_open_socket().send(msg + b";")
         if msg == b"disconnect":
-            self._on_close(self)
             self.close()
 
     def disconnect(self) -> None:
-        """
-        Request disconnection.
-        """
         self.send(b"disconnect")
 
     def close(self) -> None:
-        """
-        Directly close the socket.
-        """
         self._on_close(self)
         self._require_open_socket(False).close()
 
@@ -171,13 +201,13 @@ class Callback(object):
     def on_fail(self, service: Service, error: Exception) -> None:
         pass
 
-    def on_connect(self, service: Service, connection: Connection) -> None:
+    def on_connect(self, service: Service, connection: ConnectionBase) -> None:
         pass
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         pass
 
-    def on_disconnect(self, service: Service, connection: Connection) -> None:
+    def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
         pass
 
 
@@ -190,7 +220,7 @@ class Entity(Service, metaclass=_ABCMeta):
         super().__init__(port)
         self.callback: Callback = callback
 
-    def _stage(self, connection: Connection) -> None:
+    def _stage(self, connection: ConnectionBase) -> None:
         while True:
             msg = connection.receive()
             if not msg or msg == b"disconnect":

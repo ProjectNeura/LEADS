@@ -17,7 +17,7 @@ class WheelSpeedSensor(_Device):
     def pulse(self) -> None:
         self._pulses.append(_time())
 
-    async def initialize(self, *parent_tags: str) -> None:
+    def initialize(self, *parent_tags: str) -> None:
         self.pins_check(1)
         _GPIO.setup(self._pins[0], _GPIO.IN, pull_up_down=_GPIO.PUD_UP)
         _GPIO.add_event_detect(self._pins[0], _GPIO.FALLING, callback=self.pulse, bouncetime=20)

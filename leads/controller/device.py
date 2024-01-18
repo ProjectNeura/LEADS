@@ -27,7 +27,7 @@ class Device(object):
         if len(self._pins) != required_num:
             raise ValueError(f"`{self.__class__.__name__}` only takes in {required_num} pin")
 
-    async def initialize(self, *parent_tags: str) -> None:
+    def initialize(self, *parent_tags: str) -> None:
         pass
 
     def read(self) -> _Any:
@@ -53,6 +53,6 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
         while True:
             self.loop()
 
-    async def initialize(self, *parent_tags: str) -> None:
+    def initialize(self, *parent_tags: str) -> None:
         self._shadow_thread = _Thread(name=f"{id(self)} shadow", target=self.run)
         self._shadow_thread.start()

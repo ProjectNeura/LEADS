@@ -8,5 +8,5 @@ class RaspberryPi4B(_Controller):
         super().__init__()
         self._srw_mode: bool = srw_mode
 
-    async def initialize(self, *parent_tags: str) -> None:
+    def initialize(self, *parent_tags: str) -> None:
         _GPIO.setmode(_GPIO.BCM)

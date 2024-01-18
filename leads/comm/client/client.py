@@ -17,4 +17,5 @@ class Client(Entity):
         self._connection.send(msg)
 
     def kill(self) -> None:
-        self._socket.close()
+        if self._connection:
+            self._connection.close()
