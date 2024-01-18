@@ -2,8 +2,6 @@ template<typename E>
 class ArrayList {
 private:
   static const int DEFAULT_CAPACITY = 10;
-  static const E EMPTY_ELEMENTDATA[] = {};
-  static const E DEFAULTCAPACITY_EMPTY_ELEMENTDATA[] = {};
   E* elementData;
   int s;
   static int calculateCapacity(E* elementData, int minCapacity);
@@ -21,4 +19,6 @@ public:
   int lastIndexOf(E o);
   int lastIndexOfRange(E o, int start, int end);
   E* toArray();
+  E get();
+  void add(E o);
 };
