@@ -81,7 +81,7 @@ python -m leads_vec -h
 ##### Specify a Configuration File
 
 ```shell
-python -m leads_vec -c path/to/the/config/file run
+python -m leads_vec -c path/to/the/config/file.json run
 ```
 
 If not specified, all configurations will be default values.
@@ -94,7 +94,7 @@ To learn about the configuration file, read [Configurations](#Configurations).
 python -m leads_vec -r config run
 ```
 
-This will generate a default `config.json` file under the current directory.
+This will generate a default "config.json" file under the current directory.
 
 ##### Register as a Systemd Service
 
@@ -135,6 +135,15 @@ systemctl enable leads_vec_rc
 ```
 
 ### Configurations
+
+The configuration is a json file that has the following columns. You can have an empty configuration file like the
+following as all the columns are optional.
+
+```json
+{}
+```
+
+Note that a purely empty file could cause error.
 
 |                           | Type    | Usage                                                              | Used By      | Default       |
 |---------------------------|---------|--------------------------------------------------------------------|--------------|---------------|

@@ -1,8 +1,8 @@
 from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence
 
-from leads.controller.controller import Controller
-from leads.controller.device import Device
-from leads.controller.predefined_tags import MAIN_CONTROLLER
+from leads.dt.controller import Controller
+from leads.dt.device import Device
+from leads.dt.predefined_tags import MAIN_CONTROLLER
 
 _controllers: dict[str, Controller] = {}
 

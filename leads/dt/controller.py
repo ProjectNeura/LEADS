@@ -1,4 +1,4 @@
-from leads.controller.device import Device
+from leads.dt.device import Device
 
 
 class Controller(Device):
