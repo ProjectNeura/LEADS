@@ -5,6 +5,7 @@
 template<typename E>
 class ArrayList {
 private:
+    int _size;
     E *_array = {};
 
 public:

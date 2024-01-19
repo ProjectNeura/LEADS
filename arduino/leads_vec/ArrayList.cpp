@@ -11,7 +11,7 @@ ArrayList<E>::ArrayList(E *initialArray) {
 }
 template<typename E>
 int ArrayList<E>::size() {
-    return sizeof(_array);
+    return _size;
 }
 template<typename E>
 E *const &ArrayList<E>::toArray() {

@@ -107,7 +107,7 @@ class ConnectionBase(metaclass=_ABCMeta):
         if (i := msg.find(b";")) != len(msg) - 1:
             self._remainder = msg[i + 1:]
             return msg[:i]
-        return msg[:len(msg) - 1]
+        return msg[:-1]
 
     @_abstractmethod
     def closed(self) -> bool:
