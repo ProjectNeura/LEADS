@@ -4,7 +4,7 @@ from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
-    initialize_main as _initialize_main
+    initialize_main as _initialize_main, L as _L
 from leads_dashboard import get_system_platform as _get_system_platform, load_config as _load_config, \
     DEFAULT_CONFIG as _DEFAULT_CONFIG
 
@@ -20,24 +20,24 @@ if __name__ == '__main__':
     if args.action == "info":
         from leads_vec.__version__ import __version__
 
-        print(f"LEADS Version: {__version__}",
-              f"System Platform: {_get_system_platform()}",
-              f"Python Version: {_version}",
-              sep="\n")
+        _L.info(f"LEADS Version: {__version__}",
+                f"System Platform: {_get_system_platform()}",
+                f"Python Version: {_version}",
+                sep="\n")
         _exit()
     if args.register == "systemd":
         if _get_system_platform() != "linux":
             _exit("Error: Unsupported operating system")
         if not _exists("/usr/local/leads/config.json"):
-            print("Config file not found. Creating \"/usr/local/leads/config.json\"...")
+            _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
             _mkdir("/usr/local/leads")
             with open("/usr/local/leads/config.json", "w") as f:
                 f.write(str(_DEFAULT_CONFIG))
-            print("Using \"/usr/local/leads/config.json\"")
+            _L.info("Using \"/usr/local/leads/config.json\"")
         from ._bootloader import create_service
 
         create_service()
-        print("Service registered")
+        _L.info("Service registered")
     elif args.register == "config":
         if _exists("config.json"):
             r = input("\"config.json\" already exists. Overwrite? (y/N) >>>").lower()
@@ -45,7 +45,7 @@ if __name__ == '__main__':
                 _exit("Error: Aborted")
         with open("config.json", "w") as f:
             f.write(str(_DEFAULT_CONFIG))
-        print("Configuration file saved to \"config.json\"")
+        _L.info("Configuration file saved to \"config.json\"")
     try:
         from leads_emulation import SRWRandom as _Controller
     except ImportError:

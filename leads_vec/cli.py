@@ -88,7 +88,7 @@ def main(cfg: Config) -> int:
 
     class CustomCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
-            print("Server failed to start")
+            L.error("Server failed to start")
 
         def on_connect(self, service: Service, connection: Connection) -> None:
             uim["comm_status"].update("COMM ONLINE", text_color="black")

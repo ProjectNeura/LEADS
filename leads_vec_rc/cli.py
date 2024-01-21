@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from leads import L
 from leads.comm import *
 from leads.data_persistence import *
 from leads_dashboard import *
@@ -13,7 +14,7 @@ from leads_dashboard import *
 config = load_config(abspath(__file__)[:-6] + "config.json")
 if not exists(config.data_dir):
     mkdir(config.data_dir)
-    print(f"Data dir \"{config.data_dir}\" created")
+    L.info(f"Data dir \"{config.data_dir}\" created")
 
 time_stamp_record = DataPersistence(config.data_dir + "/time_stamp.csv", persistence=config.enable_data_persistence,
                                     max_size=2000)
@@ -23,10 +24,10 @@ speed_record = DataPersistence(config.data_dir + "/speed.csv", persistence=confi
 
 class CustomCallback(Callback):
     def on_connect(self, service: Service, connection: Connection) -> None:
-        print("Connected")
+        L.info("Connected")
 
     def on_fail(self, service: Service, error: Exception) -> None:
-        print(error)
+        L.error(str(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         data = loads(msg.decode())

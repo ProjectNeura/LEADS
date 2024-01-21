@@ -3,6 +3,7 @@ from os import system as _system, chdir as _chdir
 from os.path import abspath as _abspath
 from sys import exit as _exit
 
+from leads import L as _L
 from leads_dashboard import get_system_platform as _get_system_platform
 
 if __name__ == '__main__':
@@ -17,6 +18,6 @@ if __name__ == '__main__':
         from ._bootloader import create_service
 
         create_service()
-        print("Service registered")
+        _L.info("Service registered")
     _chdir(_abspath(__file__)[:-12])
     _system("uvicorn cli:app --reload")

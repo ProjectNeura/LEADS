@@ -46,14 +46,18 @@ class Logger(object):
         if self._debug_level <= level:
             print(msg)
 
-    def info(self, msg: str, f: tuple[int, int | None, int | None] = (REGULAR, None, None)):
-        self.print(self.format(self.mark(msg, Level.INFO), *f), Level.INFO)
+    def info(self, *msg: str, sep: str = " ", end: str = "\n",
+             f: tuple[int, int | None, int | None] = (REGULAR, None, None)):
+        self.print(self.format(self.mark(sep.join(msg) + end, level=Level.INFO), *f), Level.INFO)
 
-    def debug(self, msg: str, f: tuple[int, int | None, int | None] = (REGULAR, YELLOW, None)):
-        self.print(self.format(self.mark(msg, Level.DEBUG), *f), Level.DEBUG)
+    def debug(self, *msg: str, sep: str = " ", end: str = "\n",
+              f: tuple[int, int | None, int | None] = (REGULAR, YELLOW, None)):
+        self.print(self.format(self.mark(sep.join(msg) + end, level=Level.DEBUG), *f), Level.DEBUG)
 
-    def warn(self, msg: str, f: tuple[int, int | None, int | None] = (REGULAR, RED, None)):
-        self.print(self.format(self.mark(msg, Level.WARN), *f), Level.WARN)
+    def warn(self, *msg: str, sep: str = " ", end: str = "\n",
+             f: tuple[int, int | None, int | None] = (REGULAR, RED, None)):
+        self.print(self.format(self.mark(sep.join(msg) + end, level=Level.WARN), *f), Level.WARN)
 
-    def error(self, msg: str, f: tuple[int, int | None, int | None] = (REGULAR, RED, None)):
-        self.print(self.format(self.mark(msg, Level.ERROR), *f), Level.ERROR)
+    def error(self, *msg: str, sep: str = " ", end: str = "\n",
+              f: tuple[int, int | None, int | None] = (REGULAR, RED, None)):
+        self.print(self.format(self.mark(sep.join(msg) + end, Level.ERROR), *f), Level.ERROR)
