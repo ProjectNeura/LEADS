@@ -1,0 +1,3 @@
+[submodule "readthedocs"]
+	path = readthedocs
+	url = https://github.com/ProjectNeura/leads-docs

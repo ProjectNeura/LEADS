@@ -163,6 +163,10 @@ Note that a purely empty file could cause error.
 | `data_dir`                | `str`   | The directory for the data recording system                        | Remote       | `"./data"`    |
 | `enable_data_persistence` | `bool`  | `True`: enable data persistence; `False`: disable data persistence | Remote       | `True`        |
 
+## Full Docs
+
+Besides the [docs](docs) on GitHub, we also host our docs on [Read the Docs]().
+
 ## Periodic Report
 
 See [reports](docs/reports).
