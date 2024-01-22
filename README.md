@@ -165,7 +165,7 @@ Note that a purely empty file could cause error.
 
 ## Full Docs
 
-Besides the [docs](docs) on GitHub, we also host our docs on [Read the Docs]().
+Besides the [docs](docs) on GitHub, we also host our docs on [Read the Docs](https://leads.projectneura.org).
 
 ## Periodic Report
 
