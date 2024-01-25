@@ -7,16 +7,14 @@
 template<typename T>
 class Controller : public Device<T> {
 protected:
-    template<typename Any>
-    void _attachDevice(String tag, Device<Any> device);
+    ArrayList<Device<String>> _devices;
+    void _attachDevice(String tag, Device<String> device);
 
 public:
     Controller();
     int level();
-    template<typename Any>
-    void device(String tag, Device<Any> device);
-    template<typename Any>
-    Device<Any> device(String tag);
+    void device(String tag, Device<String> device);
+    Device<String> device(String tag);
 };
 
 

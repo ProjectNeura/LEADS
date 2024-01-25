@@ -7,5 +7,6 @@ int Controller<T>::level() {
     return this._parentTags.size();
 }
 template<typename T>
-template<typename Any>
-void Controller<T>::_attachDevice(String tag, Device<Any> device) {}
+void Controller<T>::_attachDevice(String tag, Device<String> device) {
+    _devices.add(device);
+}
