@@ -7,6 +7,9 @@ class ArrayList {
 private:
     int _size;
     E *_array = {};
+    void grow(int minCapacity);
+    void ensureExplicitCapacity(int minCapacity);
+    void ensureCapacityInternal(int minCapacity);
 
 public:
     ArrayList();
@@ -15,12 +18,12 @@ public:
     int size();
     E *const &toArray();
     E get(int index);
-    bool add(E element);
+    void add(E element);
     bool insert(int index, E element);
     bool contains(E element);
-    int indexOfInRange(E element, int start, int end);
+    int indexOfInRange(E element, int start, int stop);
     int indexOf(E element);
-    int lastIndexOfInRange(E element, int start, int end);
+    int lastIndexOfInRange(E element, int start, int stop);
     int lastIndexOf(E element);
 };
 
