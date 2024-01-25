@@ -2,35 +2,26 @@
 
 <img src="https://projectneura.org/img/logo.png" alt="logo" style="zoom:25%;" />
 
-LEADS is a system designed for [VeC](https://www.villanovacollege.org/giving/vec-project).
-
 LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
-
-Python is generally not the best choice for writing embedded systems. We made this decision for the following reasons.
-
-- Data analysis
-- Short development cycle
-- Official support for Raspberry Pi
-- Low difficulty in getting started for team members
 
 This project aims to implement the following features:
 
-- A basic instrumentation system
-- A basic communication system
-- A basic control system
-- A data recording system with the following components
-  - A speed recording system
-  - A G force recording system
-  - A GPS recording system
-  - A battery voltage recording system
-- A control system with the following components
-  - DTCS (Dynamic Traction Control System)
-  - ABS (Anti-lock Braking System)
-  - EBI (Emergency Braking Intervention)
-  - ATBS (Automatic Trail Braking System)
+- [x] A basic instrumentation system
+- [x] A basic communication system
+- [ ] A basic control system
+- [x] A data recording system with the following components
+  - [x] A speed recording system
+  - [ ] A G force recording system
+  - [ ] A GPS recording system
+  - [ ] A battery voltage recording system
+- [ ] A control system with the following components
+  - [ ] DTCS (Dynamic Traction Control System)
+  - [ ] ABS (Anti-lock Braking System)
+  - [ ] EBI (Emergency Braking Intervention)
+  - [ ] ATBS (Automatic Trail Braking System)
 
-The codes are never designed for average high school students to understand. You may find it hard to read the codes if
-you do not satisfy the following requirements of skills and knowledge.
+
+The codes are never designed for average high school students to understand. You may find it hard to read the codes if you do not satisfy the following requirements of skills and knowledge.
 
 - Advanced Python knowledge (you should be familiar with everything and even programming philosophy in Python)
 - Solid knowledge of Physics (you should understand how a car moves in reality)
@@ -136,8 +127,7 @@ systemctl enable leads_vec_rc
 
 ### Configurations
 
-The configuration is a json file that has the following columns. You can have an empty configuration file like the
-following as all the columns are optional.
+The configuration is a json file that has the following columns. You can have an empty configuration file like the following as all the columns are optional.
 
 ```json
 {}
@@ -183,9 +173,7 @@ See [reports](docs/reports).
 
 #### Issues
 
-Our team management completely relies on GitHub. Tasks are published and assigned
-as [issues](https://github.com/ProjectNeura/LEADS/issues). You will be notified if you are assigned to certain tasks.
-However, you may also join other discussions for which you are not responsible.
+Our team management completely relies on GitHub. Tasks are published and assigned as [issues](https://github.com/ProjectNeura/LEADS/issues). You will be notified if you are assigned to certain tasks. However, you may also join other discussions for which you are not responsible.
 
 There are a few labels that classify the issues.
 
@@ -195,7 +183,7 @@ There are a few labels that classify the issues.
 - `duplicate` marks that a similar issue has been raised
 - `enhancement` proposes a new feature or request
 - `help wanted` means that extra attention is needed to this issue
-- `invalid` marks that the issue is in valid format
+- `invalid` marks that the issue is in a valid format
 - `question` requests further information
 - `report` starts a periodic report discussion
 - `todo` creates a new task
@@ -205,14 +193,11 @@ Label your issue with at least one of the labels above before you submit.
 
 #### Projects
 
-You can have a look at the whole schedule of each project in a timeline using
-the [projects](https://github.com/orgs/ProjectNeura/projects/) feature.
+You can have a look at the whole schedule of each project in a timeline using the [projects](https://github.com/orgs/ProjectNeura/projects/) feature.
 
 ### Code Contributions
 
-Please fork the project into your repository. Before your pull request, make sure that you have tested all possible
-impacts on other parts of the project. If no certainty is assured, please reach out to our core team members to have
-official support.
+Please fork the project into your repository. Before your pull request, ensure you have tested all possible impacts on other parts of the project. If no certainty is assured, please contact our core team members for official support.
 
 #### Code Specifications
 
