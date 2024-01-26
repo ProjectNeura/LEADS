@@ -9,7 +9,7 @@ This project aims to implement the following features:
 - [x] A basic instrumentation system
 - [x] A basic communication system
 - [x] A basic control system
-- [x] A data recording system with the following components
+- [ ] A data recording system with the following components
   - [x] A speed recording system
   - [ ] A G force recording system
   - [ ] A GPS recording system
