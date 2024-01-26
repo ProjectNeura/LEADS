@@ -222,7 +222,7 @@ class Entity(Service, metaclass=_ABCMeta):
     def _stage(self, connection: ConnectionBase) -> None:
         while True:
             msg = connection.receive()
-            if not msg or msg == b"disconnect":
+            if msg is None or msg == b"disconnect":
                 self.callback.on_disconnect(self, connection)
                 return connection.close()
             self.callback.on_receive(self, msg)

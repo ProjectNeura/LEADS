@@ -7,7 +7,7 @@ class CustomCallback(Callback):
         print(msg)
 
     def on_connect(self, service: Service, connection: ConnectionBase) -> None:
-        print("A")
+        print("Connected")
 
     def on_fail(self, service: Service, error: Exception) -> None:
         print(error)
