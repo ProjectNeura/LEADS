@@ -6,7 +6,7 @@ ArrayList<E>::ArrayList(int initialCapacity) {
     _array = new E[initialCapacity];
 }
 template<typename E>
-ArrayList<E>::ArrayList(E *initialArray) {
+ArrayList<E>::ArrayList(E *const initialArray) {
     _array = initialArray;
 }
 template<typename E>

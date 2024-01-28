@@ -6,7 +6,7 @@ template<typename E>
 class ArrayList {
 private:
     int _size;
-    E *_array = {};
+    E *const _array = {};
     void grow(int minCapacity);
     void ensureExplicitCapacity(int minCapacity);
     void ensureCapacityInternal(int minCapacity);
@@ -14,7 +14,7 @@ private:
 public:
     ArrayList();
     ArrayList(int initialCapacity);
-    ArrayList(E *initialArray);
+    ArrayList(E *const initialArray);
     int size();
     E *const &toArray();
     E get(int index);

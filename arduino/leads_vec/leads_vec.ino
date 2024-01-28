@@ -1,8 +1,12 @@
-const int PIN_LFWSS = 2;
-const int PIN_RFWSS = 3;
-const int PIN_LRWSS = 4;
-const int PIN_RRWSS = 5;
-const int PIN_MRWSS = 6;
+#include "WheelSpeedSensor.h"
+
+#define PIN_LFWSS 2
+#define PIN_RFWSS 3
+#define PIN_LRWSS 4
+#define PIN_RRWSS 5
+#define PIN_MRWSS 6
+
+WheelSpeedSensor wss = WheelSpeedSensor(new ArrayList<int>({2}));
 
 void setup() {
     pinMode(PIN_LFWSS, INPUT);
@@ -11,8 +15,6 @@ void setup() {
     pinMode(PIN_RRWSS, INPUT);
     pinMode(PIN_MRWSS, INPUT);
 }
-
-bool pulse(int pin) { return digitalRead(pin) == LOW; }
 
 void loop() {
     if (pulse(PIN_LFWSS))
