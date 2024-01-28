@@ -163,6 +163,12 @@ See [reports](docs/reports).
 
 ## Architecture
 
+### Main
+
+#### Pin Configuration
+
+![pin-config](docs/assets/pin-config.png)
+
 ### Remote Controller
 
 ![comm-flowchart](docs/assets/comm-flowchart.png)
