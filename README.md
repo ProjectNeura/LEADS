@@ -204,7 +204,3 @@ You can have a look at the whole schedule of each project in a timeline using th
 ### Code Contributions
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-#### Code Specifications
-
-All code must be type-annotated and follow the [Code Style Guide](docs/Code%20Style%20Guide.md).
