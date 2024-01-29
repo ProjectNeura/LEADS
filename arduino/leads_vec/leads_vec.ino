@@ -6,7 +6,7 @@
 #define PIN_RRWSS 5
 #define PIN_MRWSS 6
 
-WheelSpeedSensor wss = WheelSpeedSensor(new ArrayList<int>({2}));
+WheelSpeedSensor wss = WheelSpeedSensor({2});
 
 void setup() {
     pinMode(PIN_LFWSS, INPUT);

@@ -10,10 +10,11 @@ class Device {
 protected:
     String _tag = "";
     ArrayList<String> _parentTags = new ArrayList<String>();
-    ArrayList<int> _pins = new ArrayList<int>();
+    int *const _pins;
 
 public:
-    Device(ArrayList<int> pins);
+    Device(int *const pins);
+    ~Device();
     void tag(String tag);
     String tag();
     void parentTags(ArrayList<String> parentTags);

@@ -2,19 +2,21 @@
 #define ARRAYLIST_H
 
 
+#include "Arduino.h"
+
 template<typename E>
 class ArrayList {
 private:
     int _size;
-    E *const _array = {};
-    void grow(int minCapacity);
-    void ensureExplicitCapacity(int minCapacity);
-    void ensureCapacityInternal(int minCapacity);
+    E *_array = {};
+    void grow(size_t minCapacity);
+    void ensureExplicitCapacity(size_t minCapacity);
+    void ensureCapacityInternal(size_t minCapacity);
 
 public:
-    ArrayList();
-    ArrayList(int initialCapacity);
+    ArrayList(size_t initialCapacity = 10);
     ArrayList(E *const initialArray);
+    ~ArrayList();
     int size();
     E *const &toArray();
     E get(int index);

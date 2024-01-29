@@ -1,7 +1,11 @@
 #include "Device.h"
 
 template<typename T>
-Device<T>::Device(ArrayList<int> pins) : _pins(pins) {}
+Device<T>::Device(int *const pins) : _pins(pins) {}
+template<typename T>
+Device<T>::~Device<T>() {
+    delete[] _pins;
+}
 template<typename T>
 void Device<T>::tag(String tag) {
     _tag = tag;

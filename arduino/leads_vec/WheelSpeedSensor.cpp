@@ -1,11 +1,12 @@
 #include "WheelSpeedSensor.h"
 
-WheelSpeedSensor::WheelSpeedSensor(ArrayList<int> pins) : Device(pins) {}
+WheelSpeedSensor::WheelSpeedSensor(int *const pins) : Device<float>(pins) {
+}
 
-void WheelSpeedSensor::initialize() { pinMode(_pins.get(0), INPUT); }
+void WheelSpeedSensor::initialize() { pinMode(_pins[0], INPUT); }
 
 float WheelSpeedSensor::read() {
-    if (millis() - _t2 > BOUNCETIME && pulse(_pins.get(0))) {
+    if (millis() - _t2 > BOUNCETIME && pulse(_pins[0])) {
         _t1 = _t2;
         _t2 = millis();
     }

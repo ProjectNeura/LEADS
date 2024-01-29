@@ -2,12 +2,12 @@
 
 
 template<typename E>
-ArrayList<E>::ArrayList(int initialCapacity) {
-    _array = new E[initialCapacity];
-}
+ArrayList<E>::ArrayList(size_t initialCapacity) : _size(0), _array(new E[initialCapacity]) {}
 template<typename E>
-ArrayList<E>::ArrayList(E *const initialArray) {
-    _array = initialArray;
+ArrayList<E>::ArrayList(E *const initialArray) : _size(0), _array(initialArray) {}
+template<typename E>
+ArrayList<E>::~ArrayList<E>() {
+    delete[] _array;
 }
 template<typename E>
 int ArrayList<E>::size() {
@@ -22,7 +22,7 @@ E ArrayList<E>::get(int index) {
     return _array[index];
 }
 template<typename E>
-void ArrayList<E>::grow(int minCapacity) {
+void ArrayList<E>::grow(size_t minCapacity) {
     int oldCapacity = _array.length;
     int newCapacity = oldCapacity + (oldCapacity >> 1);
     if (newCapacity < minCapacity) newCapacity = minCapacity;
@@ -31,11 +31,11 @@ void ArrayList<E>::grow(int minCapacity) {
     _array = newArray;
 }
 template<typename E>
-void ArrayList<E>::ensureExplicitCapacity(int minCapacity) {
+void ArrayList<E>::ensureExplicitCapacity(size_t minCapacity) {
     if (minCapacity > _array.length) grow(minCapacity);
 }
 template<typename E>
-void ArrayList<E>::ensureCapacityInternal(int minCapacity) {
+void ArrayList<E>::ensureCapacityInternal(size_t minCapacity) {
     if (_array.length == 0) minCapacity = max(10, minCapacity);
     ensureExplicitCapacity(minCapacity);
 }

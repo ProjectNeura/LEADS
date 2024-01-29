@@ -10,7 +10,7 @@ protected:
     long _t1, _t2;
 
 public:
-    WheelSpeedSensor(ArrayList<int> pins);
+    WheelSpeedSensor(int *const pins);
     void initialize();
     float read();
 };
