@@ -203,7 +203,7 @@ You can have a look at the whole schedule of each project in a timeline using th
 
 ### Code Contributions
 
-Please fork the project into your repository. Before your pull request, ensure you have tested all possible impacts on other parts of the project. If no certainty is assured, please contact our core team members for official support.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 #### Code Specifications
 
