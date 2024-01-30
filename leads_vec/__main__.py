@@ -50,7 +50,7 @@ if __name__ == '__main__':
     from leads_vec.cli import main
 
     try:
-        from leads_vec.controller import VeCController
+        from leads_vec.controller import _
     except ImportError:
         try:
             from leads_emulation import SRWRandom as _Controller

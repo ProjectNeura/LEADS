@@ -1,7 +1,16 @@
-from leads import controller as _controller, MAIN_CONTROLLER as _MAIN_CONTROLLER
-from leads_raspberry_pi import RaspberryPi4B as _RaspberryPi4B
+from leads import *
+from leads_arduino import *
+from leads_raspberry_pi import *
 
 
-@_controller(_MAIN_CONTROLLER)
-class VeCController(_RaspberryPi4B):
+@controller(MAIN_CONTROLLER)
+class VeCController(RaspberryPi4B):
     pass
+
+
+@device(WHEEL_SPEED_SUBSYSTEM, MAIN_CONTROLLER)
+class WheelSpeedSubsystem(ArduinoMicro):
+    pass
+
+
+_ = None    # null export

@@ -1,5 +1,6 @@
 MAIN_CONTROLLER: str = "__main__"
 
+WHEEL_SPEED_SUBSYSTEM: str = "wssub"
 LEFT_FRONT_WHEEL_SPEED_SENSOR: str = "lfwss"
 RIGHT_FRONT_WHEEL_SPEED_SENSOR: str = "rfwss"
 LEFT_REAR_WHEEL_SPEED_SENSOR: str = "lrwss"
