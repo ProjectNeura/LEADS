@@ -1,4 +1,5 @@
 #include "WheelSpeedSensor.h"
+#include "Algorithms.h"
 
 #define PIN_LFWSS 2
 #define PIN_RFWSS 3
@@ -17,6 +18,6 @@ void setup() {
 }
 
 void loop() {
-    if (pulse(PIN_LFWSS))
+    if (pulseTriggered(PIN_LFWSS))
         Serial.write("A\n;");
 }
