@@ -7,17 +7,18 @@
 #define PIN_RRWSS 5
 #define PIN_MRWSS 6
 
-WheelSpeedSensor wss = WheelSpeedSensor({2});
+WheelSpeedSensor LFWSS = WheelSpeedSensor({PIN_LFWSS});
+WheelSpeedSensor RFWSS = WheelSpeedSensor({PIN_RFWSS});
+WheelSpeedSensor LRWSS = WheelSpeedSensor({PIN_LRWSS});
+WheelSpeedSensor RRWSS = WheelSpeedSensor({PIN_RRWSS});
 
 void setup() {
-    pinMode(PIN_LFWSS, INPUT);
-    pinMode(PIN_RFWSS, INPUT);
-    pinMode(PIN_LRWSS, INPUT);
-    pinMode(PIN_RRWSS, INPUT);
-    pinMode(PIN_MRWSS, INPUT);
+    LFWSS.initialize();
+    RFWSS.initialize();
+    LRWSS.initialize();
+    RRWSS.initialize();
 }
 
 void loop() {
-    if (pulseTriggered(PIN_LFWSS))
-        Serial.write("A\n;");
+    Serial.write(LFWSS.read());
 }
