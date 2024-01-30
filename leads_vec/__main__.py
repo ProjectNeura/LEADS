@@ -46,13 +46,18 @@ if __name__ == '__main__':
         with open("config.json", "w") as f:
             f.write(str(_DEFAULT_CONFIG))
         _L.info("Configuration file saved to \"config.json\"")
-    try:
-        from leads_emulation import SRWRandom as _Controller
-    except ImportError:
-        raise ImportError("At least one adapter has to be installed")
     config = _load_config(args.config) if args.config else _DEFAULT_CONFIG
     from leads_vec.cli import main
 
-    _register_controller(_MAIN_CONTROLLER, _Controller())
+    try:
+        from leads_vec.controller import VeCController
+    except ImportError:
+        try:
+            from leads_emulation import SRWRandom as _Controller
+
+            _register_controller(_MAIN_CONTROLLER, _Controller())
+        except ImportError:
+            raise ImportError("At least one adapter has to be installed")
+
     _initialize_main()
     _exit(main(config))
