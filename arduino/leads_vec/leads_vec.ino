@@ -33,5 +33,6 @@ char *str(int n) {
 }
 
 void loop() {
-    Serial.println(LFWSS.debug());
+    Serial.print(LFWSS.debug());
+    Serial.println(LFWSS.read());
 }
