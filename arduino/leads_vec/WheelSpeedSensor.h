@@ -6,14 +6,14 @@
 
 #define BOUNCETIME 20
 
-class WheelSpeedSensor : public Device<float> {
+class WheelSpeedSensor : public Device<int> {
 protected:
     long _t1, _t2;
 
 public:
     WheelSpeedSensor(int *const pins);
     void initialize();
-    float read();
+    int read();
 };
 
 

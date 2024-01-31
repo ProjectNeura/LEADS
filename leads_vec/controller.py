@@ -8,8 +8,13 @@ class VeCController(RaspberryPi4B):
     pass
 
 
-@device(WHEEL_SPEED_SUBSYSTEM, MAIN_CONTROLLER)
+@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER)
 class WheelSpeedSubsystem(ArduinoMicro):
+    pass
+
+
+@device(LEFT_FRONT_WHEEL_SPEED_SENSOR, WHEEL_SPEED_CONTROLLER)
+class LeftFrontWheelSpeedSensor(WheelSpeedSensor):
     pass
 
 

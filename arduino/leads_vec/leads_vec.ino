@@ -19,6 +19,13 @@ void setup() {
     RRWSS.initialize();
 }
 
+char *str(int n) {
+    char r[16];
+    itoa(n, r, 10);
+    return r;
+}
+
 void loop() {
-    Serial.write(LFWSS.read());
+    Serial.write(str(LFWSS.read()));
+    Serial.write("\n");
 }
