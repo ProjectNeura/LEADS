@@ -14,6 +14,7 @@ public:
     WheelSpeedSensor(int *const pins);
     void initialize();
     int read();
+    String debug();
 };
 
 

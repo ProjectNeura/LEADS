@@ -13,3 +13,7 @@ int WheelSpeedSensor::read() {
     }
     return 60 / (_t2 - _t1);
 }
+
+String WheelSpeedSensor::debug() {
+    return String(_t1) + " " + String(_t2);
+}
