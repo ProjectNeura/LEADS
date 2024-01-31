@@ -81,3 +81,10 @@ class Leads(Context[T]):
                     self.intervene(dtcs_drw(self, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed))
 
         self._event_listener.post_update(UpdateEvent(self))
+
+    def brake(self, force: float) -> int:
+        self.intervene(InterventionEvent(self, "BRAKING", force))
+        try:
+            return super().brake(force)
+        finally:
+            self.intervene(InterventionExitEvent(self, "BRAKING", force))

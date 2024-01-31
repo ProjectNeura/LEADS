@@ -89,3 +89,7 @@ class Context(_Generic[T]):
 
     def is_atbs_enabled(self) -> bool:
         return self._atbs
+
+    def brake(self, force: float) -> int:
+        # todo
+        return 0
