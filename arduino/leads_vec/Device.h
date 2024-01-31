@@ -2,7 +2,6 @@
 #define DEVICE_H
 
 
-#include "Arduino.h"
 #include "ArrayList.h"
 
 template<typename T>
