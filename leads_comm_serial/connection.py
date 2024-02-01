@@ -22,14 +22,14 @@ class SerialConnection(_Connection):
             return self.use_remainder()
         try:
             msg = chunk = b""
-            while b";" not in chunk:
+            while b"\n" not in chunk:
                 msg += (chunk := self._require_open_serial().read(chunk_size))
             return self.with_remainder(msg)
         except IOError:
             return
 
     def send(self, msg: bytes) -> None:
-        self._require_open_serial().write(msg + b";")
+        self._require_open_serial().write(msg + b"\n")
         if msg == b"disconnect":
             self.close()
 
