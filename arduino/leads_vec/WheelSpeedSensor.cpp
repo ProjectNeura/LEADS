@@ -1,7 +1,7 @@
 #include "WheelSpeedSensor.h"
 #include "Algorithms.h"
 
-WheelSpeedSensor::WheelSpeedSensor(int *const pins, void (*onUpdate)(int ws)) : Device<int>(pins), _onUpdate(onUpdate) {
+WheelSpeedSensor::WheelSpeedSensor(int *const pins, OnUpdate onUpdate) : Device<int>(pins), _onUpdate(onUpdate) {
 }
 
 void WheelSpeedSensor::initialize() {
