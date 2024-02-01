@@ -8,7 +8,7 @@ template<typename E>
 class ArrayList {
 private:
     int _size;
-    E *_array = {};
+    E *_array;
     void grow(size_t minCapacity) {
         int oldCapacity = _array.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);

@@ -8,7 +8,7 @@ template<typename T>
 class Device {
 protected:
     String _tag = "";
-    ArrayList<String> _parentTags = new ArrayList<String>();
+    ArrayList<String> _parentTags();
     int *const _pins;
 
 public:
