@@ -4,14 +4,14 @@
 
 #include "Device.h"
 
-#define BOUNCETIME 100
+#define BOUNCE_TIME 100
 
 typedef void (*OnUpdate)(int ws);
 
 class WheelSpeedSensor : public Device<int> {
 protected:
     long _t1, _t2;
-    OnUpdate _onUpdate;
+    const OnUpdate _onUpdate;
 
 public:
     WheelSpeedSensor(int *const pins, OnUpdate onUpdate);

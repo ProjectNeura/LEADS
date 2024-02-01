@@ -12,10 +12,13 @@ class Controller(Device):
     def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
         device.tag(tag)
-        device.initialize(*tuple(self._parent_tags), self._tag)
 
     def device(self, tag: str, device: Device | None = None) -> Device | None:
         if device:
             self._attach_device(tag, device)
         else:
             return self._devices[tag]
+
+    def initialize(self, *parent_tags: str) -> None:
+        for device in self._devices.values():
+            device.initialize(*tuple(self._parent_tags), self._tag)

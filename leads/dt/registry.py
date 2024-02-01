@@ -28,7 +28,6 @@ def _register_device(prototype: type,
                      args: tuple[_Any],
                      kwargs: dict[str, _Any]) -> None:
     instance = prototype(*args, **kwargs)
-    instance.tag(tag)
     parent.parent_tags(parent.parent_tags())
     parent.device(tag, instance)
 

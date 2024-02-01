@@ -15,9 +15,10 @@ int getRPM(long t1, long t2) {
 }
 
 int WheelSpeedSensor::read() {
-    if (millis() - _t2 > BOUNCETIME && pulseTriggered(_pins[0])) {
+    long c = millis();
+    if (c - _t2 > BOUNCE_TIME && pulseTriggered(_pins[0])) {
         _t1 = _t2;
-        _t2 = millis();
+        _t2 = c;
         int r = getRPM(_t1, _t2);
         _onUpdate(r);
         return r;
