@@ -7,7 +7,11 @@ const int PIN_LRWSS[] = {4};
 const int PIN_RRWSS[] = {5};
 const int PIN_MRWSS[] = {6};
 
-WheelSpeedSensor LFWSS(PIN_LFWSS);
+void onUpdate(int ws) {
+    Serial.println(ws);
+}
+
+WheelSpeedSensor LFWSS(PIN_LFWSS, onUpdate);
 
 void setup() {
     Serial.begin(9600);
@@ -15,5 +19,5 @@ void setup() {
 }
 
 void loop() {
-    Serial.println(LFWSS.read());
+    LFWSS.read();
 }

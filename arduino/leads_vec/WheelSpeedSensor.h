@@ -9,9 +9,10 @@
 class WheelSpeedSensor : public Device<int> {
 protected:
     long _t1, _t2;
+    void (*_onUpdate)(int ws);
 
 public:
-    WheelSpeedSensor(int *const pins);
+    WheelSpeedSensor(int *const pins, void (*onUpdate)(int ws));
     void initialize();
     int read();
     String debug();
