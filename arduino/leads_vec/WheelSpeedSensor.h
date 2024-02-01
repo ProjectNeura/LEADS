@@ -4,7 +4,7 @@
 
 #include "Device.h"
 
-#define BOUNCETIME 20
+#define BOUNCETIME 13
 
 class WheelSpeedSensor : public Device<int> {
 protected:
