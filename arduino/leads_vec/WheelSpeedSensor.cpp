@@ -8,6 +8,7 @@ void WheelSpeedSensor::initialize() {
     pinMode(_pins[0], INPUT);
     _t1 = 0;
     _t2 = millis();
+    _consecutive = false;
 }
 
 int getRPM(long t1, long t2) {
@@ -15,14 +16,16 @@ int getRPM(long t1, long t2) {
 }
 
 int WheelSpeedSensor::read() {
-    long c = millis();
-    if (c - _t2 > BOUNCE_TIME && pulseTriggered(_pins[0])) {
-        _t1 = _t2;
-        _t2 = c;
-        int r = getRPM(_t1, _t2);
-        _onUpdate(r);
-        return r;
-    }
+    if (pulseTriggered(_pins[0])) {
+        if (!_consecutive) {
+            _consecutive = true;
+            _t1 = _t2;
+            _t2 = millis();
+            int r = getRPM(_t1, _t2);
+            _onUpdate(r);
+            return r;
+        }
+    } else _consecutive = false;
     return getRPM(_t1, _t2);
 }
 
