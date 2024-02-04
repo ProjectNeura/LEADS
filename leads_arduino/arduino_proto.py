@@ -18,7 +18,7 @@ class ArduinoProto(_Controller, _Entity):
         return self._serial.port
 
     def initialize(self, *parent_tags: str) -> None:
-        self.start()
+        self.start(True)
 
     def run(self) -> None:
         self.callback.on_initialize(self)
