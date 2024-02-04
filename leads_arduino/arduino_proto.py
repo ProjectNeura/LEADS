@@ -7,6 +7,7 @@ from leads_comm_serial import SerialConnection as _SerialConnection
 
 class ArduinoProto(_Controller, _Entity):
     def __init__(self, port: str, callback: _Callback, baud_rate: int = 9600) -> None:
+        _Controller.__init__(self)
         _Entity.__init__(self, -1, callback)
         self._serial: _Serial = _Serial()
         self._serial.port = port
