@@ -36,6 +36,9 @@ class Device(object):
     def write(self, payload: _Any) -> None:
         raise NotImplementedError
 
+    def update(self, data: _Any) -> None:
+        raise NotImplementedError
+
     def close(self) -> None:
         pass
 
