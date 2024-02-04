@@ -4,9 +4,9 @@
 
 #include "Device.h"
 
-typedef void (*OnUpdate)(int ws);
+typedef void (*OnUpdate)(float ws);
 
-class WheelSpeedSensor : public Device<int> {
+class WheelSpeedSensor : public Device<float> {
 protected:
     long _t1, _t2;
     bool _consecutive;
@@ -15,7 +15,7 @@ protected:
 public:
     WheelSpeedSensor(int *const pins, OnUpdate onUpdate);
     void initialize();
-    int read();
+    float read();
     String debug();
 };
 

@@ -7,12 +7,12 @@ const int PIN_LRWSS[] = {4};
 const int PIN_RRWSS[] = {5};
 const int PIN_MRWSS[] = {6};
 
-void println(int n) {
+void println(float n) {
     Serial.print(n);
     Serial.print(";");
 }
 
-void onUpdate(int ws) {
+void onUpdate(float ws) {
     println(ws);
 }
 

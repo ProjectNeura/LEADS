@@ -1,7 +1,7 @@
 #include "WheelSpeedSensor.h"
 #include "Algorithms.h"
 
-WheelSpeedSensor::WheelSpeedSensor(int *const pins, OnUpdate onUpdate) : Device<int>(pins), _onUpdate(onUpdate) {
+WheelSpeedSensor::WheelSpeedSensor(int *const pins, OnUpdate onUpdate) : Device<float>(pins), _onUpdate(onUpdate) {
 }
 
 void WheelSpeedSensor::initialize() {
@@ -11,17 +11,17 @@ void WheelSpeedSensor::initialize() {
     _consecutive = false;
 }
 
-int getRPM(long t1, long t2) {
-    return 60000 / (t2 - t1);
+float getRPM(long t1, long t2) {
+    return 60000.0 / (t2 - t1);
 }
 
-int WheelSpeedSensor::read() {
+float WheelSpeedSensor::read() {
     if (pulseTriggered(_pins[0])) {
         if (!_consecutive) {
             _consecutive = true;
             _t1 = _t2;
             _t2 = millis();
-            int r = getRPM(_t1, _t2);
+            float r = getRPM(_t1, _t2);
             _onUpdate(r);
             return r;
         }
