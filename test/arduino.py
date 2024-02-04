@@ -13,6 +13,6 @@ class CustomCallback(Callback):
         print(error)
 
 
-controller = ArduinoMicro("COM3", CustomCallback())
+controller = ArduinoMicro("COM6", CustomCallback())
 controller.initialize()
 controller.close()
