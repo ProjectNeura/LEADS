@@ -9,7 +9,7 @@ _controllers: dict[str, Controller] = {}
 
 def controller(tag: str,
                parent: str | None = None,
-               args: tuple[_Any] = (),
+               args: tuple[_Any, ...] = (),
                kwargs: dict[str, _Any] | None = None) -> _Callable[[type], None]:
     if not kwargs:
         kwargs = {}
@@ -25,7 +25,7 @@ def controller(tag: str,
 def _register_device(prototype: type,
                      tag: str,
                      parent: Controller,
-                     args: tuple[_Any],
+                     args: tuple[_Any, ...],
                      kwargs: dict[str, _Any]) -> None:
     instance = prototype(*args, **kwargs)
     parent.parent_tags(parent.parent_tags())
@@ -34,7 +34,7 @@ def _register_device(prototype: type,
 
 def device(tag: str | _Sequence[str],
            parent: str | _Sequence[str],
-           args: tuple[_Any] | list[tuple[_Any]] = (),
+           args: tuple[_Any, ...] | list[tuple[_Any, ...]] = (),
            kwargs: dict[str, _Any] | list[dict[str, _Any]] | None = None) -> _Callable[[type], None]:
     if isinstance(tag, str):
         tag = [tag]
