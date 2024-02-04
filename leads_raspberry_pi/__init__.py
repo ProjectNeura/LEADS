@@ -8,4 +8,3 @@ if not _find_spec("serial"):
 from leads_raspberry_pi.raspberry_pi_4b import *
 from leads_raspberry_pi.gps_receiver import *
 from leads_raspberry_pi.throttle import *
-from leads_raspberry_pi.wheel_speed_sensor import *
