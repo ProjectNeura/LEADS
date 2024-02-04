@@ -20,9 +20,9 @@ if __name__ == '__main__':
     if args.action == "info":
         from leads_vec.__version__ import __version__
 
-        _L.info(f"LEADS Version: {__version__}",
-                f"System Platform: {_get_system_platform()}",
-                f"Python Version: {_version}",
+        _L.info("LEADS Version: " + __version__,
+                "System Platform: " + _get_system_platform(),
+                "Python Version: " + _version,
                 sep="\n")
         _exit()
     if args.register == "systemd":

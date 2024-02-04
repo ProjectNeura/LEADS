@@ -57,5 +57,5 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
             self.loop()
 
     def initialize(self, *parent_tags: str) -> None:
-        self._shadow_thread = _Thread(name=f"{id(self)} shadow", target=self.run)
+        self._shadow_thread = _Thread(name=str(id(self)) + " shadow", target=self.run)
         self._shadow_thread.start()

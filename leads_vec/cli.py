@@ -86,14 +86,14 @@ def main(cfg: Config) -> int:
         context,
         get_controller(MAIN_CONTROLLER))
 
-    class CustomCallback(Callback):
+    class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
-            L.error("Server failed to start")
+            L.error("Comm server error: " + str(error))
 
         def on_connect(self, service: Service, connection: Connection) -> None:
             uim["comm_status"].update("COMM ONLINE", text_color="black")
 
-    uim.rd().comm = start_server(create_server(cfg.comm_port, CustomCallback()), True)
+    uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:

@@ -22,12 +22,12 @@ speed_record = DataPersistence(config.data_dir + "/speed.csv", persistence=confi
                                max_size=2000)
 
 
-class CustomCallback(Callback):
+class CommCallback(Callback):
     def on_connect(self, service: Service, connection: Connection) -> None:
-        L.info("Connected")
+        L.debug("Connected")
 
     def on_fail(self, service: Service, error: Exception) -> None:
-        L.error(str(error))
+        L.error("Comm client error: " + str(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         data = loads(msg.decode())
@@ -39,7 +39,7 @@ class CustomCallback(Callback):
         speed_record.close()
 
 
-client = start_client(config.comm_addr, create_client(config.comm_port, CustomCallback()), True)
+client = start_client(config.comm_addr, create_client(config.comm_port, CommCallback()), True)
 
 app = FastAPI(title="LEADS VeC Remote Controller")
 
