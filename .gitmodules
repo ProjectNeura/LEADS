@@ -1,6 +1,6 @@
 [submodule "readthedocs"]
 	path = readthedocs
-	url = https://github.com/ProjectNeura/leads-docs
+	url = https://github.com/ProjectNeura/leads-docs.git
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/ProjectNeura/leads-vec-rc.git
