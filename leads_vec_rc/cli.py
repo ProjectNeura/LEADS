@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from leads import L
 from leads.comm import *
 from leads.data_persistence import *
-from leads_dashboard import *
+from leads_gui import *
 
 config = load_config(abspath(__file__)[:-6] + "config.json")
 if not exists(config.data_dir):

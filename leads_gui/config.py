@@ -1,7 +1,7 @@
 from json import load as _load, dumps as _dumps
 from typing import TextIO as _TextIO, Any as _Any
 
-from leads_dashboard.system import get_system_platform
+from leads_gui.system import get_system_platform
 
 
 class Config(object):

@@ -7,9 +7,9 @@ from typing import Callable as _Callable, Any as _Any
 
 from leads import Leads as _Leads, Controller as _Controller
 from leads.comm import Server as _Server, create_server as _create_server
-from leads_dashboard.prototype import *
-from leads_dashboard.runtime import *
-from leads_dashboard.config import *
+from leads_gui.prototype import *
+from leads_gui.runtime import *
+from leads_gui.config import *
 
 
 def initialize(window: Window,

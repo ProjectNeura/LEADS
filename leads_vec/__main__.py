@@ -5,7 +5,7 @@ from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     initialize_main as _initialize_main, L as _L
-from leads_dashboard import get_system_platform as _get_system_platform, load_config as _load_config, \
+from leads_gui import get_system_platform as _get_system_platform, load_config as _load_config, \
     DEFAULT_CONFIG as _DEFAULT_CONFIG
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from sys import exit
 
 from leads import MAIN_CONTROLLER, register_controller
-from leads_dashboard.config import DEFAULT_CONFIG
+from leads_gui.config import DEFAULT_CONFIG
 from leads_emulation import SRWSin
 from leads_vec.cli import main
 

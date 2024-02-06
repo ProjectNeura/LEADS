@@ -4,7 +4,7 @@ from os.path import abspath as _abspath
 from sys import exit as _exit
 
 from leads import L as _L
-from leads_dashboard import get_system_platform as _get_system_platform
+from leads_gui import get_system_platform as _get_system_platform
 
 if __name__ == '__main__':
     parser = _ArgumentParser(prog="LEADS VeC RC",

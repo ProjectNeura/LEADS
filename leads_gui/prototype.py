@@ -4,8 +4,8 @@ from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Ge
 
 from PySimpleGUI import Window as _Window, Element as _Element, WINDOW_CLOSED as _WINDOW_CLOSED, theme as _theme
 
-from leads_dashboard.runtime import RuntimeData
-from leads_dashboard.system import get_system_platform
+from leads_gui.runtime import RuntimeData
+from leads_gui.system import get_system_platform
 
 
 def default_on_refresh() -> None:

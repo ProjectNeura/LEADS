@@ -6,7 +6,7 @@ from keyboard import add_hotkey
 
 from leads import *
 from leads.comm import *
-from leads_dashboard import *
+from leads_gui import *
 from leads_vec.__version__ import __version__
 
 
