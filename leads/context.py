@@ -5,7 +5,7 @@ from typing import TypeVar as _TypeVar, Generic as _Generic
 from leads.constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 
-T = _TypeVar("T")
+T = _TypeVar("T", bound=DataContainer)
 
 
 def _check_data_type(data: T, superclass: type = DataContainer) -> None:

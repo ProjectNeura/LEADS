@@ -4,8 +4,9 @@ from leads.constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from leads.context import Context
 from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
+from leads.data import DataContainer
 
-T = _TypeVar("T")
+T = _TypeVar("T", bound=DataContainer)
 
 _OptionalNumber = int | float | None
 
