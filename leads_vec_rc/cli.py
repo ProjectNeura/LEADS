@@ -7,11 +7,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from leads import L
+from leads.config import *
 from leads.comm import *
 from leads.data_persistence import *
 from leads_gui import *
 
-config = load_config(abspath(__file__)[:-6] + "config.json")
+config = load_config(abspath(__file__)[:-6] + "config.json", Config)
 if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{config.data_dir}\" created")

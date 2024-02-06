@@ -5,8 +5,8 @@ from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     initialize_main as _initialize_main, L as _L
-from leads_gui import get_system_platform as _get_system_platform, load_config as _load_config, \
-    DEFAULT_CONFIG as _DEFAULT_CONFIG
+from leads.config import load_config as _load_config, register_config as _register_config, get_config as _get_config
+from leads_gui import get_system_platform as _get_system_platform, Config as _Config
 
 if __name__ == '__main__':
     parser = _ArgumentParser(prog="LEADS VeC",
@@ -32,7 +32,7 @@ if __name__ == '__main__':
             _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
             _mkdir("/usr/local/leads")
             with open("/usr/local/leads/config.json", "w") as f:
-                f.write(str(_DEFAULT_CONFIG))
+                f.write(str(_get_config(_Config)))
             _L.info("Using \"/usr/local/leads/config.json\"")
         from ._bootloader import create_service
 
@@ -44,9 +44,9 @@ if __name__ == '__main__':
             if r.lower() != "y":
                 _exit("Error: Aborted")
         with open("config.json", "w") as f:
-            f.write(str(_DEFAULT_CONFIG))
+            f.write(str(_get_config(_Config)))
         _L.info("Configuration file saved to \"config.json\"")
-    config = _load_config(args.config) if args.config else _DEFAULT_CONFIG
+    _register_config(_load_config(args.config, _Config) if args.config else None)
     from leads_vec.cli import main
 
     try:
@@ -62,4 +62,4 @@ if __name__ == '__main__':
             raise ImportError("At least one adapter has to be installed")
 
     _initialize_main()
-    _exit(main(config))
+    _exit(main())

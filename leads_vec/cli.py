@@ -5,6 +5,7 @@ from PySimpleGUI import Button, Text, Column
 from keyboard import add_hotkey
 
 from leads import *
+from leads.config import *
 from leads.comm import *
 from leads_gui import *
 from leads_vec.__version__ import __version__
@@ -15,7 +16,8 @@ class CustomRuntimeData(RuntimeData):
     m3_mode: int = 0
 
 
-def main(cfg: Config) -> int:
+def main() -> int:
+    cfg = get_config(Config)
     context = Leads(srw_mode=cfg.srw_mode)
 
     def render(manager: ContextManager):

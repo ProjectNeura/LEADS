@@ -1,14 +1,13 @@
 from leads import L, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer
+from leads.config import get_config
+from leads_gui import Config
 from leads.comm import Callback, Service, ConnectionBase
 from leads_arduino import ArduinoMicro
 from leads_emulation import SRWRandom
 
-# FixMe
-"""
-These parameters should somehow be loaded from the config
-But the config file currently has no way to be passed into this module
-"""
-WHEEL_RADIUS: float = 159.5  # 20 inches
+config = get_config(Config)
+WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "COM3")
+WHEEL_RADIUS: float = config.get("wheel_radius", 159.5)  # 20 inches
 
 
 @controller(MAIN_CONTROLLER)
@@ -28,7 +27,7 @@ class WheelSpeedControllerCallback(Callback):
         L.error(str(error))
 
 
-@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, ("COM6", WheelSpeedControllerCallback()))
+@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, WheelSpeedControllerCallback()))
 class WheelSpeedController(ArduinoMicro):
     _wheel_speed: float = 0
 
