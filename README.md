@@ -160,9 +160,15 @@ Note that a purely empty file could cause error.
 | `data_dir`                | `str`   | The directory for the data recording system                  | Remote       | `"./data"`    |
 | `enable_data_persistence` | `bool`  | `True`: enable data persistence; `False`: disable data persistence | Remote       | `True`        |
 
+## Submodules
+
+- [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino)
+- [leads-docs](https://github.com/ProjectNeura/leads-docs)
+- [leads-vec-rc](https://github.com/ProjectNeura/leads-vec-rc) (Private)
+
 ## Full Docs
 
-Besides the [docs](docs) on GitHub, we also host our docs on [Read the Docs](https://leads.projectneura.org) [TBC].
+Besides the [docs](docs) on GitHub, we also host our docs on [Read the Docs](https://leads.projectneura.org) (TBC).
 
 ## Periodic Report
 
