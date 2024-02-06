@@ -31,6 +31,8 @@ The codes are never designed for average high school students to understand. You
 
 ## Installation
 
+### Python
+
 Note that LEADS requires **Python >= 3.11**.
 
 ```shell
@@ -47,11 +49,15 @@ If you need only the skeleton, run the following.
 pip install leads
 ```
 
-### Verify
+#### Verify
 
 ```shell
 python -m leads_vec info
 ```
+
+### Arduino
+
+You can install [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino) from Arduino Library Manager. Note that it is named "LEADS", not "LEADS-Arduino", in the index.
 
 ## Quickstart
 
