@@ -43,7 +43,7 @@ pip install pysimplegui keyboard RPi.GPIO pyserial leads
 
 `pysimplegui`, `keyboard`, `RPi.GPIO`, and `pyserial` are optional.
 
-If you need only the skeleton, run the following.
+If you only want the framework, run the following.
 
 ```shell
 pip install leads
@@ -59,7 +59,11 @@ python -m leads_vec info
 
 You can install [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino) from Arduino Library Manager. Note that it is named "LEADS", not "LEADS-Arduino", in the index.
 
-## Quickstart
+## LEADS Framework
+
+See [Read the Docs](https://leads.projectneura.org) (TBC) for the documentation of how to customize and make use of the framework in your project.
+
+## Quick Start
 
 ### Main
 
@@ -165,10 +169,6 @@ Note that a purely empty file could cause error.
 - [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino)
 - [leads-docs](https://github.com/ProjectNeura/leads-docs)
 - [leads-vec-rc](https://github.com/ProjectNeura/leads-vec-rc) (Private)
-
-## Full Docs
-
-Besides the [docs](docs) on GitHub, we also host our docs on [Read the Docs](https://leads.projectneura.org) (TBC).
 
 ## Periodic Report
 
