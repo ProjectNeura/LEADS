@@ -61,3 +61,6 @@ class Logger(object):
     def error(self, *msg: str, sep: str = " ", end: str = "\n",
               f: tuple[int, int | None, int | None] = (REGULAR, RED, None)):
         self.print(self.format(self.mark(sep.join(msg) + end, Level.ERROR), *f), Level.ERROR)
+
+
+L: Logger = Logger()

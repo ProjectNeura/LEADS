@@ -9,6 +9,8 @@ class ConfigTemplate(object):
         :param base: base dictionary
         """
         self._d: dict[str, _Any] = base
+        self.debug_level: str = "INFO"
+        self.srw_mode: bool = True
 
     def __getitem__(self, name: str) -> _Any | None:
         return self.get(name)

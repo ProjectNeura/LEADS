@@ -7,7 +7,6 @@ from leads_gui.system import get_system_platform
 class Config(_ConfigTemplate):
     def __init__(self, base: dict[str, _Any]) -> None:
         super().__init__(base)
-        self.srw_mode: bool = True
         self.width: int = 720
         self.height: int = 480
         self.fullscreen: bool = False

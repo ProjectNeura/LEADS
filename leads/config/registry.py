@@ -1,6 +1,7 @@
 from json import load as _load
 from typing import TypeVar as _TypeVar, TextIO as _TextIO, Callable as _Callable, Any as _Any
 
+from leads.logger import Level, L
 from leads.config.template import ConfigTemplate
 
 T = _TypeVar("T", bound=ConfigTemplate)
@@ -18,8 +19,10 @@ def load_config(file: str | _TextIO, constructor: _Callable[[dict[str, _Any]], T
 
 def register_config(config: T | None) -> None:
     global _config_instance
-    if config and _config_instance:
-        raise RuntimeError("Another config is already registered")
+    if config:
+        if _config_instance:
+            raise RuntimeError("Another config is already registered")
+        L.debug_level(Level(config.debug_level.upper()))
     _config_instance = config
 
 
