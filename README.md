@@ -2,6 +2,8 @@
 
 <img src="https://projectneura.org/img/logo.png" alt="logo" style="zoom:25%;" />
 
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ProjectNeura/LEADS)![PyPI - Downloads](https://img.shields.io/pypi/dm/leads)![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/ProjectNeura/LEADS)
+
 LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the instrumentation system for electric vehicles. It is written in well-organized Python and C/C++ with impressive performance. It is not only plug-and-play ([VeC Project](https://www.villanovacollege.org/giving/vec-project)) but also fully customizable. It provides multiple abstract layers that allow users to pull out the components and rearrange them into a new project. You can either configure the existing executable module `leads_vec` and `leads_vec_rc` simply through a JSON file or write your own codes based on the framework as easily as building a LEGO.
 
 LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
