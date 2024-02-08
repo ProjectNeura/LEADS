@@ -8,7 +8,9 @@
 
 LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the instrumentation system for electric vehicles. It is written in well-organized Python and C/C++ with impressive performance. It is not only plug-and-play ([VeC Project](https://www.villanovacollege.org/giving/vec-project)) but also fully customizable. It provides multiple abstract layers that allow users to pull out the components and rearrange them into a new project. You can either configure the existing executable module `leads_vec` and `leads_vec_rc` simply through a JSON file or write your own codes based on the framework as easily as building a LEGO.
 
-LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
+The hardware components chosen for this project are geared towards amateur developers. It uses no dedicated circuit boards, but generic development kits such as Raspberry Pi and Arduino instead. However, if you wish to write some codes, the software framework has the ability to adapt to any type of hardware component.
+
+Before you start, please note that LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
 
 ## Key Features
 
