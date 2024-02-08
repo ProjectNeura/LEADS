@@ -7,6 +7,7 @@ from leads_arduino import ArduinoMicro
 from leads_raspberry_pi import RaspberryPi4B, Pedal, DCMotorController
 
 config = get_config(Config)
+BAUD_RATE: int = config.get("baud_rate", 9600)
 WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "COM3")
 WHEEL_RADIUS: float = config.get("wheel_radius", 159.5)  # 20 inches
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
@@ -34,7 +35,9 @@ class WheelSpeedControllerCallback(Callback):
         L.error(str(error))
 
 
-@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, WheelSpeedControllerCallback()))
+@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (
+        WHEEL_SPEED_CONTROLLER_PORT, WheelSpeedControllerCallback(), BAUD_RATE
+))
 class WheelSpeedController(ArduinoMicro):
     _wheel_speed: float = 0
 
