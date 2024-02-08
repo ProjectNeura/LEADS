@@ -6,3 +6,4 @@ fi
 sudo su
 apt update
 apt install python3.11
+apt install python3-rpi.gpio
