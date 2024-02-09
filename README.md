@@ -147,7 +147,7 @@ systemctl enable leads_vec_rc
 
 ## Environment Setup
 
-This section helps you set up the exact environment we have for the VeC project. A more detailed guide of reproduction is available on [https://leads.projectneura.org](https://leads.projectneura.org), but first of all, we run an Ubuntu 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, clone the repository or download the scripts from [releases](/releases) (only stable releases provide scripts).
+This section helps you set up the exact environment we have for the VeC project. A more detailed guide of reproduction is available on [https://leads.projectneura.org](https://leads.projectneura.org), but first of all, we run an Ubuntu 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, clone the repository or download the scripts from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
 You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything for you. If anything goes wrong, you can also manually install everything.
 
