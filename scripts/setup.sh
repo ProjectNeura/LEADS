@@ -4,7 +4,5 @@ then
   exit 1
 fi
 sudo su
-apt update
-apt install python3.11
-apt install python3-tk
-apt install python3-rpi.gpi
+./python-install.sh
+python3.11 -m pip install pysimplegui keyboard RPi.GPIO pyserial leads
