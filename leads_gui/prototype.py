@@ -116,11 +116,15 @@ class ContextManager(object):
 
     def layout(self, layout: list[list[str | Widget]]) -> None:
         layout = self.parse_layout(layout)
+        t = 1
+        for row in layout:
+            t *= len(row)
         for i in range(len(layout)):
             row = layout[i]
-            for j in range(len(row)):
-                widget = row[j]
-                widget.grid(row=i, column=j, pady=2)
+            length = len(row)
+            for j in range(length):
+                s = int(t / length)
+                row[j].grid(row=i, column=j * s, columnspan=s, ipadx=4, ipady=4, padx=2, pady=2)
 
     def window(self) -> Window:
         return self._window

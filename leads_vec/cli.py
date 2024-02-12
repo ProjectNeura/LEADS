@@ -33,64 +33,48 @@ def main() -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = CTkButton(window.root(), font=("Arial", cfg.font_size_small), command=switch_m1_mode,
-                                  width=round(manager.window().width() * cfg.scaling_factor / 21), height=13)
-        manager["m2"] = CTkButton(window.root(), font=("Arial", cfg.font_size_x_large),
-                                  width=round(manager.window().width() * cfg.scaling_factor / 126), height=2)
-        manager["m3"] = CTkButton(window.root(), font=("Arial", cfg.font_size_medium), command=switch_m3_mode,
-                                  width=round(manager.window().width() * cfg.scaling_factor / 42), height=7)
+        manager["m1"] = CTkButton(window.root(), font=("Arial", cfg.font_size_small), command=switch_m1_mode)
+        manager["m2"] = CTkButton(window.root(), font=("Arial", cfg.font_size_x_large))
+        manager["m3"] = CTkButton(window.root(), font=("Arial", cfg.font_size_medium), command=switch_m3_mode)
         manager["dtcs_status"] = CTkLabel(window.root(), text="DTCS READY", text_color="green",
-                                          font=("Arial", cfg.font_size_small),
-                                          width=round(manager.window().width() * cfg.scaling_factor / 40))
+                                          font=("Arial", cfg.font_size_small))
         manager["abs_status"] = CTkLabel(window.root(), text="ABS READY", text_color="green",
-                                         font=("Arial", cfg.font_size_small),
-                                         width=round(manager.window().width() * cfg.scaling_factor / 40))
+                                         font=("Arial", cfg.font_size_small))
         manager["ebi_status"] = CTkLabel(window.root(), text="EBI READY", text_color="green",
-                                         font=("Arial", cfg.font_size_small),
-                                         width=round(manager.window().width() * cfg.scaling_factor / 40))
+                                         font=("Arial", cfg.font_size_small))
         manager["atbs_status"] = CTkLabel(window.root(), text="ATBS READY", text_color="green",
-                                          font=("Arial", cfg.font_size_small),
-                                          width=round(manager.window().width() * cfg.scaling_factor / 40))
+                                          font=("Arial", cfg.font_size_small))
         manager["comm_status"] = CTkLabel(window.root(), text="COMM OFFLINE", text_color="gray",
-                                          font=("Arial", cfg.font_size_small),
-                                          width=round(manager.window().width() * cfg.scaling_factor / 40))
+                                          font=("Arial", cfg.font_size_small))
 
         def switch_dtcs():
-            context.set_dtcs(not (dtcs_enabled := context.is_dtcs_enabled()))
-            manager["dtcs"].configure(text=f"DTCS {'OFF' if dtcs_enabled else 'ON'}")
+            context.set_dtcs(not context.is_dtcs_enabled())
 
         add_hotkey("1", switch_dtcs)
 
         def switch_abs():
-            context.set_abs(not (abs_enabled := context.is_abs_enabled()))
-            manager["abs"].configure(text=f"ABS {'OFF' if abs_enabled else 'ON'}")
+            context.set_abs(not context.is_abs_enabled())
 
         add_hotkey("2", switch_abs)
 
         def switch_ebi():
-            context.set_ebi(not (ebi_enabled := context.is_ebi_enabled()))
-            manager["ebi"].configure(text=f"EBI {'OFF' if ebi_enabled else 'ON'}")
+            context.set_ebi(not context.is_ebi_enabled())
 
         add_hotkey("3", switch_ebi)
 
         def switch_atbs():
-            context.set_atbs(not (atbs_enabled := context.is_atbs_enabled()))
-            manager["atbs"].configure(text=f"ATBS {'OFF' if atbs_enabled else 'ON'}")
+            context.set_atbs(not context.is_atbs_enabled())
 
         add_hotkey("4", switch_atbs)
 
         manager["dtcs"] = CTkButton(window.root(), text="DTCS ON", command=switch_dtcs,
-                                    font=("Arial", cfg.font_size_small),
-                                    width=round(manager.window().width() * cfg.scaling_factor / 35), height=1)
+                                    font=("Arial", cfg.font_size_small))
         manager["abs"] = CTkButton(window.root(), text="ABS ON", command=switch_abs,
-                                   font=("Arial", cfg.font_size_small),
-                                   width=round(manager.window().width() * cfg.scaling_factor / 35), height=1)
+                                   font=("Arial", cfg.font_size_small))
         manager["ebi"] = CTkButton(window.root(), text="EBI ON", command=switch_ebi,
-                                   font=("Arial", cfg.font_size_small),
-                                   width=round(manager.window().width() * cfg.scaling_factor / 35), height=1)
+                                   font=("Arial", cfg.font_size_small))
         manager["atbs"] = CTkButton(window.root(), text="ATBS ON", command=switch_atbs,
-                                    font=("Arial", cfg.font_size_small),
-                                    width=round(manager.window().width() * cfg.scaling_factor / 35), height=1)
+                                    font=("Arial", cfg.font_size_small))
 
     uim = initialize(window, render, context, get_controller(MAIN_CONTROLLER))
 
@@ -127,6 +111,10 @@ def main() -> int:
                 uim["m3"].configure(text="Speed Trend")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
+            uim["dtcs"].configure(text=f"DTCS {'OFF' if context.is_dtcs_enabled() else 'ON'}")
+            uim["abs"].configure(text=f"ABS {'OFF' if context.is_abs_enabled() else 'ON'}")
+            uim["ebi"].configure(text=f"EBI {'OFF' if context.is_ebi_enabled() else 'ON'}")
+            uim["atbs"].configure(text=f"ATBS {'OFF' if context.is_atbs_enabled() else 'ON'}")
 
         def on_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="purple")
