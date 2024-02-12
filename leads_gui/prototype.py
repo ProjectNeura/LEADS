@@ -122,7 +122,7 @@ class ContextManager(object):
             row = layout[i]
             for j in range(len(row)):
                 widget = row[j]
-                widget.grid(row=i, column=j)
+                widget.grid(row=i, column=j, pady=2)
 
     def window(self) -> Window:
         return self._window
