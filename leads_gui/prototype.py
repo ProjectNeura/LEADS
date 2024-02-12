@@ -1,8 +1,7 @@
-from threading import Thread as _Thread
 from time import sleep as _sleep
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
-from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass, CTkLabel as _CTkLabel
+from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import get_system_platform
