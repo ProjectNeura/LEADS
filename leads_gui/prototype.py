@@ -31,13 +31,12 @@ class Window(_Generic[T]):
                  title: str = "LEADS",
                  fullscreen: bool = True,
                  no_title_bar: bool = True) -> None:
-        self._root: _CTk = _CTk(title,
-                                size=(None if width < 0 else width, None if height < 0 else height),
-                                text_justification="center",
-                                no_titlebar=no_title_bar)
-        size = self._root.size()
-        self._width: int = size[0] if fullscreen else width
-        self._height: int = size[1] if fullscreen else height
+        self._root: _CTk = _CTk()
+        self._root.title(title)
+        self._root.overrideredirect(no_title_bar)
+        self._width: int = self._root.winfo_screenwidth() if fullscreen else width
+        self._height: int = self._root.winfo_screenheight() if fullscreen else height
+        self._root.geometry(str(self._width) + "x" + str(self._height))
         self._refresh_rate: int = refresh_rate
         self._refresh_interval: float = float(1 / refresh_rate)
         self._runtime_data: T = runtime_data
