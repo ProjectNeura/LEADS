@@ -38,10 +38,9 @@ def device(tag: str | _Sequence[str],
            kwargs: dict[str, _Any] | list[dict[str, _Any]] | None = None) -> _Callable[[type], None]:
     if isinstance(tag, str):
         tag = [tag]
-    p = _controllers[parent]
     n = len(tag)
     if isinstance(parent, str):
-        p = [parent] * n
+        parent = [parent] * n
     if isinstance(args, tuple):
         args = [args] * n
     if not kwargs:
@@ -53,7 +52,7 @@ def device(tag: str | _Sequence[str],
         if not issubclass(target, Device):
             raise TypeError("Devices must inherit from `Device`")
         for i in range(len(tag)):
-            _register_device(target, tag[i], p, args[i], kwargs[i])
+            _register_device(target, tag[i], _controllers[parent[i]], args[i], kwargs[i])
 
     return _
 
