@@ -2,7 +2,7 @@ from math import lcm as _lcm
 from time import sleep as _sleep
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
-from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
+from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass, CTkLabel as _CTkLabel
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import get_system_platform
@@ -124,7 +124,7 @@ class ContextManager(object):
             length = len(row)
             for j in range(length):
                 s = int(t / length)
-                row[j].grid(row=i, column=j * s, columnspan=s, ipadx=4, ipady=4, padx=2, pady=2)
+                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=2, padx=2)
 
     def window(self) -> Window:
         return self._window

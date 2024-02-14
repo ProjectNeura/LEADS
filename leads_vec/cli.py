@@ -134,6 +134,9 @@ def main() -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         ["dtcs", "abs", "ebi", "atbs"]
     ])
+    CTkLabel(uim.root(), text="").grid(row=3, column=0)
+    uim.root().grid_rowconfigure(0, weight=1)
+    uim.root().grid_rowconfigure(3, weight=2)
     uim.show()
     uim.rd().comm_kill()
     return 0
