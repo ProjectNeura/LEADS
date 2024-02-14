@@ -22,7 +22,7 @@ def register_config(config: T | None) -> None:
     if config:
         if _config_instance:
             raise RuntimeError("Another config is already registered")
-        L.debug_level(Level(config.debug_level.upper()))
+        L.debug_level(Level[config.debug_level.upper()])
     _config_instance = config
 
 
