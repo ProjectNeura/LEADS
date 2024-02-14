@@ -7,4 +7,4 @@ class RaspberryPi4B(_Controller):
         self._srw_mode: bool = srw_mode
 
     def initialize(self, *parent_tags: str) -> None:
-        pass
+        super().initialize(*parent_tags)
