@@ -19,6 +19,7 @@ class ArduinoProto(_Controller, _Entity):
 
     def initialize(self, *parent_tags: str) -> None:
         self.start(True)
+        super().initialize(*parent_tags)
 
     def run(self) -> None:
         self.callback.on_initialize(self)
