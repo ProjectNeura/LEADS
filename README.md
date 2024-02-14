@@ -46,12 +46,12 @@ The codes are never designed for average high school students to understand. You
 Note that LEADS requires **Python >= 3.11**.
 
 ```shell
-pip install pysimplegui keyboard pyserial leads
+pip install customtkinter keyboard pyserial leads
 ```
 
 `numpy` will be automatically installed with `leads`.
 
-`pysimplegui`, `keyboard`, and `pyserial` are optional.
+`customtkinter`, `keyboard`, and `pyserial` are optional.
 
 If you only want the framework, run the following.
 

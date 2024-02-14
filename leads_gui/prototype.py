@@ -1,8 +1,8 @@
-from threading import Thread as _Thread
+from math import lcm as _lcm
 from time import sleep as _sleep
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
-from PySimpleGUI import Window as _Window, Element as _Element, WINDOW_CLOSED as _WINDOW_CLOSED, theme as _theme
+from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass, CTkLabel as _CTkLabel
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import get_system_platform
@@ -16,7 +16,7 @@ def default_on_kill() -> None:
     pass
 
 
-Widget: type = _Element
+Widget: type = _CTkBaseClass
 
 T = _TypeVar("T", bound=RuntimeData)
 
@@ -32,14 +32,12 @@ class Window(_Generic[T]):
                  title: str = "LEADS",
                  fullscreen: bool = True,
                  no_title_bar: bool = True) -> None:
-        _theme("Default1")
-        self._root: _Window = _Window(title,
-                                      size=(None if width < 0 else width, None if height < 0 else height),
-                                      text_justification="center",
-                                      no_titlebar=no_title_bar)
-        self._width: int = _Window.get_screen_size()[0] if fullscreen else width
-        self._height: int = _Window.get_screen_size()[1] if fullscreen else height
-        self._fullscreen: bool = fullscreen
+        self._root: _CTk = _CTk()
+        self._root.title(title)
+        self._root.overrideredirect(no_title_bar)
+        self._width: int = self._root.winfo_screenwidth() if fullscreen else width
+        self._height: int = self._root.winfo_screenheight() if fullscreen else height
+        self._root.geometry(str(self._width) + "x" + str(self._height))
         self._refresh_rate: int = refresh_rate
         self._refresh_interval: float = float(1 / refresh_rate)
         self._runtime_data: T = runtime_data
@@ -47,9 +45,8 @@ class Window(_Generic[T]):
         self._on_kill: _Callable[[_Self], None] = on_kill
 
         self._active: bool = False
-        self._refresher_thread: _Thread | None = None
 
-    def root(self) -> _Window:
+    def root(self) -> _CTk:
         return self._root
 
     def width(self) -> int:
@@ -76,32 +73,17 @@ class Window(_Generic[T]):
     def active(self) -> bool:
         return self._active
 
-    def refresher(self) -> None:
-        while self._active:
-            self._root.write_event_value("refresher", None)
-            self._runtime_data.frame_counter += 1
-            _sleep(self._refresh_interval)
-
     def show(self) -> None:
-        self._root.finalize()
-        if self._fullscreen:
-            self._root.maximize()
         self._active = True
-        self._refresher_thread = _Thread(name="refresher", target=self.refresher)
-        self._refresher_thread.start()
         while self._active:
-            event, values = self._root.read()
-            if event == _WINDOW_CLOSED:
-                self._active = False
-                break
-            elif event == "refresher":
-                self._on_refresh(self)
-            elif callable(event):
-                event()
+            self._on_refresh(self)
+            self._root.update()
+            _sleep(self._refresh_interval)
+            self._runtime_data.frame_counter += 1
 
     def kill(self) -> None:
         self._active = False
-        self._root.close()
+        self._root.destroy()
 
 
 class ContextManager(object):
@@ -134,7 +116,15 @@ class ContextManager(object):
         return layout
 
     def layout(self, layout: list[list[str | Widget]]) -> None:
-        self._window.root().layout(self.parse_layout(layout))
+        layout = self.parse_layout(layout)
+        t = _lcm(*tuple(map(len, layout)))
+        self.root().grid_columnconfigure(tuple(range(t)), weight=1)
+        for i in range(len(layout)):
+            row = layout[i]
+            length = len(row)
+            for j in range(length):
+                s = int(t / length)
+                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=2, padx=2)
 
     def window(self) -> Window:
         return self._window
@@ -145,7 +135,7 @@ class ContextManager(object):
     def active(self) -> bool:
         return self._window.active()
 
-    def root(self) -> _Window:
+    def root(self) -> _CTk:
         return self._window.root()
 
     def show(self) -> None:
