@@ -1,4 +1,5 @@
 from collections import deque as _deque
+from time import time as _time
 from copy import copy as _copy
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
@@ -14,7 +15,11 @@ def _check_data_type(data: T, superclass: type = DataContainer) -> None:
 
 
 class Context(_Generic[T]):
-    def __init__(self, srw_mode: bool = True, initial_data: T | None = None, data_seq_size: int = 1000) -> None:
+    def __init__(self,
+                 srw_mode: bool = True,
+                 initial_data: T | None = None,
+                 data_seq_size: int = 1000,
+                 num_laps_recorded: int = 3) -> None:
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data
@@ -22,13 +27,15 @@ class Context(_Generic[T]):
         """
         self._srw_mode: bool = srw_mode
         superclass = SRWDataContainer if srw_mode else DRWDataContainer
-        if not initial_data:
+        if initial_data:
+            _check_data_type(initial_data, superclass)
+        else:
             initial_data = superclass()
-        _check_data_type(initial_data, superclass)
         self.__initial_data_type: type = type(initial_data)
         if data_seq_size < 1:
             raise ValueError("`data_seq_size` must be greater or equal to 1")
-        self._data_seq: _deque = _deque((initial_data,), maxlen=data_seq_size)
+        self._data_seq: _deque[superclass] = _deque((initial_data,), maxlen=data_seq_size)
+        self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_recorded + 1)
         self._dtcs: bool = True
         self._abs: bool = True
         self._ebi: bool = True
@@ -89,6 +96,12 @@ class Context(_Generic[T]):
 
     def is_atbs_enabled(self) -> bool:
         return self._atbs
+
+    def record_lap(self):
+        self._lap_time_seq.append(int(_time() * 1000))
+
+    def get_lap_time_list(self) -> list[int]:
+        return [self._lap_time_seq[i] - self._lap_time_seq[i - 1] for i in range(1, len(self._lap_time_seq))]
 
     def brake(self, force: float) -> int:
         # todo

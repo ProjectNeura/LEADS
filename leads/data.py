@@ -19,7 +19,7 @@ class DataContainer(object, metaclass=_ABCMeta):
         """
         Reset the data's time stamp to now.
         """
-        self._time_stamp = _time() * 1000
+        self._time_stamp = int(_time() * 1000)
 
     def get_time_stamp(self) -> int:
         """
