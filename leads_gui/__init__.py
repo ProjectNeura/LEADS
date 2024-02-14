@@ -18,7 +18,6 @@ def initialize(window: Window,
                main_controller: _Controller) -> ContextManager:
     ctx = ContextManager(window)
     render(ctx)
-    window.runtime_data().frame_counter = 0
 
     def on_refresh(_) -> None:
         leads.push(main_controller.read())

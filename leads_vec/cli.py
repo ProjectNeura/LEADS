@@ -101,8 +101,7 @@ def main() -> int:
                                          f"{duration // 60} MIN {duration % 60} SEC\n\n"
                                          f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
                                          f"REFRESH RATE: {cfg.refresh_rate} FPS")
-            if uim.rd().frame_counter % int(cfg.refresh_rate / 4) == 0:
-                uim["m2"].configure(text=f"{int(context.data().front_wheel_speed)}")
+            uim["m2"].configure(text=f"{int(context.data().front_wheel_speed)}")
             if uim.rd().m3_mode == 0:
                 uim["m3"].configure(text="0.0V")
             elif uim.rd().m3_mode == 1:

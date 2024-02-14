@@ -78,8 +78,6 @@ class Window(_Generic[T]):
         while self._active:
             self._on_refresh(self)
             self._root.update()
-            _sleep(self._refresh_interval)
-            self._runtime_data.frame_counter += 1
 
     def kill(self) -> None:
         self._active = False

@@ -7,7 +7,6 @@ from leads.comm import Server as _Server
 class RuntimeData(object):
     start_time: int = int(_time())
     lap_time: list[int] = []
-    frame_counter: int = 0
     comm: _Server | None = None
 
     def comm_notify(self, d: _DataContainer) -> None:
