@@ -118,6 +118,7 @@ class ContextManager(object):
     def layout(self, layout: list[list[str | Widget]]) -> None:
         layout = self.parse_layout(layout)
         t = _lcm(*tuple(map(len, layout)))
+        self.root().grid_columnconfigure(tuple(range(t)), weight=1)
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
