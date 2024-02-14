@@ -111,10 +111,10 @@ def main() -> int:
                 uim["m3"].configure(text="Speed Trend")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
-            uim["dtcs"].configure(text=f"DTCS {'OFF' if context.is_dtcs_enabled() else 'ON'}")
-            uim["abs"].configure(text=f"ABS {'OFF' if context.is_abs_enabled() else 'ON'}")
-            uim["ebi"].configure(text=f"EBI {'OFF' if context.is_ebi_enabled() else 'ON'}")
-            uim["atbs"].configure(text=f"ATBS {'OFF' if context.is_atbs_enabled() else 'ON'}")
+            uim["dtcs"].configure(text=f"DTCS {'ON' if context.is_dtcs_enabled() else 'OFF'}")
+            uim["abs"].configure(text=f"ABS {'ON' if context.is_abs_enabled() else 'OFF'}")
+            uim["ebi"].configure(text=f"EBI {'ON' if context.is_ebi_enabled() else 'OFF'}")
+            uim["atbs"].configure(text=f"ATBS {'ON' if context.is_atbs_enabled() else 'OFF'}")
 
         def on_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="purple")
