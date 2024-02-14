@@ -21,7 +21,6 @@ def main() -> int:
     context = Leads(srw_mode=cfg.srw_mode)
     window = Window(cfg.width,
                     cfg.height,
-                    cfg.refresh_rate,
                     CustomRuntimeData(),
                     fullscreen=cfg.fullscreen,
                     no_title_bar=cfg.no_title_bar)
@@ -99,8 +98,7 @@ def main() -> int:
                 uim["m1"].configure(text=f"VeC {__version__.upper()}\n\n"
                                          f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
                                          f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                         f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
-                                         f"REFRESH RATE: {cfg.refresh_rate} FPS")
+                                         f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}")
             uim["m2"].configure(text=f"{int(context.data().front_wheel_speed)}")
             if uim.rd().m3_mode == 0:
                 uim["m3"].configure(text="0.0V")

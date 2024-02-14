@@ -1,8 +1,7 @@
 from math import lcm as _lcm
-from time import sleep as _sleep
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
-from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass, CTkLabel as _CTkLabel
+from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import get_system_platform
@@ -25,7 +24,6 @@ class Window(_Generic[T]):
     def __init__(self,
                  width: int,
                  height: int,
-                 refresh_rate: int,
                  runtime_data: T,
                  on_refresh: _Callable[[_Self], None] = default_on_refresh,
                  on_kill: _Callable[[_Self], None] = default_on_kill,
@@ -38,8 +36,6 @@ class Window(_Generic[T]):
         self._width: int = self._root.winfo_screenwidth() if fullscreen else width
         self._height: int = self._root.winfo_screenheight() if fullscreen else height
         self._root.geometry(str(self._width) + "x" + str(self._height))
-        self._refresh_rate: int = refresh_rate
-        self._refresh_interval: float = float(1 / refresh_rate)
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[_Self], None] = on_refresh
         self._on_kill: _Callable[[_Self], None] = on_kill
@@ -54,12 +50,6 @@ class Window(_Generic[T]):
 
     def height(self) -> int:
         return self._height
-
-    def refresh_interval(self) -> float:
-        return self._refresh_interval
-
-    def refresh_rate(self) -> int:
-        return self._refresh_rate
 
     def runtime_data(self) -> T:
         return self._runtime_data
