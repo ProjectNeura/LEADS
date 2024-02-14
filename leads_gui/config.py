@@ -1,6 +1,7 @@
 from typing import Any as _Any
 
 from leads.config import ConfigTemplate as _ConfigTemplate
+from leads_gui.system import get_system_platform
 
 
 class Config(_ConfigTemplate):
@@ -11,6 +12,7 @@ class Config(_ConfigTemplate):
         self.fullscreen: bool = False
         self.no_title_bar: bool = False
         self.manual_mode: bool = False
+        self.refresh_rate: int = 30
         self.font_size_small: int = 12
         self.font_size_medium: int = 24
         self.font_size_large: int = 40

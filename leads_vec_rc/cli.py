@@ -6,6 +6,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from leads import L
 from leads.config import *
 from leads.comm import *
 from leads.data_persistence import *
