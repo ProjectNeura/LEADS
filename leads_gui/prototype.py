@@ -1,3 +1,4 @@
+from math import lcm as _lcm
 from time import sleep as _sleep
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
@@ -116,9 +117,7 @@ class ContextManager(object):
 
     def layout(self, layout: list[list[str | Widget]]) -> None:
         layout = self.parse_layout(layout)
-        t = 1
-        for row in layout:
-            t *= len(row)
+        t = _lcm(*tuple(map(len, layout)))
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
