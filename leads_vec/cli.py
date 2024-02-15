@@ -128,7 +128,7 @@ def main() -> int:
                 uim["atbs"].configure(text=f"ATBS {'ON' if context.is_atbs_enabled() else 'OFF'}")
 
         def on_intervene(self, e: InterventionEvent) -> None:
-            uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="purple")
+            uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="blue")
 
         def post_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
