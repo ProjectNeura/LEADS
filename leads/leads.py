@@ -2,9 +2,9 @@ from typing import TypeVar as _TypeVar, Any as _Any
 
 from leads.constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from leads.context import Context
+from leads.data import DataContainer
 from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
-from leads.data import DataContainer
 
 T = _TypeVar("T", bound=DataContainer)
 
@@ -30,7 +30,7 @@ def dtcs_drw(context: Context,
     return InterventionExitEvent(context, SYSTEM_DTCS, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed)
 
 
-class Leads(Context[T]):
+class LEADS(Context[T]):
     def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self._event_listener: EventListener = event_listener

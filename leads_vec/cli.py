@@ -5,8 +5,8 @@ from customtkinter import CTkButton, CTkLabel
 from keyboard import add_hotkey
 
 from leads import *
-from leads.config import *
 from leads.comm import *
+from leads.config import *
 from leads_gui import *
 from leads_vec.__version__ import __version__
 
@@ -18,7 +18,7 @@ class CustomRuntimeData(RuntimeData):
 
 def main() -> int:
     cfg = get_config(Config)
-    context = Leads(srw_mode=cfg.srw_mode)
+    context = LEADS(srw_mode=cfg.srw_mode)
     window = Window(cfg.width,
                     cfg.height,
                     cfg.refresh_rate,

@@ -5,7 +5,7 @@ if not _find_spec("PySimpleGUI"):
 
 from typing import Callable as _Callable, Any as _Any
 
-from leads import Leads as _Leads, Controller as _Controller
+from leads import LEADS as _LEADS, Controller as _Controller
 from leads.comm import Server as _Server, create_server as _create_server
 from leads_gui.prototype import *
 from leads_gui.runtime import *
@@ -14,7 +14,7 @@ from leads_gui.config import *
 
 def initialize(window: Window,
                render: _Callable[[ContextManager], None],
-               leads: _Leads[_Any],
+               leads: _LEADS[_Any],
                main_controller: _Controller) -> ContextManager:
     ctx = ContextManager(window)
     render(ctx)
