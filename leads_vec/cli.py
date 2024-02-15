@@ -17,6 +17,9 @@ class CustomRuntimeData(RuntimeData):
     control_system_switch_changed: bool = False
 
 
+SYSTEMS: tuple[str, str, str, str] = ("dtcs", "abs", "ebi", "atbs")
+
+
 def main() -> int:
     cfg = get_config(Config)
     ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
@@ -133,16 +136,20 @@ def main() -> int:
                 uim["atbs"].configure(text=f"ATBS {'ON' if ctx.is_atbs_enabled() else 'OFF'}")
 
         def on_intervene(self, e: InterventionEvent) -> None:
-            uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="blue")
+            if e.system in SYSTEMS:
+                uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="blue")
 
         def post_intervene(self, e: InterventionEvent) -> None:
-            uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
+            if e.system in SYSTEMS:
+                uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
         def on_suspend(self, e: SuspensionEvent) -> None:
-            uim[e.system.lower() + "_status"].configure(text=e.system + " SUSPD", text_color="red")
+            if e.system in SYSTEMS:
+                uim[e.system.lower() + "_status"].configure(text=e.system + " SUSPD", text_color="red")
 
         def post_suspend(self, e: SuspensionEvent) -> None:
-            uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
+            if e.system in SYSTEMS:
+                uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
     ctx.set_event_listener(CustomListener())
     uim.layout([

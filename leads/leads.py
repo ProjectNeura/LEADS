@@ -83,6 +83,11 @@ class LEADS(Context[T]):
 
         self._event_listener.post_update(UpdateEvent(self))
 
+    def record_lap(self) -> None:
+        self.intervene(InterventionEvent(self, "LAP RECORDING"))
+        super().record_lap()
+        return self.intervene(InterventionExitEvent(self, "LAP RECORDING"))
+
     def brake(self, force: float) -> int:
         self.intervene(InterventionEvent(self, "BRAKING", force))
         try:
