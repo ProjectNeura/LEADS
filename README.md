@@ -163,22 +163,23 @@ The configuration is a JSON file that has the following columns. You can have an
 
 Note that a purely empty file could cause an error.
 
-|                           | Type    | Usage                                                        | Used By      | Default       |
-| ------------------------- | ------- | ------------------------------------------------------------ | ------------ | ------------- |
-| `srw_mode`                | `bool`  | `True`: single rear wheel; `False`: dual rear wheel          | Main, Remote | `True`        |
-| `width`                   | `int`   | Window width                                                 | Main         | `720`         |
-| `height`                  | `int`   | Window height                                                | Main         | `480`         |
-| `fullscreen`              | `bool`  | `True`: auto maximize; `False`: window mode                  | Main         | `False`       |
-| `no_title_bar`            | `bool`  | `True`: no title bar; `False`: default title bar             | Main         | `False`       |
-| `manual_mode`             | `bool`  | `True`: hide control system; `False`: show control system    | Main         | `False`       |
-| `font_size_small`         | `int`   | Small font size                                              | Main         | `8`           |
-| `font_size_medium`        | `int`   | Medium font size                                             | Main         | `16`          |
-| `font_size_large`         | `int`   | Large font size                                              | Main         | `32`          |
-| `font_size_x_large`       | `int`   | Extra large font size                                        | Main         | `48`          |
-| `comm_addr`               | `str`   | Communication server address                                 | Remote       | `"127.0.0.1"` |
-| `comm_port`               | `int`   | The port on which the communication system runs on           | Main, Remote | `16900`       |
-| `data_dir`                | `str`   | The directory for the data recording system                  | Remote       | `"./data"`    |
-| `enable_data_persistence` | `bool`  | `True`: enable data persistence; `False`: disable data persistence | Remote       | `True`        |
+|                           | Type   | Usage                                                              | Used By      | Default       |
+|---------------------------|--------|--------------------------------------------------------------------|--------------|---------------|
+| `srw_mode`                | `bool` | `True`: single rear wheel; `False`: dual rear wheel                | Main, Remote | `True`        |
+| `width`                   | `int`  | Window width                                                       | Main         | `720`         |
+| `height`                  | `int`  | Window height                                                      | Main         | `480`         |
+| `fullscreen`              | `bool` | `True`: auto maximize; `False`: window mode                        | Main         | `False`       |
+| `no_title_bar`            | `bool` | `True`: no title bar; `False`: default title bar                   | Main         | `False`       |
+| `manual_mode`             | `bool` | `True`: hide control system; `False`: show control system          | Main         | `False`       |
+| `refresh_rate`            | `int`  | GUI frame per second                                               | Main         | `30`          |
+| `font_size_small`         | `int`  | Small font size                                                    | Main         | `8`           |
+| `font_size_medium`        | `int`  | Medium font size                                                   | Main         | `16`          |
+| `font_size_large`         | `int`  | Large font size                                                    | Main         | `32`          |
+| `font_size_x_large`       | `int`  | Extra large font size                                              | Main         | `48`          |
+| `comm_addr`               | `str`  | Communication server address                                       | Remote       | `"127.0.0.1"` |
+| `comm_port`               | `int`  | The port on which the communication system runs on                 | Main, Remote | `16900`       |
+| `data_dir`                | `str`  | The directory for the data recording system                        | Remote       | `"./data"`    |
+| `enable_data_persistence` | `bool` | `True`: enable data persistence; `False`: disable data persistence | Remote       | `True`        |
 
 ## Submodules
 
