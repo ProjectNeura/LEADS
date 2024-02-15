@@ -5,5 +5,5 @@ then
 fi
 sudo su
 ./python-install.sh
-python3.11 -m pip install pysimplegui keyboard pyserial leads
+python3.11 -m pip install customtkinter keyboard pyserial leads
 python3.11 -m leads_vec info
