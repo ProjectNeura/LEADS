@@ -123,7 +123,7 @@ def main() -> int:
             elif uim.rd().m3_mode == 1:
                 m3.set("G Force")
             else:
-                m3.set("Speed Trend\n" + str(ctx.get_speed_trend()))
+                m3.set(f"Speed Trend\n{int(st := ctx.get_speed_trend())} {'↑' if st > 0 else '↓'}")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
