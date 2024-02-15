@@ -1,16 +1,12 @@
-from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
+from abc import ABCMeta as _ABCMeta
 from json import dumps as _dumps
 from time import time as _time
-from typing import Self as _Self
 
 
 class DataContainer(object, metaclass=_ABCMeta):
-    def __init__(self) -> None:
+    def __init__(self, *speeds: int | float) -> None:
         self._time_stamp: int = int(_time() * 1000)
-
-    @_abstractmethod
-    def __sub__(self, other: _Self) -> _Self:
-        raise NotImplementedError
+        self.speed: int | float = min(speeds)
 
     def __str__(self) -> str:
         return _dumps(self.to_dict())
@@ -56,15 +52,9 @@ class SRWDataContainer(DataContainer):
                  front_wheel_speed: int | float = 0,
                  rear_wheel_speed: int | float = 0,
                  ) -> None:
-        super().__init__()
+        super().__init__(front_wheel_speed, rear_wheel_speed)
         self.front_wheel_speed: int | float = front_wheel_speed
         self.rear_wheel_speed: int | float = rear_wheel_speed
-
-    def __sub__(self, other: _Self) -> _Self:
-        return SRWDataContainer(
-            self.front_wheel_speed - other.front_wheel_speed,
-            self.rear_wheel_speed - other.rear_wheel_speed
-        )
 
 
 class DRWDataContainer(DataContainer):
@@ -73,14 +63,7 @@ class DRWDataContainer(DataContainer):
                  left_rear_wheel_speed: int | float = 0,
                  right_rear_wheel_speed: int | float = 0,
                  ) -> None:
-        super().__init__()
+        super().__init__(front_wheel_speed, left_rear_wheel_speed, left_rear_wheel_speed)
         self.front_wheel_speed: int | float = front_wheel_speed
         self.left_rear_wheel_speed: int | float = left_rear_wheel_speed
         self.right_rear_wheel_speed: int | float = right_rear_wheel_speed
-
-    def __sub__(self, other: _Self) -> _Self:
-        return DRWDataContainer(
-            self.front_wheel_speed - other.front_wheel_speed,
-            self.left_rear_wheel_speed - other.left_rear_wheel_speed,
-            self.right_rear_wheel_speed - other.right_rear_wheel_speed
-        )

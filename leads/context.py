@@ -1,7 +1,9 @@
 from collections import deque as _deque
-from time import time as _time
 from copy import copy as _copy
+from time import time as _time
 from typing import TypeVar as _TypeVar, Generic as _Generic
+
+from numpy import diff as _diff, gradient as _gradient, average as _average, array as _array
 
 from leads.constant import SYSTEM_DTCS, SYSTEM_ABS, SYSTEM_EBI, SYSTEM_ATBS
 from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
@@ -26,15 +28,16 @@ class Context(_Generic[T]):
         :param data_seq_size: buffer size of previous data
         """
         self._srw_mode: bool = srw_mode
-        superclass = SRWDataContainer if srw_mode else DRWDataContainer
+        dct = SRWDataContainer if srw_mode else DRWDataContainer
         if initial_data:
-            _check_data_type(initial_data, superclass)
+            _check_data_type(initial_data, dct)
         else:
-            initial_data = superclass()
+            initial_data = dct()
         self.__initial_data_type: type = type(initial_data)
         if data_seq_size < 1:
             raise ValueError("`data_seq_size` must be greater or equal to 1")
-        self._data_seq: _deque[superclass] = _deque((initial_data,), maxlen=data_seq_size)
+        self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
+        self._speed_seq: _deque[int | float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_recorded + 1)
         self._dtcs: bool = True
         self._abs: bool = True
@@ -54,6 +57,7 @@ class Context(_Generic[T]):
         """
         _check_data_type(data, self.__initial_data_type)
         self._data_seq.append(data)
+        self._speed_seq.append(data.speed)
 
     def set_subsystem(self, system: str, enabled: bool) -> None:
         """
@@ -102,6 +106,9 @@ class Context(_Generic[T]):
 
     def get_lap_time_list(self) -> list[int]:
         return [self._lap_time_seq[i] - self._lap_time_seq[i - 1] for i in range(1, len(self._lap_time_seq))]
+
+    def get_speed_trend(self) -> float:
+        return float(_average(_gradient(_diff(_array(self._speed_seq)))))
 
     def brake(self, force: float) -> int:
         # todo

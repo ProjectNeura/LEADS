@@ -19,7 +19,7 @@ class CustomRuntimeData(RuntimeData):
 
 def main() -> int:
     cfg = get_config(Config)
-    ctx = LEADS(srw_mode=cfg.srw_mode)
+    ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
     window = Window(cfg.width,
                     cfg.height,
                     cfg.refresh_rate,
@@ -117,13 +117,13 @@ def main() -> int:
                        f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n\n"
                        f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
                        f"REFRESH RATE: {cfg.refresh_rate} FPS")
-            m2.set(int(d.front_wheel_speed))
+            m2.set(int(d.speed))
             if uim.rd().m3_mode == 0:
                 m3.set("0.0V")
             elif uim.rd().m3_mode == 1:
                 m3.set("G Force")
             else:
-                m3.set("Speed Trend")
+                m3.set("Speed Trend\n" + str(ctx.get_speed_trend()))
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
