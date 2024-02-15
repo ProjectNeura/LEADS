@@ -33,9 +33,10 @@ def main() -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = CTkButton(window.root(), font=("Arial", cfg.font_size_small), command=switch_m1_mode)
-        manager["m2"] = CTkButton(window.root(), font=("Arial", cfg.font_size_x_large))
-        manager["m3"] = CTkButton(window.root(), font=("Arial", cfg.font_size_medium), command=switch_m3_mode)
+        manager["m1"] = CTkButton(window.root(), command=switch_m1_mode, font=("Arial", cfg.font_size_small))
+        manager["m2"] = CTkButton(window.root(), hover_color=("gray95", "gray10"),
+                                  font=("Arial", cfg.font_size_x_large))
+        manager["m3"] = CTkButton(window.root(), command=switch_m3_mode, font=("Arial", cfg.font_size_medium))
         manager["dtcs_status"] = CTkLabel(window.root(), text="DTCS READY", text_color="green",
                                           font=("Arial", cfg.font_size_small))
         manager["abs_status"] = CTkLabel(window.root(), text="ABS READY", text_color="green",

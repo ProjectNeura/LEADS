@@ -1,0 +1,57 @@
+{
+  "CTk": {
+    "fg_color": [
+      "gray95",
+      "gray10"
+    ]
+  },
+  "CTkButton": {
+    "corner_radius": 4,
+    "border_width": 2,
+    "fg_color": [
+      "gray95",
+      "gray10"
+    ],
+    "hover_color": [
+      "gray85",
+      "gray20"
+    ],
+    "border_color": [
+      "gray50",
+      "gray50"
+    ],
+    "text_color": [
+      "black",
+      "white"
+    ],
+    "text_color_disabled": [
+      "gray74",
+      "gray60"
+    ]
+  },
+  "CTkLabel": {
+    "corner_radius": 0,
+    "fg_color": "transparent",
+    "text_color": [
+      "gray14",
+      "gray84"
+    ]
+  },
+  "CTkFont": {
+    "macOS": {
+      "family": "SF Display",
+      "size": 13,
+      "weight": "normal"
+    },
+    "Windows": {
+      "family": "Roboto",
+      "size": 13,
+      "weight": "normal"
+    },
+    "Linux": {
+      "family": "Roboto",
+      "size": 13,
+      "weight": "normal"
+    }
+  }
+}
