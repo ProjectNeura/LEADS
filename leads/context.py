@@ -101,7 +101,7 @@ class Context(_Generic[T]):
     def is_atbs_enabled(self) -> bool:
         return self._atbs
 
-    def record_lap(self):
+    def record_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
 
     def get_lap_time_list(self) -> list[int]:
