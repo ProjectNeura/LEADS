@@ -1,7 +1,7 @@
 from datetime import datetime
 from time import time
 
-from customtkinter import CTkButton, CTkLabel
+from customtkinter import CTkButton, CTkLabel, IntVar, StringVar
 from keyboard import add_hotkey
 
 from leads import *
@@ -14,6 +14,7 @@ from leads_vec.__version__ import __version__
 class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
     m3_mode: int = 0
+    control_system_switch_changed: bool = False
 
 
 def main() -> int:
@@ -25,6 +26,9 @@ def main() -> int:
                     CustomRuntimeData(),
                     fullscreen=cfg.fullscreen,
                     no_title_bar=cfg.no_title_bar)
+    m1 = StringVar(window.root(), "")
+    m2 = IntVar(window.root(), 0)
+    m3 = StringVar(window.root(), "")
 
     def render(manager: ContextManager):
         def switch_m1_mode():
@@ -33,10 +37,12 @@ def main() -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = CTkButton(window.root(), command=switch_m1_mode, font=("Arial", cfg.font_size_small))
-        manager["m2"] = CTkButton(window.root(), hover_color=("gray95", "gray10"),
+        manager["m1"] = CTkButton(window.root(), textvariable=m1, command=switch_m1_mode,
+                                  font=("Arial", cfg.font_size_small))
+        manager["m2"] = CTkButton(window.root(), textvariable=m2, state="disabled",
                                   font=("Arial", cfg.font_size_x_large))
-        manager["m3"] = CTkButton(window.root(), command=switch_m3_mode, font=("Arial", cfg.font_size_medium))
+        manager["m3"] = CTkButton(window.root(), textvariable=m3, command=switch_m3_mode,
+                                  font=("Arial", cfg.font_size_medium))
         manager["dtcs_status"] = CTkLabel(window.root(), text="DTCS READY", text_color="green",
                                           font=("Arial", cfg.font_size_small))
         manager["abs_status"] = CTkLabel(window.root(), text="ABS READY", text_color="green",
@@ -50,21 +56,25 @@ def main() -> int:
 
         def switch_dtcs():
             context.set_dtcs(not context.is_dtcs_enabled())
+            manager.rd().control_system_switch_changed = True
 
         add_hotkey("1", switch_dtcs)
 
         def switch_abs():
             context.set_abs(not context.is_abs_enabled())
+            manager.rd().control_system_switch_changed = True
 
         add_hotkey("2", switch_abs)
 
         def switch_ebi():
             context.set_ebi(not context.is_ebi_enabled())
+            manager.rd().control_system_switch_changed = True
 
         add_hotkey("3", switch_ebi)
 
         def switch_atbs():
             context.set_atbs(not context.is_atbs_enabled())
+            manager.rd().control_system_switch_changed = True
 
         add_hotkey("4", switch_atbs)
 
@@ -95,26 +105,27 @@ def main() -> int:
         def on_update(self, e: UpdateEvent) -> None:
             duration = int(time()) - uim.rd().start_time
             if uim.rd().m1_mode == 0:
-                uim["m1"].configure(text="LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
-            elif uim.rd().m1_mode == 1:
-                uim["m1"].configure(text=f"VeC {__version__.upper()}\n\n"
-                                         f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                                         f"{duration // 60} MIN {duration % 60} SEC\n\n"
-                                         f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
-                                         f"REFRESH RATE: {cfg.refresh_rate} FPS")
-            uim["m2"].configure(text=f"{int(context.data().front_wheel_speed)}")
-            if uim.rd().m3_mode == 0:
-                uim["m3"].configure(text="0.0V")
-            elif uim.rd().m3_mode == 1:
-                uim["m3"].configure(text="G Force")
+                m1.set("LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
             else:
-                uim["m3"].configure(text="Speed Trend")
+                m1.set(f"VeC {__version__.upper()}\n\n"
+                       f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                       f"{duration // 60} MIN {duration % 60} SEC\n\n"
+                       f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
+                       f"REFRESH RATE: {cfg.refresh_rate} FPS")
+            m2.set(int(context.data().front_wheel_speed))
+            if uim.rd().m3_mode == 0:
+                m3.set("0.0V")
+            elif uim.rd().m3_mode == 1:
+                m3.set("G Force")
+            else:
+                m3.set("Speed Trend")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
-            uim["dtcs"].configure(text=f"DTCS {'ON' if context.is_dtcs_enabled() else 'OFF'}")
-            uim["abs"].configure(text=f"ABS {'ON' if context.is_abs_enabled() else 'OFF'}")
-            uim["ebi"].configure(text=f"EBI {'ON' if context.is_ebi_enabled() else 'OFF'}")
-            uim["atbs"].configure(text=f"ATBS {'ON' if context.is_atbs_enabled() else 'OFF'}")
+            if uim.rd().control_system_switch_changed:
+                uim["dtcs"].configure(text=f"DTCS {'ON' if context.is_dtcs_enabled() else 'OFF'}")
+                uim["abs"].configure(text=f"ABS {'ON' if context.is_abs_enabled() else 'OFF'}")
+                uim["ebi"].configure(text=f"EBI {'ON' if context.is_ebi_enabled() else 'OFF'}")
+                uim["atbs"].configure(text=f"ATBS {'ON' if context.is_atbs_enabled() else 'OFF'}")
 
         def on_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="purple")
