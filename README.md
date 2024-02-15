@@ -13,7 +13,7 @@ The hardware components chosen for this project are geared towards amateur devel
 
 Before you start, please note that LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
 
-![preview](docs/assets/preview.png)
+![demo](docs/assets/preview.png)
 
 ## Key Features
 
