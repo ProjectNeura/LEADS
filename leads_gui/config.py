@@ -1,7 +1,6 @@
 from typing import Any as _Any
 
 from leads.config import ConfigTemplate as _ConfigTemplate
-from leads_gui.system import get_system_platform
 
 
 class Config(_ConfigTemplate):
