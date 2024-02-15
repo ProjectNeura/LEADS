@@ -39,7 +39,7 @@ class Window(_Generic[T]):
         self._height: int = self._root.winfo_screenheight() if fullscreen else height
         self._root.geometry(str(self._width) + "x" + str(self._height))
         self._refresh_rate: int = refresh_rate
-        self._refresh_interval: float = float(1 / refresh_rate)
+        self._refresh_interval: int = int(1000 / refresh_rate)
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[_Self], None] = on_refresh
         self._on_kill: _Callable[[_Self], None] = on_kill
@@ -54,9 +54,6 @@ class Window(_Generic[T]):
 
     def height(self) -> int:
         return self._height
-
-    def refresh_interval(self) -> float:
-        return self._refresh_interval
 
     def refresh_rate(self) -> int:
         return self._refresh_rate
@@ -75,9 +72,14 @@ class Window(_Generic[T]):
 
     def show(self) -> None:
         self._active = True
-        while self._active:
+
+        def wrapper():
             self._on_refresh(self)
-            self._root.update()
+            if self._active:
+                self._root.after(self._refresh_interval, wrapper)
+
+        self._root.after(0, wrapper)
+        self._root.mainloop()
 
     def kill(self) -> None:
         self._active = False
@@ -122,7 +124,7 @@ class ContextManager(object):
             length = len(row)
             for j in range(length):
                 s = int(t / length)
-                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=2, padx=2)
+                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=2, padx=4, pady=4)
 
     def window(self) -> Window:
         return self._window
