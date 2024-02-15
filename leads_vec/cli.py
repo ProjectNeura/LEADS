@@ -19,7 +19,7 @@ class CustomRuntimeData(RuntimeData):
 
 def main() -> int:
     cfg = get_config(Config)
-    context = LEADS(srw_mode=cfg.srw_mode)
+    ctx = LEADS(srw_mode=cfg.srw_mode)
     window = Window(cfg.width,
                     cfg.height,
                     cfg.refresh_rate,
@@ -55,25 +55,25 @@ def main() -> int:
                                           font=("Arial", cfg.font_size_small))
 
         def switch_dtcs():
-            context.set_dtcs(not context.is_dtcs_enabled())
+            ctx.set_dtcs(not ctx.is_dtcs_enabled())
             manager.rd().control_system_switch_changed = True
 
         add_hotkey("1", switch_dtcs)
 
         def switch_abs():
-            context.set_abs(not context.is_abs_enabled())
+            ctx.set_abs(not ctx.is_abs_enabled())
             manager.rd().control_system_switch_changed = True
 
         add_hotkey("2", switch_abs)
 
         def switch_ebi():
-            context.set_ebi(not context.is_ebi_enabled())
+            ctx.set_ebi(not ctx.is_ebi_enabled())
             manager.rd().control_system_switch_changed = True
 
         add_hotkey("3", switch_ebi)
 
         def switch_atbs():
-            context.set_atbs(not context.is_atbs_enabled())
+            ctx.set_atbs(not ctx.is_atbs_enabled())
             manager.rd().control_system_switch_changed = True
 
         add_hotkey("4", switch_atbs)
@@ -86,8 +86,10 @@ def main() -> int:
                                    font=("Arial", cfg.font_size_small))
         manager["atbs"] = CTkButton(window.root(), text="ATBS ON", command=switch_atbs,
                                     font=("Arial", cfg.font_size_small))
+        manager["record_lap"] = CTkButton(window.root(), text="Record Lap", command=ctx.record_lap,
+                                          font=("Arial", cfg.font_size_small))
 
-    uim = initialize(window, render, context, get_controller(MAIN_CONTROLLER))
+    uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
     class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
@@ -98,21 +100,24 @@ def main() -> int:
 
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
+    def format_lap_time(t: int) -> str:
+        return f"{(t := int(t * .001)) // 60}MIN {t % 60}S"
+
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
             uim.rd().comm_notify(e.data)
 
         def on_update(self, e: UpdateEvent) -> None:
-            duration = int(time()) - uim.rd().start_time
+            d = ctx.data()
             if uim.rd().m1_mode == 0:
-                m1.set("LAP TIME\n\nLAP1 9s\nLAP2 11s\nLAP3 10s")
+                m1.set("LAP TIME\n\n" + "\n".join(map(format_lap_time, ctx.get_lap_time_list())))
             else:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-                       f"{duration // 60} MIN {duration % 60} SEC\n\n"
+                       f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n\n"
                        f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
                        f"REFRESH RATE: {cfg.refresh_rate} FPS")
-            m2.set(int(context.data().front_wheel_speed))
+            m2.set(int(d.front_wheel_speed))
             if uim.rd().m3_mode == 0:
                 m3.set("0.0V")
             elif uim.rd().m3_mode == 1:
@@ -122,10 +127,10 @@ def main() -> int:
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
-                uim["dtcs"].configure(text=f"DTCS {'ON' if context.is_dtcs_enabled() else 'OFF'}")
-                uim["abs"].configure(text=f"ABS {'ON' if context.is_abs_enabled() else 'OFF'}")
-                uim["ebi"].configure(text=f"EBI {'ON' if context.is_ebi_enabled() else 'OFF'}")
-                uim["atbs"].configure(text=f"ATBS {'ON' if context.is_atbs_enabled() else 'OFF'}")
+                uim["dtcs"].configure(text=f"DTCS {'ON' if ctx.is_dtcs_enabled() else 'OFF'}")
+                uim["abs"].configure(text=f"ABS {'ON' if ctx.is_abs_enabled() else 'OFF'}")
+                uim["ebi"].configure(text=f"EBI {'ON' if ctx.is_ebi_enabled() else 'OFF'}")
+                uim["atbs"].configure(text=f"ATBS {'ON' if ctx.is_atbs_enabled() else 'OFF'}")
 
         def on_intervene(self, e: InterventionEvent) -> None:
             uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="blue")
@@ -139,15 +144,16 @@ def main() -> int:
         def post_suspend(self, e: SuspensionEvent) -> None:
             uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
-    context.set_event_listener(CustomListener())
+    ctx.set_event_listener(CustomListener())
     uim.layout([
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
-        ["dtcs", "abs", "ebi", "atbs"]
+        ["dtcs", "abs", "ebi", "atbs"],
+        ["record_lap"]
     ])
-    CTkLabel(uim.root(), text="").grid(row=3, column=0)
+    CTkLabel(uim.root(), text="").grid(row=4, column=0)
     uim.root().grid_rowconfigure(0, weight=1)
-    uim.root().grid_rowconfigure(3, weight=2)
+    uim.root().grid_rowconfigure(4, weight=2)
     uim.show()
     uim.rd().comm_kill()
     return 0
