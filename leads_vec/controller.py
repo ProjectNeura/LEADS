@@ -1,10 +1,10 @@
-from leads import L, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
-    DRWDataContainer
+from leads import L, device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
+    DRWDataContainer, DC_MOTOR_CONTROLLER_A
 from leads.comm import Callback, Service, ConnectionBase
 from leads.config import get_config
 from leads_arduino import ArduinoMicro
 from leads_gui import Config
-from leads_raspberry_pi import RaspberryPi4B
+from leads_raspberry_pi import RaspberryPi4B, DCMotorController
 
 config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -52,9 +52,9 @@ class WheelSpeedController(ArduinoMicro):
 #         self._brake: bool = brake
 
 
-# @device(DC_MOTOR_CONTROLLER_A, MAIN_CONTROLLER)
-# class DriverMotorController(DCMotorController):
-#     pass
+@device(DC_MOTOR_CONTROLLER_A, MAIN_CONTROLLER)
+class DriverMotorController(DCMotorController):
+    pass
 
 
 _ = None  # null export
