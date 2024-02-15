@@ -4,7 +4,7 @@ from leads.comm import Callback, Service, ConnectionBase
 from leads.config import get_config
 from leads_arduino import ArduinoMicro
 from leads_gui import Config
-from leads_raspberry_pi import RaspberryPi4B, DCMotorController
+from leads_raspberry_pi import RaspberryPi4B, DCMotorController, VoltageSensor
 
 config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -12,6 +12,7 @@ WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "CO
 WHEEL_RADIUS: float = config.get("wheel_radius", 159.5)  # 20 inches
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
 BRAKE_PEDAL_PIN: int = config.get("brake_pedal_pin", 3)
+VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 
 
 @controller(MAIN_CONTROLLER)
@@ -54,6 +55,11 @@ class WheelSpeedController(ArduinoMicro):
 
 @device(DC_MOTOR_CONTROLLER_A, MAIN_CONTROLLER)
 class DriverMotorController(DCMotorController):
+    pass
+
+
+@device("mvs", MAIN_CONTROLLER, (4,))
+class MotorVoltageSensor(VoltageSensor):
     pass
 
 
