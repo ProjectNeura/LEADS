@@ -15,6 +15,7 @@ def dtcs_srw(context: Context,
              front_wheel_speed: _OptionalNumber,
              rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
     if front_wheel_speed < rear_wheel_speed:
+        context.overwrite_throttle(0)
         return InterventionEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
     return InterventionExitEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
 
@@ -24,8 +25,10 @@ def dtcs_drw(context: Context,
              left_rear_wheel_speed: _OptionalNumber,
              right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
     if front_wheel_speed < left_rear_wheel_speed:
+        context.overwrite_throttle(0)
         return InterventionEvent(context, SystemLiteral.DTCS, "l", front_wheel_speed, left_rear_wheel_speed)
     if front_wheel_speed < right_rear_wheel_speed:
+        context.overwrite_throttle(0)
         return InterventionEvent(context, SystemLiteral.DTCS, "r", front_wheel_speed, right_rear_wheel_speed)
     return InterventionExitEvent(context, SystemLiteral.DTCS,
                                  front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed)
@@ -35,6 +38,7 @@ def abs_srw(context: Context,
             front_wheel_speed: _OptionalNumber,
             rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
     if front_wheel_speed > rear_wheel_speed:
+        context.overwrite_brake(0)
         return InterventionEvent(context, SystemLiteral.ABS, front_wheel_speed, rear_wheel_speed)
     return InterventionExitEvent(context, SystemLiteral.ABS, front_wheel_speed, rear_wheel_speed)
 
@@ -44,8 +48,10 @@ def abs_drw(context: Context,
             left_rear_wheel_speed: _OptionalNumber,
             right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
     if front_wheel_speed > left_rear_wheel_speed:
+        context.overwrite_brake(0)
         return InterventionEvent(context, SystemLiteral.ABS, "l", front_wheel_speed, left_rear_wheel_speed)
     if front_wheel_speed > right_rear_wheel_speed:
+        context.overwrite_brake(0)
         return InterventionEvent(context, SystemLiteral.ABS, "r", front_wheel_speed, right_rear_wheel_speed)
     return InterventionExitEvent(context, SystemLiteral.ABS,
                                  front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed)
@@ -88,13 +94,13 @@ class LEADS(Context[T]):
                                                     SystemLiteral.ATBS)) is not None:
             rear_wheel_speed = self._acquire_data("rear_wheel_speed",
                                                   SystemLiteral.DTCS, SystemLiteral.ATBS,
-                                                  mandatory=self.in_srw_mode())
+                                                  mandatory=self.srw_mode())
             left_rear_wheel_speed = self._acquire_data("left_rear_wheel_speed",
                                                        SystemLiteral.DTCS, SystemLiteral.ATBS,
-                                                       mandatory=not self.in_srw_mode())
+                                                       mandatory=not self.srw_mode())
             right_rear_wheel_speed = self._acquire_data("right_rear_wheel_speed",
                                                         SystemLiteral.DTCS, SystemLiteral.ATBS,
-                                                        mandatory=not self.in_srw_mode())
+                                                        mandatory=not self.srw_mode())
             # DTCS
             if self._dtcs:
                 self.intervene(dtcs_srw(self, front_wheel_speed, rear_wheel_speed) if self._srw_mode else
@@ -111,9 +117,16 @@ class LEADS(Context[T]):
         super().record_lap()
         return self.intervene(InterventionExitEvent(self, "LAP RECORDING"))
 
-    def brake(self, force: float) -> int:
-        self.intervene(InterventionEvent(self, "BRAKING", force))
+    def overwrite_throttle(self, force: float) -> float:
+        self.intervene(InterventionEvent(self, "THROTTLE", force))
         try:
-            return super().brake(force)
+            return super().overwrite_throttle(force)
         finally:
-            self.intervene(InterventionExitEvent(self, "BRAKING", force))
+            self.intervene(InterventionExitEvent(self, "THROTTLE", force))
+
+    def overwrite_brake(self, force: float) -> float:
+        self.intervene(InterventionEvent(self, "BRAKE", force))
+        try:
+            return super().overwrite_brake(force)
+        finally:
+            self.intervene(InterventionExitEvent(self, "BRAKE", force))

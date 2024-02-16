@@ -38,6 +38,7 @@ class Context(_Generic[T]):
         self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
         self._speed_seq: _deque[int | float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_recorded + 1)
+        self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
         self._dtcs: bool = True
         self._abs: bool = True
         self._ebi: bool = True
@@ -83,32 +84,8 @@ class Context(_Generic[T]):
         elif system == SystemLiteral.ATBS:
             return self._atbs
 
-    def in_srw_mode(self) -> bool:
+    def srw_mode(self) -> bool:
         return self._srw_mode
-
-    def set_dtcs(self, enabled: bool) -> None:
-        self._dtcs = enabled
-
-    def is_dtcs_enabled(self) -> bool:
-        return self._dtcs
-
-    def set_abs(self, enabled: bool) -> None:
-        self._abs = enabled
-
-    def is_abs_enabled(self) -> bool:
-        return self._abs
-
-    def set_ebi(self, enabled: bool) -> None:
-        self._ebi = enabled
-
-    def is_ebi_enabled(self) -> bool:
-        return self._ebi
-
-    def set_atbs(self, enabled: bool) -> None:
-        self._atbs = enabled
-
-    def is_atbs_enabled(self) -> bool:
-        return self._atbs
 
     def record_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
@@ -119,6 +96,16 @@ class Context(_Generic[T]):
     def get_speed_trend(self) -> float:
         return float(_average(_gradient(_diff(_array(self._speed_seq)))))
 
-    def brake(self, force: float) -> int:
+    def torque_mapping(self, torque_mapping: list[float] | None = None) -> list[float] | None:
+        if torque_mapping:
+            self._torque_mapping = torque_mapping
+        else:
+            return self._torque_mapping
+
+    def overwrite_throttle(self, force: float) -> float:
+        # todo
+        return 0
+
+    def overwrite_brake(self, force: float) -> float:
         # todo
         return 0
