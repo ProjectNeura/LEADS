@@ -1,6 +1,11 @@
 MAIN_CONTROLLER: str = "__main__"
 
 WHEEL_SPEED_CONTROLLER: str = "wsc"
+LEFT_FRONT_WHEEL_SPEED_SENSOR: str = "wss_lf"
+RIGHT_FRONT_WHEEL_SPEED_SENSOR: str = "wss_rf"
+CENTER_REAR_WHEEL_SPEED_SENSOR: str = "wss_cr"
+LEFT_REAR_WHEEL_SPEED_SENSOR: str = "wss_lr"
+RIGHT_REAR_WHEEL_SPEED_SENSOR: str = "wss_rr"
 THROTTLE_PEDAL: str = "tpd"
 BRAKE_PEDAL: str = "bpd"
 DC_MOTOR_CONTROLLER_A: str = "dmca"
