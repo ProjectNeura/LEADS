@@ -13,6 +13,9 @@ class Controller(Device):
         self._devices[tag] = device
         device.tag(tag)
 
+    def devices(self) -> list[Device]:
+        return list(self._devices.values())
+
     def device(self, tag: str, device: Device | None = None) -> Device | None:
         if device:
             self._attach_device(tag, device)
