@@ -1,5 +1,6 @@
 from datetime import datetime
 from time import time
+from typing import Callable
 
 from customtkinter import CTkButton, CTkLabel, IntVar, StringVar
 from keyboard import add_hotkey
@@ -15,6 +16,14 @@ class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
     m3_mode: int = 0
     control_system_switch_changed: bool = False
+
+
+def make_system_switch(context: Context, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
+    def switch() -> None:
+        context.set_subsystem(system, not context.is_subsystem_enabled(system))
+        runtime_data.control_system_switch_changed = True
+
+    return switch
 
 
 def main() -> int:
@@ -43,49 +52,20 @@ def main() -> int:
                                   font=("Arial", cfg.font_size_x_large))
         manager["m3"] = CTkButton(window.root(), textvariable=m3, command=switch_m3_mode,
                                   font=("Arial", cfg.font_size_medium))
-        manager["dtcs_status"] = CTkLabel(window.root(), text="DTCS READY", text_color="green",
-                                          font=("Arial", cfg.font_size_small))
-        manager["abs_status"] = CTkLabel(window.root(), text="ABS READY", text_color="green",
-                                         font=("Arial", cfg.font_size_small))
-        manager["ebi_status"] = CTkLabel(window.root(), text="EBI READY", text_color="green",
-                                         font=("Arial", cfg.font_size_small))
-        manager["atbs_status"] = CTkLabel(window.root(), text="ATBS READY", text_color="green",
-                                          font=("Arial", cfg.font_size_small))
+
         manager["comm_status"] = CTkLabel(window.root(), text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
 
-        def switch_dtcs():
-            ctx.set_dtcs(not ctx.is_dtcs_enabled())
-            manager.rd().control_system_switch_changed = True
+        i = 0
+        for system in SystemLiteral:
+            i += 1
+            system_lower = system.lower()
+            manager[system_lower + "_status"] = CTkLabel(window.root(), text=system + " READY", text_color="green",
+                                                         font=("Arial", cfg.font_size_small))
+            add_hotkey(str(i), switch := make_system_switch(ctx, SystemLiteral(system), manager.rd()))
+            manager[system_lower] = CTkButton(window.root(), text=system + " ON", command=switch,
+                                              font=("Arial", cfg.font_size_small))
 
-        add_hotkey("1", switch_dtcs)
-
-        def switch_abs():
-            ctx.set_abs(not ctx.is_abs_enabled())
-            manager.rd().control_system_switch_changed = True
-
-        add_hotkey("2", switch_abs)
-
-        def switch_ebi():
-            ctx.set_ebi(not ctx.is_ebi_enabled())
-            manager.rd().control_system_switch_changed = True
-
-        add_hotkey("3", switch_ebi)
-
-        def switch_atbs():
-            ctx.set_atbs(not ctx.is_atbs_enabled())
-            manager.rd().control_system_switch_changed = True
-
-        add_hotkey("4", switch_atbs)
-
-        manager["dtcs"] = CTkButton(window.root(), text="DTCS ON", command=switch_dtcs,
-                                    font=("Arial", cfg.font_size_small))
-        manager["abs"] = CTkButton(window.root(), text="ABS ON", command=switch_abs,
-                                   font=("Arial", cfg.font_size_small))
-        manager["ebi"] = CTkButton(window.root(), text="EBI ON", command=switch_ebi,
-                                   font=("Arial", cfg.font_size_small))
-        manager["atbs"] = CTkButton(window.root(), text="ATBS ON", command=switch_atbs,
-                                    font=("Arial", cfg.font_size_small))
         manager["record_lap"] = CTkButton(window.root(), text="Record Lap", command=ctx.record_lap,
                                           font=("Arial", cfg.font_size_small))
 
@@ -127,10 +107,14 @@ def main() -> int:
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
-                uim["dtcs"].configure(text=f"DTCS {'ON' if ctx.is_dtcs_enabled() else 'OFF'}")
-                uim["abs"].configure(text=f"ABS {'ON' if ctx.is_abs_enabled() else 'OFF'}")
-                uim["ebi"].configure(text=f"EBI {'ON' if ctx.is_ebi_enabled() else 'OFF'}")
-                uim["atbs"].configure(text=f"ATBS {'ON' if ctx.is_atbs_enabled() else 'OFF'}")
+                for system in SystemLiteral:
+                    system_lowercase = system.lower()
+                    if ctx.is_subsystem_enabled(SystemLiteral(system)):
+                        uim[system_lowercase].configure(text=system + " ON")
+                    else:
+                        uim[system_lowercase].configure(text=system + " OFF")
+                        uim[system_lowercase + "_status"].configure(text=system + " OFF", text_color="white")
+                uim.rd().control_system_switch_changed = False
 
         def on_intervene(self, e: InterventionEvent) -> None:
             if e.system in SystemLiteral:
@@ -152,7 +136,7 @@ def main() -> int:
     uim.layout([
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
-        ["dtcs", "abs", "ebi", "atbs"],
+        list(map(lambda s: s.lower(), SystemLiteral)),
         ["record_lap"]
     ])
     CTkLabel(uim.root(), text="").grid(row=4, column=0)
