@@ -4,8 +4,8 @@ from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
-    initialize_main as _initialize_main, L as _L
-from leads.config import load_config as _load_config, register_config as _register_config, get_config as _get_config
+    initialize_main as _initialize_main, L as _L, load_config as _load_config, register_config as _register_config, \
+    get_config as _get_config
 from leads_gui import get_system_platform as _get_system_platform, Config as _Config
 
 if __name__ == '__main__':
@@ -46,7 +46,8 @@ if __name__ == '__main__':
         with open("config.json", "w") as f:
             f.write(str(_get_config(_Config)))
         _L.info("Configuration file saved to \"config.json\"")
-    _register_config(_load_config(args.config, _Config) if args.config else None)
+    _register_config(config := _load_config(args.config, _Config) if args.config else None)
+    _L.debug("Configuration loaded:", str(config))
     from leads_vec.cli import main
 
     try:

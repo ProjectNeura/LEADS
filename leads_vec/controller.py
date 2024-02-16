@@ -2,9 +2,8 @@ from typing import Optional as _Optional
 
 from leads import L, device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, DC_MOTOR_CONTROLLER_A, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
-    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR
+    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config
 from leads.comm import Callback, Service, ConnectionBase
-from leads.config import get_config
 from leads_arduino import ArduinoMicro, WheelSpeedSensor
 from leads_gui import Config
 from leads_raspberry_pi import RaspberryPi4B, DCMotorController, VoltageSensor

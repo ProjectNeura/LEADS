@@ -1,8 +1,10 @@
 from json import dumps as _dumps
 from typing import Any as _Any
 
+from leads.data import Serializable
 
-class ConfigTemplate(object):
+
+class ConfigTemplate(Serializable):
     def __init__(self, base: dict[str, _Any]) -> None:
         """
         All custom columns should be public (not named after "_").
@@ -23,7 +25,7 @@ class ConfigTemplate(object):
         self.refresh()
 
     def __str__(self) -> str:
-        return _dumps(self)
+        return _dumps(self.to_dict())
 
     def load(self, d: dict[str, _Any]) -> None:
         """

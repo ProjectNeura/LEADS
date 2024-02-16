@@ -1,6 +1,6 @@
 from typing import Any as _Any
 
-from leads.config import ConfigTemplate as _ConfigTemplate
+from leads import ConfigTemplate as _ConfigTemplate
 
 
 class Config(_ConfigTemplate):
