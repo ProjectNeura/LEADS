@@ -20,5 +20,6 @@ class WheelSpeedSensor(_Device):
         self._last_valid = _time()
 
     def read(self) -> float:
-        d = rpm2kmh(60 / (.001 + _time() - self._last_valid), self._wheel_speed)  # add .001 to avoid zero division
+        # add .001 to avoid zero division
+        d = rpm2kmh(60 / (.001 + _time() - self._last_valid), self._wheel_circumference)
         return d if d < 3 else self._wheel_speed
