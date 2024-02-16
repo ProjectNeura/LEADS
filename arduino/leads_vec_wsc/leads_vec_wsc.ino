@@ -14,6 +14,8 @@ void reportWheelSpeed(String tag, float n) {
 
 void lfwssOnUpdate(float ws) {
     reportWheelSpeed(LEFT_FRONT_WHEEL_SPEED_SENSOR, ws);
+    reportWheelSpeed(RIGHT_FRONT_WHEEL_SPEED_SENSOR, ws);
+    reportWheelSpeed(CENTER_REAR_WHEEL_SPEED_SENSOR, ws);
 }
 
 WheelSpeedSensor LFWSS(PIN_LFWSS, lfwssOnUpdate);
