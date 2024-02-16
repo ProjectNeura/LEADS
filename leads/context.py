@@ -1,5 +1,4 @@
 from collections import deque as _deque
-from copy import copy as _copy
 from time import time as _time
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
@@ -48,7 +47,7 @@ class Context(_Generic[T]):
         """
         :return: a copy of the current data container
         """
-        return _copy(self._data_seq[-1])
+        return self._data_seq[-1]
 
     def push(self, data: T) -> None:
         """
