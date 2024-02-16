@@ -4,9 +4,9 @@ from time import time as _time
 
 
 class DataContainer(object, metaclass=_ABCMeta):
-    def __init__(self, *speeds: int | float) -> None:
+    def __init__(self, min_speed: int | float) -> None:
         self._time_stamp: int = int(_time() * 1000)
-        self.speed: int | float = min(speeds)
+        self.speed: int | float = min_speed
 
     def __str__(self) -> str:
         return _dumps(self.to_dict())
@@ -49,21 +49,23 @@ class DataContainer(object, metaclass=_ABCMeta):
 
 class SRWDataContainer(DataContainer):
     def __init__(self,
+                 min_speed: int | float = 0,
                  front_wheel_speed: int | float = 0,
                  rear_wheel_speed: int | float = 0,
                  ) -> None:
-        super().__init__(front_wheel_speed, rear_wheel_speed)
+        super().__init__(min_speed)
         self.front_wheel_speed: int | float = front_wheel_speed
         self.rear_wheel_speed: int | float = rear_wheel_speed
 
 
 class DRWDataContainer(DataContainer):
     def __init__(self,
+                 min_speed: int | float = 0,
                  front_wheel_speed: int | float = 0,
                  left_rear_wheel_speed: int | float = 0,
                  right_rear_wheel_speed: int | float = 0,
                  ) -> None:
-        super().__init__(front_wheel_speed, left_rear_wheel_speed, left_rear_wheel_speed)
+        super().__init__(min_speed)
         self.front_wheel_speed: int | float = front_wheel_speed
         self.left_rear_wheel_speed: int | float = left_rear_wheel_speed
         self.right_rear_wheel_speed: int | float = right_rear_wheel_speed
