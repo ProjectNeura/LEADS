@@ -6,4 +6,3 @@ class SystemLiteral(_StrEnum):
     ABS: str = "ABS"
     EBI: str = "EBI"
     ATBS: str = "ATBS"
-    COMM: str = "COMM"
