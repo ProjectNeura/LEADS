@@ -6,3 +6,4 @@ if not _find_spec("serial"):
 from leads_arduino.arduino_proto import *
 from leads_arduino.arduino_nano import *
 from leads_arduino.arduino_micro import *
+from leads_arduino.wheel_speed_sensor import *
