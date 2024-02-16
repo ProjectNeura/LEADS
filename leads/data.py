@@ -3,7 +3,20 @@ from json import dumps as _dumps
 from time import time as _time
 
 
-class DataContainer(object, metaclass=_ABCMeta):
+class Serializable(object):
+    def to_dict(self) -> dict:
+        attributes = dir(self)
+        r = {}
+        for n in attributes:
+            if n.startswith("_"):
+                continue
+            v = self.__getattribute__(n)
+            if type(v) in (int, float, str):
+                r[n] = v
+        return r
+
+
+class DataContainer(Serializable, metaclass=_ABCMeta):
     def __init__(self, min_speed: int | float) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.speed: int | float = min_speed
@@ -29,14 +42,7 @@ class DataContainer(object, metaclass=_ABCMeta):
         Convert the data into a dictionary.
         :return: a dictionary that contains all custom attributes of the container
         """
-        attributes = dir(self)
-        r = {"t": self._time_stamp}
-        for n in attributes:
-            if n.startswith("_"):
-                continue
-            v = self.__getattribute__(n)
-            if type(v) in (int, float, str):
-                r[n] = v
+        (r := super().to_dict())["t"] = self._time_stamp
         return r
 
     def encode(self) -> bytes:
