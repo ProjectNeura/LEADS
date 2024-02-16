@@ -11,7 +11,8 @@ LEADS is a lightweight embedded assisted driving system. It is designed to simpl
 
 The hardware components chosen for this project are geared towards amateur developers. It uses no dedicated circuit boards, but generic development kits such as Raspberry Pi and Arduino instead. However, if you wish to write some codes, the software framework has the ability to adapt to any type of hardware component.
 
-Before you start, please note that LEADS only supports two drive-wheel configurations: single rear wheel (SRW) mode and dual rear wheel (DRW) mode.
+Before you start, please note that LEADS only supports rear drive and two drive-wheel configurations: single rear
+wheel (SRW) mode and dual rear wheel (DRW) mode.
 
 ![demo](docs/assets/preview.png)
 
