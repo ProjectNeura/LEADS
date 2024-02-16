@@ -12,8 +12,8 @@ from leads_raspberry_pi import RaspberryPi4B, DCMotorController, VoltageSensor
 config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
 WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "COM3")
-FRONT_WHEEL_RADIUS: float = config.get("front_wheel_radius", 159.5)  # 20 inches
-REAR_WHEEL_RADIUS: float = config.get("rear_wheel_radius", 159.5)  # 20 inches
+FRONT_WHEEL_DIAMETER: float = config.get("front_wheel_diameter", 20)  # 20 inches
+REAR_WHEEL_DIAMETER: float = config.get("rear_wheel_diameter", 20)  # 20 inches
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
 BRAKE_PEDAL_PIN: int = config.get("brake_pedal_pin", 3)
 VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
@@ -62,9 +62,9 @@ class WheelSpeedController(ArduinoMicro):
                 RIGHT_FRONT_WHEEL_SPEED_SENSOR,
                 CENTER_REAR_WHEEL_SPEED_SENSOR
         ), WHEEL_SPEED_CONTROLLER, [
-            (FRONT_WHEEL_RADIUS,),
-            (FRONT_WHEEL_RADIUS,),
-            (REAR_WHEEL_RADIUS,)
+            (FRONT_WHEEL_DIAMETER,),
+            (FRONT_WHEEL_DIAMETER,),
+            (REAR_WHEEL_DIAMETER,)
         ]
 ) if config.srw_mode else (
         (
@@ -73,10 +73,10 @@ class WheelSpeedController(ArduinoMicro):
                 LEFT_REAR_WHEEL_SPEED_SENSOR,
                 RIGHT_REAR_WHEEL_SPEED_SENSOR
         ), WHEEL_SPEED_CONTROLLER, [
-            (FRONT_WHEEL_RADIUS,),
-            (FRONT_WHEEL_RADIUS,),
-            (REAR_WHEEL_RADIUS,),
-            (REAR_WHEEL_RADIUS,)
+            (FRONT_WHEEL_DIAMETER,),
+            (FRONT_WHEEL_DIAMETER,),
+            (REAR_WHEEL_DIAMETER,),
+            (REAR_WHEEL_DIAMETER,)
         ]
 )))
 class WheelSpeedSensors(WheelSpeedSensor):

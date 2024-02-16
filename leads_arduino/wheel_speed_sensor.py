@@ -1,21 +1,22 @@
+from math import pi as _pi
 from time import time as _time
 
 from leads import Device as _Device
 
 
-def rpm2kmh(rpm: float, wheel_radius: float) -> float:
-    return rpm * wheel_radius * .0006
+def rpm2kmh(rpm: float, wheel_circumference: float) -> float:
+    return rpm * wheel_circumference * .0006
 
 
 class WheelSpeedSensor(_Device):
-    def __init__(self, wheel_radius: float) -> None:
+    def __init__(self, wheel_diameter: int | float) -> None:
         super().__init__()
-        self._wheel_radius: float = wheel_radius
+        self._wheel_circumference: float = wheel_diameter * 2.54 * _pi
         self._wheel_speed: int | float = 0
         self._last_valid: float = 0
 
     def update(self, data: int | float) -> None:
-        self._wheel_speed = rpm2kmh(data, self._wheel_radius)
+        self._wheel_speed = rpm2kmh(data, self._wheel_circumference)
         self._last_valid = _time()
 
     def read(self) -> float:
