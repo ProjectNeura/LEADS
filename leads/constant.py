@@ -1,5 +1,9 @@
-SYSTEM_DTCS: str = "DTCS"
-SYSTEM_ABS: str = "ABS"
-SYSTEM_EBI: str = "EBI"
-SYSTEM_ATBS: str = "ATBS"
-SYSTEM_COMM: str = "COMM"
+from enum import StrEnum as _StrEnum
+
+
+class System(_StrEnum):
+    DTCS: str = "DTCS"
+    ABS: str = "ABS"
+    EBI: str = "EBI"
+    ATBS: str = "ATBS"
+    COMM: str = "COMM"
