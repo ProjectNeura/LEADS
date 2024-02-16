@@ -65,13 +65,23 @@ class Context(_Generic[T]):
         :param enabled: True: enabled; False: disabled
         """
         if system == SystemLiteral.DTCS:
-            self.set_dtcs(enabled)
+            self._dtcs = enabled
         elif system == SystemLiteral.ABS:
-            self.set_abs(enabled)
+            self._abs = enabled
         elif system == SystemLiteral.EBI:
-            self.set_ebi(enabled)
+            self._ebi = enabled
         elif system == SystemLiteral.ATBS:
-            self.set_atbs(enabled)
+            self._atbs = enabled
+
+    def is_subsystem_enabled(self, system: SystemLiteral) -> bool:
+        if system == SystemLiteral.DTCS:
+            return self._dtcs
+        elif system == SystemLiteral.ABS:
+            return self._abs
+        elif system == SystemLiteral.EBI:
+            return self._ebi
+        elif system == SystemLiteral.ATBS:
+            return self._atbs
 
     def in_srw_mode(self) -> bool:
         return self._srw_mode
