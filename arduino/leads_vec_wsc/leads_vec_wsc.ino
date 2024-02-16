@@ -4,18 +4,19 @@ const int PIN_LFWSS[] = {2};
 const int PIN_RFWSS[] = {3};
 const int PIN_LRWSS[] = {4};
 const int PIN_RRWSS[] = {5};
-const int PIN_MRWSS[] = {6};
+const int PIN_CRWSS[] = {6};
 
-void println(float n) {
+void reportWheelSpeed(String tag, float n) {
+    Serial.print(tag + ":");
     Serial.print(n);
     Serial.print(";");
 }
 
-void onUpdate(float ws) {
-    println(ws);
+void lfwssOnUpdate(float ws) {
+    reportWheelSpeed(LEFT_FRONT_WHEEL_SPEED_SENSOR, ws);
 }
 
-WheelSpeedSensor LFWSS(PIN_LFWSS, onUpdate);
+WheelSpeedSensor LFWSS(PIN_LFWSS, lfwssOnUpdate);
 
 void setup() {
     Serial.begin(9600);
