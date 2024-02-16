@@ -4,7 +4,7 @@ from typing import TypeVar as _TypeVar, Generic as _Generic
 
 from numpy import diff as _diff, gradient as _gradient, average as _average, array as _array
 
-from leads.constant import System
+from leads.constant import SystemLiteral
 from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 
 T = _TypeVar("T", bound=DataContainer)
@@ -58,19 +58,19 @@ class Context(_Generic[T]):
         self._data_seq.append(data)
         self._speed_seq.append(data.speed)
 
-    def set_subsystem(self, system: System, enabled: bool) -> None:
+    def set_subsystem(self, system: SystemLiteral, enabled: bool) -> None:
         """
         Set a certain subsystem enabled or disabled.
         :param system: subsystem id
         :param enabled: True: enabled; False: disabled
         """
-        if system == System.DTCS:
+        if system == SystemLiteral.DTCS:
             self.set_dtcs(enabled)
-        elif system == System.ABS:
+        elif system == SystemLiteral.ABS:
             self.set_abs(enabled)
-        elif system == System.EBI:
+        elif system == SystemLiteral.EBI:
             self.set_ebi(enabled)
-        elif system == System.ATBS:
+        elif system == SystemLiteral.ATBS:
             self.set_atbs(enabled)
 
     def in_srw_mode(self) -> bool:
