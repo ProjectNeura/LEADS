@@ -1,3 +1,4 @@
+from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from collections import deque as _deque
 from time import time as _time
 from typing import TypeVar as _TypeVar, Generic as _Generic
@@ -15,7 +16,7 @@ def _check_data_type(data: T, superclass: type = DataContainer) -> None:
         raise TypeError(f"New data must inherit from `{superclass}`")
 
 
-class Context(_Generic[T]):
+class Context(_Generic[T], metaclass=_ABCMeta):
     def __init__(self,
                  srw_mode: bool = True,
                  initial_data: T | None = None,
@@ -86,6 +87,10 @@ class Context(_Generic[T]):
 
     def srw_mode(self) -> bool:
         return self._srw_mode
+
+    @_abstractmethod
+    def update(self) -> None:
+        raise NotImplementedError
 
     def record_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
