@@ -1,5 +1,17 @@
+import sys as _sys
 from datetime import datetime as _datetime
 from enum import IntEnum as _IntEnum
+from types import FrameType as _FrameType
+
+if hasattr(_sys, "_getframe"):
+    def currentframe() -> _FrameType:
+        return _sys._getframe(1)
+else:
+    def currentframe() -> _FrameType:
+        try:
+            raise Exception
+        except Exception as exc:
+            return exc.__traceback__.tb_frame.f_back
 
 
 class Level(_IntEnum):
@@ -36,7 +48,7 @@ class Logger(object):
 
     @staticmethod
     def mark(msg: str, level: Level) -> str:
-        return f"[{repr(level)[1:-1]}] [{_datetime.now()}] {msg}"
+        return f"[{repr(level)[1:-1]}] [{currentframe().f_back.f_back.f_code.co_name}] [{_datetime.now()}] {msg}"
 
     @staticmethod
     def format(msg: str, font: int, color: int | None, background: int | None) -> str:
