@@ -113,7 +113,7 @@ def main() -> int:
                         uim[system_lowercase].configure(text=system + " ON")
                     else:
                         uim[system_lowercase].configure(text=system + " OFF")
-                        uim[system_lowercase + "_status"].configure(text=system + " OFF", text_color="white")
+                        uim[system_lowercase + "_status"].configure(text=system + " OFF", text_color=("black", "white"))
                 uim.rd().control_system_switch_changed = False
 
         def on_intervene(self, e: InterventionEvent) -> None:
