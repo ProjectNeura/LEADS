@@ -19,7 +19,7 @@ class Context(_Generic[T]):
     def __init__(self,
                  srw_mode: bool = True,
                  initial_data: T | None = None,
-                 data_seq_size: int = 300,
+                 data_seq_size: int = 100,
                  num_laps_recorded: int = 3) -> None:
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
@@ -94,7 +94,7 @@ class Context(_Generic[T]):
         return [self._lap_time_seq[i] - self._lap_time_seq[i - 1] for i in range(1, len(self._lap_time_seq))]
 
     def get_speed_trend(self) -> float:
-        return float(_average(_diff(_array(self._speed_seq)[-100:])))
+        return float(_average(_diff(_array(self._speed_seq))))
 
     def torque_mapping(self, torque_mapping: list[float] | None = None) -> list[float] | None:
         if torque_mapping:
