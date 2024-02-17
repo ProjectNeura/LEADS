@@ -6,7 +6,7 @@
 
 ## Programmers
 
-Required Environment: [Python](https://python.org) >= 3.11
+Required Environment: [Python](https://python.org) >= 3.12
 
 Recommended Package Management: [Anaconda](https://www.anaconda.com/)
 

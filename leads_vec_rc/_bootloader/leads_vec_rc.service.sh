@@ -1,1 +1,1 @@
-python3.11 -m leads_vec_rc
+python3.12 -m leads_vec_rc

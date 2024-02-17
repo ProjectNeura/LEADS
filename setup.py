@@ -9,7 +9,7 @@ setup(
     author="ProjectNeura",
     author_email="central@projectneura.org",
     description="Lightweight Embedded Assisted Driving System",
-    license='Apache License 2.0',
+    license="Apache License 2.0",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/ProjectNeura/LEADS",

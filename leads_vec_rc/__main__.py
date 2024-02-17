@@ -6,7 +6,7 @@ from sys import exit as _exit
 from leads import L as _L
 from leads_gui import get_system_platform as _get_system_platform
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = _ArgumentParser(prog="LEADS VeC RC",
                              description="Lightweight Embedded Assisted Driving System VeC Remote Controller",
                              epilog="GitHub: https://github.com/ProjectNeura/LEADS")

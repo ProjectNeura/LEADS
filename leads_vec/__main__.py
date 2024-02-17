@@ -8,7 +8,7 @@ from leads import register_controller as _register_controller, MAIN_CONTROLLER a
     get_config as _get_config
 from leads_gui import get_system_platform as _get_system_platform, Config as _Config
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
                              epilog="ProjectNeura: https://projectneura.org"

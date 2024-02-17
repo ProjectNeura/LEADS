@@ -40,7 +40,7 @@ class Logger(object):
 
     @staticmethod
     def format(msg: str, font: int, color: int | None, background: int | None) -> str:
-        return f"\033[{font}{f';{color}' if color else ''}{f';{background + 10}' if background else ''}m{msg}\033[0m"
+        return f"\033[{font}{f";{color}" if color else ""}{f";{background + 10}" if background else ""}m{msg}\033[0m"
 
     def print(self, msg: str, level: int) -> None:
         if self._debug_level <= level:

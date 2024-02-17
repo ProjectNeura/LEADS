@@ -47,7 +47,7 @@ The codes are never designed for average high school students to understand. You
 
 ### Python
 
-Note that LEADS requires **Python >= 3.11**.
+Note that LEADS requires **Python >= 3.12**.
 
 ```shell
 pip install customtkinter keyboard pyserial leads
@@ -155,7 +155,8 @@ This section helps you set up the exact environment we have for the VeC project.
 
 You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything for you. If anything goes wrong, you can also manually install everything.
 
-If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working because you have to specify the Python version such that `python3.11 ...` and `python3.11 -m pip ...`.
+If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
+because you have to specify the Python version such that `python3.12 ...` and `python3.12 -m pip ...`.
 
 ## Configurations
 

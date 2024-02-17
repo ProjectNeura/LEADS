@@ -92,9 +92,9 @@ def main() -> int:
                 m1.set("LAP TIME\n\n" + "\n".join(map(format_lap_time, ctx.get_lap_time_list())))
             else:
                 m1.set(f"VeC {__version__.upper()}\n\n"
-                       f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                       f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                        f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n\n"
-                       f"{'SRW MODE' if cfg.srw_mode else 'DRW MODE'}\n"
+                       f"{"SRW MODE" if cfg.srw_mode else "DRW MODE"}\n"
                        f"REFRESH RATE: {cfg.refresh_rate} FPS")
             m2.set(int(d.speed))
             if uim.rd().m3_mode == 0:
@@ -103,7 +103,7 @@ def main() -> int:
                 m3.set("G Force")
             else:
                 m3.set(f"Speed Trend\n"
-                       f"{(sts := str(st := ctx.get_speed_trend() * 10))[:sts.find('.') + 2]} {'↑' if st > 0 else '↓'}")
+                       f"{(sts := str(st := ctx.get_speed_trend() * 10))[:sts.find(".") + 2]} {"↑" if st > 0 else "↓"}")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
