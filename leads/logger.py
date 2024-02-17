@@ -15,8 +15,8 @@ else:
 
 
 class Level(_IntEnum):
-    INFO: int = 0x00
-    DEBUG: int = 0x01
+    DEBUG: int = 0x00
+    INFO: int = 0x01
     WARN: int = 0x02
     ERROR: int = 0x03
 

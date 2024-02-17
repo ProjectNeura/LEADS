@@ -11,7 +11,7 @@ class ConfigTemplate(Serializable):
         :param base: base dictionary
         """
         self._d: dict[str, _Any] = base
-        self.debug_level: str = "INFO"
+        self.debug_level: str = "DEBUG"
         self.srw_mode: bool = True
 
     def __getitem__(self, name: str) -> _Any | None:
