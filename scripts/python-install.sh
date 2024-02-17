@@ -6,5 +6,7 @@ fi
 sudo su
 apt update
 apt install python3.12
+wget https://bootstrap.pypa.io/get-pip.py
+python3.12 get-pip.py
 apt install python3-tk
 apt install python3-rpi.gpi
