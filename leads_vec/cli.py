@@ -103,7 +103,7 @@ def main() -> int:
                 m3.set("G Force")
             else:
                 m3.set(f"Speed Trend\n"
-                       f"{(sts := str(st := ctx.get_speed_trend() * 10))[:sts.find(".") + 2]} {'↑' if st > 0 else '↓'}")
+                       f"{(sts := str(st := ctx.get_speed_trend() * 10))[:sts.find('.') + 2]} {'↑' if st > 0 else '↓'}")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
