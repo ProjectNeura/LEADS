@@ -2,7 +2,7 @@ from datetime import datetime
 from time import time
 from typing import Callable
 
-from customtkinter import CTkButton, CTkLabel, IntVar, StringVar
+from customtkinter import CTkButton, CTkLabel, IntVar, StringVar, CTkRadioButton
 from keyboard import add_hotkey
 
 from leads import *
@@ -37,6 +37,7 @@ def main() -> int:
     m1 = StringVar(window.root(), "")
     m2 = IntVar(window.root(), 0)
     m3 = StringVar(window.root(), "")
+    ecs = IntVar(window.root(), 0)
 
     def render(manager: ContextManager):
         def switch_m1_mode():
@@ -45,28 +46,42 @@ def main() -> int:
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = CTkButton(window.root(), textvariable=m1, command=switch_m1_mode,
+        manager["m1"] = CTkButton(manager.root(), textvariable=m1, command=switch_m1_mode,
                                   font=("Arial", cfg.font_size_small))
-        manager["m2"] = CTkButton(window.root(), textvariable=m2, state="disabled",
+        manager["m2"] = CTkButton(manager.root(), textvariable=m2, state="disabled",
                                   font=("Arial", cfg.font_size_x_large))
-        manager["m3"] = CTkButton(window.root(), textvariable=m3, command=switch_m3_mode,
+        manager["m3"] = CTkButton(manager.root(), textvariable=m3, command=switch_m3_mode,
                                   font=("Arial", cfg.font_size_medium))
 
-        manager["comm_status"] = CTkLabel(window.root(), text="COMM OFFLINE", text_color="gray",
+        manager["comm_status"] = CTkLabel(manager.root(), text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
 
         i = 0
         for system in SystemLiteral:
             i += 1
             system_lower = system.lower()
-            manager[system_lower + "_status"] = CTkLabel(window.root(), text=system + " READY", text_color="green",
+            manager[system_lower + "_status"] = CTkLabel(manager.root(), text=system + " READY", text_color="green",
                                                          font=("Arial", cfg.font_size_small))
             add_hotkey(str(i), switch := make_system_switch(ctx, SystemLiteral(system), manager.rd()))
-            manager[system_lower] = CTkButton(window.root(), text=system + " ON", command=switch,
+            manager[system_lower] = CTkButton(manager.root(), text=system + " ON", command=switch,
                                               font=("Arial", cfg.font_size_small))
 
-        manager["record_lap"] = CTkButton(window.root(), text="Record Lap", command=ctx.record_lap,
+        manager["record_lap"] = CTkButton(manager.root(), text="Record Lap", command=ctx.record_lap,
                                           font=("Arial", cfg.font_size_small))
+
+        def switch_ecs_mode():
+            manager["ecs_label"].configure(text_color="green" if ecs.get() < 2 else "red")
+
+        manager["ecs_label"] = CTkLabel(manager.root(), text="ECS", text_color="green",
+                                        font=("Arial", cfg.font_size_small))
+        manager["ecs_standard"] = CTkRadioButton(manager.root(), text="STANDARD", variable=ecs, command=switch_ecs_mode,
+                                                 font=("Arial", cfg.font_size_small))
+        manager["ecs_sport"] = CTkRadioButton(manager.root(), text="SPORT", variable=ecs, value=1,
+                                              command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
+        manager["ecs_sport_plus"] = CTkRadioButton(manager.root(), text="SPORT+", variable=ecs, value=2, fg_color="red",
+                                                   command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
+        manager["ecs_off"] = CTkRadioButton(manager.root(), text="OFF", variable=ecs, value=3, fg_color="red",
+                                            command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
@@ -137,7 +152,7 @@ def main() -> int:
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["record_lap"]
+        ["record_lap", "ecs_label", "ecs_standard", "ecs_sport", "ecs_sport_plus", "ecs_off"]
     ])
     CTkLabel(uim.root(), text="").grid(row=4, column=0)
     uim.root().grid_rowconfigure(0, weight=1)

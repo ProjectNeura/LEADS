@@ -8,6 +8,7 @@
   "CTkButton": {
     "corner_radius": 4,
     "border_width": 2,
+    "border_color": "gray50",
     "fg_color": [
       "gray95",
       "gray10"
@@ -15,10 +16,6 @@
     "hover_color": [
       "gray85",
       "gray20"
-    ],
-    "border_color": [
-      "gray50",
-      "gray50"
     ],
     "text_color": [
       "black",
@@ -35,6 +32,25 @@
     "text_color": [
       "black",
       "white"
+    ]
+  },
+  "CTkRadioButton": {
+    "corner_radius": 10,
+    "border_width_unchecked": 2,
+    "border_width_checked": 2,
+    "fg_color": "green",
+    "border_color": "gray50",
+    "hover_color": [
+      "gray85",
+      "gray20"
+    ],
+    "text_color": [
+      "black",
+      "white"
+    ],
+    "text_color_disabled": [
+      "gray74",
+      "gray60"
     ]
   },
   "CTkFont": {
