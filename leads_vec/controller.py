@@ -30,10 +30,11 @@ class WheelSpeedControllerCallback(Callback):
         L.debug("Wheel speed controller connected")
 
     def on_receive(self, service: Service, msg: bytes) -> None:
+        L.debug("Wheel speed controller data: " + msg.decode())  # Fixme
         get_controller(WHEEL_SPEED_CONTROLLER).update(msg.decode())
 
     def on_fail(self, service: Service, error: Exception) -> None:
-        L.error(str(error))
+        L.error("Wheel speed controller error: " + str(error))
 
 
 @controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (
