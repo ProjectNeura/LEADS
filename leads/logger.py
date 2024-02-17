@@ -38,10 +38,10 @@ class Logger(object):
     WHITE: int = 37
 
     def __init__(self) -> None:
-        self._debug_level: Level = Level.INFO
+        self._debug_level: Level = Level.DEBUG
 
     def debug_level(self, debug_level: Level | None = None) -> Level | None:
-        if debug_level:
+        if debug_level is not None:
             self._debug_level = debug_level
         else:
             return self._debug_level
