@@ -10,12 +10,12 @@
     "border_width": 0,
     "border_color": "gray50",
     "fg_color": [
-      "gray90",
-      "gray15"
-    ],
-    "hover_color": [
       "gray85",
       "gray20"
+    ],
+    "hover_color": [
+      "gray80",
+      "gray25"
     ],
     "text_color": [
       "black",
@@ -39,10 +39,13 @@
     "border_width_unchecked": 4,
     "border_width_checked": 4,
     "fg_color": "green",
-    "border_color": "gray50",
-    "hover_color": [
+    "border_color": [
       "gray85",
       "gray20"
+    ],
+    "hover_color": [
+      "gray80",
+      "gray25"
     ],
     "text_color": [
       "black",
