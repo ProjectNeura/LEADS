@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import IntEnum
 from time import time
 from typing import Callable
 
@@ -24,13 +23,6 @@ def make_system_switch(context: Context, system: SystemLiteral, runtime_data: Ru
         runtime_data.control_system_switch_changed = True
 
     return switch
-
-
-class ECSMode(IntEnum):
-    STANDARD: int = 0x00
-    AGGRESSIVE: int = 0x01
-    SPORT: int = 0x02
-    OFF: int = 0x03
 
 
 def main() -> int:
@@ -81,7 +73,7 @@ def main() -> int:
             manager["ecs"].configure(selected_color=(c := "green" if ECSMode[mode] < 2 else "red"),
                                      selected_hover_color=c)
 
-        manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
+        manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT"],
                                             variable=ecs, command=switch_ecs_mode)
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
