@@ -5,6 +5,20 @@
       "gray10"
     ]
   },
+  "CTkFrame": {
+    "corner_radius": 4,
+    "border_width": 0,
+    "border_color": "gray50",
+    "fg_color": "transparent"
+  },
+  "CTkLabel": {
+    "corner_radius": 0,
+    "fg_color": "transparent",
+    "text_color": [
+      "black",
+      "white"
+    ]
+  },
   "CTkButton": {
     "corner_radius": 4,
     "border_width": 0,
@@ -26,24 +40,17 @@
       "gray60"
     ]
   },
-  "CTkLabel": {
-    "corner_radius": 0,
-    "fg_color": "transparent",
-    "text_color": [
-      "black",
-      "white"
-    ]
-  },
-  "CTkRadioButton": {
-    "corner_radius": 10,
-    "border_width_unchecked": 4,
-    "border_width_checked": 4,
-    "fg_color": "green",
-    "border_color": [
+  "CTkSegmentedButton": {
+    "corner_radius": 4,
+    "border_width": 0,
+    "fg_color": [
       "gray85",
       "gray20"
     ],
-    "hover_color": [
+    "selected_color": "green",
+    "selected_hover_color": "green",
+    "unselected_color": "transparent",
+    "unselected_hover_color": [
       "gray80",
       "gray25"
     ],

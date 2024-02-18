@@ -1,8 +1,9 @@
 from datetime import datetime
+from enum import IntEnum
 from time import time
 from typing import Callable
 
-from customtkinter import CTkButton, CTkLabel, IntVar, StringVar, CTkRadioButton
+from customtkinter import CTkButton, CTkLabel, IntVar, StringVar, CTkSegmentedButton
 from keyboard import add_hotkey
 
 from leads import *
@@ -25,6 +26,13 @@ def make_system_switch(context: Context, system: SystemLiteral, runtime_data: Ru
     return switch
 
 
+class ECSMode(IntEnum):
+    STANDARD: int = 0x00
+    AGGRESSIVE: int = 0x01
+    SPORT: int = 0x02
+    OFF: int = 0x03
+
+
 def main() -> int:
     cfg = get_config(Config)
     ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
@@ -37,7 +45,7 @@ def main() -> int:
     m1 = StringVar(window.root(), "")
     m2 = IntVar(window.root(), 0)
     m3 = StringVar(window.root(), "")
-    ecs = IntVar(window.root(), 0)
+    ecs = StringVar(window.root(), "STANDARD")
 
     def render(manager: ContextManager):
         def switch_m1_mode():
@@ -69,19 +77,12 @@ def main() -> int:
         manager["record_lap"] = CTkButton(manager.root(), text="Record Lap", command=ctx.record_lap,
                                           font=("Arial", cfg.font_size_small))
 
-        def switch_ecs_mode():
-            manager["ecs_label"].configure(text_color="green" if ecs.get() < 2 else "red")
+        def switch_ecs_mode(mode):
+            manager["ecs"].configure(selected_color=(c := "green" if ECSMode[mode] < 2 else "red"),
+                                     selected_hover_color=c)
 
-        manager["ecs_label"] = CTkLabel(manager.root(), text="ECS", text_color="green",
-                                        font=("Arial", cfg.font_size_small))
-        manager["ecs_standard"] = CTkRadioButton(manager.root(), text="STANDARD", variable=ecs, command=switch_ecs_mode,
-                                                 font=("Arial", cfg.font_size_small))
-        manager["ecs_sport"] = CTkRadioButton(manager.root(), text="SPORT", variable=ecs, value=1,
-                                              command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
-        manager["ecs_sport_plus"] = CTkRadioButton(manager.root(), text="SPORT+", variable=ecs, value=2, fg_color="red",
-                                                   command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
-        manager["ecs_off"] = CTkRadioButton(manager.root(), text="OFF", variable=ecs, value=3, fg_color="red",
-                                            command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
+        manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
+                                            variable=ecs, command=switch_ecs_mode)
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
@@ -148,15 +149,17 @@ def main() -> int:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
     ctx.set_event_listener(CustomListener())
-    uim.layout([
+    layout = [
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["record_lap", "ecs_label", "ecs_standard", "ecs_sport", "ecs_sport_plus", "ecs_off"]
-    ])
-    CTkLabel(uim.root(), text="").grid(row=4, column=0)
+        ["record_lap", "ecs"]
+    ]
+    uim.layout(layout)
+    placeholder_row = len(layout)
+    CTkLabel(uim.root(), text="").grid(row=placeholder_row, column=0)
     uim.root().grid_rowconfigure(0, weight=1)
-    uim.root().grid_rowconfigure(4, weight=2)
+    uim.root().grid_rowconfigure(placeholder_row, weight=2)
     uim.show()
     uim.rd().comm_kill()
     return 0
