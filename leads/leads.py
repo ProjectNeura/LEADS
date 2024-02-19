@@ -61,10 +61,10 @@ def abs_drw(context: Context,
 class LEADS(Context[T]):
     def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._plugins: dict[SystemLiteral | str, Plugin] = {SystemLiteral.DTCS: DTCS()}
+        self._plugins: dict[str, Plugin] = {SystemLiteral.DTCS: DTCS()}
         self._event_listener: EventListener = event_listener
 
-    def plugin(self, key: SystemLiteral | str, plugin: Plugin | None = None) -> Plugin | None:
+    def plugin(self, key: str, plugin: Plugin | None = None) -> Plugin | None:
         if plugin:
             self._plugins[key] = plugin
         else:
