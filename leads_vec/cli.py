@@ -17,9 +17,9 @@ class CustomRuntimeData(RuntimeData):
     control_system_switch_changed: bool = False
 
 
-def make_system_switch(context: Context, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
+def make_system_switch(context: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
     def switch() -> None:
-        context.set_subsystem(system, not context.is_subsystem_enabled(system))
+        context.plugin(system)["enabled"] = not context.plugin(system)["enabled"]
         runtime_data.control_system_switch_changed = True
 
     return switch
@@ -117,7 +117,7 @@ def main() -> int:
             if uim.rd().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
-                    if ctx.is_subsystem_enabled(SystemLiteral(system)):
+                    if ctx.plugin(SystemLiteral(system)).enabled:
                         uim[system_lowercase].configure(text=system + " ON")
                     else:
                         uim[system_lowercase].configure(text=system + " OFF")

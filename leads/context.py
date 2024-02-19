@@ -6,7 +6,6 @@ from typing import TypeVar as _TypeVar, Generic as _Generic
 
 from numpy import diff as _diff, average as _average, array as _array
 
-from leads.constant import SystemLiteral
 from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 
 T = _TypeVar("T", bound=DataContainer)
@@ -47,10 +46,6 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._speed_seq: _deque[int | float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_recorded + 1)
         self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
-        self._dtcs: bool = True
-        self._abs: bool = True
-        self._ebi: bool = True
-        self._atbs: bool = True
 
     def data(self) -> T:
         """
@@ -66,31 +61,6 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         _check_data_type(data, self.__initial_data_type)
         self._data_seq.append(data)
         self._speed_seq.append(data.speed)
-
-    def set_subsystem(self, system: SystemLiteral, enabled: bool) -> None:
-        """
-        Set a certain subsystem enabled or disabled.
-        :param system: subsystem id
-        :param enabled: True: enabled; False: disabled
-        """
-        if system == SystemLiteral.DTCS:
-            self._dtcs = enabled
-        elif system == SystemLiteral.ABS:
-            self._abs = enabled
-        elif system == SystemLiteral.EBI:
-            self._ebi = enabled
-        elif system == SystemLiteral.ATBS:
-            self._atbs = enabled
-
-    def is_subsystem_enabled(self, system: SystemLiteral) -> bool:
-        if system == SystemLiteral.DTCS:
-            return self._dtcs
-        elif system == SystemLiteral.ABS:
-            return self._abs
-        elif system == SystemLiteral.EBI:
-            return self._ebi
-        elif system == SystemLiteral.ATBS:
-            return self._atbs
 
     def srw_mode(self) -> bool:
         return self._srw_mode

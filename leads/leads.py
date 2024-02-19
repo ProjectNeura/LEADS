@@ -5,6 +5,7 @@ from leads.context import Context
 from leads.data import DataContainer
 from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
+from leads.plugin import Plugin, DTCS
 
 T = _TypeVar("T", bound=DataContainer)
 
@@ -60,7 +61,14 @@ def abs_drw(context: Context,
 class LEADS(Context[T]):
     def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+        self._plugins: dict[SystemLiteral | str, Plugin] = {SystemLiteral.DTCS: DTCS()}
         self._event_listener: EventListener = event_listener
+
+    def plugin(self, key: SystemLiteral | str, plugin: Plugin | None = None) -> Plugin | None:
+        if plugin:
+            self._plugins[key] = plugin
+        else:
+            return self._plugins[key]
 
     def set_event_listener(self, event_listener: EventListener) -> None:
         self._event_listener = event_listener
@@ -102,11 +110,11 @@ class LEADS(Context[T]):
                                                         SystemLiteral.DTCS, SystemLiteral.ATBS,
                                                         mandatory=not self.srw_mode())
             # DTCS
-            if self._dtcs:
+            if self.plugin(SystemLiteral.DTCS).enabled:
                 self.intervene(dtcs_srw(self, front_wheel_speed, rear_wheel_speed) if self._srw_mode else
                                dtcs_drw(self, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed))
             # ABS
-            if self._abs:
+            if self.plugin(SystemLiteral.ABS).enabled:
                 self.intervene(abs_srw(self, front_wheel_speed, rear_wheel_speed) if self._srw_mode else
                                abs_drw(self, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed))
 
