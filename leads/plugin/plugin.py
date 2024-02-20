@@ -2,7 +2,7 @@ from typing import Any as _Any
 
 from leads.context import Context
 
-type RequiredData = list[str, ...] | tuple[list[str], list[str]]
+type RequiredData = list[str] | tuple[list[str], list[str]]
 
 
 class Plugin(object):
