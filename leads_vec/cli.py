@@ -68,6 +68,7 @@ def main() -> int:
 
         manager["record_lap"] = CTkButton(manager.root(), text="Record Lap", command=ctx.record_lap,
                                           font=("Arial", cfg.font_size_small))
+        manager["self_test"] = CTkButton(manager.root(), text="Self Test", font=("Arial", cfg.font_size_small))
 
         def switch_ecs_mode(mode):
             manager["ecs"].configure(selected_color=(c := "green" if ECSMode[mode] < 2 else "red"),
@@ -145,7 +146,7 @@ def main() -> int:
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["record_lap", "ecs"]
+        ["record_lap", "self_test", "ecs"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
