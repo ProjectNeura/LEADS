@@ -1,3 +1,5 @@
+from typing import override as _override
+
 from serial import Serial as _Serial
 
 from leads.comm import ConnectionBase as _Connection, Service as _Service
@@ -9,6 +11,7 @@ class SerialConnection(_Connection):
         self._serial: _Serial = serial
         self._port: str = port
 
+    @_override
     def closed(self) -> bool:
         return self._serial.closed
 
@@ -17,6 +20,7 @@ class SerialConnection(_Connection):
             raise IOError("An open serial is required")
         return self._serial
 
+    @_override
     def receive(self, chunk_size: int = 1) -> bytes | None:
         if self._remainder != b"":
             return self.use_remainder()
@@ -28,10 +32,12 @@ class SerialConnection(_Connection):
         except IOError:
             return
 
+    @_override
     def send(self, msg: bytes) -> None:
         self._require_open_serial().write(msg + b";")
         if msg == b"disconnect":
             self.close()
 
+    @_override
     def close(self) -> None:
         self._require_open_serial(False).close()

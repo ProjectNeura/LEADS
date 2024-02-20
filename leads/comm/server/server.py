@@ -1,4 +1,5 @@
 from threading import Thread as _Thread
+from typing import override as _override
 
 from leads.comm.prototype import Entity, Connection
 
@@ -16,6 +17,7 @@ class Server(Entity):
         except ValueError:
             pass
 
+    @_override
     def run(self, max_connection: int = 1) -> None:
         self._killed = False
         self._socket.bind(("127.0.0.1", self._port))
@@ -35,6 +37,7 @@ class Server(Entity):
             except IOError:
                 self.remove_connection(c)
 
+    @_override
     def kill(self) -> None:
         self._killed = True
         self._socket.close()

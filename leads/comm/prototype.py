@@ -1,10 +1,10 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM
 from threading import Lock as _Lock, Thread as _Thread
-from typing import Self as _Self, Callable as _Callable
+from typing import Self as _Self, Callable as _Callable, override as _override
 
 
-class Service(object, metaclass=_ABCMeta):
+class Service(metaclass=_ABCMeta):
     def __init__(self, port: int) -> None:
         """
         :param port: the port on which the service listens
@@ -152,9 +152,11 @@ class Connection(ConnectionBase):
         self._address: tuple[str, int] = address
         self._on_close: _Callable[[_Self], None] = on_close
 
+    @_override
     def __str__(self) -> str:
         return self._address[0] + ":" + str(self._address[1])
 
+    @_override
     def closed(self) -> bool:
         return self._socket.fileno() == -1
 
@@ -168,6 +170,7 @@ class Connection(ConnectionBase):
             raise IOError("An open socket is required")
         return self._socket
 
+    @_override
     def receive(self, chunk_size: int = 512) -> bytes | None:
         """
         :param chunk_size: chunk buffer size
@@ -183,11 +186,13 @@ class Connection(ConnectionBase):
         except IOError:
             return
 
+    @_override
     def send(self, msg: bytes) -> None:
         self._require_open_socket().send(msg + b";")
         if msg == b"disconnect":
             self.close()
 
+    @_override
     def close(self) -> None:
         self._on_close(self)
         self._require_open_socket(False).close()
@@ -227,6 +232,7 @@ class Entity(Service, metaclass=_ABCMeta):
                 return connection.close()
             self.callback.on_receive(self, msg)
 
+    @_override
     def _run(self, *args, **kwargs) -> None:
         try:
             return super()._run(*args, **kwargs)

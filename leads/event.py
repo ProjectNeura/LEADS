@@ -1,4 +1,4 @@
-from typing import Any as _Any
+from typing import Any as _Any, override as _override
 
 from leads.context import Context
 from leads.data import DataContainer
@@ -9,6 +9,7 @@ class Event(object):
         self.context: Context = context
         self.t: str = t
 
+    @_override
     def __str__(self) -> str:
         return f"[{self.t}] {self.context.data()}"
 

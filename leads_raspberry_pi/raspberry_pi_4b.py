@@ -1,3 +1,5 @@
+from typing import override as _override
+
 from leads import Controller as _Controller
 
 
@@ -6,5 +8,6 @@ class RaspberryPi4B(_Controller):
         super().__init__()
         self._srw_mode: bool = srw_mode
 
+    @_override
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)

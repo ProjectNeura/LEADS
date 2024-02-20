@@ -1,4 +1,4 @@
-from typing import Any as _Any
+from typing import Any as _Any, override as _override
 
 from leads.constant import SystemLiteral
 from leads.context import Context
@@ -35,6 +35,7 @@ class DTCS(Plugin):
         super(DTCS, self).__init__((["front_wheel_speed", "rear_wheel_speed"],
                                     ["front_wheel_speed", "left_rear_wheel_speed", "right_rear_wheel_speed"]))
 
+    @_override
     def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
         context.intervene(dtcs_srw(context, kwargs["front_wheel_speed"], kwargs["rear_wheel_speed"])
                           if context.srw_mode() else

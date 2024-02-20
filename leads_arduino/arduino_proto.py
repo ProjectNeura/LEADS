@@ -1,3 +1,5 @@
+from typing import override as _override
+
 from serial import Serial as _Serial
 
 from leads import Controller as _Controller
@@ -14,13 +16,16 @@ class ArduinoProto(_Controller, _Entity):
         self._serial.baudrate = baud_rate
         self._connection: _SerialConnection | None = None
 
+    @_override
     def port(self) -> str:
         return self._serial.port
 
+    @_override
     def initialize(self, *parent_tags: str) -> None:
         self.start(True)
         super().initialize(*parent_tags)
 
+    @_override
     def run(self) -> None:
         self.callback.on_initialize(self)
         self._serial.open()
@@ -28,14 +33,17 @@ class ArduinoProto(_Controller, _Entity):
         self._connection = connection
         self._stage(connection)
 
+    @_override
     def write(self, payload: bytes) -> None:
         if not self._connection:
             raise IOError("Target must be connected to perform this operation")
         self._connection.send(payload)
 
+    @_override
     def kill(self) -> None:
         if self._connection:
             self._connection.close()
 
+    @_override
     def close(self) -> None:
         self.kill()

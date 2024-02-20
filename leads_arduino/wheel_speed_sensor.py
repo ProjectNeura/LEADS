@@ -1,5 +1,6 @@
 from math import pi as _pi
 from time import time as _time
+from typing import override as _override
 
 from leads import Device as _Device
 
@@ -15,10 +16,12 @@ class WheelSpeedSensor(_Device):
         self._wheel_speed: int | float = 0
         self._last_valid: float = 0
 
+    @_override
     def update(self, data: int | float) -> None:
         self._wheel_speed = rpm2kmh(data, self._wheel_circumference)
         self._last_valid = _time()
 
+    @_override
     def read(self) -> float:
         # add .001 to avoid zero division
         d = rpm2kmh(60 / (.001 + _time() - self._last_valid), self._wheel_circumference)

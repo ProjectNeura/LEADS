@@ -1,4 +1,4 @@
-from typing import TypeVar as _TypeVar, Any as _Any
+from typing import TypeVar as _TypeVar, Any as _Any, override as _override
 
 from leads.context import Context
 from leads.data import DataContainer
@@ -34,17 +34,20 @@ class LEADS(Context[T]):
                 for system in systems:
                     self._event_listener.on_suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
 
+    @_override
     def push(self, data: T) -> None:
         self._event_listener.on_push(DataPushedEvent(self, data))
         super().push(data)
         self._event_listener.post_push(DataPushedEvent(self, data))
 
+    @_override
     def intervene(self, event: InterventionEvent) -> None:
         if isinstance(event, InterventionExitEvent):
             self._event_listener.post_intervene(event)
         else:
             self._event_listener.on_intervene(event)
 
+    @_override
     def update(self) -> None:
         self._event_listener.on_update(UpdateEvent(self))
 
@@ -54,11 +57,13 @@ class LEADS(Context[T]):
 
         self._event_listener.post_update(UpdateEvent(self))
 
+    @_override
     def record_lap(self) -> None:
         self.intervene(InterventionEvent(self, "LAP RECORDING"))
         super().record_lap()
         return self.intervene(InterventionExitEvent(self, "LAP RECORDING"))
 
+    @_override
     def overwrite_throttle(self, force: float) -> float:
         self.intervene(InterventionEvent(self, "THROTTLE", force))
         try:
@@ -66,6 +71,7 @@ class LEADS(Context[T]):
         finally:
             self.intervene(InterventionExitEvent(self, "THROTTLE", force))
 
+    @_override
     def overwrite_brake(self, force: float) -> float:
         self.intervene(InterventionEvent(self, "BRAKE", force))
         try:

@@ -1,6 +1,6 @@
 from copy import copy as _copy
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
-    Callable as _Callable
+    Callable as _Callable, override as _override
 
 from numpy import mean as _mean
 
@@ -61,12 +61,15 @@ class DataPersistence(_Sequence, _Generic[T]):
         self._chunk: list[T] = []
         self._chunk_size: int = chunk_scale
 
+    @_override
     def __len__(self) -> int:
         return len(self._data)
 
+    @_override
     def __getitem__(self, item: int | slice) -> T | list[T]:
         return self._data[item]
 
+    @_override
     def __str__(self) -> str:
         return str(self._data)
 

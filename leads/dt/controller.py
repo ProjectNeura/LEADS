@@ -1,3 +1,5 @@
+from typing import override as _override
+
 from leads.dt.device import Device
 
 
@@ -22,6 +24,7 @@ class Controller(Device):
         else:
             return self._devices[tag]
 
+    @_override
     def initialize(self, *parent_tags: str) -> None:
         for device in self._devices.values():
             device.initialize(*tuple(self._parent_tags), self._tag)

@@ -1,5 +1,6 @@
 from math import sin as _sin, pi as _pi
 from random import randint as _randint
+from typing import override as _override
 
 from leads import Controller as _Controller, SRWDataContainer as _SRWDataContainer, \
     DRWDataContainer as _DRWDataContainer
@@ -20,11 +21,13 @@ class _EmulatedController(_Controller):
 
 
 class SRWRandom(_EmulatedController):
+    @_override
     def read(self) -> _SRWDataContainer:
         return _SRWDataContainer(fws := _randint(self.minimum, self.maximum), fws, self.generate_rear_wheel_speed(fws))
 
 
 class DRWRandom(_EmulatedController):
+    @_override
     def read(self) -> _DRWDataContainer:
         return _DRWDataContainer(fws := _randint(self.minimum, self.maximum),
                                  fws,
@@ -46,6 +49,7 @@ class _SinController(_EmulatedController):
 
 
 class SRWSin(_SinController):
+    @_override
     def read(self) -> _SRWDataContainer:
         try:
             return _SRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
@@ -56,6 +60,7 @@ class SRWSin(_SinController):
 
 
 class DRWSin(_SinController):
+    @_override
     def read(self) -> _DRWDataContainer:
         try:
             return _DRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,

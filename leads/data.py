@@ -1,6 +1,7 @@
 from abc import ABCMeta as _ABCMeta
 from json import dumps as _dumps
 from time import time as _time
+from typing import override as _override
 
 
 class Serializable(object):
@@ -21,6 +22,7 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
         self._time_stamp: int = int(_time() * 1000)
         self.speed: int | float = min_speed
 
+    @_override
     def __str__(self) -> str:
         return _dumps(self.to_dict())
 
@@ -37,6 +39,7 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
         """
         return self._time_stamp
 
+    @_override
     def to_dict(self) -> dict:
         """
         Convert the data into a dictionary.

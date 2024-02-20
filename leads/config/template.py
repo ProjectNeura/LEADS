@@ -1,5 +1,5 @@
 from json import dumps as _dumps
-from typing import Any as _Any
+from typing import Any as _Any, override as _override
 
 from leads.data import Serializable
 
@@ -24,6 +24,7 @@ class ConfigTemplate(Serializable):
         self._d[name] = value
         self.refresh()
 
+    @_override
     def __str__(self) -> str:
         return _dumps(self.to_dict())
 

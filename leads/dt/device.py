@@ -1,6 +1,6 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from threading import Thread as _Thread
-from typing import Any as _Any
+from typing import Any as _Any, override as _override
 
 
 class Device(object):
@@ -56,6 +56,7 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
         while True:
             self.loop()
 
+    @_override
     def initialize(self, *parent_tags: str) -> None:
         self._shadow_thread = _Thread(name=str(id(self)) + " shadow", target=self.run)
         self._shadow_thread.start()

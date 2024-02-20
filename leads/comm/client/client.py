@@ -1,9 +1,12 @@
+from typing import override as _override
+
 from leads.comm.prototype import Entity, Connection
 
 
 class Client(Entity):
     _connection: Connection | None = None
 
+    @_override
     def run(self, server_address: str) -> None:
         self.callback.on_initialize(self)
         self._socket.connect((server_address, self._port))
@@ -16,6 +19,7 @@ class Client(Entity):
             raise IOError("Client must be running to perform this operation")
         self._connection.send(msg)
 
+    @_override
     def kill(self) -> None:
         if self._connection:
             self._connection.close()
