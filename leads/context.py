@@ -69,6 +69,10 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def update(self) -> None:
         raise NotImplementedError
 
+    @_abstractmethod
+    def intervene(self, *args, **kwargs) -> None:
+        raise NotImplementedError
+
     def record_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
 

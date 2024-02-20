@@ -1,72 +1,25 @@
 from typing import TypeVar as _TypeVar, Any as _Any
 
-from leads.constant import SystemLiteral
 from leads.context import Context
 from leads.data import DataContainer
 from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
-from leads.plugin import Plugin, DTCS
+from leads.plugin import Plugin
 
 T = _TypeVar("T", bound=DataContainer)
-
-_OptionalNumber = int | float | None
-
-
-def dtcs_srw(context: Context,
-             front_wheel_speed: _OptionalNumber,
-             rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
-    if front_wheel_speed < rear_wheel_speed:
-        context.overwrite_throttle(0)
-        return InterventionEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
-    return InterventionExitEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
-
-
-def dtcs_drw(context: Context,
-             front_wheel_speed: _OptionalNumber,
-             left_rear_wheel_speed: _OptionalNumber,
-             right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
-    if front_wheel_speed < left_rear_wheel_speed:
-        context.overwrite_throttle(0)
-        return InterventionEvent(context, SystemLiteral.DTCS, "l", front_wheel_speed, left_rear_wheel_speed)
-    if front_wheel_speed < right_rear_wheel_speed:
-        context.overwrite_throttle(0)
-        return InterventionEvent(context, SystemLiteral.DTCS, "r", front_wheel_speed, right_rear_wheel_speed)
-    return InterventionExitEvent(context, SystemLiteral.DTCS,
-                                 front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed)
-
-
-def abs_srw(context: Context,
-            front_wheel_speed: _OptionalNumber,
-            rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
-    if front_wheel_speed > rear_wheel_speed:
-        context.overwrite_brake(0)
-        return InterventionEvent(context, SystemLiteral.ABS, front_wheel_speed, rear_wheel_speed)
-    return InterventionExitEvent(context, SystemLiteral.ABS, front_wheel_speed, rear_wheel_speed)
-
-
-def abs_drw(context: Context,
-            front_wheel_speed: _OptionalNumber,
-            left_rear_wheel_speed: _OptionalNumber,
-            right_rear_wheel_speed: _OptionalNumber) -> InterventionEvent:
-    if front_wheel_speed > left_rear_wheel_speed:
-        context.overwrite_brake(0)
-        return InterventionEvent(context, SystemLiteral.ABS, "l", front_wheel_speed, left_rear_wheel_speed)
-    if front_wheel_speed > right_rear_wheel_speed:
-        context.overwrite_brake(0)
-        return InterventionEvent(context, SystemLiteral.ABS, "r", front_wheel_speed, right_rear_wheel_speed)
-    return InterventionExitEvent(context, SystemLiteral.ABS,
-                                 front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed)
 
 
 class LEADS(Context[T]):
     def __init__(self, event_listener: EventListener = EventListener(), *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self._plugins: dict[str, Plugin] = {SystemLiteral.DTCS: DTCS()}
+        self._plugins: dict[str, Plugin] = {}
         self._event_listener: EventListener = event_listener
 
     def plugin(self, key: str, plugin: Plugin | None = None) -> Plugin | None:
         if plugin:
+            plugin.bind_context(self)
             self._plugins[key] = plugin
+            plugin.load()
         else:
             return self._plugins[key]
 
@@ -95,28 +48,9 @@ class LEADS(Context[T]):
     def update(self) -> None:
         self._event_listener.on_update(UpdateEvent(self))
 
-        if (front_wheel_speed := self._acquire_data("front_wheel_speed",
-                                                    SystemLiteral.DTCS,
-                                                    SystemLiteral.ABS,
-                                                    SystemLiteral.EBI,
-                                                    SystemLiteral.ATBS)) is not None:
-            rear_wheel_speed = self._acquire_data("rear_wheel_speed",
-                                                  SystemLiteral.DTCS, SystemLiteral.ATBS,
-                                                  mandatory=self.srw_mode())
-            left_rear_wheel_speed = self._acquire_data("left_rear_wheel_speed",
-                                                       SystemLiteral.DTCS, SystemLiteral.ATBS,
-                                                       mandatory=not self.srw_mode())
-            right_rear_wheel_speed = self._acquire_data("right_rear_wheel_speed",
-                                                        SystemLiteral.DTCS, SystemLiteral.ATBS,
-                                                        mandatory=not self.srw_mode())
-            # DTCS
-            if self.plugin(SystemLiteral.DTCS).enabled:
-                self.intervene(dtcs_srw(self, front_wheel_speed, rear_wheel_speed) if self._srw_mode else
-                               dtcs_drw(self, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed))
-            # ABS
-            if self.plugin(SystemLiteral.ABS).enabled:
-                self.intervene(abs_srw(self, front_wheel_speed, rear_wheel_speed) if self._srw_mode else
-                               abs_drw(self, front_wheel_speed, left_rear_wheel_speed, right_rear_wheel_speed))
+        for key, plugin in self._plugins.items():
+            if plugin.enabled:
+                plugin.update({d: self._acquire_data(d, key) for d in plugin.required_data()})
 
         self._event_listener.post_update(UpdateEvent(self))
 

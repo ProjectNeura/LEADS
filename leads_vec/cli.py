@@ -17,9 +17,9 @@ class CustomRuntimeData(RuntimeData):
     control_system_switch_changed: bool = False
 
 
-def make_system_switch(context: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
+def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
     def switch() -> None:
-        context.plugin(system)["enabled"] = not context.plugin(system)["enabled"]
+        ctx.plugin(system)["enabled"] = not ctx.plugin(system)["enabled"]
         runtime_data.control_system_switch_changed = True
 
     return switch
@@ -28,6 +28,8 @@ def make_system_switch(context: LEADS, system: SystemLiteral, runtime_data: Runt
 def main() -> int:
     cfg = get_config(Config)
     ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
+    ctx.plugin(SystemLiteral.DTCS, DTCS())
+    ctx.plugin(SystemLiteral.ABS, ABS())
     window = Window(cfg.width,
                     cfg.height,
                     cfg.refresh_rate,
