@@ -30,9 +30,8 @@ class Plugin(object):
         raise RuntimeError("No context bound")
 
     def required_data(self) -> list[str]:
-        return (self._required_data if isinstance(self._required_data, list)
-                else self._required_data[0] if self._require_context().srw_mode()
-        else self._required_data[1])
+        return (self._required_data if isinstance(self._required_data, list) else
+                self._required_data[0] if self._require_context().srw_mode() else self._required_data[1])
 
     def load(self) -> None:
         self.on_load(self._require_context())
