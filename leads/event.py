@@ -42,9 +42,10 @@ class InterventionExitEvent(InterventionEvent):
 
 
 class SuspensionEvent(SystemEvent):
-    def __init__(self, context: Context, system: str, cause: str) -> None:
+    def __init__(self, context: Context, system: str, cause: str, fatal: bool = False) -> None:
         super().__init__("SUSPENSION", context, system)
         self.cause: str = cause
+        self.fatal: bool = fatal
 
 
 class EventListener(object):
