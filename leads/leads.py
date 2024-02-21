@@ -26,13 +26,17 @@ class LEADS(Context[T]):
     def set_event_listener(self, event_listener: EventListener) -> None:
         self._event_listener = event_listener
 
+    @_override
+    def suspend(self, event: SuspensionEvent) -> None:
+        self._event_listener.on_suspend(event)
+
     def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
         try:
             return self.data().__getattribute__(name)
         except AttributeError:
             if mandatory:
                 for system in systems:
-                    self._event_listener.on_suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
+                    self.suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
 
     @_override
     def push(self, data: T) -> None:

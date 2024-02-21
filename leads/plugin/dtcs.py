@@ -31,7 +31,7 @@ def dtcs_drw(context: Context,
 
 
 class DTCS(Plugin):
-    def __init__(self):
+    def __init__(self) -> None:
         super(DTCS, self).__init__((["front_wheel_speed", "rear_wheel_speed"],
                                     ["front_wheel_speed", "left_rear_wheel_speed", "right_rear_wheel_speed"]))
 
