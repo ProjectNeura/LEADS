@@ -1,7 +1,7 @@
 from datetime import datetime as _datetime
 from enum import IntEnum as _IntEnum
 
-from leads.system import currentframe
+from leads.os import currentframe
 
 
 class Level(_IntEnum):
