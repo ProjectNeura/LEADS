@@ -50,12 +50,12 @@ The codes are never designed for average high school students to understand. You
 Note that LEADS requires **Python >= 3.12**.
 
 ```shell
-pip install customtkinter keyboard pyserial leads
+pip install pillow customtkinter keyboard pyserial leads
 ```
 
 `numpy` will be automatically installed with `leads`.
 
-`customtkinter`, `keyboard`, and `pyserial` are optional.
+`pillow`, `customtkinter`, `keyboard`, and `pyserial` are optional.
 
 If you only want the framework, run the following.
 

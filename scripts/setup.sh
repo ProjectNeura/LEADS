@@ -5,5 +5,5 @@ then
 fi
 sudo su
 ./python-install.sh
-python3.12 -m pip install customtkinter keyboard pyserial leads
+python3.12 -m pip install pillow customtkinter keyboard pyserial leads
 python3.12 -m leads_vec info
