@@ -145,12 +145,15 @@ def main() -> int:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
     ctx.set_event_listener(CustomListener())
+    uim["wheel_speed_failure"] = CTkLabel(uim.root(), text="")
+    SFT.on_fail = lambda _, __: uim["wheel_speed_failure"].configure(image=WheelSpeed)
+    SFT.on_recover = lambda _, __: uim["wheel_speed_failure"].configure(image=None)
     layout = [
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["record_lap", "ecs"],
-        [CTkLabel(uim.root(), image=WheelSpeed, text="")]
+        ["wheel_speed_failure"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
