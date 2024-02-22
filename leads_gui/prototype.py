@@ -6,15 +6,6 @@ from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import get_system_platform
 
-
-def default_on_refresh() -> None:
-    pass
-
-
-def default_on_kill() -> None:
-    pass
-
-
 Widget: type = _CTkBaseClass
 
 T = _TypeVar("T", bound=RuntimeData)
@@ -26,8 +17,8 @@ class Window(_Generic[T]):
                  height: int,
                  refresh_rate: int,
                  runtime_data: T,
-                 on_refresh: _Callable[[_Self], None] = default_on_refresh,
-                 on_kill: _Callable[[_Self], None] = default_on_kill,
+                 on_refresh: _Callable[[_Self], None] = lambda _: None,
+                 on_kill: _Callable[[_Self], None] = lambda _: None,
                  title: str = "LEADS",
                  fullscreen: bool = True,
                  no_title_bar: bool = True) -> None:

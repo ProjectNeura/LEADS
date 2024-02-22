@@ -78,10 +78,6 @@ class Service(metaclass=_ABCMeta):
         raise NotImplementedError
 
 
-def _default_connection_on_close(_) -> None:
-    pass
-
-
 class ConnectionBase(metaclass=_ABCMeta):
     def __init__(self, service: Service, remainder: bytes) -> None:
         """
@@ -146,7 +142,7 @@ class ConnectionBase(metaclass=_ABCMeta):
 
 class Connection(ConnectionBase):
     def __init__(self, service: Service, socket: _socket, address: tuple[str, int], remainder: bytes = b"",
-                 on_close: _Callable[[_Self], None] = _default_connection_on_close) -> None:
+                 on_close: _Callable[[_Self], None] = lambda _: None) -> None:
         super().__init__(service, remainder)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
