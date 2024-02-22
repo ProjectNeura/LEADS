@@ -6,8 +6,8 @@ from numpy import mean as _mean
 
 T = _TypeVar("T")
 
-Compressor = _Callable[[list[T], int], list[T]]
-Stringifier = _Callable[[T], str]
+type Compressor[T] = _Callable[[list[T], int], list[T]]
+type Stringifier[T] = _Callable[[T], str]
 
 
 def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
@@ -42,8 +42,8 @@ class DataPersistence(_Sequence, _Generic[T]):
                  max_size: int = -1,
                  chunk_scale: int = 1,
                  persistence: bool = False,
-                 compressor: Compressor = mean_compressor,
-                 stringifier: Stringifier = csv_stringifier) -> None:
+                 compressor: Compressor[T] = mean_compressor,
+                 stringifier: Stringifier[T] = csv_stringifier) -> None:
         """
         :param file: the file into which the data is written
         :param max_size: maximum cached size
@@ -55,8 +55,8 @@ class DataPersistence(_Sequence, _Generic[T]):
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
         self._persistence: bool = persistence if file else False
-        self._compressor: Compressor = compressor
-        self._stringifier: Stringifier = stringifier
+        self._compressor: Compressor[T] = compressor
+        self._stringifier: Stringifier[T] = stringifier
         self._data: list[T] = []
         self._chunk: list[T] = []
         self._chunk_size: int = chunk_scale
