@@ -12,6 +12,7 @@ from leads.comm import Server as _Server, create_server as _create_server
 from leads_gui.prototype import *
 from leads_gui.runtime import *
 from leads_gui.config import *
+from leads_gui.icons import *
 
 _set_default_color_theme(_abspath(__file__)[:-11] + "assets/leads-theme.json")
 
