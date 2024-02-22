@@ -13,7 +13,7 @@ from leads_gui.prototype import *
 from leads_gui.runtime import *
 from leads_gui.config import *
 
-_set_default_color_theme(_abspath(__file__)[:-11] + "leads-theme.json")
+_set_default_color_theme(_abspath(__file__)[:-11] + "assets/leads-theme.json")
 
 
 def initialize(window: Window,
