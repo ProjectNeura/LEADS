@@ -78,7 +78,7 @@ def main() -> int:
                                      selected_hover_color=c)
 
         manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT"],
-                                            variable=ecs, command=switch_ecs_mode)
+                                            variable=ecs, command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
@@ -149,7 +149,8 @@ def main() -> int:
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["record_lap", "ecs"]
+        ["record_lap", "ecs"],
+        [CTkLabel(uim.root(), image=WheelSpeed, text="")]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)

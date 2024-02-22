@@ -12,7 +12,7 @@ class Config(_ConfigTemplate):
         self.no_title_bar: bool = False
         self.manual_mode: bool = False
         self.refresh_rate: int = 30
-        self.font_size_small: int = 12
+        self.font_size_small: int = 14
         self.font_size_medium: int = 24
         self.font_size_large: int = 40
         self.font_size_x_large: int = 56
