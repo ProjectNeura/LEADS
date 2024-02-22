@@ -2,7 +2,8 @@ from typing import Optional as _Optional
 
 from leads import L, device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, DC_MOTOR_CONTROLLER_A, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
-    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config
+    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, SFT, \
+    mark_system
 from leads.comm import Callback, Service, ConnectionBase
 from leads_arduino import ArduinoMicro, WheelSpeedSensor
 from leads_gui import Config
@@ -33,13 +34,17 @@ class WheelSpeedControllerCallback(Callback):
         get_controller(WHEEL_SPEED_CONTROLLER).update(msg.decode())
 
     def on_fail(self, service: Service, error: Exception) -> None:
-        L.error("Wheel speed controller error: " + str(error))
+        SFT.fail(service, error)
 
 
 @controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (
         WHEEL_SPEED_CONTROLLER_PORT, WheelSpeedControllerCallback(), BAUD_RATE
 ))
 class WheelSpeedController(ArduinoMicro):
+    def initialize(self, *parent_tags: str) -> None:
+        mark_system(self, "WSC")
+        super().initialize(*parent_tags)
+
     def update(self, data: str) -> None:
         for d in self.devices():
             if data.startswith(d.tag()):
@@ -56,30 +61,28 @@ class WheelSpeedController(ArduinoMicro):
 
 
 @device(*((
-        (
-                LEFT_FRONT_WHEEL_SPEED_SENSOR,
-                RIGHT_FRONT_WHEEL_SPEED_SENSOR,
-                CENTER_REAR_WHEEL_SPEED_SENSOR
-        ), WHEEL_SPEED_CONTROLLER, [
-            (FRONT_WHEEL_DIAMETER,),
-            (FRONT_WHEEL_DIAMETER,),
-            (REAR_WHEEL_DIAMETER,)
-        ]
-) if config.srw_mode else (
-        (
-                LEFT_FRONT_WHEEL_SPEED_SENSOR,
-                RIGHT_FRONT_WHEEL_SPEED_SENSOR,
-                LEFT_REAR_WHEEL_SPEED_SENSOR,
-                RIGHT_REAR_WHEEL_SPEED_SENSOR
-        ), WHEEL_SPEED_CONTROLLER, [
-            (FRONT_WHEEL_DIAMETER,),
-            (FRONT_WHEEL_DIAMETER,),
-            (REAR_WHEEL_DIAMETER,),
-            (REAR_WHEEL_DIAMETER,)
-        ]
+        (LEFT_FRONT_WHEEL_SPEED_SENSOR,
+         RIGHT_FRONT_WHEEL_SPEED_SENSOR,
+         CENTER_REAR_WHEEL_SPEED_SENSOR),
+        WHEEL_SPEED_CONTROLLER,
+        [(FRONT_WHEEL_DIAMETER,),
+         (FRONT_WHEEL_DIAMETER,),
+         (REAR_WHEEL_DIAMETER,)
+         ]) if config.srw_mode else (
+        (LEFT_FRONT_WHEEL_SPEED_SENSOR,
+         RIGHT_FRONT_WHEEL_SPEED_SENSOR,
+         LEFT_REAR_WHEEL_SPEED_SENSOR,
+         RIGHT_REAR_WHEEL_SPEED_SENSOR),
+        WHEEL_SPEED_CONTROLLER,
+        [(FRONT_WHEEL_DIAMETER,),
+         (FRONT_WHEEL_DIAMETER,),
+         (REAR_WHEEL_DIAMETER,),
+         (REAR_WHEEL_DIAMETER,)]
 )))
 class WheelSpeedSensors(WheelSpeedSensor):
-    pass
+    def initialize(self, *parent_tags: str) -> None:
+        mark_system(self, "WSC")
+        super().initialize(*parent_tags)
 
 
 # @device((THROTTLE_PEDAL, BRAKE_PEDAL), MAIN_CONTROLLER, [(THROTTLE_PEDAL_PIN, False), (BRAKE_PEDAL_PIN, True)])
@@ -91,12 +94,16 @@ class WheelSpeedSensors(WheelSpeedSensor):
 
 @device(DC_MOTOR_CONTROLLER_A, MAIN_CONTROLLER)
 class DriverMotorController(DCMotorController):
-    pass
+    def initialize(self, *parent_tags: str) -> None:
+        mark_system(self, "POWER")
+        super().initialize(*parent_tags)
 
 
 @device("mvs", MAIN_CONTROLLER, (4,))
 class MotorVoltageSensor(VoltageSensor):
-    pass
+    def initialize(self, *parent_tags: str) -> None:
+        mark_system(self, "POWER")
+        super().initialize(*parent_tags)
 
 
 _ = None  # null export
