@@ -113,7 +113,7 @@ class ContextManager(object):
             length = len(row)
             for j in range(length):
                 s = int(t / length)
-                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=2, padx=4, pady=4)
+                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=4, padx=4, pady=4)
 
     def window(self) -> Window:
         return self._window
