@@ -146,7 +146,7 @@ def main() -> int:
 
     ctx.set_event_listener(CustomListener())
     uim["battery_failure"] = CTkLabel(uim.root(), text="")
-    uim["engine_failure"] = CTkLabel(uim.root(), text="")
+    uim["motor_failure"] = CTkLabel(uim.root(), text="")
     uim["wheel_speed_failure"] = CTkLabel(uim.root(), text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
@@ -165,7 +165,7 @@ def main() -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["record_lap", "ecs"],
-        ["battery_failure", "engine_failure", "wheel_speed_failure"]
+        ["battery_failure", "motor_failure", "wheel_speed_failure"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
