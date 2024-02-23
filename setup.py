@@ -19,7 +19,8 @@ setup(
         "leads_gui": [
             "assets/leads-theme.json", "assets/icons/battery-black.png", "assets/icons/battery-red.png",
             "assets/icons/battery-white.png", "assets/icons/brake-black.png", "assets/icons/brake-red.png",
-            "assets/icons/brake-white.png", "assets/icons/engine-black.png", "assets/icons/engine-red.png",
+            "assets/icons/brake-white.png", "assets/icons/ecs-black.png", "assets/icons/ecs-red.png",
+            "assets/icons/ecs-white.png", "assets/icons/engine-black.png", "assets/icons/engine-red.png",
             "assets/icons/engine-white.png", "assets/icons/high-beam-black.png", "assets/icons/high-beam-red.png",
             "assets/icons/high-beam-white.png", "assets/icons/light-black.png", "assets/icons/light-red.png",
             "assets/icons/light-white.png", "assets/icons/motor-black.png", "assets/icons/motor-red.png",
