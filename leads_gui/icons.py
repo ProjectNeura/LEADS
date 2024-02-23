@@ -21,11 +21,11 @@ def _on_register_config(chain: _OnRegisterConfig[Config] | None) -> _OnRegisterC
     def _(config: Config) -> None:
         if chain:
             chain(config)
-        Battery.configure(size=(config.font_size_large, config.font_size_large))
-        Engine.configure(size=(config.font_size_large, config.font_size_large))
-        HighBeam.configure(size=(config.font_size_large, config.font_size_large))
-        Light.configure(size=(config.font_size_large, config.font_size_large))
-        Speed.configure(size=(config.font_size_large, config.font_size_large))
+        Battery.configure(size=(config.font_size_medium, config.font_size_medium))
+        Engine.configure(size=(config.font_size_medium, config.font_size_medium))
+        HighBeam.configure(size=(config.font_size_medium, config.font_size_medium))
+        Light.configure(size=(config.font_size_medium, config.font_size_medium))
+        Speed.configure(size=(config.font_size_medium, config.font_size_medium))
 
     return _
 
