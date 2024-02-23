@@ -39,7 +39,7 @@ def initialize_comm_server(window: Window,
     render(ctx)
     server.start(True)
 
-    def on_close(_):
+    def on_close(_) -> None:
         server.kill()
 
     window.set_on_close(on_close)

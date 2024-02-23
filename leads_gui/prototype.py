@@ -63,7 +63,7 @@ class Window(_Generic[T]):
     def show(self) -> None:
         self._active = True
 
-        def wrapper():
+        def wrapper() -> None:
             self._on_refresh(self)
             if self._active:
                 self._root.after(self._refresh_interval, wrapper)
