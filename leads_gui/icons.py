@@ -6,4 +6,6 @@ from customtkinter import CTkImage as _CTkImage
 _ASSETS_PATH = _abspath(__file__)[:-8] + "assets"
 _ICONS_PATH = _ASSETS_PATH + "/icons"
 
-WheelSpeed = _CTkImage(_Image.open(_ICONS_PATH + "/wheel_speed.webp"), size=(40, 40))
+Battery = _CTkImage(_Image.open(_ICONS_PATH + "/battery.png"), size=(40, 40))
+Engine = _CTkImage(_Image.open(_ICONS_PATH + "/engine.png"), size=(40, 40))
+Speed = _CTkImage(_Image.open(_ICONS_PATH + "/speed.png"), size=(40, 40))

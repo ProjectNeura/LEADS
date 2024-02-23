@@ -16,7 +16,8 @@ setup(
     url="https://github.com/ProjectNeura/LEADS",
     packages=find_packages(),
     package_data={
-        "leads_gui": ["assets/leads-theme.json", "assets/icons/wheel_speed.webp"],
+        "leads_gui": ["assets/leads-theme.json", "assets/icons/battery.png", "assets/icons/engine.png",
+                      "assets/icons/speed.png"],
         "leads_vec": ["_bootloader/leads_vec.service.sh"],
         "leads_vec_rc": ["_bootloader/leads_vec_rc.service.sh", "config.json"]
     },
