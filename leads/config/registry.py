@@ -9,6 +9,15 @@ T = _TypeVar("T", bound=ConfigTemplate)
 
 _config_instance: T | None = None
 
+type OnRegisterConfig[T] = _Callable[[T], None]
+type OnRegisterConfigChain[T] = _Callable[[OnRegisterConfig[T] | None], OnRegisterConfig[T]]
+_on_register_config: OnRegisterConfig[T] = lambda c: L.debug_level(Level[c.debug_level])
+
+
+def set_on_register_config(callback: OnRegisterConfigChain[T]) -> None:
+    global _on_register_config
+    _on_register_config = callback(_on_register_config)
+
 
 def load_config(file: str | _TextIO, constructor: _Callable[[dict[str, _Any]], T]) -> T:
     if isinstance(file, str):
@@ -22,7 +31,7 @@ def register_config(config: T | None) -> None:
     if config:
         if _config_instance:
             raise RuntimeError("Another config is already registered")
-        L.debug_level(Level[config.debug_level])
+        _on_register_config(config)
     _config_instance = config
 
 
