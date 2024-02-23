@@ -145,21 +145,28 @@ def main() -> int:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
     ctx.set_event_listener(CustomListener())
+    uim["battery_failure"] = CTkLabel(uim.root(), text="")
+    uim["engine_failure"] = CTkLabel(uim.root(), text="")
     uim["wheel_speed_failure"] = CTkLabel(uim.root(), text="")
-    SFT.on_fail = lambda _, __: uim["wheel_speed_failure"].configure(image=WheelSpeed)
+    SFT.on_fail = lambda _, __: uim["batter_failure"].configure(image=Battery)
+    SFT.on_fail = lambda _, __: uim["engine_failure"].configure(image=Engine)
+    SFT.on_fail = lambda _, __: uim["wheel_speed_failure"].configure(image=Speed)
+    SFT.on_recover = lambda _, __: uim["battery_failure"].configure(image=None)
+    SFT.on_recover = lambda _, __: uim["engine_failure"].configure(image=None)
     SFT.on_recover = lambda _, __: uim["wheel_speed_failure"].configure(image=None)
     layout = [
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["record_lap", "ecs"],
-        ["wheel_speed_failure"]
+        ["battery_failure", "engine_failure", "wheel_speed_failure"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
     CTkLabel(uim.root(), text="").grid(row=placeholder_row, column=0)
     uim.root().grid_rowconfigure(0, weight=1)
     uim.root().grid_rowconfigure(placeholder_row, weight=2)
+    initialize_main()
     uim.show()
     uim.rd().comm_kill()
     return 0

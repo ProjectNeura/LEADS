@@ -4,7 +4,7 @@ from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
-    initialize_main as _initialize_main, L as _L, load_config as _load_config, register_config as _register_config, \
+    L as _L, load_config as _load_config, register_config as _register_config, \
     get_config as _get_config
 from leads_gui import get_system_platform as _get_system_platform, Config as _Config
 
@@ -62,5 +62,4 @@ if __name__ == "__main__":
         except ImportError:
             raise ImportError("At least one adapter has to be installed")
 
-    _initialize_main()
     _exit(main())
