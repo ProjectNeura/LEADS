@@ -33,6 +33,7 @@ class _Icon(object):
 
 
 Battery = _Icon("battery")
+Brake = _Icon("brake")
 Engine = _Icon("engine")
 HighBeam = _Icon("high-beam")
 Light = _Icon("light")
