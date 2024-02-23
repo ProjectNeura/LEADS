@@ -151,7 +151,7 @@ def main() -> int:
 
     def on_fail(_, e: SuspensionEvent) -> None:
         if e.system == "WSC":
-            uim["wheel_speed_failure"].configure(image=Speed)
+            uim["wheel_speed_failure"].configure(image=Speed(color=Color.DEFAULT))
 
     SFT.on_fail = on_fail
 
@@ -162,10 +162,10 @@ def main() -> int:
     SFT.on_recover = on_recover
     layout = [
         ["m1", "m2", "m3"],
+        ["battery_failure", "engine_failure", "wheel_speed_failure"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["record_lap", "ecs"],
-        ["battery_failure", "engine_failure", "wheel_speed_failure"]
+        ["record_lap", "ecs"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
