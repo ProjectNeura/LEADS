@@ -151,7 +151,7 @@ def main() -> int:
 
     def on_fail(_, e: SuspensionEvent) -> None:
         if e.system == "WSC":
-            uim["wheel_speed_failure"].configure(image=Speed(color=Color.DEFAULT))
+            uim["wheel_speed_failure"].configure(image=Speed(color=Color.RED))
 
     SFT.on_fail = on_fail
 

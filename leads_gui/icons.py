@@ -15,7 +15,7 @@ _config: Config = _get_config(Config)
 
 
 class Color(_StrEnum):
-    DEFAULT: str = "black"
+    BLACK: str = "black"
     WHITE: str = "white"
     RED: str = "red"
 
@@ -27,8 +27,8 @@ class _Icon(object):
     def load_source(self, color: Color) -> _Image:
         return _Image.open(f"{_ICONS_PATH}/{self._name}-{color}.png")
 
-    def __call__(self, size: int = _config.font_size_medium, color: Color = Color.DEFAULT) -> _CTkImage:
-        return _CTkImage(self.load_source(color), self.load_source(Color.WHITE) if color == Color.DEFAULT else None,
+    def __call__(self, size: int = _config.font_size_medium, color: Color = Color.BLACK) -> _CTkImage:
+        return _CTkImage(self.load_source(color), self.load_source(Color.WHITE) if color == Color.BLACK else None,
                          size=(size, size))
 
 
