@@ -36,6 +36,7 @@ Battery = _Icon("battery")
 Engine = _Icon("engine")
 HighBeam = _Icon("high-beam")
 Light = _Icon("light")
+Motor = _Icon("motor")
 Speed = _Icon("speed")
 
 
