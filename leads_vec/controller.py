@@ -42,7 +42,7 @@ class WheelSpeedControllerCallback(Callback):
 ))
 class WheelSpeedController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC")
+        mark_system(self, "WSC", "ECS")
         super().initialize(*parent_tags)
 
     def update(self, data: str) -> None:
@@ -81,7 +81,7 @@ class WheelSpeedController(ArduinoMicro):
 )))
 class WheelSpeedSensors(WheelSpeedSensor):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC")
+        mark_system(self, "WSC", "ECS")
         super().initialize(*parent_tags)
 
 
@@ -95,7 +95,7 @@ class WheelSpeedSensors(WheelSpeedSensor):
 @device(DC_MOTOR_CONTROLLER_A, MAIN_CONTROLLER)
 class DriverMotorController(DCMotorController):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER")
+        mark_system(self, "POWER", "ECS")
         super().initialize(*parent_tags)
 
 

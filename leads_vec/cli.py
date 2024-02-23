@@ -147,16 +147,21 @@ def main() -> int:
 
     ctx.set_event_listener(CustomListener())
     uim["battery_failure"] = CTkLabel(uim.root(), text="")
+    uim["ecs_failure"] = CTkLabel(uim.root(), text="")
     uim["motor_failure"] = CTkLabel(uim.root(), text="")
     uim["wheel_speed_failure"] = CTkLabel(uim.root(), text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
-        if e.system == "WSC":
+        if e.system == "ECS":
+            uim["ecs_failure"].configure(image=ECS(color=Color.RED))
+        elif e.system == "WSC":
             uim["wheel_speed_failure"].configure(image=Speed(color=Color.RED))
 
     SFT.on_fail = on_fail
 
     def on_recover(_, e: SuspensionEvent) -> None:
+        if e.system == "ECS":
+            uim["ecs_failure"].configure(image=None)
         if e.system == "WSC":
             uim["wheel_speed_failure"].configure(image=None)
 
@@ -166,7 +171,7 @@ def main() -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["record_lap", "ecs"],
-        ["battery_failure", "motor_failure", "wheel_speed_failure"]
+        ["battery_failure", "ecs_failure", "motor_failure", "wheel_speed_failure"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
