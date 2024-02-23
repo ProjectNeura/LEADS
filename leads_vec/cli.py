@@ -84,7 +84,7 @@ def main() -> int:
 
     class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
-            L.error("Comm server error: " + str(error))
+            SFT.error("Comm server error: " + str(error))
 
         def on_connect(self, service: Service, connection: Connection) -> None:
             uim["comm_status"].configure(text="COMM ONLINE", text_color="black")
@@ -148,12 +148,18 @@ def main() -> int:
     uim["battery_failure"] = CTkLabel(uim.root(), text="")
     uim["engine_failure"] = CTkLabel(uim.root(), text="")
     uim["wheel_speed_failure"] = CTkLabel(uim.root(), text="")
-    SFT.on_fail = lambda _, __: uim["batter_failure"].configure(image=Battery)
-    SFT.on_fail = lambda _, __: uim["engine_failure"].configure(image=Engine)
-    SFT.on_fail = lambda _, __: uim["wheel_speed_failure"].configure(image=Speed)
-    SFT.on_recover = lambda _, __: uim["battery_failure"].configure(image=None)
-    SFT.on_recover = lambda _, __: uim["engine_failure"].configure(image=None)
-    SFT.on_recover = lambda _, __: uim["wheel_speed_failure"].configure(image=None)
+
+    def on_fail(_, e: SuspensionEvent) -> None:
+        if e.system == "WSC":
+            uim["wheel_speed_failure"].configure(image=Speed)
+
+    SFT.on_fail = on_fail
+
+    def on_recover(_, e: SuspensionEvent) -> None:
+        if e.system == "WSC":
+            uim["wheel_speed_failure"].configure(image=None)
+
+    SFT.on_recover = on_recover
     layout = [
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
