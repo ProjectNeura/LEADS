@@ -234,7 +234,7 @@ There are a few labels that classify the issues.
 - `help wanted` means that extra attention is needed to this issue
 - `invalid` marks that the issue is in a valid format
 - `question` requests further information
-- `report` starts a periodic report discussion
+- `report` states that it is discussed in the meeting
 - `todo` creates a new task
 - `wontfix` marks that the issue is ignored
 
