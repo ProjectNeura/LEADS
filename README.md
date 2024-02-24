@@ -7,9 +7,17 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/leads)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/ProjectNeura/LEADS)
 
-LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the instrumentation system for electric vehicles. It is written in well-organized Python and C/C++ with impressive performance. It is not only plug-and-play ([VeC Project](https://www.villanovacollege.org/giving/vec-project)) but also fully customizable. It provides multiple abstract layers that allow users to pull out the components and rearrange them into a new project. You can either configure the existing executable module `leads_vec` and `leads_vec_rc` simply through a JSON file or write your own codes based on the framework as easily as building a LEGO.
+LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the
+instrumentation system for electric vehicles. It is written in well-organized Python and C/C++ with impressive
+performance. It is not only plug-and-play (the [VeC Project](https://www.villanovacollege.org/giving/vec-project)) but
+also fully customizable. It provides multiple abstract layers that allow users to pull out the components and rearrange
+them into a new project. You can either configure the existing executable module `leads_vec` and `leads_vec_rc` simply
+through a JSON file or write your own codes based on the framework as easily as building a LEGO.
 
-The hardware components chosen for this project are geared towards amateur developers. It uses no dedicated circuit boards, but generic development kits such as Raspberry Pi and Arduino instead. However, if you wish to write some codes, the software framework has the ability to adapt to any type of hardware component.
+The hardware components chosen for this project are geared towards amateur developers. It uses neither a CAN bus nor any
+dedicated circuit board, but generic development kits such as Raspberry Pi and Arduino instead. However, as it is a
+high-level system running on a host computer, the software framework has the ability to adapt to any type of hardware
+component if you are willing to write some codes.
 
 Before you start, please note that LEADS only supports rear drive and two drive-wheel configurations: single rear
 wheel (SRW) mode and dual rear wheel (DRW) mode.
