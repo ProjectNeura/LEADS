@@ -3,7 +3,7 @@ from typing import Optional as _Optional
 from leads import L, device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, DC_MOTOR_CONTROLLER_A, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, SFT, \
-    mark_system
+    mark_system, Device
 from leads.comm import Callback, Service, ConnectionBase
 from leads_arduino import ArduinoMicro, WheelSpeedSensor
 from leads_gui import Config
@@ -34,6 +34,7 @@ class WheelSpeedControllerCallback(Callback):
         get_controller(WHEEL_SPEED_CONTROLLER).update(msg.decode())
 
     def on_fail(self, service: Service, error: Exception) -> None:
+        assert isinstance(service, Device)
         SFT.fail(service, error)
 
 
@@ -47,8 +48,7 @@ class WheelSpeedController(ArduinoMicro):
 
     def update(self, data: str) -> None:
         for d in self.devices():
-            if data.startswith(d.tag()):
-                d.update(float(data[data.find(":") + 1:]))
+            d.update(d)
 
     def read(self) -> [float, float, float, _Optional[float]]:
         lfws = self.device(LEFT_FRONT_WHEEL_SPEED_SENSOR).read()

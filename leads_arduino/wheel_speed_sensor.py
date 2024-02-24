@@ -17,9 +17,10 @@ class WheelSpeedSensor(_Device):
         self._last_valid: float = 0
 
     @_override
-    def update(self, data: int | float) -> None:
-        self._wheel_speed = rpm2kmh(data, self._wheel_circumference)
-        self._last_valid = _time()
+    def update(self, data: str) -> None:
+        if data.startswith(self._tag):
+            self._wheel_speed = rpm2kmh(float(data[data.find(":") + 1:]), self._wheel_circumference)
+            self._last_valid = _time()
 
     @_override
     def read(self) -> float:
