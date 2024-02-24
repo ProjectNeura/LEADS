@@ -85,7 +85,7 @@ def main() -> int:
 
     class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
-            SFT.error("Comm server error: " + str(error))
+            L.error("Comm server error: " + str(error))
 
         def on_connect(self, service: Service, connection: Connection) -> None:
             uim["comm_status"].configure(text="COMM ONLINE", text_color="black")
