@@ -1,13 +1,12 @@
 from copy import copy as _copy
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
-    Callable as _Callable, override as _override
+    override as _override
 
 from numpy import mean as _mean
 
-T = _TypeVar("T")
+from leads.types import Compressor, Stringifier
 
-type Compressor[T] = _Callable[[list[T], int], list[T]]
-type Stringifier[T] = _Callable[[T], str]
+T = _TypeVar("T")
 
 
 def mean_compressor(sequence: list[T], target_size: int) -> list[T]:

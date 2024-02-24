@@ -1,8 +1,7 @@
 from typing import Any as _Any
 
 from leads.context import Context, ContextAssociated
-
-type RequiredData = list[str] | tuple[list[str], list[str]]
+from leads.types import RequiredData
 
 
 class Plugin(ContextAssociated):

@@ -3,14 +3,13 @@ from typing import TypeVar as _TypeVar, TextIO as _TextIO, Callable as _Callable
 
 from leads.config.template import ConfigTemplate
 from leads.logger import Level, L
+from leads.types import OnRegisterConfig, OnRegisterConfigChain
 
 T = _TypeVar("T", bound=ConfigTemplate)
 
 
 _config_instance: T | None = None
 
-type OnRegisterConfig[T] = _Callable[[T], None]
-type OnRegisterConfigChain[T] = _Callable[[OnRegisterConfig[T] | None], OnRegisterConfig[T]]
 _on_register_config: OnRegisterConfig[T] = lambda c: L.debug_level(Level[c.debug_level])
 
 
