@@ -38,4 +38,4 @@ class SystemFailureTracer(ContextAssociated):
             L.info(system + " recovered")
 
 
-SFT = SystemFailureTracer()
+SFT: SystemFailureTracer = SystemFailureTracer()
