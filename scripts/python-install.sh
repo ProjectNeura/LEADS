@@ -4,6 +4,7 @@ then
   exit 1
 fi
 sudo su
+add-apt-repository ppa:deadsnakes/ppa
 apt update
 apt install python3.12
 wget https://bootstrap.pypa.io/get-pip.py
