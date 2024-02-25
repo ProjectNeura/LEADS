@@ -146,24 +146,24 @@ def main() -> int:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
     ctx.set_event_listener(CustomListener())
-    uim["battery_failure"] = CTkLabel(uim.root(), text="")
-    uim["ecs_failure"] = CTkLabel(uim.root(), text="")
-    uim["motor_failure"] = CTkLabel(uim.root(), text="")
-    uim["wheel_speed_failure"] = CTkLabel(uim.root(), text="")
+    uim["battery_fault"] = CTkLabel(uim.root(), text="")
+    uim["ecs_fault"] = CTkLabel(uim.root(), text="")
+    uim["motor_fault"] = CTkLabel(uim.root(), text="")
+    uim["wheel_speed_fault"] = CTkLabel(uim.root(), text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
         if e.system == "ECS":
-            uim["ecs_failure"].configure(image=ECS(color=Color.RED))
+            uim["ecs_fault"].configure(image=ECS(color=Color.RED))
         elif e.system == "WSC":
-            uim["wheel_speed_failure"].configure(image=Speed(color=Color.RED))
+            uim["wheel_speed_fault"].configure(image=Speed(color=Color.RED))
 
     SFT.on_fail = on_fail
 
     def on_recover(_, e: SuspensionEvent) -> None:
         if e.system == "ECS":
-            uim["ecs_failure"].configure(image=None)
+            uim["ecs_fault"].configure(image=None)
         if e.system == "WSC":
-            uim["wheel_speed_failure"].configure(image=None)
+            uim["wheel_speed_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
     layout = [
