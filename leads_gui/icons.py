@@ -1,5 +1,4 @@
 from enum import StrEnum as _StrEnum
-from os.path import abspath as _abspath
 
 from PIL import Image as _Image
 from customtkinter import CTkImage as _CTkImage
@@ -7,8 +6,8 @@ from customtkinter import CTkImage as _CTkImage
 from leads import set_on_register_config as _set_on_register_config, OnRegisterConfig as _OnRegisterConfig, \
     get_config as _get_config
 from leads_gui.config import Config
+from leads_gui.system import _ASSETS_PATH
 
-_ASSETS_PATH: str = _abspath(__file__)[:-8] + "assets"
 _ICONS_PATH: str = _ASSETS_PATH + "/icons"
 
 _config: Config = _get_config(Config)

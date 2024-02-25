@@ -1,9 +1,11 @@
 from math import lcm as _lcm
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
+from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
 
 from leads_gui.runtime import RuntimeData
+from leads_gui.system import _ASSETS_PATH
 from leads_gui.system import get_system_platform
 
 Widget: type = _CTkBaseClass
@@ -24,6 +26,8 @@ class Window(_Generic[T]):
                  no_title_bar: bool = True) -> None:
         self._root: _CTk = _CTk()
         self._root.title(title)
+        self._root.wm_iconbitmap()
+        self._root.iconphoto(True, _ImageTk.PhotoImage(file=_ASSETS_PATH + "/logo.png"))
         self._root.overrideredirect(no_title_bar)
         self._width: int = self._root.winfo_screenwidth() if fullscreen else width
         self._height: int = self._root.winfo_screenheight() if fullscreen else height
