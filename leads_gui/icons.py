@@ -8,8 +8,8 @@ from leads import set_on_register_config as _set_on_register_config, OnRegisterC
     get_config as _get_config
 from leads_gui.config import Config
 
-_ASSETS_PATH = _abspath(__file__)[:-8] + "assets"
-_ICONS_PATH = _ASSETS_PATH + "/icons"
+_ASSETS_PATH: str = _abspath(__file__)[:-8] + "assets"
+_ICONS_PATH: str = _ASSETS_PATH + "/icons"
 
 _config: Config = _get_config(Config)
 
