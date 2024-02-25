@@ -171,7 +171,7 @@ def main() -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["record_lap", "ecs"],
-        ["battery_failure", "ecs_failure", "motor_failure", "wheel_speed_failure"]
+        ["battery_fault", "ecs_fault", "motor_fault", "wheel_speed_fault"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
