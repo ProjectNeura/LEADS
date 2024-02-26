@@ -7,9 +7,9 @@ const int PIN_RRWSS[] = {5};
 const int PIN_CRWSS[] = {6};
 
 void lfwssOnUpdate(float ws) {
-    returnWheelSpeed(LEFT_FRONT_WHEEL_SPEED_SENSOR, ws);
-    returnWheelSpeed(RIGHT_FRONT_WHEEL_SPEED_SENSOR, ws);
-    returnWheelSpeed(CENTER_REAR_WHEEL_SPEED_SENSOR, ws);
+    returnFloat(LEFT_FRONT_WHEEL_SPEED_SENSOR, ws);
+    returnFloat(RIGHT_FRONT_WHEEL_SPEED_SENSOR, ws);
+    returnFloat(CENTER_REAR_WHEEL_SPEED_SENSOR, ws);
 }
 
 WheelSpeedSensor LFWSS(PIN_LFWSS, lfwssOnUpdate);
