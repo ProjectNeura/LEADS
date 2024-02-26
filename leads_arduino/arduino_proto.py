@@ -26,6 +26,11 @@ class ArduinoProto(_Controller, _Entity):
         super().initialize(*parent_tags)
 
     @_override
+    def update(self, data: str) -> None:
+        for d in self.devices():
+            d.update(d)
+
+    @_override
     def run(self) -> None:
         self.callback.on_initialize(self)
         self._serial.open()
@@ -53,9 +58,11 @@ class ArduinoCallback(_Callback):
     def __init__(self, tag: str) -> None:
         self._tag: str = tag
 
+    @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
         _get_controller(self._tag).update(msg.decode())
 
+    @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
         assert isinstance(service, _Device)
         _SFT.fail(service, error)
