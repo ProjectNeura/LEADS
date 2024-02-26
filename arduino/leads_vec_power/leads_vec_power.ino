@@ -14,4 +14,5 @@ void setup() {
 
 void loop() {
     returnFloat("vot", VOT.read());
+    delay(100);
 }
