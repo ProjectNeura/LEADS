@@ -1,13 +1,13 @@
 from typing import Optional as _Optional
 
 from leads import L, device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
-    DRWDataContainer, DC_MOTOR_CONTROLLER_A, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
+    DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, SFT, \
     mark_system, Device
 from leads.comm import Callback, Service, ConnectionBase
 from leads_arduino import ArduinoMicro, WheelSpeedSensor
 from leads_gui import Config
-from leads_raspberry_pi import RaspberryPi4B, DCMotorController, VoltageSensor
+from leads_raspberry_pi import RaspberryPi4B
 
 config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -90,20 +90,6 @@ class WheelSpeedSensors(WheelSpeedSensor):
 #     def __init__(self, pin: int, brake: bool) -> None:
 #         super().__init__(pin)
 #         self._brake: bool = brake
-
-
-@device(DC_MOTOR_CONTROLLER_A, MAIN_CONTROLLER)
-class DriverMotorController(DCMotorController):
-    def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER", "ECS")
-        super().initialize(*parent_tags)
-
-
-@device("mvs", MAIN_CONTROLLER, (4,))
-class MotorVoltageSensor(VoltageSensor):
-    def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER")
-        super().initialize(*parent_tags)
 
 
 _ = None  # null export
