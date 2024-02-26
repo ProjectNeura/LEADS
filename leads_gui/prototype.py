@@ -5,8 +5,7 @@ from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
 
 from leads_gui.runtime import RuntimeData
-from leads_gui.system import _ASSETS_PATH
-from leads_gui.system import get_system_platform
+from leads_gui.system import _ASSETS_PATH, get_system_platform
 
 Widget: type = _CTkBaseClass
 
