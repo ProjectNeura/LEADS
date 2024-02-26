@@ -154,6 +154,8 @@ def main() -> int:
     def on_fail(_, e: SuspensionEvent) -> None:
         if e.system == "ECS":
             uim["ecs_fault"].configure(image=ECS(color=Color.RED))
+        elif e.system == "PC":
+            uim["battery_fault"].configure(image=Battery(color=Color.RED))
         elif e.system == "WSC":
             uim["wheel_speed_fault"].configure(image=Speed(color=Color.RED))
 
@@ -162,7 +164,9 @@ def main() -> int:
     def on_recover(_, e: SuspensionEvent) -> None:
         if e.system == "ECS":
             uim["ecs_fault"].configure(image=None)
-        if e.system == "WSC":
+        elif e.system == "PC":
+            uim["battery_fault"].configure(image=None)
+        elif e.system == "WSC":
             uim["wheel_speed_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
