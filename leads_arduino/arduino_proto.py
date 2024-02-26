@@ -2,8 +2,8 @@ from typing import override as _override
 
 from serial import Serial as _Serial
 
-from leads import Controller as _Controller
-from leads.comm import Entity as _Entity, Callback as _Callback
+from leads import Controller as _Controller, get_controller as _get_controller, Device as _Device, SFT as _SFT
+from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
 from leads_comm_serial import SerialConnection as _SerialConnection
 
 
@@ -47,3 +47,15 @@ class ArduinoProto(_Controller, _Entity):
     @_override
     def close(self) -> None:
         self.kill()
+
+
+class ArduinoCallback(_Callback):
+    def __init__(self, tag: str) -> None:
+        self._tag: str = tag
+
+    def on_receive(self, service: _Service, msg: bytes) -> None:
+        _get_controller(self._tag).update(msg.decode())
+
+    def on_fail(self, service: _Service, error: Exception) -> None:
+        assert isinstance(service, _Device)
+        _SFT.fail(service, error)

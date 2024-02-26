@@ -1,11 +1,9 @@
 from typing import Optional as _Optional
 
-from leads import L, device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
+from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
-    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, SFT, \
-    mark_system, Device
-from leads.comm import Callback, Service, ConnectionBase
-from leads_arduino import ArduinoMicro, WheelSpeedSensor
+    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, mark_system
+from leads_arduino import ArduinoMicro, WheelSpeedSensor, ArduinoCallback
 from leads_gui import Config
 from leads_raspberry_pi import RaspberryPi4B
 
@@ -26,20 +24,8 @@ class VeCController(RaspberryPi4B):
         return SRWDataContainer(*r) if config.srw_mode else DRWDataContainer(*r)
 
 
-class WheelSpeedControllerCallback(Callback):
-    def on_connect(self, service: Service, connection: ConnectionBase) -> None:
-        L.debug("Wheel speed controller connected")
-
-    def on_receive(self, service: Service, msg: bytes) -> None:
-        get_controller(WHEEL_SPEED_CONTROLLER).update(msg.decode())
-
-    def on_fail(self, service: Service, error: Exception) -> None:
-        assert isinstance(service, Device)
-        SFT.fail(service, error)
-
-
 @controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (
-        WHEEL_SPEED_CONTROLLER_PORT, WheelSpeedControllerCallback(), BAUD_RATE
+        WHEEL_SPEED_CONTROLLER_PORT, ArduinoCallback(WHEEL_SPEED_CONTROLLER), BAUD_RATE
 ))
 class WheelSpeedController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
