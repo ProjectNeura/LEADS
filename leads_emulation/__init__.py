@@ -16,7 +16,7 @@ class _EmulatedController(_Controller):
         self.maximum: int = maximum
         self.skid_possibility: float = skid_possibility
 
-    def generate_rear_wheel_speed(self, front_wheel_speed: int | float) -> int | float:
+    def generate_rear_wheel_speed(self, front_wheel_speed: float) -> float:
         return front_wheel_speed + int(_randint(1, int(1 / self.skid_possibility)) * self.skid_possibility)
 
 

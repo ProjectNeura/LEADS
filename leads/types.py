@@ -1,7 +1,6 @@
 from typing import Callable as _Callable
 
-
-type OptionalNumber = int | float | None
+type OptionalSpeed = float | None
 type Compressor[T] = _Callable[[list[T], int], list[T]]
 type Stringifier[T] = _Callable[[T], str]
 type RequiredData = list[str] | tuple[list[str], list[str]]

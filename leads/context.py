@@ -43,7 +43,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         if data_seq_size < 1:
             raise ValueError("`data_seq_size` must be greater or equal to 1")
         self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
-        self._speed_seq: _deque[int | float] = _deque(maxlen=data_seq_size)
+        self._speed_seq: _deque[float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_recorded + 1)
         self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
 
