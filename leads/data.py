@@ -11,7 +11,7 @@ class Serializable(object):
         for n in attributes:
             if n.startswith("_"):
                 continue
-            v = self.__getattribute__(n)
+            v = getattr(self, n)
             if type(v) in (int, float, str):
                 r[n] = v
         return r

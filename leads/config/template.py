@@ -53,4 +53,4 @@ class ConfigTemplate(Serializable):
         """
         for name in dir(self):
             if not name.startswith("_") and (v := self.get(name)):
-                self.__setattr__(name, v)
+                setattr(self, name, v)

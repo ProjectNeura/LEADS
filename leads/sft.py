@@ -8,8 +8,8 @@ from leads.logger import L
 
 def mark_system(device: Device, system: str, *related: str) -> None:
     if hasattr(device, "__device_system__"):
-        device.__setattr__("__device_system__", device.__getattribute__("__device_system__") + related)
-    device.__setattr__("__device_system__", [system, *related])
+        setattr(device, "__device_system__", getattr(device, "__device_system__") + related)
+    setattr(device, "__device_system__", [system, *related])
 
 
 def read_marked_system(device: Device) -> list[str] | None:

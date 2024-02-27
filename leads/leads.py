@@ -32,7 +32,7 @@ class LEADS(Context[T]):
 
     def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
         try:
-            return self.data().__getattribute__(name)
+            return getattr(self.data(), name)
         except AttributeError:
             if mandatory:
                 for system in systems:
