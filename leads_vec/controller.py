@@ -1,12 +1,11 @@
 from typing import Optional as _Optional
 
 from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
-    DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
+    DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, \
     mark_system, POWER_CONTROLLER
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, ArduinoCallback, VoltageSensor
 from leads_gui import Config
-from leads_raspberry_pi import RaspberryPi4B
 
 config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -20,7 +19,7 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 
 
 @controller(MAIN_CONTROLLER)
-class VeCController(RaspberryPi4B):
+class VeCController(Controller):
     def read(self) -> SRWDataContainer | DRWDataContainer:
         r = get_controller(WHEEL_SPEED_CONTROLLER).read()
         return SRWDataContainer(*r) if config.srw_mode else DRWDataContainer(*r)
