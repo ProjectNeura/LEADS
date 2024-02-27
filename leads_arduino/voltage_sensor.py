@@ -14,4 +14,7 @@ class VoltageSensor(_Device):
 
     @_override
     def read(self) -> float:
+        """
+        :return: voltage
+        """
         return self._voltage
