@@ -13,7 +13,7 @@ def mark_system(device: Device, system: str, *related: str) -> None:
 
 
 def read_marked_system(device: Device) -> list[str] | None:
-    return device.__getattribute__("__device_system__") if hasattr(device, "__device_system__") else None
+    return getattr(device, "__device_system__") if hasattr(device, "__device_system__") else None
 
 
 class SystemFailureTracer(ContextAssociated):
