@@ -18,10 +18,10 @@ class Serializable(object):
 
 
 class DataContainer(Serializable, metaclass=_ABCMeta):
-    def __init__(self, min_speed: float, voltage: float) -> None:
+    def __init__(self, voltage: float, min_speed: float) -> None:
         self._time_stamp: int = int(_time() * 1000)
-        self.speed: float = min_speed
         self.voltage: float = voltage
+        self.speed: float = min_speed
 
     @_override
     def __str__(self) -> str:
@@ -59,23 +59,23 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
 
 class SRWDataContainer(DataContainer):
     def __init__(self,
-                 min_speed: float = 0,
                  voltage: float = 0,
+                 min_speed: float = 0,
                  front_wheel_speed: float = 0,
                  rear_wheel_speed: float = 0) -> None:
-        super().__init__(min_speed, voltage)
+        super().__init__(voltage, min_speed)
         self.front_wheel_speed: float = front_wheel_speed
         self.rear_wheel_speed: float = rear_wheel_speed
 
 
 class DRWDataContainer(DataContainer):
     def __init__(self,
-                 min_speed: float = 0,
                  voltage: float = 0,
+                 min_speed: float = 0,
                  front_wheel_speed: float = 0,
                  left_rear_wheel_speed: float = 0,
                  right_rear_wheel_speed: float = 0) -> None:
-        super().__init__(min_speed, voltage)
+        super().__init__(voltage, min_speed)
         self.front_wheel_speed: float = front_wheel_speed
         self.left_rear_wheel_speed: float = left_rear_wheel_speed
         self.right_rear_wheel_speed: float = right_rear_wheel_speed

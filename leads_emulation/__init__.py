@@ -23,8 +23,8 @@ class _EmulatedController(_Controller):
 class SRWRandom(_EmulatedController):
     @_override
     def read(self) -> _SRWDataContainer:
-        return _SRWDataContainer(fws := _randint(self.minimum, self.maximum),
-                                 voltage=48.0,
+        return _SRWDataContainer(voltage=48.0,
+                                 min_speed=(fws := _randint(self.minimum, self.maximum)),
                                  front_wheel_speed=fws,
                                  rear_wheel_speed=self.generate_rear_wheel_speed(fws))
 
@@ -32,8 +32,8 @@ class SRWRandom(_EmulatedController):
 class DRWRandom(_EmulatedController):
     @_override
     def read(self) -> _DRWDataContainer:
-        return _DRWDataContainer(fws := _randint(self.minimum, self.maximum),
-                                 voltage=48.0,
+        return _DRWDataContainer(voltage=48.0,
+                                 min_speed=(fws := _randint(self.minimum, self.maximum)),
                                  front_wheel_speed=fws,
                                  left_rear_wheel_speed=(rws := self.generate_rear_wheel_speed(fws)),
                                  right_rear_wheel_speed=rws)
@@ -56,8 +56,8 @@ class SRWSin(_SinController):
     @_override
     def read(self) -> _SRWDataContainer:
         try:
-            return _SRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
-                                     voltage=48.0,
+            return _SRWDataContainer(voltage=48.0,
+                                     min_speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
                                      front_wheel_speed=fws,
                                      rear_wheel_speed=self.generate_rear_wheel_speed(fws))
         finally:
@@ -68,8 +68,8 @@ class DRWSin(_SinController):
     @_override
     def read(self) -> _DRWDataContainer:
         try:
-            return _DRWDataContainer(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset,
-                                     voltage=48.0,
+            return _DRWDataContainer(voltage=48.0,
+                                     min_speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
                                      front_wheel_speed=fws,
                                      left_rear_wheel_speed=(rws := self.generate_rear_wheel_speed(fws)),
                                      right_rear_wheel_speed=rws)
