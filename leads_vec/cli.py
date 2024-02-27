@@ -111,7 +111,7 @@ def main() -> int:
                        f"REFRESH RATE: {cfg.refresh_rate} FPS")
             m2.set(int(d.speed))
             if uim.rd().m3_mode == 0:
-                m3.set("0.0V")
+                m3.set(f"{(volt := str(d.voltage))[:volt.find(".") + 2]}V")
             elif uim.rd().m3_mode == 1:
                 m3.set("G Force")
             else:

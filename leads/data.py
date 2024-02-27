@@ -60,10 +60,10 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
 class SRWDataContainer(DataContainer):
     def __init__(self,
                  min_speed: float = 0,
+                 voltage: float = 0,
                  front_wheel_speed: float = 0,
-                 rear_wheel_speed: float = 0,
-                 ) -> None:
-        super().__init__(min_speed)
+                 rear_wheel_speed: float = 0) -> None:
+        super().__init__(min_speed, voltage)
         self.front_wheel_speed: float = front_wheel_speed
         self.rear_wheel_speed: float = rear_wheel_speed
 
@@ -71,11 +71,11 @@ class SRWDataContainer(DataContainer):
 class DRWDataContainer(DataContainer):
     def __init__(self,
                  min_speed: float = 0,
+                 voltage: float = 0,
                  front_wheel_speed: float = 0,
                  left_rear_wheel_speed: float = 0,
-                 right_rear_wheel_speed: float = 0,
-                 ) -> None:
-        super().__init__(min_speed)
+                 right_rear_wheel_speed: float = 0) -> None:
+        super().__init__(min_speed, voltage)
         self.front_wheel_speed: float = front_wheel_speed
         self.left_rear_wheel_speed: float = left_rear_wheel_speed
         self.right_rear_wheel_speed: float = right_rear_wheel_speed

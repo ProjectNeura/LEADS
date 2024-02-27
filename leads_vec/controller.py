@@ -1,5 +1,3 @@
-from typing import Optional as _Optional
-
 from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, \
@@ -22,7 +20,8 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 class VeCController(Controller):
     def read(self) -> SRWDataContainer | DRWDataContainer:
         r = get_controller(WHEEL_SPEED_CONTROLLER).read()
-        return SRWDataContainer(*r) if config.srw_mode else DRWDataContainer(*r)
+        universal = {"voltage": get_controller(POWER_CONTROLLER).read()}
+        return SRWDataContainer(**r, **universal) if config.srw_mode else DRWDataContainer(**r, **universal)
 
 
 @controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, ArduinoCallback(POWER_CONTROLLER), BAUD_RATE))
@@ -48,14 +47,21 @@ class WheelSpeedController(ArduinoMicro):
         mark_system(self, "WSC", "ECS")
         super().initialize(*parent_tags)
 
-    def read(self) -> [float, float, float, _Optional[float]]:
+    def read(self) -> dict[str, float]:
         lfws = self.device(LEFT_FRONT_WHEEL_SPEED_SENSOR).read()
         rfws = self.device(RIGHT_FRONT_WHEEL_SPEED_SENSOR).read()
-        rws = (self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read(),) if config.srw_mode else (
-            self.device(LEFT_REAR_WHEEL_SPEED_SENSOR).read(),
-            self.device(RIGHT_REAR_WHEEL_SPEED_SENSOR).read()
-        )
-        return min(lfws, rfws, *rws), (lfws + rfws) * .5, *rws
+        front_wheel_speed = (lfws + rfws) * .5
+        return {
+            "min_speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
+            "front_wheel_speed": front_wheel_speed,
+            "rear_wheel_speed": rws
+        } if config.srw_mode else {
+            "min_speed": min(lfws, rfws, lrws := self.device(LEFT_REAR_WHEEL_SPEED_SENSOR).read(),
+                             rrws := self.device(RIGHT_REAR_WHEEL_SPEED_SENSOR).read()),
+            "front_wheel_speed": front_wheel_speed,
+            "left_rear_wheel_speed": lrws,
+            "right_rear_wheel_speed": rrws
+        }
 
 
 @device(*((
