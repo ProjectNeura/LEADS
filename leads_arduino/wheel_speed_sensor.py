@@ -35,7 +35,7 @@ class WheelSpeedSensor(_Device):
         if data.startswith(self._tag):
             self._wheel_speed = rpm2kmh(float(data[data.find(":") + 1:]), self._wheel_circumference)
             self._last_valid = _time()
-            self._odometer.write(self._odometer.read() + self._wheel_circumference * .00001)
+            self._odometer.write(self._wheel_circumference * .00001)
 
     @_override
     def read(self) -> float:
