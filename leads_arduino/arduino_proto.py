@@ -28,7 +28,7 @@ class ArduinoProto(_Controller, _Entity):
     @_override
     def update(self, data: str) -> None:
         for d in self.devices():
-            d.update(d)
+            d.update(data)
 
     @_override
     def run(self) -> None:
