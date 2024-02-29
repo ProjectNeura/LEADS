@@ -5,6 +5,7 @@ from leads.dt.device import Device
 from leads.dt.predefined_tags import MAIN_CONTROLLER
 
 _controllers: dict[str, Controller] = {}
+_devices: dict[str, Device] = {}
 
 
 def controller(tag: str,
@@ -20,16 +21,6 @@ def controller(tag: str,
         register_controller(tag, target(*args, **kwargs), parent)
 
     return _
-
-
-def _register_device(prototype: type,
-                     tag: str,
-                     parent: Controller,
-                     args: tuple[_Any, ...],
-                     kwargs: dict[str, _Any]) -> None:
-    instance = prototype(*args, **kwargs)
-    parent.parent_tags(parent.parent_tags())
-    parent.device(tag, instance)
 
 
 def device(tag: str | _Sequence[str],
@@ -52,7 +43,7 @@ def device(tag: str | _Sequence[str],
         if not issubclass(target, Device):
             raise TypeError("Devices must inherit from `Device`")
         for i in range(len(tag)):
-            _register_device(target, tag[i], _controllers[parent[i]], args[i], kwargs[i])
+            register_device(target, tag[i], _controllers[parent[i]], args[i], kwargs[i])
 
     return _
 
@@ -69,6 +60,20 @@ def register_controller(tag: str, c: Controller, parent: str | None = None) -> N
 
 def get_controller(tag: str) -> Controller:
     return _controllers[tag]
+
+
+def register_device(prototype: type,
+                    tag: str,
+                    parent: Controller,
+                    args: tuple[_Any, ...],
+                    kwargs: dict[str, _Any]) -> None:
+    instance = prototype(*args, **kwargs)
+    parent.parent_tags(parent.parent_tags())
+    parent.device(tag, instance)
+
+
+def get_device(tag: str) -> Device:
+    return _devices[tag]
 
 
 def initialize_main() -> None:
