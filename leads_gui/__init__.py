@@ -1,7 +1,7 @@
 from importlib.util import find_spec as _find_spec
 
 if not _find_spec("PIL"):
-    raise ImportError("Please install `pillow` to run this module\n>>>pip install pillow")
+    raise ImportError("Please install `Pillow` to run this module\n>>>pip install Pillow")
 if not _find_spec("customtkinter"):
     raise ImportError("Please install `customtkinter` to run this module\n>>>pip install customtkinter")
 
