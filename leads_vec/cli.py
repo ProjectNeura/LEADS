@@ -109,7 +109,8 @@ def main() -> int:
                        f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n"
                        f"{format(m := d.mileage, ".1f")} KM - {format(m * 3600 / duration, ".1f")} KM / H\n\n"
                        f"{"SRW MODE" if cfg.srw_mode else "DRW MODE"}\n"
-                       f"REFRESH RATE: {cfg.refresh_rate} FPS")
+                       f"{cfg.refresh_rate} FPS\n"
+                       f"{my_ip_addresses()[-1]}:{uim.rd().comm.port()}")
             m2.set(int(d.speed))
             if uim.rd().m3_mode == 0:
                 m3.set(f"{format(d.voltage, ".1f")} V")

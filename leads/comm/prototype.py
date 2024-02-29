@@ -1,7 +1,12 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
-from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM
+from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM, \
+    gethostbyname_ex as _gethostbyname_ex, gethostname as _gethostname
 from threading import Lock as _Lock, Thread as _Thread
 from typing import Self as _Self, Callable as _Callable, override as _override
+
+
+def my_ip_addresses() -> list[str]:
+    return [ip for ip in _gethostbyname_ex(_gethostname())[2] if not ip.startswith("127.")]
 
 
 class Service(metaclass=_ABCMeta):
