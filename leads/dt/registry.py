@@ -43,7 +43,7 @@ def device(tag: str | _Sequence[str],
         if not issubclass(target, Device):
             raise TypeError("Devices must inherit from `Device`")
         for i in range(len(tag)):
-            register_device(target, tag[i], _controllers[parent[i]], args[i], kwargs[i])
+            _register_device(target, tag[i], _controllers[parent[i]], args[i], kwargs[i])
 
     return _
 
@@ -54,7 +54,6 @@ def register_controller(tag: str, c: Controller, parent: str | None = None) -> N
     if parent:
         c.parent_tags((p := _controllers[parent]).parent_tags() + c.parent_tags())
         p.device(tag, c)
-
     _controllers[tag] = c
 
 
@@ -62,14 +61,15 @@ def get_controller(tag: str) -> Controller:
     return _controllers[tag]
 
 
-def register_device(prototype: type,
-                    tag: str,
-                    parent: Controller,
-                    args: tuple[_Any, ...],
-                    kwargs: dict[str, _Any]) -> None:
+def _register_device(prototype: type,
+                     tag: str,
+                     parent: Controller,
+                     args: tuple[_Any, ...],
+                     kwargs: dict[str, _Any]) -> None:
     instance = prototype(*args, **kwargs)
     parent.parent_tags(parent.parent_tags())
     parent.device(tag, instance)
+    _devices[tag] = instance
 
 
 def get_device(tag: str) -> Device:
