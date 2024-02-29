@@ -1,8 +1,8 @@
 from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, get_config, \
-    mark_system, POWER_CONTROLLER
-from leads_arduino import ArduinoMicro, WheelSpeedSensor, ArduinoCallback, VoltageSensor
+    mark_system, POWER_CONTROLLER, ODOMETER, get_device
+from leads_arduino import ArduinoMicro, WheelSpeedSensor, ArduinoCallback, VoltageSensor, ConcurrentOdometer
 from leads_gui import Config
 
 config = get_config(Config)
@@ -20,7 +20,10 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 class VeCController(Controller):
     def read(self) -> SRWDataContainer | DRWDataContainer:
         r = get_controller(WHEEL_SPEED_CONTROLLER).read()
-        universal = {"voltage": get_controller(POWER_CONTROLLER).read()}
+        universal = {
+            "voltage": get_controller(POWER_CONTROLLER).read(),
+            "mileage": get_device(ODOMETER).read()
+        }
         return SRWDataContainer(**r, **universal) if config.srw_mode else DRWDataContainer(**r, **universal)
 
 
@@ -64,24 +67,30 @@ class WheelSpeedController(ArduinoMicro):
         }
 
 
+@device(ODOMETER, MAIN_CONTROLLER)
+class AverageOdometer(ConcurrentOdometer):
+    def read(self) -> float:
+        return super().read() / (3 if config.srw_mode else 4)
+
+
 @device(*((
         (LEFT_FRONT_WHEEL_SPEED_SENSOR,
          RIGHT_FRONT_WHEEL_SPEED_SENSOR,
          CENTER_REAR_WHEEL_SPEED_SENSOR),
         WHEEL_SPEED_CONTROLLER,
-        [(FRONT_WHEEL_DIAMETER,),
-         (FRONT_WHEEL_DIAMETER,),
-         (REAR_WHEEL_DIAMETER,)
+        [(FRONT_WHEEL_DIAMETER, ODOMETER),
+         (FRONT_WHEEL_DIAMETER, ODOMETER),
+         (REAR_WHEEL_DIAMETER, ODOMETER)
          ]) if config.srw_mode else (
         (LEFT_FRONT_WHEEL_SPEED_SENSOR,
          RIGHT_FRONT_WHEEL_SPEED_SENSOR,
          LEFT_REAR_WHEEL_SPEED_SENSOR,
          RIGHT_REAR_WHEEL_SPEED_SENSOR),
         WHEEL_SPEED_CONTROLLER,
-        [(FRONT_WHEEL_DIAMETER,),
-         (FRONT_WHEEL_DIAMETER,),
-         (REAR_WHEEL_DIAMETER,),
-         (REAR_WHEEL_DIAMETER,)]
+        [(FRONT_WHEEL_DIAMETER, ODOMETER),
+         (FRONT_WHEEL_DIAMETER, ODOMETER),
+         (REAR_WHEEL_DIAMETER, ODOMETER),
+         (REAR_WHEEL_DIAMETER, ODOMETER)]
 )))
 class WheelSpeedSensors(WheelSpeedSensor):
     def initialize(self, *parent_tags: str) -> None:

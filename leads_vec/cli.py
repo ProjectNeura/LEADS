@@ -106,17 +106,18 @@ def main() -> int:
             else:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                       f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n\n"
+                       f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n"
+                       f"{format(m := d.mileage, ".1f")} KM - {format(m * 3600 / duration, ".1f")} KM / H\n\n"
                        f"{"SRW MODE" if cfg.srw_mode else "DRW MODE"}\n"
                        f"REFRESH RATE: {cfg.refresh_rate} FPS")
             m2.set(int(d.speed))
             if uim.rd().m3_mode == 0:
-                m3.set(f"{(v := str(d.voltage))[:v.find(".") + 2]}V")
+                m3.set(f"{format(d.voltage, ".1f")} V")
             elif uim.rd().m3_mode == 1:
                 m3.set("G Force")
             else:
                 m3.set(f"Speed Trend\n"
-                       f"{(sts := str(st := ctx.get_speed_trend() * 10))[:sts.find(".") + 2]} {"↑" if st > 0 else "↓"}")
+                       f"{format(st := ctx.get_speed_trend() * 10, ".1f")} {"↑" if st > 0 else "↓"}")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             if uim.rd().control_system_switch_changed:
