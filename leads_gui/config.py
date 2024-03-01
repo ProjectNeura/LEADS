@@ -17,6 +17,6 @@ class Config(_ConfigTemplate):
         self.font_size_x_large: int = 56
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
-        self.data_dir: str = "./data"
+        self.data_dir: str = "data"
         self.enable_data_persistence: bool = True
         super().__init__(base)
