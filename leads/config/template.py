@@ -13,6 +13,7 @@ class ConfigTemplate(Serializable):
         self._d: dict[str, _Any] = base
         self.debug_level: str = "DEBUG"
         self.srw_mode: bool = True
+        self.refresh()
 
     def __getitem__(self, name: str) -> _Any | None:
         return self.get(name)

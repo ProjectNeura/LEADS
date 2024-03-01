@@ -5,7 +5,6 @@ from leads import ConfigTemplate as _ConfigTemplate
 
 class Config(_ConfigTemplate):
     def __init__(self, base: dict[str, _Any]) -> None:
-        super().__init__(base)
         self.width: int = 720
         self.height: int = 480
         self.fullscreen: bool = False
@@ -20,4 +19,4 @@ class Config(_ConfigTemplate):
         self.comm_port: int = 16900
         self.data_dir: str = "./data"
         self.enable_data_persistence: bool = True
-        self.refresh()
+        super().__init__(base)
