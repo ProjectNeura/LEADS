@@ -53,5 +53,5 @@ class ConfigTemplate(Serializable):
         Write the dictionary into the instance attributes.
         """
         for name in dir(self):
-            if not name.startswith("_") and (v := self.get(name)):
+            if not name.startswith("_") and (v := self.get(name)) is not None:
                 setattr(self, name, v)
