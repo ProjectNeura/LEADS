@@ -20,7 +20,7 @@ class Server(Entity):
     @_override
     def run(self, max_connection: int = 1) -> None:
         self._killed = False
-        self._socket.bind(("127.0.0.1", self._port))
+        self._socket.bind(("0.0.0.0", self._port))
         self._socket.listen(max_connection)
         self.callback.on_initialize(self)
         while not self._killed:
