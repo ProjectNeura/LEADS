@@ -11,7 +11,7 @@ from leads.comm import *
 from leads.data_persistence import *
 from leads_gui import *
 
-config = load_config("config.json", Config)
+config = get_config(Config)
 if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{abspath(config.data_dir)}\" created")
