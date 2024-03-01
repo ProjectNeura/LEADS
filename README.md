@@ -142,7 +142,25 @@ python -m leads_vec_rc
 
 Go to the online dashboard https://leads-vec-rc.projectneura.org.
 
-#### Register as a Systemd Service
+#### Optional Arguments
+
+Run the following to get a list of all the supported arguments.
+
+```shell
+python -m leads_vec_rc -h
+```
+
+##### Specify a Configuration File
+
+```shell
+python -m leads_vec_rc -c path/to/the/config/file.json
+```
+
+If not specified, all configurations will be default values.
+
+To learn about the configuration file, read [Configurations](#Configurations).
+
+##### Register as a Systemd Service
 
 ```shell
 python -m leads_vec_rc -r systemd
