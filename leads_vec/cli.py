@@ -88,7 +88,7 @@ def main() -> int:
             L.error("Comm server error: " + str(error))
 
         def on_connect(self, service: Service, connection: Connection) -> None:
-            uim["comm_status"].configure(text="COMM ONLINE", text_color="black")
+            uim["comm_status"].configure(text="COMM ONLINE", text_color=["black", "white"])
 
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
