@@ -16,9 +16,12 @@ if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{abspath(config.data_dir)}\" created")
 
-time_stamp_record = DataPersistence(config.data_dir + "/time_stamp.csv", persistence=config.enable_data_persistence,
+data_record = DataPersistence(max_size=2000)
+time_stamp_record = DataPersistence(config.data_dir + "/time_stamp.csv",
+                                    persistence=config.enable_data_persistence,
                                     max_size=2000)
-speed_record = DataPersistence(config.data_dir + "/speed.csv", persistence=config.enable_data_persistence,
+speed_record = DataPersistence(config.data_dir + "/speed.csv",
+                               persistence=config.enable_data_persistence,
                                max_size=2000)
 
 
@@ -30,9 +33,10 @@ class CommCallback(Callback):
         L.error("Comm client error: " + str(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:
-        data = loads(msg.decode())
-        time_stamp_record.append(data["t"])
-        speed_record.append(data["front_wheel_speed"])
+        d = loads(msg.decode())
+        data_record.append(d)
+        time_stamp_record.append(d["t"])
+        speed_record.append(d["front_wheel_speed"])
 
     def on_disconnect(self, service: Service, connection: Connection) -> None:
         time_stamp_record.close()
@@ -59,7 +63,7 @@ async def index() -> str:
 
 @app.get("/current")
 async def current() -> dict[str, Any]:
-    return {"t": time_stamp_record[-1], "speed": speed_record[-1]}
+    return data_record[-1]
 
 
 @app.get("/time_stamp")
