@@ -100,7 +100,7 @@ def main() -> int:
             uim.rd().comm_notify(e.data)
 
         def post_update(self, e: UpdateEvent) -> None:
-            d = ctx.data()
+            d = e.context.data()
             if uim.rd().m1_mode == 0:
                 m1.set("LAP TIME\n\n" + "\n".join(map(format_lap_time, ctx.get_lap_time_list())))
             else:
