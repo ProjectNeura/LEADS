@@ -1,8 +1,8 @@
 [submodule "readthedocs"]
 	path = readthedocs
 	url = https://github.com/ProjectNeura/leads-docs.git
-[submodule "frontend"]
-	path = frontend
+[submodule "leads-vec-rc-frontend"]
+	path = leads-vec-rc-frontend
 	url = https://github.com/ProjectNeura/leads-vec-rc.git
 [submodule "arduino/leads"]
 	path = arduino/leads
