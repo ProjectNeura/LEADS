@@ -16,7 +16,7 @@ if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{abspath(config.data_dir)}\" created")
 
-data_record = DataPersistence(max_size=2000)
+data_record = DataPersistence(max_size=1, compressor=lambda o, s: o[-s:])
 time_stamp_record = DataPersistence(config.data_dir + "/time_stamp.csv",
                                     persistence=config.enable_data_persistence,
                                     max_size=2000)
