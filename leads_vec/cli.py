@@ -99,6 +99,7 @@ def main() -> int:
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
             d = e.data.to_dict()
+            d["speed_trend"] = ctx.get_speed_trend()
             d["lap_times"] = ctx.get_lap_time_list()
             uim.rd().comm_notify(d)
 
