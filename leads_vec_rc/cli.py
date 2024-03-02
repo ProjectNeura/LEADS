@@ -74,3 +74,9 @@ async def time_stamp() -> list[int]:
 @app.get("/speed")
 async def speed() -> list[float]:
     return speed_record.to_list()
+
+
+@app.get("/time_lap")
+async def time_lap() -> str:
+    client.send(b"time_lap")
+    return "done"

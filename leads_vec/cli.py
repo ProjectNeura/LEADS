@@ -87,22 +87,25 @@ def main() -> int:
         def on_fail(self, service: Service, error: Exception) -> None:
             L.error("Comm server error: " + str(error))
 
-        def on_connect(self, service: Service, connection: Connection) -> None:
-            uim["comm_status"].configure(text="COMM ONLINE", text_color=["black", "white"])
+        def on_receive(self, service: Service, msg: bytes) -> None:
+            if msg == b"time_lap":
+                ctx.time_lap()
 
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
     def format_lap_time(t: int) -> str:
-        return f"{(t := int(t * .001)) // 60} MIN {t % 60} SEC"
+        return f"{int(t // 60000)} MIN {t % 60} SEC"
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
-            uim.rd().comm_notify(e.data)
+            d = e.data.to_dict()
+            d["lap_times"] = ctx.get_lap_time_list()
+            uim.rd().comm_notify(d)
 
         def post_update(self, e: UpdateEvent) -> None:
             d = e.context.data()
             if uim.rd().m1_mode == 0:
-                m1.set("LAP TIME\n\n" + "\n".join(map(format_lap_time, ctx.get_lap_time_list())))
+                m1.set("LAP TIMES\n\n" + "\n".join(map(format_lap_time, ctx.get_lap_time_list())))
             else:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
@@ -121,6 +124,8 @@ def main() -> int:
                        f"{(st := ctx.get_speed_trend() * 10):.1f} {"↑" if st > 0 else "↓"}")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
+            else:
+                uim["comm_status"].configure(text="COMM ONLINE", text_color=["black", "white"])
             if uim.rd().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
