@@ -27,7 +27,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
                  srw_mode: bool = True,
                  initial_data: T | None = None,
                  data_seq_size: int = 100,
-                 num_laps_recorded: int = 3) -> None:
+                 num_laps_timed: int = 3) -> None:
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data
@@ -44,7 +44,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
             raise ValueError("`data_seq_size` must be greater or equal to 1")
         self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
         self._speed_seq: _deque[float] = _deque(maxlen=data_seq_size)
-        self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_recorded + 1)
+        self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_timed + 1)
         self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
 
     def data(self) -> T:
