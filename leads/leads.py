@@ -62,9 +62,9 @@ class LEADS(Context[T]):
         self._event_listener.post_update(UpdateEvent(self))
 
     @_override
-    def record_lap(self) -> None:
+    def time_lap(self) -> None:
         self.intervene(InterventionEvent(self, "LAP RECORDING"))
-        super().record_lap()
+        super().time_lap()
         return self.intervene(InterventionExitEvent(self, "LAP RECORDING"))
 
     @_override

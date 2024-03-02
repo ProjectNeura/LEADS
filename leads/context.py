@@ -77,7 +77,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def suspend(self, *args, **kwargs) -> None:
         raise NotImplementedError
 
-    def record_lap(self) -> None:
+    def time_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
 
     def get_lap_time_list(self) -> list[int]:

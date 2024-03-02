@@ -71,8 +71,8 @@ def main() -> int:
             manager[system_lower] = CTkButton(manager.root(), text=system + " ON", command=switch,
                                               font=("Arial", cfg.font_size_small))
 
-        manager["record_lap"] = CTkButton(manager.root(), text="Record Lap", command=ctx.record_lap,
-                                          font=("Arial", cfg.font_size_small))
+        manager["time_lap"] = CTkButton(manager.root(), text="Record Lap", command=ctx.time_lap,
+                                        font=("Arial", cfg.font_size_small))
 
         def switch_ecs_mode(mode):
             manager["ecs"].configure(selected_color=(c := "green" if ECSMode[mode] < 2 else "red"),
@@ -176,7 +176,7 @@ def main() -> int:
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["record_lap", "ecs"],
+        ["time_lap", "ecs"],
         ["battery_fault", "ecs_fault", "motor_fault", "wheel_speed_fault"]
     ]
     uim.layout(layout)
