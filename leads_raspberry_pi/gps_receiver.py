@@ -9,8 +9,8 @@ class GPSReceiver(_ShadowDevice):
     def __init__(self, port: str) -> None:
         super().__init__(port)
         self._gpsd: _gps | None = None
-        self._longitude: float = 0
         self._latitude: float = 0
+        self._longitude: float = 0
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
@@ -26,12 +26,12 @@ class GPSReceiver(_ShadowDevice):
     def loop(self) -> None:
         nx = self.require_gpsd().next()
         if nx["class"] == "TPV":
-            self._longitude = float(nx["lon"])
             self._latitude = float(nx["lat"])
+            self._longitude = float(nx["lon"])
 
     @_override
     def read(self) -> [float, float]:
         """
-        :return: [longitude, latitude]
+        :return: [latitude, longitude]
         """
-        return self._longitude, self._latitude
+        return self._latitude, self._longitude
