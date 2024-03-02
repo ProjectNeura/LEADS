@@ -4,3 +4,6 @@
 [submodule "arduino/leads"]
 	path = arduino/leads
 	url = https://github.com/ProjectNeura/LEADS-Arduino.git
+[submodule "leads-vec-rc-frontend"]
+	path = leads-vec-rc-frontend
+	url = https://github.com/ProjectNeura/leads-vec-rc.git
