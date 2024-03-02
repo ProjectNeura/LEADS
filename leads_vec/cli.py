@@ -94,7 +94,7 @@ def main() -> int:
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
     def format_lap_time(t: int) -> str:
-        return f"{int((t := t * .001) / 60)} MIN {t % 60} SEC"
+        return f"{int(t := t * .001) // 60} MIN {t % 60} SEC"
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
