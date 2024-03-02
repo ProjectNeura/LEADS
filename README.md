@@ -150,6 +150,14 @@ Run the following to get a list of all the supported arguments.
 python -m leads_vec_rc -h
 ```
 
+##### Server Port
+
+```shell
+python -m leads_vec_rc -p 80
+```
+
+If not specified, the port is `8000` by default.
+
 ##### Specify a Configuration File
 
 ```shell
