@@ -1,33 +1,55 @@
-from typing import override as _override
+from typing import override as _override, Any as _Any
+from serial import Serial as _Serial
+from pynmea2 import parse as _parse
+from pynmea2.types.talker import TalkerSentence as _TalkerSentence, GGA as _GGA
+from traceback import print_exc
 
-from gps import gps as _gps
+from leads import Device as _Device, SFT as _SFT
+from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
+from leads_comm_serial import SerialConnection as _SerialConnection
 
-from leads import ShadowDevice as _ShadowDevice
+
+class _GPSCallback(_Callback):
+    def __init__(self, receiver: _Device) -> None:
+        self.receiver: _Device = receiver
+
+    @_override
+    def on_receive(self, service: _Service, msg: bytes) -> None:
+        assert isinstance(service, GPSReceiver)
+        self.receiver.update(_parse(msg.decode()))
+
+    @_override
+    def on_fail(self, service: _Service, error: Exception) -> None:
+        assert isinstance(service, GPSReceiver)
+        _SFT.fail(service, error)
+        print_exc()
 
 
-class GPSReceiver(_ShadowDevice):
-    def __init__(self, port: str) -> None:
-        super().__init__(port)
-        self._gpsd: _gps | None = None
+class GPSReceiver(_Device, _Entity):
+    def __init__(self, port: str, baud_rate: int = 9600) -> None:
+        _Device.__init__(self, port)
+        _Entity.__init__(self, -1, _GPSCallback(self))
+        self._serial: _Serial = _Serial()
+        self._serial.port = port
+        self._serial.baudrate = baud_rate
+        self._connection: _SerialConnection | None = None
         self._latitude: float = 0
         self._longitude: float = 0
 
     @_override
-    def initialize(self, *parent_tags: str) -> None:
-        super().initialize(*parent_tags)
-        self._gpsd = _gps()
-
-    def require_gpsd(self) -> _gps:
-        if self._gpsd:
-            return self._gpsd
-        raise RuntimeError("Not initialized")
+    def port(self) -> str:
+        return self._serial.port
 
     @_override
-    def loop(self) -> None:
-        nx = self.require_gpsd().next()
-        if nx["class"] == "TPV":
-            self._latitude = float(nx["lat"])
-            self._longitude = float(nx["lon"])
+    def initialize(self, *parent_tags: str) -> None:
+        self.start(True)
+        super().initialize(*parent_tags)
+
+    @_override
+    def update(self, data: _TalkerSentence) -> None:
+        if isinstance(data, _GGA):
+            self._latitude = float(data.latitude)
+            self._longitude = float(data.longitude)
 
     @_override
     def read(self) -> [float, float]:
@@ -35,3 +57,21 @@ class GPSReceiver(_ShadowDevice):
         :return: [latitude, longitude]
         """
         return self._latitude, self._longitude
+
+    @_override
+    def run(self) -> None:
+        self.callback.on_initialize(self)
+        self._serial.open()
+        self.callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port,
+                                                                       separator=b"\n"))
+        self._connection = connection
+        self._stage(connection)
+
+    @_override
+    def kill(self) -> None:
+        if self._connection:
+            self._connection.close()
+
+    @_override
+    def close(self) -> None:
+        self.kill()
