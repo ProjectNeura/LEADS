@@ -28,7 +28,7 @@ class SystemFailureTracer(ContextAssociated):
         for system in systems:
             self.on_fail(device, e := SuspensionEvent(context := self.require_context(), system, str(exception)))
             context.suspend(e)
-            L.error(f"{system} error: {exception}")
+            L.error(f"{system} error: {repr(exception)}")
 
     def recover(self, device: Device) -> None:
         if not (systems := read_marked_system(device)):
