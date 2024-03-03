@@ -84,16 +84,17 @@ class Service(metaclass=_ABCMeta):
 
 
 class ConnectionBase(metaclass=_ABCMeta):
-    def __init__(self, service: Service, remainder: bytes) -> None:
+    def __init__(self, service: Service, remainder: bytes, separator: bytes) -> None:
         """
         :param service: the service to which it belongs
         :param remainder: message remain from last connection
         """
         self._service: Service = service
         self._remainder: bytes = remainder
+        self._separator: bytes = separator
 
     def use_remainder(self) -> bytes:
-        if (i := self._remainder.find(b";")) < 0:
+        if (i := self._remainder.find(self._separator)) < 0:
             msg = self._remainder
             self._remainder = b""
         elif i != len(self._remainder) - 1:
@@ -105,7 +106,7 @@ class ConnectionBase(metaclass=_ABCMeta):
         return msg
 
     def with_remainder(self, msg: bytes) -> bytes:
-        if (i := msg.find(b";")) != len(msg) - 1:
+        if (i := msg.find(self._separator)) != len(msg) - 1:
             self._remainder = msg[i + 1:]
             return msg[:i]
         return msg[:-1]
@@ -147,8 +148,8 @@ class ConnectionBase(metaclass=_ABCMeta):
 
 class Connection(ConnectionBase):
     def __init__(self, service: Service, socket: _socket, address: tuple[str, int], remainder: bytes = b"",
-                 on_close: _Callable[[_Self], None] = lambda _: None) -> None:
-        super().__init__(service, remainder)
+                 separator: bytes = b";", on_close: _Callable[[_Self], None] = lambda _: None) -> None:
+        super().__init__(service, remainder, separator)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
         self._on_close: _Callable[[_Self], None] = on_close
@@ -181,7 +182,7 @@ class Connection(ConnectionBase):
             return self.use_remainder()
         try:
             msg = chunk = b""
-            while b";" not in chunk:
+            while self._separator not in chunk:
                 msg += (chunk := self._require_open_socket().recv(chunk_size))
             return self.with_remainder(msg)
         except IOError:
@@ -189,7 +190,7 @@ class Connection(ConnectionBase):
 
     @_override
     def send(self, msg: bytes) -> None:
-        self._require_open_socket().send(msg + b";")
+        self._require_open_socket().send(msg + self._separator)
         if msg == b"disconnect":
             self.close()
 

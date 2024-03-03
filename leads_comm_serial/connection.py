@@ -6,8 +6,13 @@ from leads.comm import ConnectionBase as _Connection, Service as _Service
 
 
 class SerialConnection(_Connection):
-    def __init__(self, service: _Service, serial: _Serial, port: str, remainder: bytes = b"") -> None:
-        super().__init__(service, remainder)
+    def __init__(self,
+                 service: _Service,
+                 serial: _Serial,
+                 port: str,
+                 remainder: bytes = b"",
+                 separator: bytes = b";") -> None:
+        super().__init__(service, remainder, separator)
         self._serial: _Serial = serial
         self._port: str = port
 
@@ -26,7 +31,7 @@ class SerialConnection(_Connection):
             return self.use_remainder()
         try:
             msg = chunk = b""
-            while b";" not in chunk:
+            while self._separator not in chunk:
                 msg += (chunk := self._require_open_serial().read(chunk_size))
             return self.with_remainder(msg)
         except IOError:
@@ -34,7 +39,7 @@ class SerialConnection(_Connection):
 
     @_override
     def send(self, msg: bytes) -> None:
-        self._require_open_serial().write(msg + b";")
+        self._require_open_serial().write(msg + self._separator)
         if msg == b"disconnect":
             self.close()
 
