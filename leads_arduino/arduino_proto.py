@@ -64,5 +64,5 @@ class ArduinoCallback(_Callback):
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
-        assert isinstance(service, _Device)
+        assert isinstance(service, ArduinoProto)
         _SFT.fail(service, error)
