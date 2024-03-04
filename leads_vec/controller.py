@@ -25,7 +25,7 @@ class VeCController(Controller):
         universal = {
             "voltage": get_controller(POWER_CONTROLLER).read(),
             "mileage": self.device(ODOMETER).read(),
-            "fixed": (coords := self.device(GPS_RECEIVER).read())[0],
+            "gps_valid": (coords := self.device(GPS_RECEIVER).read())[0],
             "latitude": coords[1],
             "longitude": coords[2]
         }
