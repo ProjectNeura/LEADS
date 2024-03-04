@@ -1,8 +1,8 @@
-from typing import override as _override, Any as _Any
-from serial import Serial as _Serial
+from typing import override as _override
+
 from pynmea2 import parse as _parse
 from pynmea2.types.talker import TalkerSentence as _TalkerSentence, GGA as _GGA
-from traceback import print_exc
+from serial import Serial as _Serial
 
 from leads import Device as _Device, SFT as _SFT
 from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
@@ -22,7 +22,6 @@ class _GPSCallback(_Callback):
     def on_fail(self, service: _Service, error: Exception) -> None:
         assert isinstance(service, GPSReceiver)
         _SFT.fail(service, error)
-        print_exc()
 
 
 class GPSReceiver(_Device, _Entity):
