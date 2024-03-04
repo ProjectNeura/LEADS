@@ -193,8 +193,8 @@ def main() -> int:
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["time_lap", "hazard"],
         ["ecs"],
+        ["time_lap", "hazard"],
         ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
     ]
     uim.layout(layout)
