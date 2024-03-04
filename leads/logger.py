@@ -1,5 +1,6 @@
 from datetime import datetime as _datetime
 from enum import IntEnum as _IntEnum
+from threading import Lock as _Lock
 
 from leads.os import currentframe
 
@@ -29,6 +30,7 @@ class Logger(object):
 
     def __init__(self) -> None:
         self._debug_level: Level = Level.DEBUG
+        self._lock: _Lock = _Lock()
 
     def debug_level(self, debug_level: Level | None = None) -> Level | None:
         if debug_level is not None:
@@ -45,8 +47,12 @@ class Logger(object):
         return f"\033[{font}{f";{color}" if color else ""}{f";{background + 10}" if background else ""}m{msg}\033[0m"
 
     def print(self, msg: str, level: int) -> None:
-        if self._debug_level <= level:
-            print(msg)
+        self._lock.acquire()
+        try:
+            if self._debug_level <= level:
+                print(msg)
+        finally:
+            self._lock.release()
 
     def info(self, *msg: str, sep: str = " ", end: str = "\n",
              f: tuple[int, int | None, int | None] = (REGULAR, None, None)) -> None:
