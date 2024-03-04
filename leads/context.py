@@ -1,21 +1,14 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from collections import deque as _deque
-from enum import IntEnum as _IntEnum
 from time import time as _time
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
 from numpy import diff as _diff, average as _average, array as _array
 
+from leads.constant import ECSMode
 from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 
 T = _TypeVar("T", bound=DataContainer)
-
-
-class ECSMode(_IntEnum):
-    STANDARD: int = 0x00
-    AGGRESSIVE: int = 0x01
-    SPORT: int = 0x02
-    OFF: int = 0x03
 
 
 def _check_data_type(data: T, superclass: type = DataContainer) -> None:
