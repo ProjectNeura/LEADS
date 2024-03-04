@@ -110,7 +110,9 @@ def main() -> int:
         def post_update(self, e: UpdateEvent) -> None:
             d = e.context.data()
             if uim.rd().m1_mode == 0:
-                m1.set("LAP TIMES\n\n" + "\n".join(map(format_lap_time, ctx.get_lap_time_list())))
+                lap_time_list = ctx.get_lap_time_list()
+                m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
+                                                                                                      lap_time_list))))
             else:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
