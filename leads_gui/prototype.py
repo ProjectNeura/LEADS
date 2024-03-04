@@ -7,7 +7,7 @@ from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform
 
-Widget: type = _CTkBaseClass
+type Widget = _CTkBaseClass
 
 T = _TypeVar("T", bound=RuntimeData)
 
