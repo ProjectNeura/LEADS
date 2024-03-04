@@ -15,6 +15,7 @@ class ECSMode(_IntEnum):
     STANDARD: int = 0x00
     AGGRESSIVE: int = 0x01
     SPORT: int = 0x02
+    OFF: int = 0x03
 
 
 def _check_data_type(data: T, superclass: type = DataContainer) -> None:
@@ -46,6 +47,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._speed_seq: _deque[float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_timed + 1)
         self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
+        self._ecs_mode: ECSMode = ECSMode.STANDARD
 
     def data(self) -> T:
         """
@@ -64,6 +66,11 @@ class Context(_Generic[T], metaclass=_ABCMeta):
 
     def srw_mode(self) -> bool:
         return self._srw_mode
+
+    def ecs_mode(self, ecs_mode: ECSMode | None = None) -> ECSMode | None:
+        if ecs_mode is None:
+            return self._ecs_mode
+        self._ecs_mode = ecs_mode
 
     @_abstractmethod
     def update(self) -> None:
