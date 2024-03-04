@@ -156,6 +156,7 @@ def main() -> int:
     ctx.set_event_listener(CustomListener())
     uim["battery_fault"] = CTkLabel(uim.root(), text="")
     uim["ecs_fault"] = CTkLabel(uim.root(), text="")
+    uim["gps_fault"] = CTkLabel(uim.root(), text="")
     uim["motor_fault"] = CTkLabel(uim.root(), text="")
     uim["wheel_speed_fault"] = CTkLabel(uim.root(), text="")
 
@@ -166,6 +167,8 @@ def main() -> int:
             uim["battery_fault"].configure(image=Battery(color=Color.RED))
         elif e.system == "WSC":
             uim["wheel_speed_fault"].configure(image=Speed(color=Color.RED))
+        elif e.system == "GPS":
+            uim["gps_fault"].configure(image=Satellite(color=Color.RED))
 
     SFT.on_fail = on_fail
 
@@ -176,6 +179,8 @@ def main() -> int:
             uim["battery_fault"].configure(image=None)
         elif e.system == "WSC":
             uim["wheel_speed_fault"].configure(image=None)
+        elif e.system == "GPS":
+            uim["gps_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
     layout = [
@@ -183,7 +188,7 @@ def main() -> int:
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["time_lap", "ecs"],
-        ["battery_fault", "ecs_fault", "motor_fault", "wheel_speed_fault"]
+        ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
     ]
     uim.layout(layout)
     placeholder_row = len(layout)
