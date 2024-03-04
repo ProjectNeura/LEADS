@@ -2,7 +2,7 @@ from typing import override as _override
 
 from serial import Serial as _Serial
 
-from leads import Controller as _Controller, get_controller as _get_controller, Device as _Device, SFT as _SFT
+from leads import Controller as _Controller, get_controller as _get_controller, SFT as _SFT
 from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
 from leads_comm_serial import SerialConnection as _SerialConnection
 
