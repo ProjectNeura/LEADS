@@ -38,6 +38,7 @@ Engine = _Icon("engine")
 HighBeam = _Icon("high-beam")
 Light = _Icon("light")
 Motor = _Icon("motor")
+Satellite = _Icon("satellite")
 Speed = _Icon("speed")
 
 
