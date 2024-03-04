@@ -22,13 +22,15 @@ class SystemFailureTracer(ContextAssociated):
         self.on_fail: _Callable[[Device, SuspensionEvent], None] = lambda _, __: None
         self.on_recover: _Callable[[Device, SuspensionEvent], None] = lambda _, __: None
 
-    def fail(self, device: Device, exception: Exception) -> None:
+    def fail(self, device: Device, error: str | Exception) -> None:
+        if isinstance(error, Exception):
+            error = repr(error)
         if not (systems := read_marked_system(device)):
             raise RuntimeWarning("No system marked for device " + str(device))
         for system in systems:
-            self.on_fail(device, e := SuspensionEvent(context := self.require_context(), system, str(exception)))
+            self.on_fail(device, e := SuspensionEvent(context := self.require_context(), system, error))
             context.suspend(e)
-            L.error(f"{system} error: {repr(exception)}")
+            L.error(f"{system} error: {error}")
 
     def recover(self, device: Device) -> None:
         if not (systems := read_marked_system(device)):
