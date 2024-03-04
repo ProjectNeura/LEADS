@@ -16,6 +16,13 @@ def rpm2kmh(rpm: float, wheel_circumference: float) -> float:
 
 
 class WheelSpeedSensor(_Device):
+    """
+    See LEADS-Arduino.
+
+    Supports:
+    - Any hall effect sensor (switch)
+    """
+
     def __init__(self, wheel_diameter: float, odometer_tag: str | None = None) -> None:
         super().__init__()
         self._wheel_circumference: float = wheel_diameter * 2.54 * _pi

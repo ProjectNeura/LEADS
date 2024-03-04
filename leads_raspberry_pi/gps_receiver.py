@@ -26,6 +26,10 @@ class _GPSCallback(_Callback):
 
 
 class GPSReceiver(_Device, _Entity):
+    """
+    Supports:
+    - Any USB (serial) GPS receiver with NMEA 0183 output
+    """
     def __init__(self, port: str, baud_rate: int = 9600) -> None:
         _Device.__init__(self, port)
         _Entity.__init__(self, -1, _GPSCallback(self))

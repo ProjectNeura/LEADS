@@ -4,6 +4,13 @@ from leads import Device as _Device
 
 
 class VoltageSensor(_Device):
+    """
+    See LEADS-Arduino.
+
+    Supports:
+    - Any analog voltage sensor
+    """
+
     def __init__(self) -> None:
         super().__init__()
         self._voltage: float = 0
