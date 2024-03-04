@@ -38,7 +38,7 @@ class GPSReceiver(_Device, _Entity):
         self._connection: _SerialConnection | None = None
         self._latitude: float = 0
         self._longitude: float = 0
-        self._fixed: bool = True
+        self._valid: bool = True
 
     @_override
     def port(self) -> str:
@@ -55,18 +55,18 @@ class GPSReceiver(_Device, _Entity):
             self._latitude = float(data.latitude)
             self._longitude = float(data.longitude)
         elif isinstance(data, _GSA):
-            if (v := data.is_valid) and not self._fixed:
+            if (v := data.is_valid) and not self._valid:
                 _SFT.recover(self)
-            elif not v and self._fixed:
-                _SFT.fail(self, "GPS not fixed")
-            self._fixed = v
+            elif not v and self._valid:
+                _SFT.fail(self, "No fix")
+            self._valid = v
 
     @_override
     def read(self) -> [bool, float, float]:
         """
         :return: [validity, latitude, longitude]
         """
-        return self._fixed, self._latitude, self._longitude
+        return self._valid, self._latitude, self._longitude
 
     @_override
     def run(self) -> None:
