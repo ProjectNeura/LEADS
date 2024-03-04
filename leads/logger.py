@@ -33,10 +33,9 @@ class Logger(object):
         self._lock: _Lock = _Lock()
 
     def debug_level(self, debug_level: Level | None = None) -> Level | None:
-        if debug_level is not None:
-            self._debug_level = debug_level
-        else:
+        if debug_level is None:
             return self._debug_level
+        self._debug_level = debug_level
 
     @staticmethod
     def mark(msg: str, level: Level) -> str:
