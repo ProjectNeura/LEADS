@@ -18,11 +18,18 @@ class Serializable(object):
 
 
 class DataContainer(Serializable, metaclass=_ABCMeta):
-    def __init__(self, voltage: float, min_speed: float, mileage: float, latitude: float, longitude: float) -> None:
+    def __init__(self,
+                 voltage: float,
+                 min_speed: float,
+                 mileage: float,
+                 fixed: bool,
+                 latitude: float,
+                 longitude: float) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.voltage: float = voltage
         self.speed: float = min_speed
         self.mileage: float = mileage
+        self.fixed: bool = fixed
         self.latitude: float = latitude
         self.longitude: float = longitude
 
@@ -65,11 +72,12 @@ class SRWDataContainer(DataContainer):
                  voltage: float = 0,
                  min_speed: float = 0,
                  mileage: float = 0,
+                 fixed: bool = False,
                  latitude: float = 0,
                  longitude: float = 0,
                  front_wheel_speed: float = 0,
                  rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, min_speed, mileage, latitude, longitude)
+        super().__init__(voltage, min_speed, mileage, fixed, latitude, longitude)
         self.front_wheel_speed: float = front_wheel_speed
         self.rear_wheel_speed: float = rear_wheel_speed
 
@@ -79,12 +87,13 @@ class DRWDataContainer(DataContainer):
                  voltage: float = 0,
                  min_speed: float = 0,
                  mileage: float = 0,
+                 fixed: bool = False,
                  latitude: float = 0,
                  longitude: float = 0,
                  front_wheel_speed: float = 0,
                  left_rear_wheel_speed: float = 0,
                  right_rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, min_speed, mileage, latitude, longitude)
+        super().__init__(voltage, min_speed, mileage, fixed, latitude, longitude)
         self.front_wheel_speed: float = front_wheel_speed
         self.left_rear_wheel_speed: float = left_rear_wheel_speed
         self.right_rear_wheel_speed: float = right_rear_wheel_speed

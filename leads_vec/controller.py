@@ -10,7 +10,7 @@ config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
 POWER_CONTROLLER_PORT: str = config.get("power_controller_port", "COM4")
 WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "COM3")
-GPS_RECEIVER_PORT: str = config.get("gps_receiver_port", "COM3")
+GPS_RECEIVER_PORT: str = config.get("gps_receiver_port", "COM9")
 FRONT_WHEEL_DIAMETER: float = config.get("front_wheel_diameter", 20)  # 20 inches
 REAR_WHEEL_DIAMETER: float = config.get("rear_wheel_diameter", 20)  # 20 inches
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
@@ -25,8 +25,9 @@ class VeCController(Controller):
         universal = {
             "voltage": get_controller(POWER_CONTROLLER).read(),
             "mileage": self.device(ODOMETER).read(),
-            "latitude": (coords := self.device(GPS_RECEIVER).read())[0],
-            "longitude": coords[1]
+            "fixed": (coords := self.device(GPS_RECEIVER).read())[0],
+            "latitude": coords[1],
+            "longitude": coords[2]
         }
         return SRWDataContainer(**r, **universal) if config.srw_mode else DRWDataContainer(**r, **universal)
 

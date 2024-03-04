@@ -1,7 +1,7 @@
 from typing import override as _override
 
 from pynmea2 import parse as _parse
-from pynmea2.types.talker import TalkerSentence as _TalkerSentence, GGA as _GGA
+from pynmea2.types.talker import TalkerSentence as _TalkerSentence, GGA as _GGA, GSA as _GSA
 from serial import Serial as _Serial
 
 from leads import Device as _Device, SFT as _SFT
@@ -38,6 +38,7 @@ class GPSReceiver(_Device, _Entity):
         self._connection: _SerialConnection | None = None
         self._latitude: float = 0
         self._longitude: float = 0
+        self._fixed: bool = False
 
     @_override
     def port(self) -> str:
@@ -53,13 +54,15 @@ class GPSReceiver(_Device, _Entity):
         if isinstance(data, _GGA):
             self._latitude = float(data.latitude)
             self._longitude = float(data.longitude)
+        elif isinstance(data, _GSA):
+            self._fixed = data.is_valid
 
     @_override
-    def read(self) -> [float, float]:
+    def read(self) -> [bool, float, float]:
         """
-        :return: [latitude, longitude]
+        :return: [validity, latitude, longitude]
         """
-        return self._latitude, self._longitude
+        return self._fixed, self._latitude, self._longitude
 
     @_override
     def run(self) -> None:
