@@ -19,7 +19,7 @@ class CustomRuntimeData(RuntimeData):
 
 def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
     def switch() -> None:
-        ctx.plugin(system).enabled = not ctx.plugin(system).enabled
+        ctx.plugin(system).enabled(not ctx.plugin(system).enabled())
         runtime_data.control_system_switch_changed = True
 
     return switch
@@ -71,14 +71,18 @@ def main() -> int:
             manager[system_lower] = CTkButton(manager.root(), text=system + " ON", command=switch,
                                               font=("Arial", cfg.font_size_small))
 
-        manager["time_lap"] = CTkButton(manager.root(), text="Record Lap", command=ctx.time_lap,
+        manager["time_lap"] = CTkButton(manager.root(), text="Time Lap", command=ctx.time_lap,
                                         font=("Arial", cfg.font_size_small))
+        manager["hazard"] = CTkButton(manager.root(), text="", image=Hazard())
 
         def switch_ecs_mode(mode):
-            manager["ecs"].configure(selected_color=(c := "green" if ECSMode[mode] < 2 else "red"),
+            manager["ecs"].configure(selected_color=(c := "green" if (ecs_mode := ECSMode[mode]) < 2 else "red"),
                                      selected_hover_color=c)
+            ctx.ecs_mode(ecs_mode)
+            if ecs_mode == ECSMode.OFF:
+                manager.rd().control_system_switch_changed = True
 
-        manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT"],
+        manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
                                             variable=ecs, command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
@@ -130,7 +134,7 @@ def main() -> int:
             if uim.rd().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
-                    if ctx.plugin(SystemLiteral(system)).enabled:
+                    if ctx.plugin(SystemLiteral(system)).enabled():
                         uim[system_lowercase].configure(text=system + " ON")
                     else:
                         uim[system_lowercase].configure(text=system + " OFF")
@@ -187,7 +191,8 @@ def main() -> int:
         ["m1", "m2", "m3"],
         ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
-        ["time_lap", "ecs"],
+        ["time_lap", "hazard"],
+        ["ecs"],
         ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
     ]
     uim.layout(layout)
