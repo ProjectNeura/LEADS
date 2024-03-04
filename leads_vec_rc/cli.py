@@ -30,7 +30,7 @@ class CommCallback(Callback):
         L.debug("Connected")
 
     def on_fail(self, service: Service, error: Exception) -> None:
-        L.error("Comm client error: " + str(error))
+        L.error("Comm client error: " + repr(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         d = loads(msg.decode())

@@ -53,7 +53,7 @@ if __name__ == "__main__":
     try:
         from leads_vec.controller import _
     except ImportError as e:
-        _L.debug(str(e))
+        _L.debug(repr(e))
         _L.warn("`leads_vec.controller` is not available, using emulation module instead...")
         try:
             from leads_emulation import SRWRandom as _Controller

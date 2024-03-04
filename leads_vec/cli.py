@@ -85,7 +85,7 @@ def main() -> int:
 
     class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
-            L.error("Comm server error: " + str(error))
+            L.error("Comm server error: " + repr(error))
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             if msg == b"time_lap":
