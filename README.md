@@ -24,6 +24,10 @@ wheel (SRW) mode and dual rear wheel (DRW) mode.
 
 ![demo](docs/assets/preview.png)
 
+:link: [Docs](https://leads.projectneura.org)
+
+:link: [Online Dashboard](https://leads-vec-rc.projectneura.org)
+
 ## Key Features
 
 - [x] A basic instrumentation system
@@ -142,7 +146,7 @@ systemctl enable leads_vec
 python -m leads_vec_rc
 ```
 
-Go to the online dashboard https://leads-vec-rc.projectneura.org.
+Go to the online dashboard at https://leads-vec-rc.projectneura.org.
 
 #### Optional Arguments
 
