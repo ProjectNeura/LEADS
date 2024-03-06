@@ -79,8 +79,7 @@ def main() -> int:
             manager["ecs"].configure(selected_color=(c := "green" if (ecs_mode := ECSMode[mode]) < 2 else "red"),
                                      selected_hover_color=c)
             ctx.ecs_mode(ecs_mode)
-            if ecs_mode == ECSMode.OFF:
-                manager.rd().control_system_switch_changed = True
+            manager.rd().control_system_switch_changed = True
 
         manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
                                             variable=ecs, command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
