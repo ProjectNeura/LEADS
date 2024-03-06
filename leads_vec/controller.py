@@ -35,7 +35,7 @@ class VeCController(Controller):
 @controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, ArduinoCallback(POWER_CONTROLLER), BAUD_RATE))
 class PowerController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "PC")
+        mark_system(self, "POWER", "BATT", "MOTOR")
         super().initialize(*parent_tags)
 
     def read(self) -> float:
@@ -44,7 +44,8 @@ class PowerController(ArduinoMicro):
 
 @device("vot", POWER_CONTROLLER)
 class BatteryVoltageSensor(VoltageSensor):
-    pass
+    def initialize(self, *parent_tags: str) -> None:
+        mark_system(self, "POWER", "BATT")
 
 
 @controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (
