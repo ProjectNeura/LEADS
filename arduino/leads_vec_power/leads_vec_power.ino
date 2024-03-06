@@ -2,9 +2,6 @@
 
 const int PIN_VOT[] = {2};
 
-void lfwssOnUpdate(float ws) {
-}
-
 VoltageSensor VOT(PIN_VOT);
 
 void setup() {
