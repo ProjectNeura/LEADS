@@ -33,7 +33,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
             _check_data_type(initial_data, dct)
         else:
             initial_data = dct()
-        self.__initial_data_type: type = type(initial_data)
+        self._initial_data_type: type = type(initial_data)
         if data_seq_size < 1:
             raise ValueError("`data_seq_size` must be greater or equal to 1")
         self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
@@ -53,7 +53,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         Push new data into the sequence.
         :param data: the new data
         """
-        _check_data_type(data, self.__initial_data_type)
+        _check_data_type(data, self._initial_data_type)
         self._data_seq.append(data)
         self._speed_seq.append(data.speed)
 
