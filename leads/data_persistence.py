@@ -1,6 +1,6 @@
 from copy import copy as _copy
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
-    override as _override
+    override as _override, Self as _Self, Any as _Any, Iterator as _Iterator
 
 from numpy import mean as _mean
 
@@ -103,3 +103,34 @@ class DataPersistence(_Sequence, _Generic[T]):
             for e in self._compressor(self._chunk, self._chunk_scale):
                 self._push_to_data(e)
             self._chunk.clear()
+
+
+class Vector(object):
+    def __init__(self, *coordinates: _Any) -> None:
+        self._d: int = len(coordinates)
+        self._coordinates: tuple[_Any, ...] = coordinates
+
+    def __len__(self) -> int:
+        return self._d
+
+    def __iter__(self) -> _Iterator[_Any]:
+        return iter(self._coordinates)
+
+    def __getitem__(self, item: int | slice) -> _Self:
+        return Vector(*self._coordinates[item])
+
+    def _check_dimension(self, other: _Self) -> None:
+        if other._d != self._d:
+            raise ValueError("Cannot perform this operation on two vectors of different dimensions")
+
+    def __add__(self, other: _Self) -> _Self:
+        self._check_dimension(other)
+        return Vector(*(self._coordinates[i] + other._coordinates[i] for i in range(self._d)))
+
+    def __sub__(self, other: _Self) -> _Self:
+        self._check_dimension(other)
+        return Vector(*(self._coordinates[i] - other._coordinates[i] for i in range(self._d)))
+
+    def __mul__(self, other: _Self) -> _Self:
+        self._check_dimension(other)
+        return Vector(*(self._coordinates[i] * other._coordinates[i] for i in range(self._d)))
