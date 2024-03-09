@@ -26,7 +26,7 @@ wheel (SRW) mode and dual rear wheel (DRW) mode.
 
 :link: [Docs](https://leads.projectneura.org)
 
-:link: [Online Dashboard](https://leads-vec-rc.projectneura.org)
+:link: [Remote Analyst Online Dashboard](https://leads-vec-rc.projectneura.org)
 
 ## Key Features
 
@@ -140,7 +140,7 @@ systemctl daemon-reload
 systemctl enable leads_vec
 ```
 
-### Remote Controller
+### Remote Analyst
 
 ```shell
 python -m leads_vec_rc
