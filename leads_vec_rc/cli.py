@@ -16,13 +16,16 @@ if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{abspath(config.data_dir)}\" created")
 
-data_record = DataPersistence(max_size=1, compressor=lambda o, s: o[-s:])
-time_stamp_record = DataPersistence(config.data_dir + "/time_stamp.csv",
-                                    persistence=config.enable_data_persistence,
-                                    max_size=2000)
-speed_record = DataPersistence(config.data_dir + "/speed.csv",
-                               persistence=config.enable_data_persistence,
-                               max_size=2000)
+data_record: DataPersistence[DataContainer] = DataPersistence(max_size=1, compressor=lambda o, s: o[-s:])
+time_stamp_record: DataPersistence[int] = DataPersistence(config.data_dir + "/time_stamp.csv",
+                                                          persistence=config.enable_data_persistence,
+                                                          max_size=2000)
+speed_record: DataPersistence[float] = DataPersistence(config.data_dir + "/speed.csv",
+                                                       persistence=config.enable_data_persistence,
+                                                       max_size=2000)
+gps_record: DataPersistence[Vector[float]] = DataPersistence(config.data_dir + "/gps.csv",
+                                                             persistence=config.enable_data_persistence,
+                                                             max_size=2000)
 
 
 class CommCallback(Callback):
@@ -37,6 +40,7 @@ class CommCallback(Callback):
         data_record.append(d)
         time_stamp_record.append(d["t"])
         speed_record.append(d["front_wheel_speed"])
+        gps_record.append(Vector(d["latitude"], d["longitude"]))
 
     def on_disconnect(self, service: Service, connection: Connection) -> None:
         time_stamp_record.close()
