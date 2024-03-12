@@ -1,8 +1,11 @@
 from copy import copy as _copy
+from operator import add as _add, sub as _sub, mul as _mul, truediv as _truediv, floordiv as _floordiv, lt as _lt, \
+    le as _le, gt as _gt, ge as _ge
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
-    override as _override, Self as _Self, Any as _Any, Iterator as _Iterator
+    override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable
 
-from numpy import mean as _mean
+from numpy import mean as _mean, array as _array
+from numpy.linalg import norm as _norm
 
 from leads.types import Compressor, Stringifier
 
@@ -105,32 +108,74 @@ class DataPersistence(_Sequence, _Generic[T]):
             self._chunk.clear()
 
 
-class Vector(object):
-    def __init__(self, *coordinates: _Any) -> None:
+E = _TypeVar("E")
+
+
+class Vector(_Sequence, _Generic[E]):
+    def __init__(self, *coordinates: E) -> None:
         self._d: int = len(coordinates)
-        self._coordinates: tuple[_Any, ...] = coordinates
+        self._coordinates: tuple[E, ...] = coordinates
 
     def __len__(self) -> int:
         return self._d
 
-    def __iter__(self) -> _Iterator[_Any]:
+    def __iter__(self) -> _Iterator[E]:
         return iter(self._coordinates)
 
     def __getitem__(self, item: int | slice) -> _Self:
         return Vector(*self._coordinates[item])
 
+    def __eq__(self, other: _Self) -> bool:
+        return self._coordinates == other._coordinates
+
     def _check_dimension(self, other: _Self) -> None:
         if other._d != self._d:
             raise ValueError("Cannot perform this operation on two vectors of different dimensions")
 
-    def __add__(self, other: _Self) -> _Self:
-        self._check_dimension(other)
-        return Vector(*(self._coordinates[i] + other._coordinates[i] for i in range(self._d)))
+    def __neg__(self) -> _Self:
+        return Vector(*(-i for i in self._coordinates))
 
-    def __sub__(self, other: _Self) -> _Self:
-        self._check_dimension(other)
-        return Vector(*(self._coordinates[i] - other._coordinates[i] for i in range(self._d)))
+    def __abs__(self) -> _Self:
+        return Vector(*(abs(i) for i in self._coordinates))
 
-    def __mul__(self, other: _Self) -> _Self:
-        self._check_dimension(other)
-        return Vector(*(self._coordinates[i] * other._coordinates[i] for i in range(self._d)))
+    def _operate(self, other: _Self | E, operator: _Callable[[E, E], E]) -> _Self:
+        if isinstance(other, Vector):
+            self._check_dimension(other)
+            return Vector(*(operator(self._coordinates[i], other._coordinates[i]) for i in range(self._d)))
+        return Vector(*(operator(i, other) for i in self._coordinates))
+
+    def __add__(self, other: _Self | E) -> _Self:
+        return self._operate(other, _add)
+
+    def __sub__(self, other: _Self | E) -> _Self:
+        return self._operate(other, _sub)
+
+    def __mul__(self, other: _Self | E) -> _Self:
+        return self._operate(other, _mul)
+
+    def __truediv__(self, other: _Self | E) -> _Self:
+        return self._operate(other, _truediv)
+
+    def __floordiv__(self, other: _Self | E) -> _Self:
+        return self._operate(other, _floordiv)
+
+    def distance(self, other: _Self) -> float:
+        return float(_norm(_array(self._coordinates) - _array(other._coordinates)))
+
+    def magnitude(self) -> float:
+        return self.distance(Vector(*(0,) * self._d))
+
+    def _compare(self, other: _Self | E, comparer: _Callable[[E, E], bool]) -> bool:
+        return comparer(self.magnitude(), other.magnitude() if isinstance(other, Vector) else other)
+
+    def __lt__(self, other: _Self | E) -> bool:
+        return self._compare(other, _lt)
+
+    def __le__(self, other: _Self | E) -> bool:
+        return self._compare(other, _le)
+
+    def __gt__(self, other: _Self | E) -> bool:
+        return self._compare(other, _gt)
+
+    def __ge__(self, other: _Self | E) -> bool:
+        return self._compare(other, _ge)
