@@ -174,21 +174,6 @@ If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#Configurations).
 
-##### Register as a Systemd Service
-
-```shell
-python -m leads_vec_rc -r systemd
-```
-
-This will register a system service to start the program.
-
-To enable auto-start at boot, run the following.
-
-```shell
-systemctl daemon-reload
-systemctl enable leads_vec_rc
-```
-
 ## Environment Setup
 
 This section helps you set up the exact environment we have for the VeC project. A more detailed guide of reproduction
