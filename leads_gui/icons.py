@@ -1,4 +1,5 @@
 from enum import StrEnum as _StrEnum
+from typing import Callable as _Callable
 
 from PIL import Image as _Image
 from customtkinter import CTkImage as _CTkImage
@@ -19,7 +20,7 @@ class Color(_StrEnum):
     RED: str = "red"
 
 
-class _Icon(object):
+class _Icon(_Callable[[int, Color | None], _CTkImage]):
     def __init__(self, name: str) -> None:
         self._name: str = name
 
@@ -32,16 +33,16 @@ class _Icon(object):
                          size=(size, size))
 
 
-Battery = _Icon("battery")
-Brake = _Icon("brake")
-ECS = _Icon("ecs")
-Engine = _Icon("engine")
-Hazard = _Icon("hazard")
-HighBeam = _Icon("high-beam")
-Light = _Icon("light")
-Motor = _Icon("motor")
-Satellite = _Icon("satellite")
-Speed = _Icon("speed")
+Battery: _Icon = _Icon("battery")
+Brake: _Icon = _Icon("brake")
+ECS: _Icon = _Icon("ecs")
+Engine: _Icon = _Icon("engine")
+Hazard: _Icon = _Icon("hazard")
+HighBeam: _Icon = _Icon("high-beam")
+Light: _Icon = _Icon("light")
+Motor: _Icon = _Icon("motor")
+Satellite: _Icon = _Icon("satellite")
+Speed: _Icon = _Icon("speed")
 
 
 def _on_register_config(chain: _OnRegisterConfig[Config] | None) -> _OnRegisterConfig[Config]:
