@@ -1,5 +1,6 @@
-from os import chmod as _chmod
+from os import chmod as _chmod, getuid as _getuid
 from os.path import abspath as _abspath
+from pwd import getpwuid as _getpwuid
 
 
 def create_service() -> None:
@@ -12,7 +13,9 @@ def create_service() -> None:
             "Requires=display-manager.service\n"
             "[Service]\n"
             "Type=simple\n"
-            "Environment=DISPLAY=:0\n"
+            f"User={(user := _getpwuid(_getuid()).pw_name)}\n"
+            "Environment=\"DISPLAY=:0\"\n"
+            f"Environment=\"XAUTHORITY=/home/{user}/.Xauthority\"\n"
             f"ExecStart=/bin/bash {script}\n"
             "[Install]\n"
             "WantedBy=graphical.target"
