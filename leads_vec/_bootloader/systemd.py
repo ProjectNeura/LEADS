@@ -8,8 +8,12 @@ def create_service() -> None:
         f.write(
             "[Unit]"
             "Description=LEADS VeC"
+            "After=display-manager.service"
+            "Requires=display-manager.service"
             "[Service]"
+            "Type=simple"
+            "Environment=DISPLAY=:0"
             f"ExecStart=/bin/bash {script}"
             "[Install]"
-            "WantedBy=graphical-session.target"
+            "WantedBy=graphical.target"
         )
