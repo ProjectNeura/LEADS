@@ -73,7 +73,12 @@ def main() -> int:
 
         manager["time_lap"] = CTkButton(manager.root(), text="Time Lap", command=ctx.time_lap,
                                         font=("Arial", cfg.font_size_small))
-        manager["hazard"] = CTkButton(manager.root(), text="", image=Hazard(), command=lambda: ctx.hazard(ctx.hazard()))
+
+        def hazard():
+            ctx.hazard(not ctx.hazard())
+            manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
+
+        manager["hazard"] = CTkButton(manager.root(), text="", image=Hazard(), command=hazard)
 
         def switch_ecs_mode(mode):
             manager["ecs"].configure(selected_color=(c := "green" if (ecs_mode := ECSMode[mode]) < 2 else "red"),
