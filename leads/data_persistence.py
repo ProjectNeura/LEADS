@@ -116,15 +116,19 @@ class Vector(_Sequence, _Generic[E]):
         self._d: int = len(coordinates)
         self._coordinates: tuple[E, ...] = coordinates
 
+    @_override
     def __len__(self) -> int:
         return self._d
 
+    @_override
     def __iter__(self) -> _Iterator[E]:
         return iter(self._coordinates)
 
+    @_override
     def __getitem__(self, item: int | slice) -> _Self:
         return Vector(*self._coordinates[item])
 
+    @_override
     def __eq__(self, other: _Self) -> bool:
         return self._coordinates == other._coordinates
 
