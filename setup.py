@@ -5,7 +5,7 @@ with open("README.md") as f:
 
 setup(
     name="leads",
-    version="0.7.9",
+    version="0.8.0",
     python_requires=">=3.12",
     author="ProjectNeura",
     author_email="central@projectneura.org",
