@@ -1,6 +1,8 @@
-from argparse import ArgumentParser as _ArgumentParser
-from os import mkdir as _mkdir, chmod as _chmod
+from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
+from os import mkdir as _mkdir, chmod as _chmod, getuid as _getuid
 from os.path import exists as _exists
+from pwd import getpwuid as _getpwuid
+from subprocess import run as _run
 from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
@@ -16,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument("action", choices=("info", "run"))
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="service to register")
     parser.add_argument("-c", "--config", default=None, help="specified configuration file")
+    parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
     args = parser.parse_args()
     if args.action == "info":
         from leads_vec.__version__ import __version__
@@ -63,4 +66,7 @@ if __name__ == "__main__":
         except ImportError:
             raise ImportError("At least one adapter has to be installed")
 
+    if args.xhost:
+        _L.info("Configuring X Window System...")
+        _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
     _exit(main())
