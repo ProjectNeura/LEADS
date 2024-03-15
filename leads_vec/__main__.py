@@ -1,7 +1,6 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
-from os import mkdir as _mkdir, chmod as _chmod, getuid as _getuid
+from os import mkdir as _mkdir, chmod as _chmod
 from os.path import exists as _exists
-from pwd import getpwuid as _getpwuid
 from subprocess import run as _run
 from sys import exit as _exit, version as _version
 
@@ -52,8 +51,12 @@ if __name__ == "__main__":
         _L.info("Configuration file saved to \"config.json\"")
     _register_config(config := _load_config(args.config, _Config) if args.config else None)
     _L.debug("Configuration loaded:", str(config))
-    from leads_vec.cli import main
+    if args.xws:
+        from os import getuid as _getuid
+        from pwd import getpwuid as _getpwuid
 
+        _L.info("Configuring X Window System...")
+        _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
     try:
         from leads_vec.controller import _
     except ImportError as e:
@@ -65,8 +68,6 @@ if __name__ == "__main__":
             _register_controller(_MAIN_CONTROLLER, _Controller())
         except ImportError:
             raise ImportError("At least one adapter has to be installed")
+    from leads_vec.cli import main
 
-    if args.xhost:
-        _L.info("Configuring X Window System...")
-        _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
     _exit(main())
