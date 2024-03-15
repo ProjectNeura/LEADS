@@ -16,7 +16,7 @@ def create_service() -> None:
             f"User={(user := _getpwuid(_getuid()).pw_name)}\n"
             "Environment=\"DISPLAY=:0\"\n"
             f"Environment=\"XAUTHORITY=/home/{user}/.Xauthority\"\n"
-            f"ExecStart=/bin/bash {script}\n"
+            f"ExecStart=/bin/sh {script}\n"
             "[Install]\n"
             "WantedBy=graphical.target"
         )
