@@ -1,5 +1,5 @@
 from argparse import ArgumentParser as _ArgumentParser
-from os import mkdir as _mkdir
+from os import mkdir as _mkdir, chmod as _chmod
 from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 
@@ -34,6 +34,7 @@ if __name__ == "__main__":
             with open("/usr/local/leads/config.json", "w") as f:
                 f.write(str(_get_config(_Config)))
             _L.info("Using \"/usr/local/leads/config.json\"")
+        _chmod("/usr/local/leads/config.json", 777)
         from ._bootloader import create_service
 
         create_service()
