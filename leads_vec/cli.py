@@ -199,7 +199,7 @@ def main() -> int:
     SFT.on_recover = on_recover
     layout = [
         ["m1", "m2", "m3"],
-        ["dtcs_status", "abs_status", "ebi_status", "atbs_status", "comm_status"],
+        [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
         list(map(lambda s: s.lower(), SystemLiteral)),
         ["ecs"],
         ["time_lap", "hazard"],
