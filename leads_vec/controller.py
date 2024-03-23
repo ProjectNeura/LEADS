@@ -4,7 +4,7 @@ from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPE
     mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, ArduinoCallback, VoltageSensor, ConcurrentOdometer
 from leads_gui import Config
-from leads_raspberry_pi import GPSReceiver
+from leads_raspberry_pi import NMEAGPSReceiver
 
 config = get_config(Config)
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -112,7 +112,7 @@ class WheelSpeedSensors(WheelSpeedSensor):
 
 
 @device(GPS_RECEIVER, MAIN_CONTROLLER, (GPS_RECEIVER_PORT,))
-class GPS(GPSReceiver):
+class GPS(NMEAGPSReceiver):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "GPS")
         super().initialize(*parent_tags)

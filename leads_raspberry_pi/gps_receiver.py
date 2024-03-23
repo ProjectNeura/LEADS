@@ -1,7 +1,7 @@
 from typing import override as _override
 
 from pynmea2 import parse as _parse
-from pynmea2.types.talker import TalkerSentence as _TalkerSentence, GGA as _GGA, GSA as _GSA
+from pynmea2.types.talker import TalkerSentence as _TalkerSentence, VTG as _VTG
 from serial import Serial as _Serial
 
 from leads import Device as _Device, SFT as _SFT
@@ -15,16 +15,16 @@ class _GPSCallback(_Callback):
 
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
-        assert isinstance(service, GPSReceiver)
+        assert isinstance(service, NMEAGPSReceiver)
         self.receiver.update(_parse(msg.decode()))
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
-        assert isinstance(service, GPSReceiver)
+        assert isinstance(service, NMEAGPSReceiver)
         _SFT.fail(service, error)
 
 
-class GPSReceiver(_Device, _Entity):
+class NMEAGPSReceiver(_Device, _Entity):
     """
     Supports:
     - Any USB (serial) GPS receiver with NMEA 0183 output
@@ -38,6 +38,7 @@ class GPSReceiver(_Device, _Entity):
         self._connection: _SerialConnection | None = None
         self._latitude: float = 0
         self._longitude: float = 0
+        self._ground_speed: float = 0
         self._valid: bool = True
 
     @_override
@@ -51,15 +52,18 @@ class GPSReceiver(_Device, _Entity):
 
     @_override
     def update(self, data: _TalkerSentence) -> None:
-        if isinstance(data, _GGA):
+        if hasattr(data, "latitude"):
             self._latitude = float(data.latitude)
+        if hasattr(data, "longitude"):
             self._longitude = float(data.longitude)
-        elif isinstance(data, _GSA):
+        if hasattr(data, "is_valid"):
             if (v := data.is_valid) and not self._valid:
                 _SFT.recover(self)
             elif not v and self._valid:
                 _SFT.fail(self, "No fix")
             self._valid = v
+        if isinstance(data, _VTG):
+            self._ground_speed = float(ground_speed) if (ground_speed := data.data[6]) else 0
 
     @_override
     def read(self) -> [bool, float, float]:
