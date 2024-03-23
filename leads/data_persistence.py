@@ -129,6 +129,10 @@ class Vector(_Sequence, _Generic[E]):
         return Vector(*self._coordinates[item])
 
     @_override
+    def __str__(self) -> str:
+        return ";".join(map(str, self._coordinates))
+
+    @_override
     def __eq__(self, other: _Self) -> bool:
         return self._coordinates == other._coordinates
 
