@@ -27,4 +27,4 @@ class Controller(Device):
     @_override
     def initialize(self, *parent_tags: str) -> None:
         for device in self._devices.values():
-            device.initialize(*tuple(self._parent_tags), self._tag)
+            device.initialize(*self._parent_tags, self._tag)
