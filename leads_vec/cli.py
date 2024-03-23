@@ -131,7 +131,7 @@ def main() -> int:
             elif uim.rd().m3_mode == 1:
                 m3.set("G Force")
             else:
-                m3.set(f"Speed Trend\n"
+                m3.set("STrend\n"
                        f"{(st := ctx.get_speed_trend() * 10):.1f} {"↑" if st > 0 else "↓"}")
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
@@ -197,14 +197,24 @@ def main() -> int:
             uim["gps_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
-    layout = [
-        ["m1", "m2", "m3"],
-        [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
-        list(map(lambda s: s.lower(), SystemLiteral)),
-        ["ecs"],
-        ["time_lap", "hazard"],
-        ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
-    ]
+    if cfg.manual_mode:
+        layout = [
+            ["m1", "m2", "m3"],
+            [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
+            ["time_lap", "hazard"],
+            ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
+        ]
+        ctx.ecs_mode(ECSMode.OFF)
+        uim.rd().control_system_switch_changed = True
+    else:
+        layout = [
+            ["m1", "m2", "m3"],
+            [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
+            list(map(lambda s: s.lower(), SystemLiteral)),
+            ["ecs"],
+            ["time_lap", "hazard"],
+            ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
+        ]
     uim.layout(layout)
     placeholder_row = len(layout)
     CTkLabel(uim.root(), text="").grid(row=placeholder_row, column=0)
