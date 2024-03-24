@@ -28,7 +28,7 @@ class Device(object):
             raise ValueError(f"`{self.__class__.__name__}` only takes in {required_num} pins")
 
     def initialize(self, *parent_tags: str) -> None:
-        pass
+        ...
 
     def read(self) -> _Any:
         raise NotImplementedError
@@ -40,7 +40,7 @@ class Device(object):
         raise NotImplementedError
 
     def close(self) -> None:
-        pass
+        ...
 
 
 class ShadowDevice(Device, metaclass=_ABCMeta):

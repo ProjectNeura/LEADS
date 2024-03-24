@@ -49,26 +49,18 @@ class SuspensionEvent(SystemEvent):
 
 
 class EventListener(object):
-    def on_push(self, event: DataPushedEvent) -> None:
-        pass
+    def on_push(self, event: DataPushedEvent) -> None: ...
 
-    def post_push(self, event: DataPushedEvent) -> None:
-        pass
+    def post_push(self, event: DataPushedEvent) -> None: ...
 
-    def on_update(self, event: UpdateEvent) -> None:
-        pass
+    def on_update(self, event: UpdateEvent) -> None: ...
 
-    def post_update(self, event: UpdateEvent) -> None:
-        pass
+    def post_update(self, event: UpdateEvent) -> None: ...
 
-    def on_intervene(self, event: InterventionEvent) -> None:
-        pass
+    def on_intervene(self, event: InterventionEvent) -> None: ...
 
-    def post_intervene(self, event: InterventionExitEvent) -> None:
-        pass
+    def post_intervene(self, event: InterventionExitEvent) -> None: ...
 
-    def on_suspend(self, event: SuspensionEvent) -> None:
-        pass
+    def on_suspend(self, event: SuspensionEvent) -> None: ...
 
-    def post_suspend(self, event: SuspensionEvent) -> None:
-        pass
+    def post_suspend(self, event: SuspensionEvent) -> None: ...

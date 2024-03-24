@@ -201,20 +201,15 @@ class Connection(ConnectionBase):
 
 
 class Callback(object):
-    def on_initialize(self, service: Service) -> None:
-        pass
+    def on_initialize(self, service: Service) -> None: ...
 
-    def on_fail(self, service: Service, error: Exception) -> None:
-        pass
+    def on_fail(self, service: Service, error: Exception) -> None: ...
 
-    def on_connect(self, service: Service, connection: ConnectionBase) -> None:
-        pass
+    def on_connect(self, service: Service, connection: ConnectionBase) -> None: ...
 
-    def on_receive(self, service: Service, msg: bytes) -> None:
-        pass
+    def on_receive(self, service: Service, msg: bytes) -> None: ...
 
-    def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
-        pass
+    def on_disconnect(self, service: Service, connection: ConnectionBase) -> None: ...
 
 
 class Entity(Service, metaclass=_ABCMeta):

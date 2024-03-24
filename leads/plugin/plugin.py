@@ -33,11 +33,9 @@ class Plugin(ContextAssociated):
     def load(self) -> None:
         self.on_load(self.require_context())
 
-    def on_load(self, context: Context) -> None:
-        pass
+    def on_load(self, context: Context) -> None: ...
 
     def update(self, kwargs: dict[str, _Any]) -> None:
         self.on_update(self.require_context(), kwargs)
 
-    def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
-        pass
+    def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None: ...
