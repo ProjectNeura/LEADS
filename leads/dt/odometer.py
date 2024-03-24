@@ -1,10 +1,10 @@
 from threading import Lock as _Lock
 from typing import override as _override
 
-from leads import Device as _Device
+from leads.dt.device import Device
 
 
-class Odometer(_Device):
+class Odometer(Device):
     def __init__(self):
         super().__init__()
         self._milage: float = 0

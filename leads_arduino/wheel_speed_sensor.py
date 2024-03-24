@@ -2,8 +2,7 @@ from math import pi as _pi
 from time import time as _time
 from typing import override as _override
 
-from leads import Device as _Device, get_device as _get_device
-from leads_arduino.odometer import Odometer
+from leads import Device as _Device, get_device as _get_device, Odometer as _Odometer
 
 
 def rpm2kmh(rpm: float, wheel_circumference: float) -> float:
@@ -29,7 +28,7 @@ class WheelSpeedSensor(_Device):
         self._wheel_speed: float = 0
         self._last_valid: float = 0
         self._odometer_tag: str | None = odometer_tag
-        self._odometer: Odometer | None = None
+        self._odometer: _Odometer | None = None
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
