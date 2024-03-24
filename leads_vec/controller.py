@@ -29,7 +29,7 @@ class VeCController(Controller):
             "latitude": coords[1],
             "longitude": coords[2]
         }
-        return SRWDataContainer(**r, **universal) if config.srw_mode else DRWDataContainer(**r, **universal)
+        return (SRWDataContainer if config.srw_mode else DRWDataContainer)(**r, **universal)
 
 
 @controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, ArduinoCallback(POWER_CONTROLLER), BAUD_RATE))
