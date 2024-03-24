@@ -6,6 +6,11 @@ from leads import Device as _Device
 
 
 class LED(_Device):
+    """
+    Control a LED digitally.
+    Supports:
+    - Any 2-pin LED
+    """
     def __init__(self, pin: int, blink_time_on: float = 1, blink_time_off: float = 1) -> None:
         super().__init__(pin)
         self._led: _LED = _LED(pin)
