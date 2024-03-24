@@ -8,4 +8,3 @@ if not _find_spec("serial"):
     raise ImportError("Please install `pyserial` to run this module\n>>>pip install pyserial")
 
 from leads_raspberry_pi.gps_receiver import *
-from leads_raspberry_pi.dc_motor import *
