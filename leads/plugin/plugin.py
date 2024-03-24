@@ -21,9 +21,12 @@ class Plugin(ContextAssociated):
     def __setitem__(self, key: str, value: _Any) -> None:
         self.state[key] = value
 
-    def enabled(self, enabled: bool | None = None) -> bool | None:
-        if enabled is None:
-            return self.require_context().ecs_mode() != ECSMode.OFF and self._enabled
+    @property
+    def enabled(self) -> bool:
+        return self.require_context().ecs_mode != ECSMode.OFF and self._enabled
+
+    @enabled.setter
+    def enabled(self, enabled: bool) -> None:
         self._enabled = enabled
 
     def required_data(self) -> list[str]:

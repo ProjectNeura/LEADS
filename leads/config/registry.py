@@ -8,9 +8,12 @@ from leads.types import OnRegisterConfig, OnRegisterConfigChain
 T = _TypeVar("T", bound=ConfigTemplate)
 
 
-_config_instance: T | None = None
+def _(c: T) -> None:
+    L.debug_level = Level[c.debug_level]
 
-_on_register_config: OnRegisterConfig[T] = lambda c: L.debug_level(Level[c.debug_level])
+
+_config_instance: T | None = None
+_on_register_config: OnRegisterConfig[T] = _
 
 
 def set_on_register_config(callback: OnRegisterConfigChain[T]) -> None:

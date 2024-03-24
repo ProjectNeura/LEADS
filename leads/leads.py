@@ -56,7 +56,7 @@ class LEADS(Context[T]):
         self._event_listener.on_update(UpdateEvent(self))
 
         for key, plugin in self._plugins.items():
-            if plugin.enabled():
+            if plugin.enabled:
                 plugin.update({d: self._acquire_data(d, key) for d in plugin.required_data()})
 
         self._event_listener.post_update(UpdateEvent(self))

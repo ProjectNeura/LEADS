@@ -32,9 +32,12 @@ class Logger(object):
         self._debug_level: Level = Level.DEBUG
         self._lock: _Lock = _Lock()
 
-    def debug_level(self, debug_level: Level | None = None) -> Level | None:
-        if debug_level is None:
-            return self._debug_level
+    @property
+    def debug_level(self) -> Level:
+        return self._debug_level
+
+    @debug_level.setter
+    def debug_level(self, debug_level: Level) -> None:
         self._debug_level = debug_level
 
     @staticmethod

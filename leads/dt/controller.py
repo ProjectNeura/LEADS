@@ -13,16 +13,15 @@ class Controller(Device):
 
     def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
-        device.tag(tag)
+        device.tag = tag
 
     def devices(self) -> list[Device]:
         return list(self._devices.values())
 
     def device(self, tag: str, device: Device | None = None) -> Device | None:
-        if device:
-            self._attach_device(tag, device)
-        else:
+        if device is None:
             return self._devices[tag]
+        self._attach_device(tag, device)
 
     @_override
     def initialize(self, *parent_tags: str) -> None:

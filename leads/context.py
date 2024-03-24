@@ -61,9 +61,12 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def srw_mode(self) -> bool:
         return self._srw_mode
 
-    def ecs_mode(self, ecs_mode: ECSMode | None = None) -> ECSMode | None:
-        if ecs_mode is None:
-            return self._ecs_mode
+    @property
+    def ecs_mode(self) -> ECSMode:
+        return self._ecs_mode
+
+    @ecs_mode.setter
+    def ecs_mode(self, ecs_mode: ECSMode) -> None:
         self._ecs_mode = ecs_mode
 
     @_abstractmethod
@@ -87,11 +90,13 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def get_speed_trend(self) -> float:
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
 
-    def torque_mapping(self, torque_mapping: list[float] | None = None) -> list[float] | None:
-        if torque_mapping:
-            self._torque_mapping = torque_mapping
-        else:
-            return self._torque_mapping
+    @property
+    def torque_mapping(self) -> list[float]:
+        return self._torque_mapping
+
+    @torque_mapping.setter
+    def torque_mapping(self, torque_mapping: list[float]) -> None:
+        self._torque_mapping = torque_mapping
 
     def overwrite_throttle(self, force: float) -> float:
         # todo
@@ -101,9 +106,12 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         # todo
         return 0
 
-    def hazard(self, hazard: bool | None = None) -> bool | None:
-        if hazard is None:
-            return self._hazard
+    @property
+    def hazard(self) -> bool:
+        return self._hazard
+
+    @hazard.setter
+    def hazard(self, hazard: bool) -> None:
         self._hazard = hazard
 
 
