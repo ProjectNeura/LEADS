@@ -21,15 +21,15 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 @controller(MAIN_CONTROLLER)
 class VeCController(Controller):
     def read(self) -> SRWDataContainer | DRWDataContainer:
-        r = get_controller(WHEEL_SPEED_CONTROLLER).read()
         universal = {
-            "voltage": get_controller(POWER_CONTROLLER).read(),
             "mileage": self.device(ODOMETER).read(),
             "gps_valid": (coords := self.device(GPS_RECEIVER).read())[0],
             "latitude": coords[1],
-            "longitude": coords[2]
+            "longitude": coords[2],
+            **get_controller(POWER_CONTROLLER).read()
         }
-        return (SRWDataContainer if config.srw_mode else DRWDataContainer)(**r, **universal)
+        return (SRWDataContainer if config.srw_mode else DRWDataContainer)(
+            **get_controller(WHEEL_SPEED_CONTROLLER).read(), **universal)
 
 
 @controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, ArduinoCallback(POWER_CONTROLLER), BAUD_RATE))
@@ -38,8 +38,11 @@ class PowerController(ArduinoMicro):
         mark_system(self, "POWER", "BATT", "MOTOR")
         super().initialize(*parent_tags)
 
-    def read(self) -> float:
-        return self.device("vot").read()
+    def read(self) -> dict[str, float]:
+        return {"voltage": self.device("vot").read()}
+
+    def write(self, payload: float) -> None:
+        super().write(str(payload).encode())
 
 
 @device("vot", POWER_CONTROLLER)
