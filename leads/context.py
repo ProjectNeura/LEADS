@@ -88,10 +88,9 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
 
     def torque_mapping(self, torque_mapping: list[float] | None = None) -> list[float] | None:
-        if torque_mapping:
-            self._torque_mapping = torque_mapping
-        else:
+        if torque_mapping is None:
             return self._torque_mapping
+        self._torque_mapping = torque_mapping
 
     def overwrite_throttle(self, force: float) -> float:
         # todo

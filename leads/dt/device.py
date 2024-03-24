@@ -10,18 +10,16 @@ class Device(object):
         self._pins: tuple[int | str, ...] = pins
 
     def tag(self, tag: str | None = None) -> str | None:
-        if tag:
-            self._tag = tag
-        else:
+        if tag is None:
             return self._tag
+        self._tag = tag
 
     def parent_tags(self, parent_tags: list[str] | None = None) -> list[str] | None:
-        if parent_tags:
-            if len(self._parent_tags) > 0:
-                raise RuntimeError("Duplicated initialization")
-            self._parent_tags = parent_tags
-        else:
+        if parent_tags is None:
             return self._parent_tags[:]
+        if len(self._parent_tags) > 0:
+            raise RuntimeError("Duplicated initialization")
+        self._parent_tags = parent_tags
 
     def pins_check(self, required_num: int) -> None:
         if len(self._pins) != required_num:
