@@ -19,7 +19,7 @@ class CustomRuntimeData(RuntimeData):
 
 def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
     def switch() -> None:
-        ctx.plugin(system).enabled = not ctx.plugin(system).enabled
+        ctx.plugin(system).enabled(not ctx.plugin(system).enabled())
         runtime_data.control_system_switch_changed = True
 
     return switch
@@ -75,15 +75,15 @@ def main() -> int:
                                         font=("Arial", cfg.font_size_small))
 
         def hazard():
-            ctx.hazard = not ctx.hazard
-            manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard else None))
+            ctx.hazard(not ctx.hazard())
+            manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
 
         manager["hazard"] = CTkButton(manager.root(), text="", image=Hazard(), command=hazard)
 
         def switch_ecs_mode(mode):
             manager["ecs"].configure(selected_color=(c := "green" if (ecs_mode := ECSMode[mode]) < 2 else "red"),
                                      selected_hover_color=c)
-            ctx.ecs_mode = ecs_mode
+            ctx.ecs_mode(ecs_mode)
             manager.rd().control_system_switch_changed = True
 
         manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
@@ -140,7 +140,7 @@ def main() -> int:
             if uim.rd().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
-                    if ctx.plugin(SystemLiteral(system)).enabled:
+                    if ctx.plugin(SystemLiteral(system)).enabled():
                         uim[system_lowercase].configure(text=system + " ON")
                     else:
                         uim[system_lowercase].configure(text=system + " OFF")
@@ -204,7 +204,7 @@ def main() -> int:
             ["time_lap", "hazard"],
             ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
         ]
-        ctx.ecs_mode = ECSMode.OFF
+        ctx.ecs_mode(ECSMode.OFF)
         uim.rd().control_system_switch_changed = True
     else:
         layout = [
