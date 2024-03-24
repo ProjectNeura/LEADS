@@ -38,7 +38,7 @@ def csv_stringifier(element: T) -> str:
     return str(element) + ","
 
 
-class DataPersistence(_Sequence, _Generic[T]):
+class DataPersistence(_Sequence[T], _Generic[T]):
     def __init__(self,
                  file: str | _TextIO | None = None,
                  max_size: int = -1,
@@ -111,7 +111,7 @@ class DataPersistence(_Sequence, _Generic[T]):
 E = _TypeVar("E")
 
 
-class Vector(_Sequence, _Generic[E]):
+class Vector(_Sequence[E], _Generic[E]):
     def __init__(self, *coordinates: E) -> None:
         self._d: int = len(coordinates)
         self._coordinates: tuple[E, ...] = coordinates
