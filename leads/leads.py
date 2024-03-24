@@ -16,12 +16,11 @@ class LEADS(Context[T]):
         self._event_listener: EventListener = event_listener
 
     def plugin(self, key: str, plugin: Plugin | None = None) -> Plugin | None:
-        if plugin:
-            plugin.bind_context(self)
-            self._plugins[key] = plugin
-            plugin.load()
-        else:
+        if plugin is None:
             return self._plugins[key]
+        plugin.bind_context(self)
+        self._plugins[key] = plugin
+        plugin.load()
 
     def set_event_listener(self, event_listener: EventListener) -> None:
         self._event_listener = event_listener
