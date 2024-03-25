@@ -1,4 +1,4 @@
-from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence, TypeVar as _TypeVar
+from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence
 
 from leads.dt.controller import Controller
 from leads.dt.device import Device
@@ -6,8 +6,6 @@ from leads.dt.predefined_tags import MAIN_CONTROLLER
 
 _controllers: dict[str, Controller] = {}
 _devices: dict[str, Device] = {}
-
-T = _TypeVar("T", bound=Controller)
 
 
 def controller(tag: str,
