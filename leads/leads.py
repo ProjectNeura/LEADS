@@ -27,8 +27,9 @@ class LEADS(Context[T]):
         plugin.load()
 
     @_override
-    def set_event_listener(self, event_listener: type[EventListener]) -> None:
-        self._event_listener = event_listener(self._event_listener)
+    def set_event_listener(self, event_listener: EventListener) -> None:
+        event_listener.bind_chain(self._event_listener)
+        self._event_listener = event_listener
 
     @_override
     def suspend(self, event: SuspensionEvent) -> None:

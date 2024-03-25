@@ -173,7 +173,7 @@ def main() -> int:
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
-    ctx.set_event_listener(CustomListener)
+    ctx.set_event_listener(CustomListener())
     uim["battery_fault"] = CTkLabel(uim.root(), text="")
     uim["ecs_fault"] = CTkLabel(uim.root(), text="")
     uim["gps_fault"] = CTkLabel(uim.root(), text="")

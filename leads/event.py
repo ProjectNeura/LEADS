@@ -53,6 +53,9 @@ class EventListener(object):
     def __init__(self, chain: _Self | None = None) -> None:
         self._chain: EventListener | None = chain
 
+    def bind_chain(self, chain: _Self | None) -> None:
+        self._chain = chain
+
     def super(self, e: Event) -> None:
         """
         Call the superior method if there is one.
