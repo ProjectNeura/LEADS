@@ -1,8 +1,15 @@
-from typing import override as _override, Literal as _Literal
+from enum import IntEnum as _IntEnum
+from typing import override as _override
 
 from gpiozero import LED as _LED
 
 from leads import Device as _Device
+
+
+class LEDCommand(_IntEnum):
+    OFF: int = 0x00
+    ON: int = 0x01
+    BLINK: int = 0x02
 
 
 class LED(_Device):
@@ -22,12 +29,10 @@ class LED(_Device):
         return self._led.is_active
 
     @_override
-    def write(self, payload: _Literal[0, 1, 2]) -> None:
-        if payload == 0:
+    def write(self, payload: LEDCommand) -> None:
+        if payload == LEDCommand.OFF:
             self._led.off()
-        elif payload == 1:
+        elif payload == LEDCommand.ON:
             self._led.on()
-        elif payload == 2:
+        elif payload == LEDCommand.BLINK:
             self._led.blink(self._blink_time_on, self._blink_time_off)
-        else:
-            raise ValueError("Invalid payload: " + str(payload))
