@@ -8,7 +8,7 @@ class ConfigTemplate(Serializable):
     def __init__(self, base: dict[str, _Any]) -> None:
         """
         All custom attributes should be public (not named after "_").
-        Readonly attributes should start with "r_" such as "r_srw_mode".
+        Writable attributes should start with "w_" such as "w_debug_level".
         :param base: base dictionary
         """
         self._d: dict[str, _Any] = base
