@@ -39,10 +39,10 @@ wheel (SRW) mode and dual rear wheel (DRW) mode.
   - [x] A GPS recording system
   - [x] A battery voltage recording system
 - [ ] A control system with the following components
-  - [x] DTCS (Dynamic Traction Control System)
-  - [x] ABS (Anti-lock Braking System)
-    - [ ] EBI (Emergency Braking Intervention)
-    - [ ] ATBS (Automatic Trail Braking System)
+    - [x] DTCS (Dynamic Traction Control System)
+    - [x] ABS (Anti-lock Braking System)
+        - [ ] EBI (Emergency Braking Intervention)
+        - [ ] ATBS (Automatic Trail Braking System)
 
 ## To High School Students
 
@@ -208,10 +208,10 @@ Note that a purely empty file could cause an error.
 | `no_title_bar`            | `bool` | `True`: no title bar; `False`: default title bar                   | Main         | `False`       |
 | `manual_mode`             | `bool` | `True`: hide control system; `False`: show control system          | Main         | `False`       |
 | `refresh_rate`            | `int`  | GUI frame per second                                               | Main         | `30`          |
-| `font_size_small`         | `int`  | Small font size                                                    | Main         | `8`           |
-| `font_size_medium`        | `int`  | Medium font size                                                   | Main         | `16`          |
-| `font_size_large`         | `int`  | Large font size                                                    | Main         | `32`          |
-| `font_size_x_large`       | `int`  | Extra large font size                                              | Main         | `48`          |
+| `w_font_size_small`       | `int`  | Small font size                                                    | Main         | `8`           |
+| `w_font_size_medium`      | `int`  | Medium font size                                                   | Main         | `16`          |
+| `w_font_size_large`       | `int`  | Large font size                                                    | Main         | `32`          |
+| `w_font_size_x_large`     | `int`  | Extra large font size                                              | Main         | `48`          |
 | `comm_addr`               | `str`  | Communication server address                                       | Remote       | `"127.0.0.1"` |
 | `comm_port`               | `int`  | The port on which the communication system runs on                 | Main, Remote | `16900`       |
 | `data_dir`                | `str`  | The directory for the data recording system                        | Remote       | `"./data"`    |
