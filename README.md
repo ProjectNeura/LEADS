@@ -200,8 +200,8 @@ Note that a purely empty file could cause an error.
 
 |                           | Type   | Usage                                                              | Used By      | Default       |
 |---------------------------|--------|--------------------------------------------------------------------|--------------|---------------|
-| `r_debug_level`           | `str`  | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                           | Main, Remote | `"DEBUG"`     |
-| `r_srw_mode`              | `bool` | `True`: single rear wheel; `False`: dual rear wheel                | Main, Remote | `True`        |
+| `w_debug_level`           | `str`  | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                           | Main, Remote | `"DEBUG"`     |
+| `srw_mode`                | `bool` | `True`: single rear wheel; `False`: dual rear wheel                | Main, Remote | `True`        |
 | `width`                   | `int`  | Window width                                                       | Main         | `720`         |
 | `height`                  | `int`  | Window height                                                      | Main         | `480`         |
 | `fullscreen`              | `bool` | `True`: auto maximize; `False`: window mode                        | Main         | `False`       |
