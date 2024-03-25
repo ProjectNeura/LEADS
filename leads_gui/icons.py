@@ -56,5 +56,6 @@ def _on_register_config(chain: _OnRegisterConfig[Config] | None) -> _OnRegisterC
 
 
 _set_on_register_config(_on_register_config)
+# if config is loaded before the callback is registered
 if _c := _get_config(Config):
     _on_register_config(None)(_c)
