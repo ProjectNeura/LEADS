@@ -12,8 +12,8 @@ class ConfigTemplate(Serializable):
         :param base: base dictionary
         """
         self._d: dict[str, _Any] = base
-        self.r_debug_level: str = "DEBUG"
-        self.r_srw_mode: bool = True
+        self.w_debug_level: str = "DEBUG"
+        self.srw_mode: bool = True
         self.refresh()
 
     def __getitem__(self, name: str) -> _Any | None:
@@ -52,5 +52,5 @@ class ConfigTemplate(Serializable):
         """
         for name in dir(self):
             if not name.startswith("_") and (v := self.get(name)) is not None:
-                if not name.startswith("r_") or not hasattr(self, name):
+                if name.startswith("w_") or not hasattr(self, name):
                     setattr(self, name, v)
