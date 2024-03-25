@@ -1,9 +1,13 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from threading import Thread as _Thread
-from typing import Any as _Any, override as _override
+from typing import Any as _Any, override as _override, overload as _overload
 
 
 class Device(object):
+    @_overload
+    def __init__(self, *args, **kwargs) -> None:
+        ...
+
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""
         self._parent_tags: list[str] = []

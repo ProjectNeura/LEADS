@@ -1,9 +1,13 @@
-from typing import override as _override
+from typing import override as _override, overload as _overload
 
 from leads.dt.device import Device
 
 
 class Controller(Device):
+    @_overload
+    def __init__(self, *args, **kwargs) -> None:
+        ...
+
     def __init__(self) -> None:
         super().__init__()
         self._devices: dict[str, Device] = {}

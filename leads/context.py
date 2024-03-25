@@ -11,7 +11,7 @@ from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
 T = _TypeVar("T", bound=DataContainer)
 
 
-def _check_data_type(data: T, superclass: type = DataContainer) -> None:
+def _check_data_type(data: T, superclass: type[DataContainer] = DataContainer) -> None:
     if not isinstance(data, superclass):
         raise TypeError(f"New data must inherit from `{superclass}`")
 
@@ -33,7 +33,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
             _check_data_type(initial_data, dct)
         else:
             initial_data = dct()
-        self._initial_data_type: type = type(initial_data)
+        self._initial_data_type: type[DataContainer] = type(initial_data)
         if data_seq_size < 1:
             raise ValueError("`data_seq_size` must be greater or equal to 1")
         self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
