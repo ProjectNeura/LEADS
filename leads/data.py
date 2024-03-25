@@ -24,7 +24,8 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
                  mileage: float,
                  gps_valid: bool,
                  latitude: float,
-                 longitude: float) -> None:
+                 longitude: float,
+                 gps_ground_speed: float) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.voltage: float = voltage
         self.speed: float = min_speed
@@ -32,6 +33,7 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
         self.gps_valid: bool = gps_valid
         self.latitude: float = latitude
         self.longitude: float = longitude
+        self.gps_ground_speed: float = gps_ground_speed
 
     @_override
     def __str__(self) -> str:
@@ -75,9 +77,10 @@ class SRWDataContainer(DataContainer):
                  gps_valid: bool = False,
                  latitude: float = 0,
                  longitude: float = 0,
+                 gps_ground_speed: float = 0,
                  front_wheel_speed: float = 0,
                  rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, min_speed, mileage, gps_valid, latitude, longitude)
+        super().__init__(voltage, min_speed, mileage, gps_valid, latitude, longitude, gps_ground_speed)
         self.front_wheel_speed: float = front_wheel_speed
         self.rear_wheel_speed: float = rear_wheel_speed
 
@@ -90,10 +93,11 @@ class DRWDataContainer(DataContainer):
                  gps_valid: bool = False,
                  latitude: float = 0,
                  longitude: float = 0,
+                 gps_ground_speed: float = 0,
                  front_wheel_speed: float = 0,
                  left_rear_wheel_speed: float = 0,
                  right_rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, min_speed, mileage, gps_valid, latitude, longitude)
+        super().__init__(voltage, min_speed, mileage, gps_valid, latitude, longitude, gps_ground_speed)
         self.front_wheel_speed: float = front_wheel_speed
         self.left_rear_wheel_speed: float = left_rear_wheel_speed
         self.right_rear_wheel_speed: float = right_rear_wheel_speed
