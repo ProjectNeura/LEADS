@@ -27,7 +27,7 @@ def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeD
 
 def main() -> int:
     cfg = get_config(Config)
-    ctx = LEADS[SRWDataContainer if cfg.r_srw_mode else DRWDataContainer](srw_mode=cfg.r_srw_mode)
+    ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
     ctx.plugin(SystemLiteral.DTCS, DTCS())
     ctx.plugin(SystemLiteral.ABS, ABS())
     ctx.plugin(SystemLiteral.EBI, EBI())
@@ -130,7 +130,7 @@ def main() -> int:
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                        f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n"
                        f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
-                       f"{"SRW MODE" if cfg.r_srw_mode else "DRW MODE"}\n"
+                       f"{"SRW MODE" if cfg.srw_mode else "DRW MODE"}\n"
                        f"{cfg.refresh_rate} FPS\n"
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{uim.rd().comm.port()}")
             m2.set(int(d.speed))

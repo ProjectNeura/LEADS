@@ -28,7 +28,7 @@ class VeCController(Controller):
             "longitude": coords[2],
             **get_controller(POWER_CONTROLLER).read()
         }
-        return (SRWDataContainer if config.r_srw_mode else DRWDataContainer)(
+        return (SRWDataContainer if config.srw_mode else DRWDataContainer)(
             **get_controller(WHEEL_SPEED_CONTROLLER).read(), **universal)
 
 
@@ -67,7 +67,7 @@ class WheelSpeedController(ArduinoMicro):
             "min_speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
             "front_wheel_speed": front_wheel_speed,
             "rear_wheel_speed": rws
-        } if config.r_srw_mode else {
+        } if config.srw_mode else {
             "min_speed": min(lfws, rfws, lrws := self.device(LEFT_REAR_WHEEL_SPEED_SENSOR).read(),
                              rrws := self.device(RIGHT_REAR_WHEEL_SPEED_SENSOR).read()),
             "front_wheel_speed": front_wheel_speed,
@@ -79,7 +79,7 @@ class WheelSpeedController(ArduinoMicro):
 @device(ODOMETER, MAIN_CONTROLLER)
 class AverageOdometer(ConcurrentOdometer):
     def read(self) -> float:
-        return super().read() / (3 if config.r_srw_mode else 4)
+        return super().read() / (3 if config.srw_mode else 4)
 
 
 @device(*((
@@ -90,7 +90,7 @@ class AverageOdometer(ConcurrentOdometer):
         [(FRONT_WHEEL_DIAMETER, ODOMETER),
          (FRONT_WHEEL_DIAMETER, ODOMETER),
          (REAR_WHEEL_DIAMETER, ODOMETER)
-         ]) if config.r_srw_mode else (
+         ]) if config.srw_mode else (
         (LEFT_FRONT_WHEEL_SPEED_SENSOR,
          RIGHT_FRONT_WHEEL_SPEED_SENSOR,
          LEFT_REAR_WHEEL_SPEED_SENSOR,
