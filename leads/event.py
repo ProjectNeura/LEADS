@@ -1,7 +1,8 @@
-from typing import Any as _Any, override as _override
+from typing import Any as _Any, override as _override, Self as _Self
 
 from leads.context import Context
 from leads.data import DataContainer
+from leads.os import currentframe
 
 
 class Event(object):
@@ -49,6 +50,17 @@ class SuspensionEvent(SystemEvent):
 
 
 class EventListener(object):
+    def __init__(self, chain: _Self | None = None) -> None:
+        self._chain: EventListener | None = chain
+
+    def super(self, e: Event) -> None:
+        """
+        Call the superior method if there is one.
+        This must be called directly in the corresponding successor method.
+        """
+        if self._chain:
+            getattr(self._chain, currentframe().f_back.f_code.co_name)(e)
+
     def on_push(self, event: DataPushedEvent) -> None: ...
 
     def post_push(self, event: DataPushedEvent) -> None: ...
