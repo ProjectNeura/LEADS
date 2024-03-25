@@ -152,7 +152,7 @@ class Connection(ConnectionBase):
         super().__init__(service, remainder, separator)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
-        self._on_close: _Callable[[_Self], None] = on_close
+        self._on_close: _Callable[[Connection], None] = on_close
 
     @_override
     def __str__(self) -> str:

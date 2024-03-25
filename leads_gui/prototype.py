@@ -34,8 +34,8 @@ class Window(_Generic[T]):
         self._refresh_rate: int = refresh_rate
         self._refresh_interval: int = int(1000 / refresh_rate)
         self._runtime_data: T = runtime_data
-        self._on_refresh: _Callable[[_Self], None] = on_refresh
-        self._on_kill: _Callable[[_Self], None] = on_kill
+        self._on_refresh: _Callable[[Window], None] = on_refresh
+        self._on_kill: _Callable[[Window], None] = on_kill
 
         self._active: bool = False
 
