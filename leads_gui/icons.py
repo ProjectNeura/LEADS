@@ -27,7 +27,7 @@ class _Icon(_Callable[[int, Color | None], _CTkImage]):
     def load_source(self, color: Color) -> _Image:
         return _Image.open(f"{_ICONS_PATH}/{self._name}-{color}.png")
 
-    def __call__(self, size: int = _config.font_size_medium, color: Color | None = None) -> _CTkImage:
+    def __call__(self, size: int = _config.w_font_size_medium, color: Color | None = None) -> _CTkImage:
         return _CTkImage(self.load_source(color if color else Color.BLACK),
                          None if color else self.load_source(Color.WHITE),
                          size=(size, size))

@@ -53,27 +53,27 @@ def main() -> int:
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
         manager["m1"] = CTkButton(manager.root(), textvariable=m1, command=switch_m1_mode,
-                                  font=("Arial", cfg.font_size_small))
+                                  font=("Arial", cfg.w_font_size_small))
         manager["m2"] = CTkButton(manager.root(), textvariable=m2, state="disabled",
-                                  font=("Arial", cfg.font_size_x_large))
+                                  font=("Arial", cfg.w_font_size_x_large))
         manager["m3"] = CTkButton(manager.root(), textvariable=m3, command=switch_m3_mode,
-                                  font=("Arial", cfg.font_size_medium))
+                                  font=("Arial", cfg.w_font_size_medium))
 
         manager["comm_status"] = CTkLabel(manager.root(), text="COMM OFFLINE", text_color="gray",
-                                          font=("Arial", cfg.font_size_small))
+                                          font=("Arial", cfg.w_font_size_small))
 
         i = 0
         for system in SystemLiteral:
             i += 1
             system_lower = system.lower()
             manager[system_lower + "_status"] = CTkLabel(manager.root(), text=system + " READY", text_color="green",
-                                                         font=("Arial", cfg.font_size_small))
+                                                         font=("Arial", cfg.w_font_size_small))
             add_hotkey(str(i), switch := make_system_switch(ctx, SystemLiteral(system), manager.rd()))
             manager[system_lower] = CTkButton(manager.root(), text=system + " ON", command=switch,
-                                              font=("Arial", cfg.font_size_small))
+                                              font=("Arial", cfg.w_font_size_small))
 
         manager["time_lap"] = CTkButton(manager.root(), text="Time Lap", command=ctx.time_lap,
-                                        font=("Arial", cfg.font_size_small))
+                                        font=("Arial", cfg.w_font_size_small))
 
         def hazard():
             ctx.hazard(not ctx.hazard())
@@ -88,7 +88,8 @@ def main() -> int:
             manager.rd().control_system_switch_changed = True
 
         manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
-                                            variable=ecs, command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
+                                            variable=ecs, command=switch_ecs_mode,
+                                            font=("Arial", cfg.w_font_size_small))
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
