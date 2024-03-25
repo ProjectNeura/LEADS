@@ -9,3 +9,4 @@ if not _find_spec("serial"):
 
 from leads_raspberry_pi.gps_receiver import *
 from leads_raspberry_pi.led import *
+from leads_raspberry_pi.led_group import *
