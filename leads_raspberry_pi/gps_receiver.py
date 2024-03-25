@@ -39,7 +39,7 @@ class NMEAGPSReceiver(_Device, _Entity):
         self._latitude: float = 0
         self._longitude: float = 0
         self._ground_speed: float = 0
-        self._valid: bool = True
+        self._valid: bool = False
 
     @_override
     def port(self) -> str:
