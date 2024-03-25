@@ -202,6 +202,7 @@ Note that a purely empty file could cause an error.
 |---------------------------|--------|--------------------------------------------------------------------|--------------|---------------|
 | `w_debug_level`           | `str`  | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                           | Main, Remote | `"DEBUG"`     |
 | `srw_mode`                | `bool` | `True`: single rear wheel; `False`: dual rear wheel                | Main, Remote | `True`        |
+| `enable_data_persistence` | `bool` | `True`: enable data persistence; `False`: disable data persistence | Main, Remote | `True`        |
 | `width`                   | `int`  | Window width                                                       | Main         | `720`         |
 | `height`                  | `int`  | Window height                                                      | Main         | `480`         |
 | `fullscreen`              | `bool` | `True`: auto maximize; `False`: window mode                        | Main         | `False`       |
@@ -215,7 +216,6 @@ Note that a purely empty file could cause an error.
 | `comm_addr`               | `str`  | Communication server address                                       | Remote       | `"127.0.0.1"` |
 | `comm_port`               | `int`  | The port on which the communication system runs on                 | Main, Remote | `16900`       |
 | `data_dir`                | `str`  | The directory for the data recording system                        | Remote       | `"./data"`    |
-| `enable_data_persistence` | `bool` | `True`: enable data persistence; `False`: disable data persistence | Remote       | `True`        |
 
 ## Submodules
 
