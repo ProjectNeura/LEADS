@@ -5,7 +5,7 @@ from typing import Any as _Any, override as _override, overload as _overload
 
 class Device(object):
     @_overload
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:  # real signature unknown
         ...
 
     def __init__(self, *pins: int | str) -> None:

@@ -23,7 +23,7 @@ class Service(metaclass=_ABCMeta):
         return self._port
 
     @_abstractmethod
-    def run(self, *args, **kwargs) -> None:
+    def run(self, *args, **kwargs) -> None:  # real signature unknown
         """
         Override this method to define the specific workflow.
         :param args: args

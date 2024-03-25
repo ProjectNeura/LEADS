@@ -67,15 +67,19 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._ecs_mode = ecs_mode
 
     @_abstractmethod
+    def set_event_listener(self, *args, **kwargs) -> None:  # real signature unknown
+        raise NotImplementedError
+
+    @_abstractmethod
     def update(self) -> None:
         raise NotImplementedError
 
     @_abstractmethod
-    def intervene(self, *args, **kwargs) -> None:
+    def intervene(self, *args, **kwargs) -> None:  # real signature unknown
         raise NotImplementedError
 
     @_abstractmethod
-    def suspend(self, *args, **kwargs) -> None:
+    def suspend(self, *args, **kwargs) -> None:  # real signature unknown
         raise NotImplementedError
 
     def time_lap(self) -> None:

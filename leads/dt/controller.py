@@ -5,7 +5,7 @@ from leads.dt.device import Device
 
 class Controller(Device):
     @_overload
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:  # real signature unknown
         ...
 
     def __init__(self) -> None:

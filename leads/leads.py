@@ -26,6 +26,7 @@ class LEADS(Context[T]):
         self._plugins[key] = plugin
         plugin.load()
 
+    @_override
     def set_event_listener(self, event_listener: type[EventListener]) -> None:
         self._event_listener = event_listener(self._event_listener)
 
