@@ -67,10 +67,6 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._ecs_mode = ecs_mode
 
     @_abstractmethod
-    def set_event_listener(self, *args, **kwargs) -> None:  # real signature unknown
-        raise NotImplementedError
-
-    @_abstractmethod
     def update(self) -> None:
         raise NotImplementedError
 
