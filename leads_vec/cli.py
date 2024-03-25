@@ -46,7 +46,7 @@ def main() -> int:
 
     def render(manager: ContextManager):
         def switch_m1_mode():
-            manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 2
+            manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
 
         def switch_m3_mode():
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
@@ -117,7 +117,11 @@ def main() -> int:
                 lap_time_list = ctx.get_lap_time_list()
                 m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
                                                                                                       lap_time_list))))
-            else:
+            elif uim.rd().m1_mode == 1:
+                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"}\n"
+                       f"{d.gps_ground_speed} KM / H\n"
+                       f"LAT {d.latitude}\nLON {d.longitude}")
+            elif uim.rd().m1_mode == 2:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                        f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n"
@@ -130,7 +134,7 @@ def main() -> int:
                 m3.set(f"{d.voltage:.1f} V")
             elif uim.rd().m3_mode == 1:
                 m3.set("G Force")
-            else:
+            elif uim.rd().m3_mode == 2:
                 m3.set("STrend\n"
                        f"{(st := ctx.get_speed_trend() * 10):.1f} {"↑" if st > 0 else "↓"}")
             if uim.rd().comm.num_connections() < 1:
