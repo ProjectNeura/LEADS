@@ -106,12 +106,14 @@ def main() -> int:
 
     class CustomListener(EventListener):
         def on_push(self, e: DataPushedEvent) -> None:
+            self.super(e)
             d = e.data.to_dict()
             d["speed_trend"] = ctx.get_speed_trend()
             d["lap_times"] = ctx.get_lap_time_list()
             uim.rd().comm_notify(d)
 
         def post_update(self, e: UpdateEvent) -> None:
+            self.super(e)
             d = e.context.data()
             if uim.rd().m1_mode == 0:
                 lap_time_list = ctx.get_lap_time_list()
@@ -152,22 +154,26 @@ def main() -> int:
                 uim.rd().control_system_switch_changed = False
 
         def on_intervene(self, e: InterventionEvent) -> None:
+            self.super(e)
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="red")
 
         def post_intervene(self, e: InterventionEvent) -> None:
+            self.super(e)
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
         def on_suspend(self, e: SuspensionEvent) -> None:
+            self.super(e)
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " SUSPD", text_color="gray")
 
         def post_suspend(self, e: SuspensionEvent) -> None:
+            self.super(e)
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
-    ctx.set_event_listener(CustomListener())
+    ctx.set_event_listener(CustomListener)
     uim["battery_fault"] = CTkLabel(uim.root(), text="")
     uim["ecs_fault"] = CTkLabel(uim.root(), text="")
     uim["gps_fault"] = CTkLabel(uim.root(), text="")
