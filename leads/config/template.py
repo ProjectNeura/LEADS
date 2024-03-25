@@ -14,6 +14,7 @@ class ConfigTemplate(Serializable):
         self._d: dict[str, _Any] = base
         self.w_debug_level: str = "DEBUG"
         self.srw_mode: bool = True
+        self.enable_data_persistence: bool = True
         self.refresh()
 
     def __getitem__(self, name: str) -> _Any | None:
