@@ -32,6 +32,7 @@ def main() -> int:
     ctx.plugin(SystemLiteral.ABS, ABS())
     ctx.plugin(SystemLiteral.EBI, EBI())
     ctx.plugin(SystemLiteral.ATBS, ATBS())
+    ctx.plugin("GPS_SPEED_CORRECTION", GPSSpeedCorrection())
     SFT.bind_context(ctx)
     window = Window(cfg.width,
                     cfg.height,
