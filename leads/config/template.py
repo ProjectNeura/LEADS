@@ -7,18 +7,16 @@ from leads.data import Serializable
 class ConfigTemplate(Serializable):
     def __init__(self, base: dict[str, _Any]) -> None:
         """
-        All custom columns should be public (not named after "_").
+        All custom attributes should be public (not named after "_").
+        Readonly attributes should start with "r_" such as "r_srw_mode".
         :param base: base dictionary
         """
         self._d: dict[str, _Any] = base
-        self.debug_level: str = "DEBUG"
-        self.srw_mode: bool = True
+        self.r_debug_level: str = "DEBUG"
+        self.r_srw_mode: bool = True
         self.refresh()
 
     def __getitem__(self, name: str) -> _Any | None:
-        return self.get(name)
-
-    def __getattr__(self, name: str) -> _Any | None:
         return self.get(name)
 
     def __setitem__(self, name: str, value: _Any) -> None:
@@ -54,4 +52,5 @@ class ConfigTemplate(Serializable):
         """
         for name in dir(self):
             if not name.startswith("_") and (v := self.get(name)) is not None:
-                setattr(self, name, v)
+                if not name.startswith("r_") or not hasattr(self, name):
+                    setattr(self, name, v)
