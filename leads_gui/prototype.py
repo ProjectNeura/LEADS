@@ -2,12 +2,11 @@ from math import lcm as _lcm
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
 from PIL import ImageTk as _ImageTk
-from customtkinter import CTk as _CTk, CTkBaseClass as _CTkBaseClass
+from customtkinter import CTk as _CTk
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform
-
-type Widget = _CTkBaseClass
+from leads_gui.types import Widget
 
 T = _TypeVar("T", bound=RuntimeData)
 
