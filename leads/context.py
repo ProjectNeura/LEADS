@@ -104,16 +104,3 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         if hazard is None:
             return self._hazard
         self._hazard = hazard
-
-
-class ContextAssociated(object):
-    def __init__(self) -> None:
-        self._context: Context | None = None
-
-    def bind_context(self, context: Context) -> None:
-        self._context = context
-
-    def require_context(self) -> Context:
-        if self._context:
-            return self._context
-        raise RuntimeError("No context bound")

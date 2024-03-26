@@ -28,12 +28,12 @@ def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeD
 def main() -> int:
     cfg = get_config(Config)
     ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
+    register_context(ctx)
     ctx.plugin(SystemLiteral.DTCS, DTCS())
     ctx.plugin(SystemLiteral.ABS, ABS())
     ctx.plugin(SystemLiteral.EBI, EBI())
     ctx.plugin(SystemLiteral.ATBS, ATBS())
     ctx.plugin("GPS_SPEED_CORRECTION", GPSSpeedCorrection())
-    SFT.bind_context(ctx)
     window = Window(cfg.width,
                     cfg.height,
                     cfg.refresh_rate,

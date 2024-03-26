@@ -24,7 +24,6 @@ class LEADS(Context[T]):
             key = key,
         if plugin is None:
             return self._plugins[key]
-        plugin.bind_context(self)
         self._plugins[key] = plugin
         plugin.on_load(self)
 
