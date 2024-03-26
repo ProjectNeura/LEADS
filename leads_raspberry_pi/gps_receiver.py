@@ -48,7 +48,6 @@ class NMEAGPSReceiver(_Device, _Entity):
             elif not v and self._valid:
                 _SFT.fail(self, "No fix")
             self._valid = v
-        print(data)
         if NMEAGPSReceiver._has_field(data.fields, "spd_over_grnd", 6):
             self._ground_speed = float(ground_speed) if (ground_speed := data.data[6]) else 0
         if NMEAGPSReceiver._has_field(data.fields, "num_sv_in_view", 2):
