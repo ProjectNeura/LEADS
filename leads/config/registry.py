@@ -1,12 +1,11 @@
 from json import load as _load
-from typing import TypeVar as _TypeVar, TextIO as _TextIO, Callable as _Callable, Any as _Any
+from typing import TypeVar as _TypeVar, TextIO as _TextIO
 
 from leads.config.template import ConfigTemplate
 from leads.logger import Level, L
 from leads.types import OnRegister, OnRegisterChain
 
 T = _TypeVar("T", bound=ConfigTemplate)
-
 
 _config_instance: T | None = None
 
@@ -18,7 +17,7 @@ def set_on_register_config(callback: OnRegisterChain[T]) -> None:
     _on_register_config = callback(_on_register_config)
 
 
-def load_config(file: str | _TextIO, constructor: _Callable[[dict[str, _Any]], T]) -> T:
+def load_config(file: str | _TextIO, constructor: type[T]) -> T:
     if isinstance(file, str):
         with open(file) as f:
             return constructor(_load(f))
@@ -34,7 +33,7 @@ def register_config(config: T | None) -> None:
     _config_instance = config
 
 
-def get_config(constructor: _Callable[[dict[str, _Any]], T]) -> T:
+def get_config(constructor: type[T]) -> T:
     if not _config_instance:
         return constructor({})
     return _config_instance
