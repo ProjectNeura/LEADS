@@ -124,7 +124,7 @@ def main() -> int:
                 m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
                                                                                                       lap_time_list))))
             elif uim.rd().m1_mode == 1:
-                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"}\n"
+                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {get_device(GPS_RECEIVER).read()[4]}\n"
                        f"{d.gps_ground_speed} KM / H\n"
                        f"LAT {d.latitude}\nLON {d.longitude}")
             elif uim.rd().m1_mode == 2:

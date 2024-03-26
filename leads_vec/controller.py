@@ -24,8 +24,9 @@ class VeCController(Controller):
         universal = {
             "mileage": self.device(ODOMETER).read(),
             "gps_valid": (coords := self.device(GPS_RECEIVER).read())[0],
-            "latitude": coords[1],
-            "longitude": coords[2],
+            "gps_ground_speed": coords[1],
+            "latitude": coords[2],
+            "longitude": coords[3],
             **get_controller(POWER_CONTROLLER).read()
         }
         return (SRWDataContainer if config.srw_mode else DRWDataContainer)(

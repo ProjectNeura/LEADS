@@ -1,7 +1,7 @@
 from typing import override as _override
 
 from pynmea2 import parse as _parse
-from pynmea2.types.talker import TalkerSentence as _TalkerSentence, VTG as _VTG
+from pynmea2.types.talker import TalkerSentence as _TalkerSentence
 from serial import Serial as _Serial
 
 from leads import Device as _Device, SFT as _SFT
@@ -39,10 +39,11 @@ class NMEAGPSReceiver(_Device, _Entity):
         self._serial.port = port
         self._serial.baudrate = baud_rate
         self._connection: _SerialConnection | None = None
+        self._valid: bool = False
+        self._ground_speed: float = 0
         self._latitude: float = 0
         self._longitude: float = 0
-        self._ground_speed: float = 0
-        self._valid: bool = False
+        self._num_satellites: int = 0
 
     @_override
     def port(self) -> str:
@@ -65,15 +66,18 @@ class NMEAGPSReceiver(_Device, _Entity):
             elif not v and self._valid:
                 _SFT.fail(self, "No fix")
             self._valid = v
-        if isinstance(data, _VTG):
+        print(data)
+        if NMEAGPSReceiver._has_field(data.fields, "spd_over_grnd", 6):
             self._ground_speed = float(ground_speed) if (ground_speed := data.data[6]) else 0
+        if NMEAGPSReceiver._has_field(data.fields, "num_sv_in_view", 2):
+            self._num_satellites = int(data.data[2])
 
     @_override
-    def read(self) -> [bool, float, float]:
+    def read(self) -> [bool, float, float, float, int]:
         """
-        :return: [validity, latitude, longitude]
+        :return: [validity, ground speed, latitude, longitude, num of satellites]
         """
-        return self._valid, self._latitude, self._longitude
+        return self._valid, self._ground_speed, self._latitude, self._longitude, self._num_satellites
 
     @_override
     def run(self) -> None:
@@ -92,3 +96,7 @@ class NMEAGPSReceiver(_Device, _Entity):
     @_override
     def close(self) -> None:
         self.kill()
+
+    @staticmethod
+    def _has_field(fields: tuple[tuple[str, str], ...], target_field: str, at: int) -> bool:
+        return len(fields) > at and fields[at][1] == target_field
