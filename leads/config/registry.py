@@ -24,7 +24,7 @@ def load_config(file: str | _TextIO, constructor: type[T]) -> T:
     return constructor(_load(file))
 
 
-def register_config(config: T | None) -> None:
+def register_config(config: T) -> None:
     global _config_instance
     if config:
         if _config_instance:
