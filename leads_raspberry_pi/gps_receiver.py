@@ -12,13 +12,16 @@ from leads_comm_serial import SerialConnection as _SerialConnection
 class _GPSCallback(_Callback):
     def __init__(self, receiver: _Device) -> None:
         super().__init__()
-        self.receiver: _Device = receiver
+        self._receiver: _Device = receiver
+
+    def on_connect(self, service: _Service, connection: _SerialConnection) -> None:
+        _SFT.fail(self._receiver, "No fix")
 
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
         assert isinstance(service, NMEAGPSReceiver)
-        self.receiver.update(_parse(msg.decode()))
+        self._receiver.update(_parse(msg.decode()))
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
@@ -52,7 +55,6 @@ class NMEAGPSReceiver(_Device, _Entity):
     @_override
     def initialize(self, *parent_tags: str) -> None:
         self.start(True)
-        _SFT.fail(self, "No fix")
         super().initialize(*parent_tags)
 
     @_override
