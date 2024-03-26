@@ -124,9 +124,9 @@ def main() -> int:
                 m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
                                                                                                       lap_time_list))))
             elif uim.rd().m1_mode == 1:
-                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {get_device(GPS_RECEIVER).read()[4]}\n"
-                       f"{d.gps_ground_speed} KM / H\n"
-                       f"LAT {d.latitude}\nLON {d.longitude}")
+                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {get_device(GPS_RECEIVER).read()[5]}\n"
+                       f"{d.gps_ground_speed:.1f} KM / H\n"
+                       f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
             elif uim.rd().m1_mode == 2:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
