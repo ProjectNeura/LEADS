@@ -37,3 +37,7 @@ def get_config(constructor: type[T]) -> T:
     if not _config_instance:
         return constructor({})
     return _config_instance
+
+
+def config_registered() -> bool:
+    return _config_instance is not None

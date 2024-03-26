@@ -5,7 +5,7 @@ from PIL import Image as _Image
 from customtkinter import CTkImage as _CTkImage
 
 from leads import set_on_register_config as _set_on_register_config, OnRegister as _OnRegister, \
-    get_config as _get_config
+    get_config as _get_config, config_registered as _config_registered
 from leads_gui.config import Config
 from leads_gui.system import _ASSETS_PATH
 
@@ -57,5 +57,5 @@ def _on_register_config(chain: _OnRegister[Config] | None) -> _OnRegister[Config
 
 _set_on_register_config(_on_register_config)
 # if config is loaded before the callback is registered
-if _c := _get_config(Config):
-    _on_register_config(None)(_c)
+if _config_registered():
+    _on_register_config(None)(_get_config(Config))
