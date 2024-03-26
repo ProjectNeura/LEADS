@@ -9,9 +9,8 @@ class Serializable(object):
         attributes = dir(self)
         r = {}
         for n in attributes:
-            if n.startswith("_") or callable(v := getattr(self, n)):
-                continue
-            r[n] = v
+            if not n.startswith("_") and not callable(v := getattr(self, n)):
+                r[n] = v
         return r
 
 
