@@ -2,7 +2,7 @@ from typing import override as _override
 
 from serial import Serial as _Serial
 
-from leads import Controller as _Controller, get_controller as _get_controller, SFT as _SFT
+from leads import Controller as _Controller, SFT as _SFT
 from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
 from leads_comm_serial import SerialConnection as _SerialConnection
 
@@ -12,9 +12,10 @@ class ArduinoProto(_Controller, _Entity):
     Supports:
     - Any arduino connected through a USB (serial) port
     """
-    def __init__(self, port: str, callback: _Callback, baud_rate: int = 9600) -> None:
+
+    def __init__(self, port: str, baud_rate: int = 9600) -> None:
         _Controller.__init__(self)
-        _Entity.__init__(self, -1, callback)
+        _Entity.__init__(self, -1, _ArduinoCallback(self))
         self._serial: _Serial = _Serial()
         self._serial.port = port
         self._serial.baudrate = baud_rate
@@ -58,18 +59,17 @@ class ArduinoProto(_Controller, _Entity):
         self.kill()
 
 
-class ArduinoCallback(_Callback):
-    def __init__(self, tag: str) -> None:
+class _ArduinoCallback(_Callback):
+    def __init__(self, arduino: ArduinoProto) -> None:
         super().__init__()
-        self._tag: str = tag
+        self._arduino: ArduinoProto = arduino
 
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
-        _get_controller(self._tag).update(msg.decode())
+        self._arduino.update(msg.decode())
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
         self.super(service=service, error=error)
-        assert isinstance(service, ArduinoProto)
-        _SFT.fail(service, error)
+        _SFT.fail(self._arduino, error)
