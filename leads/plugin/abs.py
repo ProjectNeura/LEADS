@@ -36,7 +36,7 @@ class ABS(Plugin):
                                    ["front_wheel_speed", "left_rear_wheel_speed", "right_rear_wheel_speed"]))
 
     @_override
-    def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
+    def pre_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
         context.intervene(abs_srw(context, kwargs["front_wheel_speed"], kwargs["rear_wheel_speed"])
                           if context.srw_mode() else
                           abs_drw(context, kwargs["front_wheel_speed"], kwargs["left_rear_wheel_speed"],

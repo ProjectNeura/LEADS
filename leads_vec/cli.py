@@ -109,14 +109,14 @@ def main() -> int:
         return f"{(t := int(t * .001)) // 60} MIN {t % 60} SEC"
 
     class CustomListener(EventListener):
-        def on_push(self, e: DataPushedEvent) -> None:
+        def pre_push(self, e: DataPushedEvent) -> None:
             self.super(e)
             d = e.data.to_dict()
             d["speed_trend"] = ctx.get_speed_trend()
             d["lap_times"] = ctx.get_lap_time_list()
             uim.rd().comm_notify(d)
 
-        def post_update(self, e: UpdateEvent) -> None:
+        def on_update(self, e: UpdateEvent) -> None:
             self.super(e)
             d = e.context.data()
             if uim.rd().m1_mode == 0:
@@ -158,7 +158,7 @@ def main() -> int:
                         uim[system_lowercase + "_status"].configure(text=system + " OFF", text_color=("black", "white"))
                 uim.rd().control_system_switch_changed = False
 
-        def on_intervene(self, e: InterventionEvent) -> None:
+        def pre_intervene(self, e: InterventionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="red")
@@ -168,7 +168,7 @@ def main() -> int:
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
-        def on_suspend(self, e: SuspensionEvent) -> None:
+        def pre_suspend(self, e: SuspensionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " SUSPD", text_color="gray")

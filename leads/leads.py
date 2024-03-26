@@ -34,7 +34,7 @@ class LEADS(Context[T]):
 
     @_override
     def suspend(self, event: SuspensionEvent) -> None:
-        self._event_listener.on_suspend(event)
+        self._event_listener.pre_suspend(event)
 
     def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
         try:
@@ -44,15 +44,15 @@ class LEADS(Context[T]):
                 for system in systems:
                     self.suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
 
-    def _do_plugin_callback(self, method: _Literal["on_push", "post_push", "on_update", "post_update"]) -> None:
+    def _do_plugin_callback(self, method: _Literal["pre_push", "post_push", "pre_update", "post_update"]) -> None:
         for key, plugin in self._plugins.items():
             if plugin.enabled():
                 getattr(plugin, method)(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
 
     @_override
     def push(self, data: T) -> None:
-        self._event_listener.on_push(DataPushedEvent(self, data))
-        self._do_plugin_callback("on_push")
+        self._event_listener.pre_push(DataPushedEvent(self, data))
+        self._do_plugin_callback("pre_push")
         super().push(data)
         self._do_plugin_callback("post_push")
         self._event_listener.post_push(DataPushedEvent(self, data))
@@ -62,15 +62,13 @@ class LEADS(Context[T]):
         if isinstance(event, InterventionExitEvent):
             self._event_listener.post_intervene(event)
         else:
-            self._event_listener.on_intervene(event)
+            self._event_listener.pre_intervene(event)
 
     @_override
     def update(self) -> None:
+        self._do_plugin_callback("pre_update")
         self._event_listener.on_update(UpdateEvent(self))
-        self._do_plugin_callback("on_update")
-        super().update()
         self._do_plugin_callback("post_update")
-        self._event_listener.post_update(UpdateEvent(self))
 
     @_override
     def time_lap(self) -> None:

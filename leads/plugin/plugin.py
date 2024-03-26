@@ -32,7 +32,7 @@ class Plugin(ContextAssociated):
 
     def on_load(self, context: Context) -> None: ...
 
-    def on_push(self, context: Context, kwargs: dict[str, _Any]) -> None:
+    def pre_push(self, context: Context, kwargs: dict[str, _Any]) -> None:
         """
         Note that the new data at this point is not available yet.
         :param context: target context
@@ -47,7 +47,7 @@ class Plugin(ContextAssociated):
         """
         ...
 
-    def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
+    def pre_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
         """
         :param context: target context
         :param kwargs: {required data: its value}

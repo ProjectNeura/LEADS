@@ -66,8 +66,9 @@ class Context(_Generic[T], metaclass=_ABCMeta):
             return self._ecs_mode
         self._ecs_mode = ecs_mode
 
+    @_abstractmethod
     def update(self) -> None:
-        ...
+        raise NotImplementedError
 
     @_abstractmethod
     def intervene(self, *args, **kwargs) -> None:  # real signature unknown
