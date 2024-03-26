@@ -52,6 +52,7 @@ class NMEAGPSReceiver(_Device, _Entity):
     @_override
     def initialize(self, *parent_tags: str) -> None:
         self.start(True)
+        _SFT.fail(self, "No fix")
         super().initialize(*parent_tags)
 
     @_override
