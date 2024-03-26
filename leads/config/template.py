@@ -53,7 +53,7 @@ class ConfigTemplate(Serializable):
             self._d[name] = value
             self.refresh()
 
-    def get(self, name: str, default: _Any | None = None) -> _Any:
+    def get(self, name: str, default: _Any | None = None) -> _Any | None:
         """
         Get the value of a given name from the dictionary.
         :param name: dictionary key
