@@ -9,9 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from leads import *
 from leads.comm import *
 from leads.data_persistence import *
-from leads_gui import *
 
-config = get_config(Config)
+config = require_config()
 if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{abspath(config.data_dir)}\" created")

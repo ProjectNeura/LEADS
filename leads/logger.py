@@ -2,7 +2,9 @@ from datetime import datetime as _datetime
 from enum import IntEnum as _IntEnum
 from threading import Lock as _Lock
 
+from leads.config import set_on_register_config, ConfigTemplate
 from leads.os import currentframe
+from leads.types import OnRegister
 
 
 class Level(_IntEnum):
@@ -71,3 +73,14 @@ class Logger(object):
 
 
 L: Logger = Logger()
+
+
+def _on_register_config(chain: OnRegister[ConfigTemplate]) -> OnRegister[ConfigTemplate]:
+    def _(config: ConfigTemplate) -> None:
+        chain(config)
+        L.debug_level(Level[config.w_debug_level])
+
+    return _
+
+
+set_on_register_config(_on_register_config)

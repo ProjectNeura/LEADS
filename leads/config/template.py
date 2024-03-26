@@ -28,6 +28,10 @@ class ConfigTemplate(Serializable):
     def __str__(self) -> str:
         return _dumps(self.to_dict())
 
+    @_override
+    def to_dict(self) -> dict[str, _Any]:
+        return self._d.copy()
+
     def load(self, d: dict[str, _Any]) -> None:
         """
         Load a new dictionary and refresh.
@@ -49,7 +53,7 @@ class ConfigTemplate(Serializable):
             self._d[name] = value
             self.refresh()
 
-    def get(self, name: str, default: _Any | None = None) -> _Any:
+    def get(self, name: str, default: _Any | None = None) -> _Any | None:
         """
         Get the value of a given name from the dictionary.
         :param name: dictionary key
@@ -63,7 +67,7 @@ class ConfigTemplate(Serializable):
         Write the dictionary into the instance attributes.
         """
         for name in dir(self):
-            if not name.startswith("_") and (v := self.get(name)) is not None:
+            if not name.startswith("_") and (v := self._d.get(name)) is not None:
                 if self._writable(name):
                     setattr(self, name, v)
         self._frozen = True

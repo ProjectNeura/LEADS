@@ -1,11 +1,12 @@
 from typing import Any as _Any
 
 from leads.constant import ECSMode
-from leads.context import Context, ContextAssociated
+from leads.context import Context
+from leads.registry import require_context
 from leads.types import RequiredData
 
 
-class Plugin(ContextAssociated):
+class Plugin(object):
     def __init__(self, required_data: RequiredData) -> None:
         """
         :param required_data: required data or (required data in srw mode, required data in drw mode)
@@ -23,12 +24,12 @@ class Plugin(ContextAssociated):
 
     def enabled(self, enabled: bool | None = None) -> bool | None:
         if enabled is None:
-            return self.require_context().ecs_mode() != ECSMode.OFF and self._enabled
+            return require_context().ecs_mode() != ECSMode.OFF and self._enabled
         self._enabled = enabled
 
     def required_data(self) -> list[str]:
         return (self._required_data if isinstance(self._required_data, list) else
-                self._required_data[0] if self.require_context().srw_mode() else self._required_data[1])
+                self._required_data[0] if require_context().srw_mode() else self._required_data[1])
 
     def on_load(self, context: Context) -> None: ...
 

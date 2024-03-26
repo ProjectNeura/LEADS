@@ -1,20 +1,13 @@
 from abc import ABCMeta as _ABCMeta
 from json import dumps as _dumps
 from time import time as _time
-from typing import override as _override
+from typing import override as _override, Any as _Any
 
 
 class Serializable(object):
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, _Any]:
         attributes = dir(self)
-        r = {}
-        for n in attributes:
-            if n.startswith("_"):
-                continue
-            v = getattr(self, n)
-            if type(v) in (int, float, str):
-                r[n] = v
-        return r
+        return {n: v for n in attributes if not n.startswith("_") and not callable(v := getattr(self, n))}
 
 
 class DataContainer(Serializable, metaclass=_ABCMeta):

@@ -5,8 +5,7 @@ from subprocess import run as _run
 from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
-    L as _L, load_config as _load_config, register_config as _register_config, \
-    get_config as _get_config
+    L as _L, load_config as _load_config, register_config as _register_config
 from leads_gui import get_system_platform as _get_system_platform, Config as _Config
 
 if __name__ == "__main__":
@@ -34,7 +33,7 @@ if __name__ == "__main__":
             _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
             _mkdir("/usr/local/leads")
             with open("/usr/local/leads/config.json", "w") as f:
-                f.write(str(_get_config(_Config)))
+                f.write(str(_Config({})))
             _L.info("Using \"/usr/local/leads/config.json\"")
         _chmod("/usr/local/leads/config.json", 777)
         from ._bootloader import create_service
@@ -47,7 +46,7 @@ if __name__ == "__main__":
             if r.lower() != "y":
                 _exit("Error: Aborted")
         with open("config.json", "w") as f:
-            f.write(str(_get_config(_Config)))
+            f.write(str(_Config({})))
         _L.info("Configuration file saved to \"config.json\"")
     _register_config(config := _load_config(args.config, _Config) if args.config else None)
     _L.debug("Configuration loaded:", str(config))
