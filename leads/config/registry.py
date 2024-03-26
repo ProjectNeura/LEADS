@@ -26,10 +26,9 @@ def load_config(file: str | _TextIO, constructor: type[T]) -> T:
 
 def register_config(config: T) -> None:
     global _config_instance
-    if config:
-        if _config_instance:
-            raise RuntimeError("Another config is already registered")
-        _on_register_config(config)
+    if _config_instance:
+        raise RuntimeError("Another config is already registered")
+    _on_register_config(config)
     _config_instance = config
 
 
