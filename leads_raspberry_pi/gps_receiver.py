@@ -25,6 +25,7 @@ class NMEAGPSReceiver(_Device, _Entity):
         self._ground_speed: float = 0
         self._latitude: float = 0
         self._longitude: float = 0
+        self._quality: int = 0
         self._num_satellites: int = 0
 
     @_override
@@ -50,15 +51,17 @@ class NMEAGPSReceiver(_Device, _Entity):
             self._valid = v
         if NMEAGPSReceiver._has_field(data.fields, "spd_over_grnd", 6):
             self._ground_speed = float(ground_speed) * 1.852 if (ground_speed := data.data[6]) else 0
-        if NMEAGPSReceiver._has_field(data.fields, "num_sv_in_view", 2):
-            self._num_satellites = int(data.data[2])
+        if NMEAGPSReceiver._has_field(data.fields, "gps_qual", 5):
+            self._quality = int(data.data[5])
+        if NMEAGPSReceiver._has_field(data.fields, "num_sats", 6):
+            self._num_satellites = int(data.data[6])
 
     @_override
     def read(self) -> [bool, float, float, float, int]:
         """
-        :return: [validity, ground speed, latitude, longitude, num of satellites]
+        :return: [validity, ground speed, latitude, longitude, quality, num of satellites]
         """
-        return self._valid, self._ground_speed, self._latitude, self._longitude, self._num_satellites
+        return self._valid, self._ground_speed, self._latitude, self._longitude, self._quality, self._num_satellites
 
     @_override
     def run(self) -> None:
@@ -79,7 +82,7 @@ class NMEAGPSReceiver(_Device, _Entity):
         self.kill()
 
     @staticmethod
-    def _has_field(fields: tuple[tuple[str, str], ...], target_field: str, at: int) -> bool:
+    def _has_field(fields: tuple[tuple[str, str, ...], ...], target_field: str, at: int) -> bool:
         return len(fields) > at and fields[at][1] == target_field
 
 
