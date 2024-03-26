@@ -11,7 +11,8 @@ class Serializable(object):
         for n in attributes:
             if n.startswith("_"):
                 continue
-            v = getattr(self, n)
+            if callable(v := getattr(self, n)):
+                continue
             r[n] = v
         return r
 
