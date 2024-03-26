@@ -9,27 +9,6 @@ from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Ser
 from leads_comm_serial import SerialConnection as _SerialConnection
 
 
-class _GPSCallback(_Callback):
-    def __init__(self, receiver: _Device) -> None:
-        super().__init__()
-        self._receiver: _Device = receiver
-
-    def on_connect(self, service: _Service, connection: _SerialConnection) -> None:
-        _SFT.fail(self._receiver, "No fix")
-
-    @_override
-    def on_receive(self, service: _Service, msg: bytes) -> None:
-        self.super(service=service, msg=msg)
-        assert isinstance(service, NMEAGPSReceiver)
-        self._receiver.update(_parse(msg.decode()))
-
-    @_override
-    def on_fail(self, service: _Service, error: Exception) -> None:
-        self.super(service=service, error=error)
-        assert isinstance(service, NMEAGPSReceiver)
-        _SFT.fail(service, error)
-
-
 class NMEAGPSReceiver(_Device, _Entity):
     """
     Supports:
@@ -37,7 +16,7 @@ class NMEAGPSReceiver(_Device, _Entity):
     """
     def __init__(self, port: str, baud_rate: int = 9600) -> None:
         _Device.__init__(self, port)
-        _Entity.__init__(self, -1, _GPSCallback(self))
+        _Entity.__init__(self, -1, _NMEAGPSCallback(self))
         self._serial: _Serial = _Serial()
         self._serial.port = port
         self._serial.baudrate = baud_rate
@@ -103,3 +82,23 @@ class NMEAGPSReceiver(_Device, _Entity):
     @staticmethod
     def _has_field(fields: tuple[tuple[str, str], ...], target_field: str, at: int) -> bool:
         return len(fields) > at and fields[at][1] == target_field
+
+
+class _NMEAGPSCallback(_Callback):
+    def __init__(self, receiver: NMEAGPSReceiver) -> None:
+        super().__init__()
+        self._receiver: _Device = receiver
+
+    @_override
+    def on_connect(self, service: _Service, connection: _SerialConnection) -> None:
+        _SFT.fail(self._receiver, "No fix")
+
+    @_override
+    def on_receive(self, service: _Service, msg: bytes) -> None:
+        self.super(service=service, msg=msg)
+        self._receiver.update(_parse(msg.decode()))
+
+    @_override
+    def on_fail(self, service: _Service, error: Exception) -> None:
+        self.super(service=service, error=error)
+        _SFT.fail(self._receiver, error)
