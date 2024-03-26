@@ -10,7 +10,7 @@ if __name__ == "__main__":
                              description="Lightweight Embedded Assisted Driving System VeC Remote Controller",
                              epilog="GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("-c", "--config", default=None, help="specified configuration file")
-    parser.add_argument("-p", "--port", type=lambda p: int(p), default=8000, help="server port")
+    parser.add_argument("-p", "--port", type=int, default=8000, help="server port")
     args = parser.parse_args()
     _register_config(_load_config(args.config, _Config) if args.config else None)
     from leads_vec_rc.cli import app

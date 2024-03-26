@@ -9,7 +9,7 @@ T = _TypeVar("T", bound=ConfigTemplate)
 
 _config_instance: T | None = None
 
-_on_register_config: OnRegister[T] = lambda c: L.debug_level(Level[c.w_debug_level])
+_on_register_config: OnRegister[T] = lambda _c: L.debug_level(Level[_c.w_debug_level])
 
 
 def set_on_register_config(callback: OnRegisterChain[T]) -> None:
