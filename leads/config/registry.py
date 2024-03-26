@@ -3,17 +3,17 @@ from typing import TypeVar as _TypeVar, TextIO as _TextIO, Callable as _Callable
 
 from leads.config.template import ConfigTemplate
 from leads.logger import Level, L
-from leads.types import OnRegisterConfig, OnRegisterConfigChain
+from leads.types import OnRegister, OnRegisterChain
 
 T = _TypeVar("T", bound=ConfigTemplate)
 
 
 _config_instance: T | None = None
 
-_on_register_config: OnRegisterConfig[T] = lambda c: L.debug_level(Level[c.w_debug_level])
+_on_register_config: OnRegister[T] = lambda c: L.debug_level(Level[c.w_debug_level])
 
 
-def set_on_register_config(callback: OnRegisterConfigChain[T]) -> None:
+def set_on_register_config(callback: OnRegisterChain[T]) -> None:
     global _on_register_config
     _on_register_config = callback(_on_register_config)
 

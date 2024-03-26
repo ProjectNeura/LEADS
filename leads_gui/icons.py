@@ -4,7 +4,7 @@ from typing import Callable as _Callable
 from PIL import Image as _Image
 from customtkinter import CTkImage as _CTkImage
 
-from leads import set_on_register_config as _set_on_register_config, OnRegisterConfig as _OnRegisterConfig, \
+from leads import set_on_register_config as _set_on_register_config, OnRegister as _OnRegister, \
     get_config as _get_config
 from leads_gui.config import Config
 from leads_gui.system import _ASSETS_PATH
@@ -45,7 +45,7 @@ Satellite: _Icon = _Icon("satellite")
 Speed: _Icon = _Icon("speed")
 
 
-def _on_register_config(chain: _OnRegisterConfig[Config] | None) -> _OnRegisterConfig[Config]:
+def _on_register_config(chain: _OnRegister[Config] | None) -> _OnRegister[Config]:
     def _(config: Config) -> None:
         global _config
         if chain:
