@@ -28,6 +28,10 @@ class ConfigTemplate(Serializable):
     def __str__(self) -> str:
         return _dumps(self.to_dict())
 
+    @_override
+    def to_dict(self) -> dict[str, _Any]:
+        return self._d.copy()
+
     def load(self, d: dict[str, _Any]) -> None:
         """
         Load a new dictionary and refresh.
