@@ -12,6 +12,7 @@ class ConfigTemplate(Serializable):
         :param base: base dictionary
         """
         self._d: dict[str, _Any] = base
+        self._frozen: bool = False
         self.w_debug_level: str = "DEBUG"
         self.srw_mode: bool = True
         self.enable_data_persistence: bool = True
@@ -21,8 +22,7 @@ class ConfigTemplate(Serializable):
         return self.get(name)
 
     def __setitem__(self, name: str, value: _Any) -> None:
-        self._d[name] = value
-        self.refresh()
+        self.set(name, value)
 
     @_override
     def __str__(self) -> str:
@@ -36,6 +36,19 @@ class ConfigTemplate(Serializable):
         self._d = d
         self.refresh()
 
+    def _writable(self, name: str) -> bool:
+        return not self._frozen or name.startswith("w_")
+
+    def set(self, name: str, value: _Any) -> None:
+        """
+        Set the value with a given name in the dictionary.
+        :param name: dictionary key
+        :param value: value to set
+        """
+        if self._writable(name):
+            self._d[name] = value
+            self.refresh()
+
     def get(self, name: str, default: _Any | None = None) -> _Any:
         """
         Get the value of a given name from the dictionary.
@@ -43,9 +56,7 @@ class ConfigTemplate(Serializable):
         :param default: default value if the value does not exist
         :return: the value if it exists or else the default value
         """
-        if r := self._d.get(name):
-            return r
-        return default
+        return self._d.get(name, default)
 
     def refresh(self) -> None:
         """
@@ -53,5 +64,6 @@ class ConfigTemplate(Serializable):
         """
         for name in dir(self):
             if not name.startswith("_") and (v := self.get(name)) is not None:
-                if name.startswith("w_") or not hasattr(self, name):
+                if self._writable(name):
                     setattr(self, name, v)
+        self._frozen = True
