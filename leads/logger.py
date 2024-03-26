@@ -55,19 +55,19 @@ class Logger(object):
 
     def info(self, *msg: str, sep: str = " ", end: str = "\n",
              f: tuple[int, int | None, int | None] = (REGULAR, None, None)) -> None:
-        self.print(self.format(self.mark(sep.join(msg) + end, level=Level.INFO), *f), Level.INFO)
+        self.print(Logger.format(Logger.mark(sep.join(msg) + end, level=Level.INFO), *f), Level.INFO)
 
     def debug(self, *msg: str, sep: str = " ", end: str = "\n",
               f: tuple[int, int | None, int | None] = (REGULAR, YELLOW, None)) -> None:
-        self.print(self.format(self.mark(sep.join(msg) + end, level=Level.DEBUG), *f), Level.DEBUG)
+        self.print(Logger.format(Logger.mark(sep.join(msg) + end, level=Level.DEBUG), *f), Level.DEBUG)
 
     def warn(self, *msg: str, sep: str = " ", end: str = "\n",
              f: tuple[int, int | None, int | None] = (REGULAR, RED, None)) -> None:
-        self.print(self.format(self.mark(sep.join(msg) + end, level=Level.WARN), *f), Level.WARN)
+        self.print(Logger.format(Logger.mark(sep.join(msg) + end, level=Level.WARN), *f), Level.WARN)
 
     def error(self, *msg: str, sep: str = " ", end: str = "\n",
               f: tuple[int, int | None, int | None] = (REGULAR, RED, None)) -> None:
-        self.print(self.format(self.mark(sep.join(msg) + end, Level.ERROR), *f), Level.ERROR)
+        self.print(Logger.format(Logger.mark(sep.join(msg) + end, Level.ERROR), *f), Level.ERROR)
 
 
 L: Logger = Logger()
