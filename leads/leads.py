@@ -16,10 +16,12 @@ class LEADS(Context[T]):
                  data_seq_size: int = 100,
                  num_laps_timed: int = 3) -> None:
         super().__init__(srw_mode, initial_data, data_seq_size, num_laps_timed)
-        self._plugins: dict[str, Plugin] = {}
+        self._plugins: dict[tuple[str, ...], Plugin] = {}
         self._event_listener: EventListener = EventListener()
 
-    def plugin(self, key: str, plugin: Plugin | None = None) -> Plugin | None:
+    def plugin(self, key: str | tuple[str, ...], plugin: Plugin | None = None) -> Plugin | None:
+        if isinstance(key, str):
+            key = key,
         if plugin is None:
             return self._plugins[key]
         plugin.bind_context(self)
@@ -45,6 +47,9 @@ class LEADS(Context[T]):
     @_override
     def push(self, data: T) -> None:
         self._event_listener.on_push(DataPushedEvent(self, data))
+        for key, plugin in self._plugins.items():
+            if plugin.enabled():
+                plugin.on_push(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
         super().push(data)
         self._event_listener.post_push(DataPushedEvent(self, data))
 
