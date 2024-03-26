@@ -2,14 +2,13 @@ from json import load as _load
 from typing import TypeVar as _TypeVar, TextIO as _TextIO
 
 from leads.config.template import ConfigTemplate
-from leads.logger import Level, L
 from leads.types import OnRegister, OnRegisterChain
 
 T = _TypeVar("T", bound=ConfigTemplate)
 
 _config_instance: T | None = None
 
-_on_register_config: OnRegister[T] = lambda _c: L.debug_level(Level[_c.w_debug_level])
+_on_register_config: OnRegister[T] = lambda _: None
 
 
 def set_on_register_config(callback: OnRegisterChain[T]) -> None:
