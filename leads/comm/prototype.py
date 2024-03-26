@@ -4,6 +4,8 @@ from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_
 from threading import Lock as _Lock, Thread as _Thread
 from typing import Self as _Self, Callable as _Callable, override as _override
 
+from leads.callback import CallbackChain
+
 
 def my_ip_addresses() -> list[str]:
     return [ip for ip in _gethostbyname_ex(_gethostname())[2] if not ip.startswith("127.")]
@@ -200,7 +202,7 @@ class Connection(ConnectionBase):
         self._require_open_socket(False).close()
 
 
-class Callback(object):
+class Callback(CallbackChain):
     def on_initialize(self, service: Service) -> None: ...
 
     def on_fail(self, service: Service, error: Exception) -> None: ...
@@ -219,19 +221,23 @@ class Entity(Service, metaclass=_ABCMeta):
         :param callback: the callback interface
         """
         super().__init__(port)
-        self.callback: Callback = callback
+        self._callback: Callback = callback
+
+    def set_callback(self, callback: Callback) -> None:
+        callback.bind_chain(self._callback)
+        self._callback = callback
 
     def _stage(self, connection: ConnectionBase) -> None:
         while True:
             msg = connection.receive()
             if msg is None or msg == b"disconnect":
-                self.callback.on_disconnect(self, connection)
+                self._callback.on_disconnect(self, connection)
                 return connection.close()
-            self.callback.on_receive(self, msg)
+            self._callback.on_receive(self, msg)
 
     @_override
     def _run(self, *args, **kwargs) -> None:
         try:
             return super()._run(*args, **kwargs)
         except Exception as e:
-            self.callback.on_fail(self, e)
+            self._callback.on_fail(self, e)

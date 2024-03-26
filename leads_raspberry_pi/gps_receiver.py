@@ -11,15 +11,18 @@ from leads_comm_serial import SerialConnection as _SerialConnection
 
 class _GPSCallback(_Callback):
     def __init__(self, receiver: _Device) -> None:
+        super().__init__()
         self.receiver: _Device = receiver
 
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
+        self.super(service=service, msg=msg)
         assert isinstance(service, NMEAGPSReceiver)
         self.receiver.update(_parse(msg.decode()))
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
+        self.super(service=service, error=error)
         assert isinstance(service, NMEAGPSReceiver)
         _SFT.fail(service, error)
 
@@ -74,10 +77,10 @@ class NMEAGPSReceiver(_Device, _Entity):
 
     @_override
     def run(self) -> None:
-        self.callback.on_initialize(self)
+        self._callback.on_initialize(self)
         self._serial.open()
-        self.callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port,
-                                                                       separator=b"\n"))
+        self._callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port,
+                                                                        separator=b"\n"))
         self._connection = connection
         self._stage(connection)
 

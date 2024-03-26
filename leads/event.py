@@ -1,14 +1,14 @@
-from typing import Any as _Any, override as _override, Self as _Self
+from typing import Any as _Any, override as _override
 
+from leads.callback import CallbackChain
 from leads.context import Context
 from leads.data import DataContainer
-from leads.os import currentframe
 
 
 class Event(object):
     def __init__(self, t: str, context: Context) -> None:
-        self.context: Context = context
         self.t: str = t
+        self.context: Context = context
 
     @_override
     def __str__(self) -> str:
@@ -49,20 +49,10 @@ class SuspensionEvent(SystemEvent):
         self.fatal: bool = fatal
 
 
-class EventListener(object):
-    def __init__(self, chain: _Self | None = None) -> None:
-        self._chain: EventListener | None = chain
-
-    def bind_chain(self, chain: _Self | None) -> None:
-        self._chain = chain
-
+class EventListener(CallbackChain):
+    @_override
     def super(self, e: Event) -> None:
-        """
-        Call the superior method if there is one.
-        This must be called directly in the corresponding successor method.
-        """
-        if self._chain:
-            getattr(self._chain, currentframe().f_back.f_code.co_name)(e)
+        super().super(e)
 
     def on_push(self, event: DataPushedEvent) -> None: ...
 

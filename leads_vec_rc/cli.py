@@ -33,12 +33,15 @@ gps_record: DataPersistence[Vector[float]] = DataPersistence(config.data_dir + "
 
 class CommCallback(Callback):
     def on_connect(self, service: Service, connection: Connection) -> None:
+        self.super(service=service, connection=connection)
         L.debug("Connected")
 
     def on_fail(self, service: Service, error: Exception) -> None:
+        self.super(service=service, error=error)
         L.error("Comm client error: " + repr(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:
+        self.super(service=service, msg=msg)
         d = loads(msg.decode())
         data_record.append(d)
         time_stamp_record.append(d["t"])
@@ -47,6 +50,7 @@ class CommCallback(Callback):
         gps_record.append(Vector(d["latitude"], d["longitude"]))
 
     def on_disconnect(self, service: Service, connection: Connection) -> None:
+        self.super(service=service, connection=connection)
         time_stamp_record.close()
         speed_record.close()
 

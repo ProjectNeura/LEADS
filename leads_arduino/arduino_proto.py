@@ -36,9 +36,9 @@ class ArduinoProto(_Controller, _Entity):
 
     @_override
     def run(self) -> None:
-        self.callback.on_initialize(self)
+        self._callback.on_initialize(self)
         self._serial.open()
-        self.callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port))
+        self._callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port))
         self._connection = connection
         self._stage(connection)
 
@@ -60,13 +60,16 @@ class ArduinoProto(_Controller, _Entity):
 
 class ArduinoCallback(_Callback):
     def __init__(self, tag: str) -> None:
+        super().__init__()
         self._tag: str = tag
 
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
+        self.super(service=service, msg=msg)
         _get_controller(self._tag).update(msg.decode())
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
+        self.super(service=service, error=error)
         assert isinstance(service, ArduinoProto)
         _SFT.fail(service, error)

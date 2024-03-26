@@ -22,11 +22,11 @@ class Server(Entity):
         self._killed = False
         self._socket.bind(("0.0.0.0", self._port))
         self._socket.listen(max_connection)
-        self.callback.on_initialize(self)
+        self._callback.on_initialize(self)
         while not self._killed:
             socket, address = self._socket.accept()
-            self.callback.on_connect(self, connection := Connection(self, socket, address,
-                                                                    on_close=lambda c: self.remove_connection(c)))
+            self._callback.on_connect(self, connection := Connection(self, socket, address,
+                                                                     on_close=lambda c: self.remove_connection(c)))
             self._connections.append(connection)
             _Thread(target=self._stage, args=(connection,)).start()
 

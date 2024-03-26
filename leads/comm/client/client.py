@@ -8,9 +8,9 @@ class Client(Entity):
 
     @_override
     def run(self, server_address: str) -> None:
-        self.callback.on_initialize(self)
+        self._callback.on_initialize(self)
         self._socket.connect((server_address, self._port))
-        self.callback.on_connect(self, connection := Connection(self, self._socket, (server_address, self._port)))
+        self._callback.on_connect(self, connection := Connection(self, self._socket, (server_address, self._port)))
         self._connection = connection
         self._stage(connection)
 
