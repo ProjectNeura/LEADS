@@ -11,10 +11,10 @@ class Config(_ConfigTemplate):
         self.no_title_bar: bool = False
         self.manual_mode: bool = False
         self.refresh_rate: int = 30
-        self.w_font_size_small: int = 14
-        self.w_font_size_medium: int = 24
-        self.w_font_size_large: int = 40
-        self.w_font_size_x_large: int = 56
+        self.font_size_small: int = 14
+        self.font_size_medium: int = 24
+        self.font_size_large: int = 40
+        self.font_size_x_large: int = 56
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
         self.data_dir: str = "data"

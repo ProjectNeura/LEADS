@@ -25,7 +25,7 @@ class _Icon(_Callable[[int, Color | None], _CTkImage]):
 
     def __call__(self, size: int | None = None, color: Color | None = None) -> _CTkImage:
         if size is None:
-            size = _require_config().w_font_size_medium
+            size = _require_config().font_size_medium
         return _CTkImage(self.load_source(color if color else Color.BLACK),
                          None if color else self.load_source(Color.WHITE),
                          size=(size, size))
