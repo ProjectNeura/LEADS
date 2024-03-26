@@ -26,7 +26,7 @@ class LEADS(Context[T]):
             return self._plugins[key]
         plugin.bind_context(self)
         self._plugins[key] = plugin
-        plugin.load()
+        plugin.on_load(self)
 
     def set_event_listener(self, event_listener: EventListener) -> None:
         event_listener.bind_chain(self._event_listener)
@@ -66,7 +66,7 @@ class LEADS(Context[T]):
 
         for key, plugin in self._plugins.items():
             if plugin.enabled():
-                plugin.update({d: self._acquire_data(d, key) for d in plugin.required_data()})
+                plugin.on_update(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
 
         self._event_listener.post_update(UpdateEvent(self))
 
