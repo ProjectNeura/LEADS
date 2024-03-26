@@ -4,29 +4,10 @@ from typing import Callable as _Callable
 from PIL import Image as _Image
 from customtkinter import CTkImage as _CTkImage
 
-from leads import set_on_register_config as _set_on_register_config, OnRegister as _OnRegister, \
-    get_config as _get_config
-from leads_gui.config import Config
+from leads import require_config as _require_config
 from leads_gui.system import _ASSETS_PATH
 
 _ICONS_PATH: str = _ASSETS_PATH + "/icons"
-
-_config: Config = _get_config()
-if _config is None:
-    _config = Config({})
-
-
-def _on_register_config(chain: _OnRegister[Config] | None) -> _OnRegister[Config]:
-    def _(config: Config) -> None:
-        global _config
-        if chain:
-            chain(config)
-        _config = config
-
-    return _
-
-
-_set_on_register_config(_on_register_config)
 
 
 class Color(_StrEnum):
@@ -44,7 +25,7 @@ class _Icon(_Callable[[int, Color | None], _CTkImage]):
 
     def __call__(self, size: int | None = None, color: Color | None = None) -> _CTkImage:
         if size is None:
-            size = _config.w_font_size_medium
+            size = _require_config().w_font_size_medium
         return _CTkImage(self.load_source(color if color else Color.BLACK),
                          None if color else self.load_source(Color.WHITE),
                          size=(size, size))
