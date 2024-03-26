@@ -33,11 +33,11 @@ def register_config(config: T) -> None:
     _config_instance = config
 
 
-def get_config(constructor: type[T]) -> T:
-    if not _config_instance:
-        return constructor({})
+def get_config() -> T | None:
     return _config_instance
 
 
-def config_registered() -> bool:
-    return _config_instance is not None
+def require_config() -> T:
+    if _config_instance:
+        return _config_instance
+    raise RuntimeError("No config registered")

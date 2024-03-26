@@ -11,7 +11,9 @@ from leads_gui.system import _ASSETS_PATH
 
 _ICONS_PATH: str = _ASSETS_PATH + "/icons"
 
-_config: Config = _get_config(Config)
+_config: Config = _get_config()
+if _config is None:
+    _config = Config({})
 
 
 def _on_register_config(chain: _OnRegister[Config] | None) -> _OnRegister[Config]:
