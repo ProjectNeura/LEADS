@@ -1,4 +1,4 @@
-from typing import TypeVar as _TypeVar, Any as _Any, override as _override
+from typing import TypeVar as _TypeVar, Any as _Any, override as _override, Literal as _Literal
 
 from leads.context import Context
 from leads.data import DataContainer
@@ -44,13 +44,17 @@ class LEADS(Context[T]):
                 for system in systems:
                     self.suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
 
+    def _do_plugin_callback(self, method: _Literal["on_push", "post_push", "on_update", "post_update"]) -> None:
+        for key, plugin in self._plugins.items():
+            if plugin.enabled():
+                getattr(plugin, method)(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
+
     @_override
     def push(self, data: T) -> None:
         self._event_listener.on_push(DataPushedEvent(self, data))
-        for key, plugin in self._plugins.items():
-            if plugin.enabled():
-                plugin.on_push(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
+        self._do_plugin_callback("on_push")
         super().push(data)
+        self._do_plugin_callback("post_push")
         self._event_listener.post_push(DataPushedEvent(self, data))
 
     @_override
@@ -63,11 +67,9 @@ class LEADS(Context[T]):
     @_override
     def update(self) -> None:
         self._event_listener.on_update(UpdateEvent(self))
-
-        for key, plugin in self._plugins.items():
-            if plugin.enabled():
-                plugin.on_update(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
-
+        self._do_plugin_callback("on_update")
+        super().update()
+        self._do_plugin_callback("post_update")
         self._event_listener.post_update(UpdateEvent(self))
 
     @_override

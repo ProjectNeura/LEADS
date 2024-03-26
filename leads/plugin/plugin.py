@@ -30,15 +30,33 @@ class Plugin(ContextAssociated):
         return (self._required_data if isinstance(self._required_data, list) else
                 self._required_data[0] if self.require_context().srw_mode() else self._required_data[1])
 
-    def load(self) -> None:
-        self.on_load(self.require_context())
-
     def on_load(self, context: Context) -> None: ...
 
-    def update(self, kwargs: dict[str, _Any]) -> None:
+    def on_push(self, context: Context, kwargs: dict[str, _Any]) -> None:
         """
+        Note that the new data at this point is not available yet.
+        :param context: target context
         :param kwargs: {required data: its value}
         """
-        self.on_update(self.require_context(), kwargs)
+        ...
 
-    def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None: ...
+    def post_push(self, context: Context, kwargs: dict[str, _Any]) -> None:
+        """
+        :param context: target context
+        :param kwargs: {required data: its value}
+        """
+        ...
+
+    def on_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
+        """
+        :param context: target context
+        :param kwargs: {required data: its value}
+        """
+        ...
+
+    def post_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
+        """
+        :param context: target context
+        :param kwargs: {required data: its value}
+        """
+        ...
