@@ -5,6 +5,7 @@ from threading import Lock as _Lock, Thread as _Thread
 from typing import Self as _Self, Callable as _Callable, override as _override
 
 from leads.callback import CallbackChain
+from leads.os import _threads_life_flag
 
 
 def my_ip_addresses() -> list[str]:
@@ -51,7 +52,8 @@ class Service(metaclass=_ABCMeta):
         if self._main_thread:
             raise RuntimeWarning("A service can only run once")
         try:
-            self._main_thread = _Thread(name="service" + str(hash(self)), target=self._run, args=args, kwargs=kwargs)
+            self._main_thread = _Thread(name="service" + str(hash(self)), target=self._run, daemon=True, args=args,
+                                        kwargs=kwargs)
         finally:
             self._lock.release()
 
@@ -228,7 +230,7 @@ class Entity(Service, metaclass=_ABCMeta):
         self._callback = callback
 
     def _stage(self, connection: ConnectionBase) -> None:
-        while True:
+        while _threads_life_flag.active:
             msg = connection.receive()
             if msg is None or msg == b"disconnect":
                 self._callback.on_disconnect(self, connection)
