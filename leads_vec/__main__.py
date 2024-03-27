@@ -48,7 +48,7 @@ if __name__ == "__main__":
         with open("config.json", "w") as f:
             f.write(str(_Config({})))
         _L.info("Configuration file saved to \"config.json\"")
-    _register_config(config := _load_config(args.config, _Config) if args.config else None)
+    _register_config(config := _load_config(args.config, _Config) if args.config else _Config({}))
     _L.debug("Configuration loaded:", str(config))
     if args.xws:
         from os import getuid as _getuid
