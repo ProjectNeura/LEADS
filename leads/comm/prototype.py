@@ -51,7 +51,8 @@ class Service(metaclass=_ABCMeta):
         if self._main_thread:
             raise RuntimeWarning("A service can only run once")
         try:
-            self._main_thread = _Thread(name="service" + str(hash(self)), target=self._run, args=args, kwargs=kwargs)
+            self._main_thread = _Thread(name="service" + str(hash(self)), target=self._run, daemon=True, args=args,
+                                        kwargs=kwargs)
         finally:
             self._lock.release()
 

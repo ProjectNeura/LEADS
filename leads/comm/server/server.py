@@ -28,7 +28,7 @@ class Server(Entity):
             self._callback.on_connect(self, connection := Connection(self, socket, address,
                                                                      on_close=lambda c: self.remove_connection(c)))
             self._connections.append(connection)
-            _Thread(target=self._stage, args=(connection,)).start()
+            _Thread(target=self._stage, args=(connection,), daemon=True).start()
 
     def broadcast(self, msg: bytes) -> None:
         for c in self._connections:
