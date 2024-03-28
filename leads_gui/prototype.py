@@ -18,7 +18,6 @@ class Window(_Generic[T]):
                  refresh_rate: int,
                  runtime_data: T,
                  on_refresh: _Callable[[_Self], None] = lambda _: None,
-                 on_kill: _Callable[[_Self], None] = lambda _: None,
                  title: str = "LEADS",
                  fullscreen: bool = True,
                  no_title_bar: bool = True) -> None:
@@ -34,7 +33,6 @@ class Window(_Generic[T]):
         self._refresh_interval: int = int(1000 / refresh_rate)
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
-        self._on_kill: _Callable[[Window], None] = on_kill
 
         self._active: bool = False
 
@@ -55,9 +53,6 @@ class Window(_Generic[T]):
 
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
         self._on_refresh = on_refresh
-
-    def set_on_close(self, on_close: _Callable[[_Self], None]) -> None:
-        self._on_kill = on_close
 
     def active(self) -> bool:
         return self._active
