@@ -27,7 +27,7 @@ def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeD
 
 def main() -> int:
     cfg = require_config()
-    ctx = LEADS[SRWDataContainer if cfg.srw_mode else DRWDataContainer](srw_mode=cfg.srw_mode)
+    ctx = LEADS(srw_mode=cfg.srw_mode, data_seq_size=cfg.data_seq_size)
     register_context(ctx)
     ctx.plugin(SystemLiteral.DTCS, DTCS())
     ctx.plugin(SystemLiteral.ABS, ABS())
