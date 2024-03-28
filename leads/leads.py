@@ -10,14 +10,8 @@ T = _TypeVar("T", bound=DataContainer)
 
 
 class LEADS(Context[T]):
-    def __init__(self,
-                 srw_mode: bool = True,
-                 initial_data: T | None = None,
-                 data_seq_size: int = 100,
-                 num_laps_timed: int = 3) -> None:
-        super().__init__(srw_mode, initial_data, data_seq_size, num_laps_timed)
-        self._plugins: dict[tuple[str, ...], Plugin] = {}
-        self._event_listener: EventListener = EventListener()
+    _plugins: dict[tuple[str, ...], Plugin] = {}
+    _event_listener: EventListener = EventListener()
 
     def plugin(self, key: str | tuple[str, ...], plugin: Plugin | None = None) -> Plugin | None:
         if isinstance(key, str):
