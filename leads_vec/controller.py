@@ -105,13 +105,6 @@ class WheelSpeedSensors(WheelSpeedSensor):
         super().initialize(*parent_tags)
 
 
-# @device((THROTTLE_PEDAL, BRAKE_PEDAL), MAIN_CONTROLLER, [(THROTTLE_PEDAL_PIN, False), (BRAKE_PEDAL_PIN, True)])
-# class Pedals(Pedal):
-#     def __init__(self, pin: int, brake: bool) -> None:
-#         super().__init__(pin)
-#         self._brake: bool = brake
-
-
 @device(GPS_RECEIVER, MAIN_CONTROLLER, (GPS_RECEIVER_PORT,))
 class GPS(NMEAGPSReceiver):
     def initialize(self, *parent_tags: str) -> None:
