@@ -2,7 +2,7 @@ from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
 from threading import Thread as _Thread
 from typing import Any as _Any, override as _override, overload as _overload
 
-from leads.os import _threads_life_flag
+from leads.os import _thread_flags
 
 
 class Device(object):
@@ -57,7 +57,7 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
         raise NotImplementedError
 
     def run(self) -> None:
-        while _threads_life_flag.active:
+        while _thread_flags.active:
             self.loop()
 
     @_override

@@ -31,4 +31,4 @@ class _ThreadFlags(object):
             self._lock.release()
 
 
-_threads_life_flag: _ThreadFlags = _ThreadFlags()
+_thread_flags: _ThreadFlags = _ThreadFlags()
