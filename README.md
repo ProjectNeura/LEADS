@@ -204,7 +204,7 @@ Note that a purely empty file could cause an error.
 |---------------------------|--------|--------------------------------------------------------------------|--------------|---------------|
 | `w_debug_level`           | `str`  | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                           | Main, Remote | `"DEBUG"`     |
 | `srw_mode`                | `bool` | `True`: single rear wheel; `False`: dual rear wheel                | Main         | `True`        |
-| `data_seq_size`           | `int`  | Buffer size of previous data                                       | Main         | `100`         |
+| `data_seq_size`           | `int`  | Buffer size of history data                                        | Main         | `100`         |
 | `enable_data_persistence` | `bool` | `True`: enable data persistence; `False`: disable data persistence | Main, Remote | `True`        |
 | `width`                   | `int`  | Window width                                                       | Main         | `720`         |
 | `height`                  | `int`  | Window height                                                      | Main         | `480`         |

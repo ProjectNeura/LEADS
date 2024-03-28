@@ -18,14 +18,14 @@ def _check_data_type(data: T, superclass: type[DataContainer] = DataContainer) -
 
 class Context(_Generic[T], metaclass=_ABCMeta):
     def __init__(self,
-                 srw_mode: bool,
-                 initial_data: T | None,
-                 data_seq_size: int,
-                 num_laps_timed: int) -> None:
+                 srw_mode: bool = True,
+                 initial_data: T | None = None,
+                 data_seq_size: int = 100,
+                 num_laps_timed: int = 3) -> None:
         """
         :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data
-        :param data_seq_size: buffer size of previous data
+        :param data_seq_size: buffer size of history data
         """
         self._srw_mode: bool = srw_mode
         dct = SRWDataContainer if srw_mode else DRWDataContainer
