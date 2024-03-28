@@ -112,7 +112,7 @@ class ConnectionBase(metaclass=_ABCMeta):
 
     def with_remainder(self, msg: bytes) -> bytes:
         if (i := msg.find(self._separator)) != len(msg) - 1:
-            self._remainder = msg[i + 1:]
+            self._remainder += msg[i + 1:]
             return msg[:i]
         return msg[:-1]
 
