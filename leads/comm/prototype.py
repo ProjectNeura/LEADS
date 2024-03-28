@@ -85,6 +85,9 @@ class Service(metaclass=_ABCMeta):
 
     @_abstractmethod
     def close(self) -> None:
+        """
+        Release the occupied resources.
+        """
         raise NotImplementedError
 
 
@@ -92,13 +95,17 @@ class ConnectionBase(metaclass=_ABCMeta):
     def __init__(self, service: Service, remainder: bytes, separator: bytes) -> None:
         """
         :param service: the service to which it belongs
-        :param remainder: message remain from last connection
+        :param remainder: the message remained from the last connection
         """
         self._service: Service = service
         self._remainder: bytes = remainder
         self._separator: bytes = separator
 
     def use_remainder(self) -> bytes:
+        """
+        Parse the remainder queue.
+        :return: the first message from the remainder queue
+        """
         if (i := self._remainder.find(self._separator)) < 0:
             msg = self._remainder
             self._remainder = b""
@@ -111,6 +118,11 @@ class ConnectionBase(metaclass=_ABCMeta):
         return msg
 
     def with_remainder(self, msg: bytes) -> bytes:
+        """
+        Parse the raw message and store the remaining part in the remainder queue.
+        :param msg: the raw message
+        :return: the first message
+        """
         if (i := msg.find(self._separator)) != len(msg) - 1:
             self._remainder += msg[i + 1:]
             return msg[:i]
@@ -126,14 +138,14 @@ class ConnectionBase(metaclass=_ABCMeta):
     @_abstractmethod
     def receive(self) -> bytes | None:
         """
-        :return: message in bytes or None
+        :return: the message or None
         """
         raise NotImplementedError
 
     @_abstractmethod
     def send(self, msg: bytes) -> None:
         """
-        :param msg: message in bytes
+        :param msg: the message
         """
         raise NotImplementedError
 
@@ -169,7 +181,7 @@ class Connection(ConnectionBase):
 
     def _require_open_socket(self, mandatory: bool = True) -> _socket:
         """
-        Check if the socket is active and return it
+        Check if the socket is active and return it.
         :param mandatory: True: an open socket is required; False: a closed socket is acceptable
         :return: the socket object
         """
@@ -181,7 +193,7 @@ class Connection(ConnectionBase):
     def receive(self, chunk_size: int = 512) -> bytes | None:
         """
         :param chunk_size: chunk buffer size
-        :return: message in bytes or None
+        :return: message or None
         """
         if self._remainder != b"":
             return self.use_remainder()

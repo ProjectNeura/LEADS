@@ -16,11 +16,29 @@ class Device(object):
         self._pins: tuple[int | str, ...] = pins
 
     def tag(self, tag: str | None = None) -> str | None:
+        """
+        Set or get the tag of the device.
+        ```python
+        tag(a_tag) # set a tag
+        tag() # get the tag
+        ```
+        :param tag: the tag or None if getter mode
+        :return: the tag or None if setter mode
+        """
         if tag is None:
             return self._tag
         self._tag = tag
 
     def parent_tags(self, parent_tags: list[str] | None = None) -> list[str] | None:
+        """
+        Set or get the parent tags of the device.
+        ```python
+        parent_tags(a_parent_tag_list) # set the parent tags
+        parent_tags() # get the parent tags
+        ```
+        :param parent_tags: the parent tags or None if getter mode
+        :return: the parent tags or None if setter mode
+        """
         if parent_tags is None:
             return self._parent_tags[:]
         if len(self._parent_tags) > 0:
