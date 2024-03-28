@@ -236,5 +236,4 @@ def main() -> int:
     uim.root().grid_rowconfigure(placeholder_row, weight=2)
     initialize_main()
     uim.show()
-    uim.rd().comm_kill()
     return 0

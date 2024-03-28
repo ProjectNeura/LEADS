@@ -20,6 +20,6 @@ class Client(Entity):
         self._connection.send(msg)
 
     @_override
-    def kill(self) -> None:
+    def close(self) -> None:
         if self._connection:
             self._connection.close()

@@ -73,13 +73,9 @@ class NMEAGPSReceiver(_Device, _Entity):
         self._stage(connection)
 
     @_override
-    def kill(self) -> None:
+    def close(self) -> None:
         if self._connection:
             self._connection.close()
-
-    @_override
-    def close(self) -> None:
-        self.kill()
 
     @staticmethod
     def _has_field(fields: tuple[tuple[str, str, ...], ...], target_field: str, at: int) -> bool:

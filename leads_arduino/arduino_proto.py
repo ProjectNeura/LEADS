@@ -50,13 +50,9 @@ class ArduinoProto(_Controller, _Entity):
         self._connection.send(payload)
 
     @_override
-    def kill(self) -> None:
+    def close(self) -> None:
         if self._connection:
             self._connection.close()
-
-    @_override
-    def close(self) -> None:
-        self.kill()
 
 
 class _ArduinoCallback(_Callback):

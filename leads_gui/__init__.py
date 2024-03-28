@@ -42,6 +42,6 @@ def initialize_comm_server(window: Window,
     server.start(True)
 
     def on_close(_) -> None:
-        server.kill()
+        server.close()
 
     window.set_on_close(on_close)

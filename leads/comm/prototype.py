@@ -41,6 +41,7 @@ class Service(metaclass=_ABCMeta):
         :param kwargs: kwargs passed to `Service.run()`
         """
         self.run(*args, **kwargs)
+        self.close()
 
     def _register_process(self, *args, **kwargs) -> None:
         """
@@ -83,7 +84,7 @@ class Service(metaclass=_ABCMeta):
                 self._run(*args, **kwargs)
 
     @_abstractmethod
-    def kill(self) -> None:
+    def close(self) -> None:
         raise NotImplementedError
 
 

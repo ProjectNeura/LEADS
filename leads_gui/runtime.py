@@ -14,7 +14,3 @@ class RuntimeData(object):
     def comm_notify(self, d: _DataContainer | dict[str, _Any]) -> None:
         if self.comm:
             self.comm.broadcast(d.encode() if isinstance(d, _DataContainer) else _dumps(d).encode())
-
-    def comm_kill(self) -> None:
-        if self.comm:
-            self.comm.kill()
