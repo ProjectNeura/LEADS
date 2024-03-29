@@ -2,7 +2,7 @@ from math import lcm as _lcm
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
 from PIL import ImageTk as _ImageTk
-from customtkinter import CTk as _CTk
+from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mode
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform
@@ -129,3 +129,7 @@ class ContextManager(object):
 
     def kill(self) -> None:
         self._window.kill()
+
+
+def parse_color(color: str | tuple[str, str]) -> str:
+    return color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]

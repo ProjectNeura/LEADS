@@ -2,7 +2,7 @@ from datetime import datetime
 from time import time
 from typing import Callable
 
-from customtkinter import CTkButton, CTkLabel, IntVar, StringVar, CTkSegmentedButton
+from customtkinter import CTkButton, CTkLabel, DoubleVar, StringVar, CTkSegmentedButton
 from keyboard import add_hotkey
 
 from leads import *
@@ -13,6 +13,7 @@ from leads_vec.__version__ import __version__
 
 class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
+    m2_mode: int = 0
     m3_mode: int = 0
     control_system_switch_changed: bool = False
 
@@ -41,7 +42,7 @@ def main() -> int:
                     fullscreen=cfg.fullscreen,
                     no_title_bar=cfg.no_title_bar)
     m1 = StringVar(window.root(), "")
-    m2 = IntVar(window.root(), 0)
+    m2 = DoubleVar(window.root(), 0)
     m3 = StringVar(window.root(), "")
     ecs = StringVar(window.root(), "STANDARD")
 
@@ -54,8 +55,7 @@ def main() -> int:
 
         manager["m1"] = CTkButton(manager.root(), textvariable=m1, command=switch_m1_mode,
                                   font=("Arial", cfg.font_size_small))
-        manager["m2"] = CTkButton(manager.root(), textvariable=m2, state="disabled",
-                                  font=("Arial", cfg.font_size_x_large))
+        manager["m2"] = Speedometer(manager.root(), variable=m2)
         manager["m3"] = CTkButton(manager.root(), textvariable=m3, command=switch_m3_mode,
                                   font=("Arial", cfg.font_size_medium))
 
@@ -135,7 +135,7 @@ def main() -> int:
                        f"{"SRW MODE" if cfg.srw_mode else "DRW MODE"}\n"
                        f"{cfg.refresh_rate} FPS\n"
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{uim.rd().comm.port()}")
-            m2.set(int(d.speed))
+            m2.set(d.speed)
             if uim.rd().m3_mode == 0:
                 m3.set(f"{d.voltage:.1f} V")
             elif uim.rd().m3_mode == 1:
