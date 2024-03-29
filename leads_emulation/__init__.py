@@ -1,6 +1,7 @@
-from math import sin as _sin, pi as _pi
 from random import randint as _randint
 from typing import override as _override
+
+from numpy import sin as _sin, pi as _pi
 
 from leads import Controller as _Controller, SRWDataContainer as _SRWDataContainer, \
     DRWDataContainer as _DRWDataContainer
