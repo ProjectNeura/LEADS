@@ -7,7 +7,7 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
 from numpy import mean as _mean, array as _array
 from numpy.linalg import norm as _norm
 
-from leads.types import Compressor, Stringifier
+from leads.types import Compressor as _Compressor, Stringifier as _Stringifier
 
 T = _TypeVar("T")
 
@@ -44,8 +44,8 @@ class DataPersistence(_Sequence[T], _Generic[T]):
                  max_size: int = -1,
                  chunk_scale: int = 1,
                  persistence: bool = False,
-                 compressor: Compressor[T] = mean_compressor,
-                 stringifier: Stringifier[T] = csv_stringifier) -> None:
+                 compressor: _Compressor[T] = mean_compressor,
+                 stringifier: _Stringifier[T] = csv_stringifier) -> None:
         """
         :param file: the file into which the data is written
         :param max_size: maximum cached size
@@ -57,8 +57,8 @@ class DataPersistence(_Sequence[T], _Generic[T]):
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
         self._persistence: bool = persistence if file else False
-        self._compressor: Compressor[T] = compressor
-        self._stringifier: Stringifier[T] = stringifier
+        self._compressor: _Compressor[T] = compressor
+        self._stringifier: _Stringifier[T] = stringifier
         self._data: list[T] = []
         self._chunk: list[T] = []
         self._chunk_size: int = chunk_scale

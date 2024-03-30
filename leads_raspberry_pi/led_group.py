@@ -5,7 +5,7 @@ from typing import override as _override
 
 from leads import Controller as _Controller
 from leads_raspberry_pi.led import LED, LEDCommand
-from leads_raspberry_pi.types import TransitionDirection
+from leads_raspberry_pi.types import TransitionDirection as _TransitionDirection
 
 
 class LEDGroupAnimation(object, metaclass=_ABCMeta):
@@ -22,8 +22,8 @@ class Entire(LEDGroupAnimation):
 
 
 class Transition(LEDGroupAnimation):
-    def __init__(self, direction: TransitionDirection, interval: float = 1) -> None:
-        self._direction: TransitionDirection = direction
+    def __init__(self, direction: _TransitionDirection, interval: float = 1) -> None:
+        self._direction: _TransitionDirection = direction
         self._interval: float = interval
 
     @_override

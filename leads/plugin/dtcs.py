@@ -4,12 +4,12 @@ from leads.constant import SystemLiteral
 from leads.context import Context
 from leads.event import InterventionEvent, InterventionExitEvent
 from leads.plugin.plugin import Plugin
-from leads.types import OptionalSpeed
+from leads.types import OptionalSpeed as _OptionalSpeed
 
 
 def dtcs_srw(context: Context,
-             front_wheel_speed: OptionalSpeed,
-             rear_wheel_speed: OptionalSpeed) -> InterventionEvent:
+             front_wheel_speed: _OptionalSpeed,
+             rear_wheel_speed: _OptionalSpeed) -> InterventionEvent:
     if front_wheel_speed < rear_wheel_speed:
         context.overwrite_throttle(0)
         return InterventionEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
@@ -17,9 +17,9 @@ def dtcs_srw(context: Context,
 
 
 def dtcs_drw(context: Context,
-             front_wheel_speed: OptionalSpeed,
-             left_rear_wheel_speed: OptionalSpeed,
-             right_rear_wheel_speed: OptionalSpeed) -> InterventionEvent:
+             front_wheel_speed: _OptionalSpeed,
+             left_rear_wheel_speed: _OptionalSpeed,
+             right_rear_wheel_speed: _OptionalSpeed) -> InterventionEvent:
     if front_wheel_speed < left_rear_wheel_speed:
         context.overwrite_throttle(0)
         return InterventionEvent(context, SystemLiteral.DTCS, "l", front_wheel_speed, left_rear_wheel_speed)

@@ -3,16 +3,16 @@ from typing import Any as _Any
 from leads.constant import ECSMode
 from leads.context import Context
 from leads.registry import require_context
-from leads.types import RequiredData
+from leads.types import RequiredData as _RequiredData
 
 
 class Plugin(object):
-    def __init__(self, required_data: RequiredData) -> None:
+    def __init__(self, required_data: _RequiredData) -> None:
         """
         :param required_data: required data or (required data in srw mode, required data in drw mode)
         """
         super().__init__()
-        self._required_data: RequiredData = required_data
+        self._required_data: _RequiredData = required_data
         self.state: dict[str, _Any] = {}
         self._enabled: bool = True
 

@@ -3,10 +3,10 @@ from threading import Lock as _Lock
 from types import FrameType as _FrameType
 
 if hasattr(_sys, "_getframe"):
-    def currentframe() -> _FrameType:
+    def _currentframe() -> _FrameType:
         return getattr(_sys, "_getframe")(1)
 else:
-    def currentframe() -> _FrameType:
+    def _currentframe() -> _FrameType:
         try:
             raise Exception
         except Exception as exc:

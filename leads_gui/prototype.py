@@ -6,7 +6,7 @@ from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mo
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform
-from leads_gui.types import Widget
+from leads_gui.types import Widget as _Widget, Color as _Color
 
 T = _TypeVar("T", bound=RuntimeData)
 
@@ -76,25 +76,25 @@ class Window(_Generic[T]):
 class ContextManager(object):
     def __init__(self, window: Window) -> None:
         self._window: Window = window
-        self._widgets: dict[str, Widget] = {}
+        self._widgets: dict[str, _Widget] = {}
         self._system_platform: str = get_system_platform()
 
-    def __setitem__(self, key: str, widget: Widget) -> None:
+    def __setitem__(self, key: str, widget: _Widget) -> None:
         self._widgets[key] = widget
 
-    def __getitem__(self, key: str) -> Widget:
+    def __getitem__(self, key: str) -> _Widget:
         return self._widgets[key]
 
     def system_platform(self) -> str:
         return self._system_platform
 
-    def set(self, key: str, widget: Widget) -> None:
+    def set(self, key: str, widget: _Widget) -> None:
         self[key] = widget
 
-    def get(self, key: str) -> Widget:
+    def get(self, key: str) -> _Widget:
         return self[key]
 
-    def parse_layout(self, layout: list[list[str | Widget]]) -> list[list[Widget]]:
+    def parse_layout(self, layout: list[list[str | _Widget]]) -> list[list[_Widget]]:
         for i in range(len(layout)):
             for j in range(len(layout[i])):
                 e = layout[i][j]
@@ -102,7 +102,7 @@ class ContextManager(object):
                     layout[i][j] = self[e]
         return layout
 
-    def layout(self, layout: list[list[str | Widget]]) -> None:
+    def layout(self, layout: list[list[str | _Widget]]) -> None:
         layout = self.parse_layout(layout)
         self.root().grid_columnconfigure(tuple(range(t := _lcm(*map(len, layout)))), weight=1)
         for i in range(len(layout)):
@@ -131,5 +131,5 @@ class ContextManager(object):
         self._window.kill()
 
 
-def parse_color(color: str | tuple[str, str]) -> str:
+def parse_color(color: _Color) -> str:
     return color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]

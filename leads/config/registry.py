@@ -2,16 +2,16 @@ from json import load as _load
 from typing import TypeVar as _TypeVar, TextIO as _TextIO
 
 from leads.config.template import ConfigTemplate
-from leads.types import OnRegister, OnRegisterChain
+from leads.types import OnRegister as _OnRegister, OnRegisterChain as _OnRegisterChain
 
 T = _TypeVar("T", bound=ConfigTemplate)
 
 _config_instance: T | None = None
 
-_on_register_config: OnRegister[T] = lambda _: None
+_on_register_config: _OnRegister[T] = lambda _: None
 
 
-def set_on_register_config(callback: OnRegisterChain[T]) -> None:
+def set_on_register_config(callback: _OnRegisterChain[T]) -> None:
     global _on_register_config
     _on_register_config = callback(_on_register_config)
 

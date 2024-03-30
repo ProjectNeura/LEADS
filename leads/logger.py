@@ -3,8 +3,8 @@ from enum import IntEnum as _IntEnum
 from threading import Lock as _Lock
 
 from leads.config import set_on_register_config, ConfigTemplate
-from leads.os import currentframe
-from leads.types import OnRegister
+from leads.os import _currentframe
+from leads.types import OnRegister as _OnRegister
 
 
 class Level(_IntEnum):
@@ -41,7 +41,7 @@ class Logger(object):
 
     @staticmethod
     def mark(msg: str, level: Level) -> str:
-        return f"[{repr(level)[1:-1]}] [{currentframe().f_back.f_back.f_code.co_name}] [{_datetime.now()}] {msg}"
+        return f"[{repr(level)[1:-1]}] [{_currentframe().f_back.f_back.f_code.co_name}] [{_datetime.now()}] {msg}"
 
     @staticmethod
     def format(msg: str, font: int, color: int | None, background: int | None) -> str:
@@ -75,7 +75,7 @@ class Logger(object):
 L: Logger = Logger()
 
 
-def _on_register_config(chain: OnRegister[ConfigTemplate]) -> OnRegister[ConfigTemplate]:
+def _on_register_config(chain: _OnRegister[ConfigTemplate]) -> _OnRegister[ConfigTemplate]:
     def _(config: ConfigTemplate) -> None:
         chain(config)
         L.debug_level(Level[config.w_debug_level])

@@ -1,16 +1,16 @@
 from typing import TypeVar as _TypeVar
 
 from leads.context import Context
-from leads.types import OnRegister, OnRegisterChain
+from leads.types import OnRegister as _OnRegister, OnRegisterChain as _OnRegisterChain
 
 T = _TypeVar("T", bound=Context)
 
 _context_instance: T | None = None
 
-_on_register_context: OnRegister[T] = lambda _: None
+_on_register_context: _OnRegister[T] = lambda _: None
 
 
-def set_on_register_context(callback: OnRegisterChain[T]) -> None:
+def set_on_register_context(callback: _OnRegisterChain[T]) -> None:
     global _on_register_context
     _on_register_context = callback(_on_register_context)
 

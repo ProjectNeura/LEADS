@@ -1,6 +1,6 @@
 from typing import Self as _Self
 
-from leads.os import currentframe
+from leads.os import _currentframe
 
 
 class CallbackChain(object):
@@ -15,7 +15,7 @@ class CallbackChain(object):
         Call the superior method if there is one.
         This must be called directly in the corresponding successor method.
         """
-        cf = currentframe().f_back
+        cf = _currentframe().f_back
         while (cn := cf.f_code.co_name) == "super":
             cf = cf.f_back
         if self._chain:

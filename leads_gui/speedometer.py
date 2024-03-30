@@ -6,7 +6,7 @@ from numpy import pi as _pi, sin as _sin, cos as _cos
 
 from leads import require_config as _require_config
 from leads_gui.prototype import parse_color
-from leads_gui.types import Font, Color
+from leads_gui.types import Font as _Font, Color as _Color
 
 
 class Speedometer(_Canvas):
@@ -18,10 +18,10 @@ class Speedometer(_Canvas):
                  style: int = 0,
                  next_style_on_click: bool = True,
                  maximum: float = 200,
-                 font: tuple[Font, Font, Font] | None = None,
-                 text_color: Color | None = None,
-                 fg_color: Color | None = None,
-                 bg_color: Color | None = None,
+                 font: tuple[_Font, _Font, _Font] | None = None,
+                 text_color: _Color | None = None,
+                 fg_color: _Color | None = None,
+                 bg_color: _Color | None = None,
                  corner_radius: int | None = None,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
         super().__init__(master,
@@ -32,9 +32,9 @@ class Speedometer(_Canvas):
         self._variable: _DoubleVar = variable if variable else _DoubleVar(master)
         self._maximum: float = maximum
         cfg = _require_config()
-        self._font: tuple[Font, Font, Font] = font if font else (("Arial", cfg.font_size_x_large),
-                                                                 ("Arial", cfg.font_size_large),
-                                                                 ("Arial", cfg.font_size_small))
+        self._font: tuple[_Font, _Font, _Font] = font if font else (("Arial", cfg.font_size_x_large),
+                                                                    ("Arial", cfg.font_size_large),
+                                                                    ("Arial", cfg.font_size_small))
         self._text_color: str = parse_color(text_color if text_color else _Theme.theme["CTkButton"]["text_color"])
         self._fg_color: str = parse_color(fg_color if fg_color else _Theme.theme["CTkButton"]["fg_color"])
         self._corner_radius: int = _Theme.theme["CTkButton"][
