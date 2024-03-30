@@ -17,7 +17,7 @@ class Speedometer(_Canvas):
                  variable: _DoubleVar | None = None,
                  style: int = 0,
                  next_style_on_click: bool = True,
-                 maximum: float = 260,
+                 maximum: float = 200,
                  font: tuple[Font, Font, Font] | None = None,
                  text_color: Color | None = None,
                  fg_color: Color | None = None,
