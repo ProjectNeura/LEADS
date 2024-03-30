@@ -1,15 +1,15 @@
-from tkinter import Canvas as _Canvas, Misc as _Misc, Event as _Event, ARC as _ARC
-from typing import Callable as _Callable
+from tkinter import Misc as _Misc, Event as _Event, ARC as _ARC
+from typing import Callable as _Callable, override as _override
 
 from customtkinter import DoubleVar as _DoubleVar, ThemeManager as _Theme
 from numpy import pi as _pi, sin as _sin, cos as _cos
 
 from leads import require_config as _require_config
-from leads_gui.prototype import parse_color
+from leads_gui.prototype import parse_color, CanvasBased
 from leads_gui.types import Font as _Font, Color as _Color
 
 
-class Speedometer(_Canvas):
+class Speedometer(CanvasBased):
     def __init__(self,
                  master: _Misc,
                  width: int = 0,
@@ -24,11 +24,7 @@ class Speedometer(_Canvas):
                  bg_color: _Color | None = None,
                  corner_radius: int | None = None,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master,
-                         width=width,
-                         height=height,
-                         background=parse_color(bg_color if bg_color else _Theme.theme["CTk"]["fg_color"]),
-                         highlightthickness=0)
+        super().__init__(master, width, height, bg_color, command)
         self._variable: _DoubleVar = variable if variable else _DoubleVar(master)
         self._maximum: float = maximum
         cfg = _require_config()
@@ -39,24 +35,17 @@ class Speedometer(_Canvas):
         self._fg_color: str = parse_color(fg_color if fg_color else _Theme.theme["CTkButton"]["fg_color"])
         self._corner_radius: int = _Theme.theme["CTkButton"][
             "corner_radius"] if corner_radius is None else corner_radius
-        self._ids: list[int] = []
         self._variable.trace_add("write", lambda _, __, ___: self.render())
         self._style: int = style
         if next_style_on_click:
-            def on_click(e: _Event) -> None:
+            def on_click(_) -> None:
                 self._style = (self._style + 1) % 3
-                command(e)
 
             self.bind("<Button-1>", on_click)
-        else:
-            self.bind("<Button-1>", command)
 
-    def clear(self) -> None:
-        self.delete(*self._ids)
-        self._ids.clear()
-
+    @_override
     def render(self) -> None:
-        self.clear()
+        super().render()
         v = self._variable.get()
         w, h = self.winfo_width(), self.winfo_height()
         hc, vc = w / 2, h / 2

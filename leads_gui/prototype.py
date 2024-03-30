@@ -1,8 +1,9 @@
 from math import lcm as _lcm
+from tkinter import Canvas as _Canvas, Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
 from PIL import ImageTk as _ImageTk
-from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mode
+from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mode, ThemeManager as _ThemeManager
 
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform
@@ -133,3 +134,23 @@ class ContextManager(object):
 
 def parse_color(color: _Color) -> str:
     return color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]
+
+
+class CanvasBased(_Canvas):
+    def __init__(self,
+                 master: _Misc,
+                 width: int = 0,
+                 height: int = 0,
+                 bg_color: _Color | None = None,
+                 command: _Callable[[_Event], None] = lambda _: None) -> None:
+        super().__init__(master, width=width, height=height, highlightthickness=0,
+                         background=parse_color(bg_color if bg_color else _ThemeManager.theme["CTk"]["fg_color"]))
+        self.bind("<Button-1>", command)
+        self._ids: list[int] = []
+
+    def clear(self) -> None:
+        self.delete(*self._ids)
+        self._ids.clear()
+
+    def render(self) -> None:
+        self.clear()
