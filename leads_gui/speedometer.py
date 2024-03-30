@@ -81,7 +81,7 @@ class Speedometer(_Canvas):
                                               text=str(self._maximum),
                                               fill="gray",
                                               font=("Arial", 8)))
-            rad = p * 4 * _pi / 3
+            rad = p * 4 * _pi / 3 - _pi / 6
             self._ids.append(self.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
                                                                                 y - _sin(rad) * (r - 8)),
                                               x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
