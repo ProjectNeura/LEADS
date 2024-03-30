@@ -215,7 +215,7 @@ Note that a purely empty file could cause an error.
 | `font_size_small`         | `int`  | Small font size                                                    | Main         | `14`          |
 | `font_size_medium`        | `int`  | Medium font size                                                   | Main         | `28`          |
 | `font_size_large`         | `int`  | Large font size                                                    | Main         | `42`          |
-| `font_size_x_large`       | `int`  | Extra large font size                                              | Main         | `84`          |
+| `font_size_x_large`       | `int`  | Extra large font size                                              | Main         | `56`          |
 | `comm_addr`               | `str`  | Communication server address                                       | Remote       | `"127.0.0.1"` |
 | `comm_port`               | `int`  | The port on which the communication system runs on                 | Main, Remote | `16900`       |
 | `data_dir`                | `str`  | The directory for the data recording system                        | Remote       | `"./data"`    |
