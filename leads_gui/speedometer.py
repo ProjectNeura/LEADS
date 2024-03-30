@@ -69,19 +69,23 @@ class Speedometer(_Canvas):
         self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
                                               h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
                                               0, 0), smooth=True, fill=self._fg_color))
-        if self._style == 1:
+        if self._style > 0:
             x, y = hc, vc + 16
             r = min(hc, vc) + 10
-            self._ids.append(self.create_arc(x - r, y - r, x + r, y + r,
-                                             start=-30,
-                                             extent=240,
-                                             width=4,
-                                             style=_ARC,
-                                             outline="green"))
-            rad = v * 4 * _pi / 3 / self._maximum
-            self._ids.append(self.create_line(x - _cos(rad) * (r - 8), y - _sin(rad) * (r - 8),
-                                              x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4, fill="green"))
-        self._ids.append(self.create_text((hc, vc if self._style == 0 else vc + 8),
-                                          text=str(int(v)),
-                                          fill=self._text_color,
-                                          font=font))
+            p = min(v / self._maximum, 1)
+            color = parse_color(("#" + str(int(25 + p * 75)) * 3, "#" + str(int(75 - p * 75)) * 3))
+            self._ids.append(self.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
+                                             style=_ARC, outline=color))
+            self._ids.append(self.create_text(hc + r - 20,
+                                              h - 16,
+                                              text=str(self._maximum),
+                                              fill="gray",
+                                              font=("Arial", 8)))
+            rad = p * 4 * _pi / 3
+            self._ids.append(self.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
+                                                                                y - _sin(rad) * (r - 8)),
+                                              x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
+                                              fill=color))
+        self._ids.append(self.create_text(hc,
+                                          vc if self._style == 0 else vc + 8 if self._style == 1 else h - font[1],
+                                          text=str(int(v)), fill=self._text_color, font=font))
