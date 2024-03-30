@@ -15,6 +15,8 @@ class Speedometer(_Canvas):
                  width: int = 0,
                  height: int = 0,
                  variable: _DoubleVar | None = None,
+                 style: int = 0,
+                 next_style_on_click: bool = True,
                  maximum: float = 260,
                  font: tuple[Font, Font, Font] | None = None,
                  text_color: Color | None = None,
@@ -39,13 +41,15 @@ class Speedometer(_Canvas):
             "corner_radius"] if corner_radius is None else corner_radius
         self._ids: list[int] = []
         self._variable.trace_add("write", lambda _, __, ___: self.render())
-        self._mode: int = 0
+        self._style: int = style
+        if next_style_on_click:
+            def on_click(e: _Event) -> None:
+                self._style = (self._style + 1) % 3
+                command(e)
 
-        def on_click(e: _Event) -> None:
-            self._mode = (self._mode + 1) % 3
-            command(e)
-
-        self.bind("<Button-1>", on_click)
+            self.bind("<Button-1>", on_click)
+        else:
+            self.bind("<Button-1>", command)
 
     def clear(self) -> None:
         self.delete(*self._ids)
@@ -56,8 +60,8 @@ class Speedometer(_Canvas):
         v = self._variable.get()
         w, h = self.winfo_width(), self.winfo_height()
         hc, vc = w / 2, h / 2
-        font = self._font[self._mode]
-        target_font_size = h - 28 if self._mode == 0 else h - 48
+        font = self._font[self._style]
+        target_font_size = h - 28 if self._style == 0 else h - 48
         if target_font_size < font[1]:
             font = (font[0], target_font_size)
 
@@ -65,7 +69,7 @@ class Speedometer(_Canvas):
         self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
                                               h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
                                               0, 0), smooth=True, fill=self._fg_color))
-        if self._mode == 1:
+        if self._style == 1:
             x, y = hc, vc + 16
             r = min(hc, vc) + 10
             self._ids.append(self.create_arc(x - r, y - r, x + r, y + r,
@@ -77,7 +81,7 @@ class Speedometer(_Canvas):
             rad = v * 4 * _pi / 3 / self._maximum
             self._ids.append(self.create_line(x - _cos(rad) * (r - 8), y - _sin(rad) * (r - 8),
                                               x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4, fill="green"))
-        self._ids.append(self.create_text((hc, vc if self._mode == 0 else vc + 8),
+        self._ids.append(self.create_text((hc, vc if self._style == 0 else vc + 8),
                                           text=str(int(v)),
                                           fill=self._text_color,
                                           font=font))
