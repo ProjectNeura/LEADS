@@ -152,5 +152,12 @@ class CanvasBased(_Canvas):
         self.delete(*self._ids)
         self._ids.clear()
 
+    def raw_renderer(self, canvas: _Self) -> None:
+        """
+        The raw renderer should only access the parameters from self, and then render on the specified canvas.
+        :param canvas: the canvas to render on
+        """
+        ...
+
     def render(self) -> None:
-        self.clear()
+        self.raw_renderer(self)
