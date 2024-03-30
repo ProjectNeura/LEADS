@@ -1,6 +1,6 @@
 from typing import Any as _Any
 
-from leads.constant import ECSMode
+from leads.constant import ESCMode
 from leads.context import Context
 from leads.registry import require_context
 from leads.types import RequiredData as _RequiredData
@@ -24,7 +24,7 @@ class Plugin(object):
 
     def enabled(self, enabled: bool | None = None) -> bool | None:
         if enabled is None:
-            return require_context().ecs_mode() != ECSMode.OFF and self._enabled
+            return require_context().esc_mode() != ESCMode.OFF and self._enabled
         self._enabled = enabled
 
     def required_data(self) -> list[str]:

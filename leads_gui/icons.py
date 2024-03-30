@@ -33,7 +33,7 @@ class _Icon(_Callable[[int, Color | None], _CTkImage]):
 
 Battery: _Icon = _Icon("battery")
 Brake: _Icon = _Icon("brake")
-ECS: _Icon = _Icon("ecs")
+ESC: _Icon = _Icon("esc")
 Engine: _Icon = _Icon("engine")
 Hazard: _Icon = _Icon("hazard")
 HighBeam: _Icon = _Icon("high-beam")

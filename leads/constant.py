@@ -8,7 +8,7 @@ class SystemLiteral(_StrEnum):
     ATBS: str = "ATBS"
 
 
-class ECSMode(_IntEnum):
+class ESCMode(_IntEnum):
     STANDARD: int = 0x00
     AGGRESSIVE: int = 0x01
     SPORT: int = 0x02

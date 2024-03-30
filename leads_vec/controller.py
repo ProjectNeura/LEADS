@@ -54,7 +54,7 @@ class BatteryVoltageSensor(VoltageSensor):
 @controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
 class WheelSpeedController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC", "ECS")
+        mark_system(self, "WSC", "ESC")
         super().initialize(*parent_tags)
 
     def read(self) -> dict[str, float]:
@@ -101,7 +101,7 @@ class AverageOdometer(ConcurrentOdometer):
 )))
 class WheelSpeedSensors(WheelSpeedSensor):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC", "ECS")
+        mark_system(self, "WSC", "ESC")
         super().initialize(*parent_tags)
 
 

@@ -44,7 +44,7 @@ def main() -> int:
     m1 = StringVar(window.root(), "")
     m2 = DoubleVar(window.root(), 0)
     m3 = StringVar(window.root(), "")
-    ecs = StringVar(window.root(), "STANDARD")
+    esc = StringVar(window.root(), "STANDARD")
 
     def render(manager: ContextManager):
         def switch_m1_mode():
@@ -81,14 +81,14 @@ def main() -> int:
 
         manager["hazard"] = CTkButton(manager.root(), text="", image=Hazard(), command=hazard)
 
-        def switch_ecs_mode(mode):
-            manager["ecs"].configure(selected_color=(c := "green" if (ecs_mode := ECSMode[mode]) < 2 else "red"),
+        def switch_esc_mode(mode):
+            manager["esc"].configure(selected_color=(c := "green" if (esc_mode := ESCMode[mode]) < 2 else "red"),
                                      selected_hover_color=c)
-            ctx.ecs_mode(ecs_mode)
+            ctx.esc_mode(esc_mode)
             manager.rd().control_system_switch_changed = True
 
-        manager["ecs"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
-                                            variable=ecs, command=switch_ecs_mode, font=("Arial", cfg.font_size_small))
+        manager["esc"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
+                                            variable=esc, command=switch_esc_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
@@ -179,14 +179,14 @@ def main() -> int:
 
     ctx.set_event_listener(CustomListener())
     uim["battery_fault"] = CTkLabel(uim.root(), text="")
-    uim["ecs_fault"] = CTkLabel(uim.root(), text="")
+    uim["esc_fault"] = CTkLabel(uim.root(), text="")
     uim["gps_fault"] = CTkLabel(uim.root(), text="")
     uim["motor_fault"] = CTkLabel(uim.root(), text="")
     uim["wheel_speed_fault"] = CTkLabel(uim.root(), text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
-        if e.system == "ECS":
-            uim["ecs_fault"].configure(image=ECS(color=Color.RED))
+        if e.system == "ESC":
+            uim["esc_fault"].configure(image=ESC(color=Color.RED))
         elif e.system == "BATT":
             uim["battery_fault"].configure(image=Battery(color=Color.RED))
         elif e.system == "MOTOR":
@@ -199,8 +199,8 @@ def main() -> int:
     SFT.on_fail = on_fail
 
     def on_recover(_, e: SuspensionEvent) -> None:
-        if e.system == "ECS":
-            uim["ecs_fault"].configure(image=None)
+        if e.system == "ESC":
+            uim["esc_fault"].configure(image=None)
         elif e.system == "BATT":
             uim["battery_fault"].configure(image=None)
         elif e.system == "MOTOR":
@@ -216,18 +216,18 @@ def main() -> int:
             ["m1", "m2", "m3"],
             [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
             ["time_lap", "hazard"],
-            ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
+            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
         ]
-        ctx.ecs_mode(ECSMode.OFF)
+        ctx.esc_mode(ESCMode.OFF)
         uim.rd().control_system_switch_changed = True
     else:
         layout = [
             ["m1", "m2", "m3"],
             [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
             list(map(lambda s: s.lower(), SystemLiteral)),
-            ["ecs"],
+            ["esc"],
             ["time_lap", "hazard"],
-            ["battery_fault", "ecs_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
+            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
         ]
     uim.layout(layout)
     placeholder_row = len(layout)
