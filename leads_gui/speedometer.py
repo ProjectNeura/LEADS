@@ -1,5 +1,5 @@
-from tkinter import Misc as _Misc, Event as _Event, ARC as _ARC
-from typing import Callable as _Callable, override as _override
+from tkinter import Misc as _Misc, ARC as _ARC
+from typing import override as _override
 
 from customtkinter import DoubleVar as _DoubleVar, ThemeManager as _Theme
 from numpy import pi as _pi, sin as _sin, cos as _cos
@@ -12,8 +12,9 @@ from leads_gui.types import Font as _Font, Color as _Color
 class Speedometer(CanvasBased):
     def __init__(self,
                  master: _Misc,
-                 width: int = 0,
-                 height: int = 0,
+                 theme_key: str = "CTkButton",
+                 width: float = 0,
+                 height: float = 0,
                  variable: _DoubleVar | None = None,
                  style: int = 0,
                  next_style_on_click: bool = True,
@@ -21,27 +22,23 @@ class Speedometer(CanvasBased):
                  font: tuple[_Font, _Font, _Font] | None = None,
                  text_color: _Color | None = None,
                  fg_color: _Color | None = None,
+                 hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
-                 corner_radius: int | None = None,
-                 command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master, width, height, bg_color, command)
+                 corner_radius: int | None = None) -> None:
+        def command(_) -> None:
+            self._style = (self._style + 1) % 3
+
+        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius,
+                         next_style_on_click, command if next_style_on_click else lambda _: None)
         self._variable: _DoubleVar = variable if variable else _DoubleVar(master)
         self._maximum: float = maximum
         cfg = _require_config()
         self._font: tuple[_Font, _Font, _Font] = font if font else (("Arial", cfg.font_size_x_large),
                                                                     ("Arial", cfg.font_size_large),
                                                                     ("Arial", cfg.font_size_small))
-        self._text_color: str = parse_color(text_color if text_color else _Theme.theme["CTkButton"]["text_color"])
-        self._fg_color: str = parse_color(fg_color if fg_color else _Theme.theme["CTkButton"]["fg_color"])
-        self._corner_radius: int = _Theme.theme["CTkButton"][
-            "corner_radius"] if corner_radius is None else corner_radius
+        self._text_color: str = parse_color(text_color if text_color else _Theme.theme[theme_key]["text_color"])
         self._variable.trace_add("write", lambda _, __, ___: self.render())
         self._style: int = style
-        if next_style_on_click:
-            def on_click(_) -> None:
-                self._style = (self._style + 1) % 3
-
-            self.bind("<Button-1>", on_click)
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
@@ -50,20 +47,16 @@ class Speedometer(CanvasBased):
         w, h = canvas.winfo_width(), canvas.winfo_height()
         hc, vc = w * .5, h * .5
         font = self._font[self._style]
-        target_font_size = h - 28 if self._style == 0 else h - 48
-        if target_font_size < font[1]:
+        canvas.configure(height=20)
+        if (target_font_size := h - 28 if self._style == 0 else h - 48) < font[1]:
             font = (font[0], target_font_size)
-
-        r = self._corner_radius
-        canvas._ids.append(
-            canvas.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
-                                   h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
-                                   0, 0), smooth=True, fill=self._fg_color))
+        canvas.draw_fg(canvas)
         if self._style > 0:
             r = min(hc, vc) + 10
-            x, y = hc, vc + r * .2
+            x, y = hc, vc + r * .25
             p = min(v / self._maximum, 1)
-            color = parse_color(("#" + str(int(60 - p * 60)) * 3, "#" + str(int(40 + p * 60)) * 3))
+            color = parse_color(("#" + str(hex(int(0xbf - p * 0xbf)))[2:] * 3,
+                                 "#" + str(hex(int(0x4d + 0xb2 * p)))[2:] * 3))
             canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                  style=_ARC, outline=color))
             canvas._ids.append(canvas.create_text(x - r * .7,
@@ -81,6 +74,7 @@ class Speedometer(CanvasBased):
                                                                                     y - _sin(rad) * (r - 8)),
                                                   x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
                                                   fill=color))
-        canvas._ids.append(canvas.create_text(hc,
-                                              vc if self._style == 0 else vc * 1.1 if self._style == 1 else vc + r * .6,
-                                              text=str(int(v)), fill=self._text_color, font=font))
+            canvas._ids.append(canvas.create_text(x, y * .9 if self._style == 1 else y + (r - font[1]) * .5,
+                                                  text=str(int(v)), fill=self._text_color, font=font))
+        else:
+            canvas._ids.append(canvas.create_text(hc, vc, text=str(int(v)), fill=self._text_color, font=font))

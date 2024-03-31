@@ -8,12 +8,17 @@ from leads_gui.types import Color as _Color
 class ProxyCanvas(CanvasBased):
     def __init__(self,
                  master: _Misc,
+                 theme_key: str,
                  *canvases: CanvasBased,
                  mode: int = 0,
-                 width: int = 0,
-                 height: int = 0,
-                 bg_color: _Color | None = None) -> None:
-        super().__init__(master, width, height, bg_color, lambda _: self.next_mode())
+                 width: float = 0,
+                 height: float = 0,
+                 fg_color: _Color | None = None,
+                 hover_color: _Color | None = None,
+                 bg_color: _Color | None = None,
+                 corner_radius: int | None = None) -> None:
+        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, True,
+                         lambda _: self.next_mode())
         self._canvases: tuple[CanvasBased, ...] = canvases
         self._mode: int = mode
 

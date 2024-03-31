@@ -140,18 +140,47 @@ def parse_color(color: _Color) -> str:
 class CanvasBased(_Canvas):
     def __init__(self,
                  master: _Misc,
-                 width: int = 0,
-                 height: int = 0,
+                 theme_key: str,
+                 width: float = 0,
+                 height: float = 0,
+                 fg_color: _Color | None = None,
+                 hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
+                 corner_radius: int | None = None,
+                 clickable: bool = False,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master, width=width, height=height, highlightthickness=0,
+        super().__init__(master, width=width * master.winfo_width() if 0 < width < 1 else width,
+                         height=height * master.winfo_height() if 0 < height < 1 else height,
+                         highlightthickness=0, cursor="hand2" if clickable else "arrow",
                          background=parse_color(bg_color if bg_color else _ThemeManager.theme["CTk"]["fg_color"]))
-        self.bind("<Button-1>", command)
+        self._fg_color: str = parse_color(fg_color if fg_color else _ThemeManager.theme[theme_key]["fg_color"])
+        try:
+            self._hover_color: str = parse_color(hover_color if hover_color else
+                                                 _ThemeManager.theme[theme_key]["hover_color"])
+            if clickable:
+                def hover(_) -> None:
+                    self._fg_color, self._hover_color = self._hover_color, self._fg_color
+                    self.render()
+
+                self.bind("<Enter>", hover)
+                self.bind("<Leave>", hover)
+        except KeyError:
+            self._hover_color: str = self._fg_color
+        self._corner_radius: int = _ThemeManager.theme[theme_key][
+            "corner_radius"] if corner_radius is None else corner_radius
+        if clickable:
+            self.bind("<Button-1>", command)
         self._ids: list[int] = []
 
     def clear(self) -> None:
         self.delete(*self._ids)
         self._ids.clear()
+
+    def draw_fg(self, canvas: _Self) -> None:
+        w, h, r = canvas.winfo_width(), canvas.winfo_height(), self._corner_radius
+        canvas._ids.append(canvas.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r,
+                                                  w, h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r,
+                                                  0, r, 0, 0), smooth=True, fill=self._fg_color))
 
     def raw_renderer(self, canvas: _Self) -> None:
         """

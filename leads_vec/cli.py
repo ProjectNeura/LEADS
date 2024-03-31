@@ -47,39 +47,41 @@ def main() -> int:
     esc = StringVar(window.root(), "STANDARD")
 
     def render(manager: ContextManager):
-        def switch_m1_mode():
+        root = manager.root()
+
+        def switch_m1_mode(_):
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
 
-        def switch_m3_mode():
+        def switch_m3_mode(_):
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
-        manager["m1"] = CTkButton(manager.root(), textvariable=m1, command=switch_m1_mode,
-                                  font=("Arial", cfg.font_size_small))
-        manager["m2"] = Speedometer(manager.root(), variable=m2)
-        manager["m3"] = CTkButton(manager.root(), textvariable=m3, command=switch_m3_mode,
-                                  font=("Arial", cfg.font_size_medium))
+        manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, height=cfg.height * .3, clickable=True,
+                                   command=switch_m1_mode)
+        manager["m2"] = Speedometer(root, variable=m2, height=cfg.height * .3)
+        manager["m3"] = Typography(root, theme_key="CTkButton", variable=m3, height=cfg.height * .3, clickable=True,
+                                   command=switch_m3_mode, font=("Arial", cfg.font_size_medium))
 
-        manager["comm_status"] = CTkLabel(manager.root(), text="COMM OFFLINE", text_color="gray",
+        manager["comm_status"] = CTkLabel(root, text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
 
         i = 0
         for system in SystemLiteral:
             i += 1
             system_lower = system.lower()
-            manager[system_lower + "_status"] = CTkLabel(manager.root(), text=system + " READY", text_color="green",
+            manager[system_lower + "_status"] = CTkLabel(root, text=system + " READY", text_color="green",
                                                          font=("Arial", cfg.font_size_small))
             add_hotkey(str(i), switch := make_system_switch(ctx, SystemLiteral(system), manager.rd()))
-            manager[system_lower] = CTkButton(manager.root(), text=system + " ON", command=switch,
+            manager[system_lower] = CTkButton(root, text=system + " ON", command=switch,
                                               font=("Arial", cfg.font_size_small))
 
-        manager["time_lap"] = CTkButton(manager.root(), text="Time Lap", command=ctx.time_lap,
+        manager["time_lap"] = CTkButton(root, text="Time Lap", command=ctx.time_lap,
                                         font=("Arial", cfg.font_size_small))
 
         def hazard():
             ctx.hazard(not ctx.hazard())
             manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
 
-        manager["hazard"] = CTkButton(manager.root(), text="", image=Hazard(), command=hazard)
+        manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=hazard)
 
         def switch_esc_mode(mode):
             manager["esc"].configure(selected_color=(c := "green" if (esc_mode := ESCMode[mode]) < 2 else "red"),
@@ -87,8 +89,8 @@ def main() -> int:
             ctx.esc_mode(esc_mode)
             manager.rd().control_system_switch_changed = True
 
-        manager["esc"] = CTkSegmentedButton(manager.root(), values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"],
-                                            variable=esc, command=switch_esc_mode, font=("Arial", cfg.font_size_small))
+        manager["esc"] = CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=esc,
+                                            command=switch_esc_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
 
@@ -230,10 +232,6 @@ def main() -> int:
             ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
         ]
     uim.layout(layout)
-    placeholder_row = len(layout)
-    CTkLabel(uim.root(), text="").grid(row=placeholder_row, column=0)
-    uim.root().grid_rowconfigure(0, weight=1)
-    uim.root().grid_rowconfigure(placeholder_row, weight=2)
     initialize_main()
     uim.show()
     return 0
