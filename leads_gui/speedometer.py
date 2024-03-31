@@ -66,8 +66,13 @@ class Speedometer(CanvasBased):
             color = parse_color(("#" + str(int(60 - p * 60)) * 3, "#" + str(int(40 + p * 60)) * 3))
             canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                  style=_ARC, outline=color))
-            canvas._ids.append(canvas.create_text(hc + r - 20,
-                                                  h - 16,
+            canvas._ids.append(canvas.create_text(x - r + 22,
+                                                  y + r / 2 - 10,
+                                                  text="0",
+                                                  fill="gray",
+                                                  font=("Arial", 8)))
+            canvas._ids.append(canvas.create_text(x + r - 22,
+                                                  y + r / 2 - 10,
                                                   text=str(self._maximum),
                                                   fill="gray",
                                                   font=("Arial", 8)))
