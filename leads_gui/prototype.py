@@ -133,7 +133,8 @@ class ContextManager(object):
 
 
 def parse_color(color: _Color) -> str:
-    return color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]
+    c = color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]
+    return parse_color(_ThemeManager.theme["CTk"]["fg_color"]) if c == "transparent" else c
 
 
 class CanvasBased(_Canvas):
