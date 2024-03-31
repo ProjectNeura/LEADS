@@ -6,7 +6,8 @@ from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config
-from leads_gui import get_system_platform as _get_system_platform, Config as _Config
+from leads_gui import Config as _Config
+from leads_gui.system import get_system_platform as _get_system_platform
 
 if __name__ == "__main__":
     parser = _ArgumentParser(prog="LEADS VeC",
