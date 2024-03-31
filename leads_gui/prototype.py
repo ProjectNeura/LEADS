@@ -6,7 +6,7 @@ from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mode, ThemeManager as _ThemeManager
 
 from leads_gui.runtime import RuntimeData
-from leads_gui.system import _ASSETS_PATH, get_system_platform
+from leads_gui.system import _ASSETS_PATH, get_system_platform as _get_system_platform
 from leads_gui.types import Widget as _Widget, Color as _Color
 
 T = _TypeVar("T", bound=RuntimeData)
@@ -78,7 +78,7 @@ class ContextManager(object):
     def __init__(self, window: Window) -> None:
         self._window: Window = window
         self._widgets: dict[str, _Widget] = {}
-        self._system_platform: str = get_system_platform()
+        self._system_platform: str = _get_system_platform()
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
         self._widgets[key] = widget
