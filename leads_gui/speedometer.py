@@ -60,8 +60,8 @@ class Speedometer(CanvasBased):
                                    h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
                                    0, 0), smooth=True, fill=self._fg_color))
         if self._style > 0:
-            x, y = hc, vc + 16
             r = min(hc, vc) + 10
+            x, y = hc, vc + r * .2
             p = min(v / self._maximum, 1)
             color = parse_color(("#" + str(int(60 - p * 60)) * 3, "#" + str(int(40 + p * 60)) * 3))
             canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
@@ -81,6 +81,5 @@ class Speedometer(CanvasBased):
                                                                                     y - _sin(rad) * (r - 8)),
                                                   x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
                                                   fill=color))
-        canvas._ids.append(canvas.create_text(hc,
-                                              vc if self._style == 0 else vc + 8 if self._style == 1 else h - font[1],
-                                              text=str(int(v)), fill=self._text_color, font=font))
+        canvas._ids.append(canvas.create_text(hc, vc if self._style == 0 else vc + 8 if self._style == 1
+        else vc + r * .6, text=str(int(v)), fill=self._text_color, font=font))
