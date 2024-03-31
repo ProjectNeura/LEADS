@@ -65,18 +65,18 @@
   },
   "CTkFont": {
     "macOS": {
-      "family": "SF Display",
-      "size": 13,
+      "family": "Arial",
+      "size": 14,
       "weight": "normal"
     },
     "Windows": {
-      "family": "Roboto",
-      "size": 13,
+      "family": "Arial",
+      "size": 14,
       "weight": "normal"
     },
     "Linux": {
-      "family": "Roboto",
-      "size": 13,
+      "family": "Arial",
+      "size": 14,
       "weight": "normal"
     }
   }
