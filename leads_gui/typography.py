@@ -29,7 +29,7 @@ class Typography(TextBased):
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
-        self.clear()
+        canvas.clear()
         v = self._variable.get()
         w, h = canvas.winfo_width(), canvas.winfo_height()
         font = self._font
