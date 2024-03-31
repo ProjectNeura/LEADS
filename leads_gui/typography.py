@@ -1,14 +1,13 @@
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, override as _override
 
-from customtkinter import StringVar as _StringVar, ThemeManager as _Theme
+from customtkinter import StringVar as _StringVar
 
-from leads import require_config as _require_config
-from leads_gui.prototype import parse_color, CanvasBased
+from leads_gui.prototype import CanvasBased, TextBased
 from leads_gui.types import Font as _Font, Color as _Color
 
 
-class Typography(CanvasBased):
+class Typography(TextBased):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkLabel",
@@ -23,11 +22,9 @@ class Typography(CanvasBased):
                  corner_radius: int | None = None,
                  clickable: bool = False,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, clickable,
-                         command)
+        super().__init__(master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
+                         corner_radius, clickable, command)
         self._variable: _StringVar = variable if variable else _StringVar(master)
-        self._font: _Font = font if font else ("Arial", _require_config().font_size_small)
-        self._text_color: str = parse_color(text_color if text_color else _Theme.theme[theme_key]["text_color"])
         self._variable.trace_add("write", lambda _, __, ___: self.render())
 
     @_override

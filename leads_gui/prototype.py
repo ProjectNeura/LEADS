@@ -5,9 +5,10 @@ from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Ge
 from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mode, ThemeManager as _ThemeManager
 
+from leads import require_config as _require_config
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform as _get_system_platform
-from leads_gui.types import Widget as _Widget, Color as _Color
+from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
 
 T = _TypeVar("T", bound=RuntimeData)
 
@@ -191,3 +192,23 @@ class CanvasBased(_Canvas):
 
     def render(self) -> None:
         self.raw_renderer(self)
+
+
+class TextBased(CanvasBased):
+    def __init__(self,
+                 master: _Misc,
+                 theme_key: str,
+                 width: float = 0,
+                 height: float = 0,
+                 font: _Font | None = None,
+                 text_color: _Color | None = None,
+                 fg_color: _Color | None = None,
+                 hover_color: _Color | None = None,
+                 bg_color: _Color | None = None,
+                 corner_radius: int | None = None,
+                 clickable: bool = False,
+                 command: _Callable[[_Event], None] = lambda _: None) -> None:
+        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, clickable,
+                         command)
+        self._font: _Font = font if font else ("Arial", _require_config().font_size_small)
+        self._text_color: str = parse_color(text_color if text_color else _ThemeManager.theme[theme_key]["text_color"])

@@ -1,22 +1,22 @@
 from tkinter import Misc as _Misc, ARC as _ARC
-from typing import override as _override
+from typing import override as _override, Literal as _Literal
 
-from customtkinter import DoubleVar as _DoubleVar, ThemeManager as _Theme
+from customtkinter import DoubleVar as _DoubleVar
 from numpy import pi as _pi, sin as _sin, cos as _cos
 
 from leads import require_config as _require_config
-from leads_gui.prototype import parse_color, CanvasBased
+from leads_gui.prototype import parse_color, CanvasBased, TextBased
 from leads_gui.types import Font as _Font, Color as _Color
 
 
-class Speedometer(CanvasBased):
+class Speedometer(TextBased):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkButton",
                  width: float = 0,
                  height: float = 0,
                  variable: _DoubleVar | None = None,
-                 style: int = 0,
+                 style: _Literal[0, 1, 2] = 0,
                  next_style_on_click: bool = True,
                  maximum: float = 200,
                  font: tuple[_Font, _Font, _Font] | None = None,
@@ -25,20 +25,25 @@ class Speedometer(CanvasBased):
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
                  corner_radius: int | None = None) -> None:
-        def command(_) -> None:
-            self._style = (self._style + 1) % 3
-
-        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius,
-                         next_style_on_click, command if next_style_on_click else lambda _: None)
+        super().__init__(master, theme_key, width, height, None, text_color, fg_color, hover_color, bg_color,
+                         corner_radius, next_style_on_click,
+                         lambda _: self.next_style() if next_style_on_click else lambda _: None)
         self._variable: _DoubleVar = variable if variable else _DoubleVar(master)
+        self._style: _Literal[0, 1, 2] = style
         self._maximum: float = maximum
         cfg = _require_config()
         self._font: tuple[_Font, _Font, _Font] = font if font else (("Arial", cfg.font_size_x_large),
                                                                     ("Arial", cfg.font_size_large),
                                                                     ("Arial", cfg.font_size_small))
-        self._text_color: str = parse_color(text_color if text_color else _Theme.theme[theme_key]["text_color"])
         self._variable.trace_add("write", lambda _, __, ___: self.render())
-        self._style: int = style
+
+    def next_style(self) -> None:
+        self._style = (self._style + 1) % 3
+
+    def style(self, style: _Literal[0, 1, 2] | None) -> _Literal[0, 1, 2] | None:
+        if style is None:
+            return self._style
+        self._style = style
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
