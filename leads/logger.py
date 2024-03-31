@@ -8,10 +8,10 @@ from leads.types import OnRegister as _OnRegister
 
 
 class Level(_IntEnum):
-    DEBUG: int = 0x00
-    INFO: int = 0x01
-    WARN: int = 0x02
-    ERROR: int = 0x03
+    DEBUG: int = 0
+    INFO: int = 1
+    WARN: int = 2
+    ERROR: int = 3
 
 
 class Logger(object):

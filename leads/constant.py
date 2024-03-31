@@ -9,7 +9,7 @@ class SystemLiteral(_StrEnum):
 
 
 class ESCMode(_IntEnum):
-    STANDARD: int = 0x00
-    AGGRESSIVE: int = 0x01
-    SPORT: int = 0x02
-    OFF: int = 0x03
+    STANDARD: int = 0
+    AGGRESSIVE: int = 1
+    SPORT: int = 2
+    OFF: int = 3

@@ -7,9 +7,9 @@ from leads import Device as _Device
 
 
 class LEDCommand(_IntEnum):
-    OFF: int = 0x00
-    ON: int = 0x01
-    BLINK: int = 0x02
+    OFF: int = 0
+    ON: int = 1
+    BLINK: int = 2
 
 
 class LED(_Device):
