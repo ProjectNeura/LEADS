@@ -56,10 +56,10 @@ def main() -> int:
             manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
 
         manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, height=cfg.height * .3, clickable=True,
-                                   command=switch_m1_mode)
+                                   command=switch_m1_mode, font=("Arial", cfg.font_size_small - 4))
         manager["m2"] = Speedometer(root, variable=m2, height=cfg.height * .3)
         manager["m3"] = Typography(root, theme_key="CTkButton", variable=m3, height=cfg.height * .3, clickable=True,
-                                   command=switch_m3_mode, font=("Arial", cfg.font_size_medium))
+                                   command=switch_m3_mode, font=("Arial", cfg.font_size_medium - 4))
 
         manager["comm_status"] = CTkLabel(root, text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
@@ -126,7 +126,7 @@ def main() -> int:
                                                                                                       lap_time_list))))
             elif uim.rd().m1_mode == 1:
                 gps = get_device(GPS_RECEIVER).read()
-                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n"
+                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n\n"
                        f"{d.gps_ground_speed:.1f} KM / H\n"
                        f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
             elif uim.rd().m1_mode == 2:
