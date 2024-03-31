@@ -63,7 +63,10 @@ if __name__ == "__main__":
         _L.debug(repr(e))
         _L.warn("`leads_vec.controller` is not available, using emulation module instead...")
         try:
-            from leads_emulation import SRWRandom as _Controller
+            if config.srw_mode:
+                from leads_emulation import SRWSin as _Controller
+            else:
+                from leads_emulation import DRWSin as _Controller
 
             _register_controller(_MAIN_CONTROLLER, _Controller())
         except ImportError:
