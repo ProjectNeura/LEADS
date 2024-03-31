@@ -48,7 +48,7 @@ class Speedometer(CanvasBased):
         canvas.clear()
         v = self._variable.get()
         w, h = canvas.winfo_width(), canvas.winfo_height()
-        hc, vc = w / 2, h / 2
+        hc, vc = w * .5, h * .5
         font = self._font[self._style]
         target_font_size = h - 28 if self._style == 0 else h - 48
         if target_font_size < font[1]:
@@ -66,13 +66,13 @@ class Speedometer(CanvasBased):
             color = parse_color(("#" + str(int(60 - p * 60)) * 3, "#" + str(int(40 + p * 60)) * 3))
             canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                  style=_ARC, outline=color))
-            canvas._ids.append(canvas.create_text(x - r + 22,
-                                                  y + r / 2 - 10,
+            canvas._ids.append(canvas.create_text(x - r * .7,
+                                                  y + r * .4,
                                                   text="0",
                                                   fill="gray",
                                                   font=("Arial", 8)))
-            canvas._ids.append(canvas.create_text(x + r - 22,
-                                                  y + r / 2 - 10,
+            canvas._ids.append(canvas.create_text(x + r * .7,
+                                                  y + r * .4,
                                                   text=str(self._maximum),
                                                   fill="gray",
                                                   font=("Arial", 8)))
@@ -81,5 +81,6 @@ class Speedometer(CanvasBased):
                                                                                     y - _sin(rad) * (r - 8)),
                                                   x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
                                                   fill=color))
-        canvas._ids.append(canvas.create_text(hc, vc if self._style == 0 else vc + 8 if self._style == 1
-        else vc + r * .6, text=str(int(v)), fill=self._text_color, font=font))
+        canvas._ids.append(canvas.create_text(hc,
+                                              vc if self._style == 0 else vc * 1.1 if self._style == 1 else vc + r * .6,
+                                              text=str(int(v)), fill=self._text_color, font=font))
