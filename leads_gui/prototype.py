@@ -71,7 +71,8 @@ class Window(_Generic[T]):
         def wrapper() -> None:
             self._on_refresh(self)
             if self._active:
-                self._root.after(int(2 * self._refresh_interval - self._performance_checker.average_delay()), wrapper)
+                self._root.after(max(0, int(2 * self._refresh_interval - self._performance_checker.average_delay())),
+                                 wrapper)
             self._performance_checker.record_frame()
 
         self._root.after(0, wrapper)
