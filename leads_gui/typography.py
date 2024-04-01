@@ -35,6 +35,6 @@ class Typography(TextBased):
         font = self._font
         if (target_font_size := h - 28) < font[1]:
             font = (font[0], target_font_size)
-        canvas.draw_fg(canvas)
+        canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         canvas._ids.append(canvas.create_text(w * .5, h * .5, text=v, justify="center", fill=self._text_color,
                                               font=font))

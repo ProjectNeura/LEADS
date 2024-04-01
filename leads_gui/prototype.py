@@ -156,12 +156,13 @@ class CanvasBased(_CTkCanvas):
                          highlightthickness=0, cursor="hand2" if clickable else "arrow",
                          background=parse_color(bg_color if bg_color else _ThemeManager.theme["CTk"]["fg_color"]))
         self._fg_color: str = parse_color(fg_color if fg_color else _ThemeManager.theme[theme_key]["fg_color"])
+        self._hovering: bool = False
         try:
             self._hover_color: str = parse_color(hover_color if hover_color else
                                                  _ThemeManager.theme[theme_key]["hover_color"])
             if clickable:
                 def hover(_) -> None:
-                    self._fg_color, self._hover_color = self._hover_color, self._fg_color
+                    self._hovering = not self._hovering
                     self.render()
 
                 self.bind("<Enter>", hover)
@@ -178,11 +179,11 @@ class CanvasBased(_CTkCanvas):
         self.delete(*self._ids)
         self._ids.clear()
 
-    def draw_fg(self, canvas: _Self) -> None:
-        w, h, r = canvas.winfo_width(), canvas.winfo_height(), self._corner_radius
-        canvas._ids.append(canvas.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r,
-                                                  w, h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r,
-                                                  0, r, 0, 0), smooth=True, fill=self._fg_color))
+    def draw_fg(self, fg_color: _Color, hover_color: _Color, corner_radius: int) -> None:
+        w, h, r = self.winfo_width(), self.winfo_height(), corner_radius
+        self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
+                                              h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
+                                              0, 0), smooth=True, fill=hover_color if self._hovering else fg_color))
 
     def raw_renderer(self, canvas: _Self) -> None:
         """

@@ -52,10 +52,9 @@ class Speedometer(TextBased):
         w, h = canvas.winfo_width(), canvas.winfo_height()
         hc, vc = w * .5, h * .5
         font = self._font[self._style]
-        canvas.configure(height=20)
         if (target_font_size := h - 28 if self._style == 0 else h - 48) < font[1]:
             font = (font[0], target_font_size)
-        canvas.draw_fg(canvas)
+        canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         if self._style > 0:
             r = min(hc, vc) + 10
             x, y = hc, vc + r * .25
