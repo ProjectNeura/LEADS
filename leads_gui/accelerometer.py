@@ -7,7 +7,7 @@ from leads_gui.prototype import CanvasBased, TextBased
 from leads_gui.types import Font as _Font, Color as _Color
 
 
-class Accelerometer(TextBased):
+class GForceMeter(TextBased):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkButton",
