@@ -73,7 +73,7 @@ class Speedometer(TextBased):
                                                                                     y - _sin(rad) * (r - 8)),
                                                   x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
                                                   fill=color))
-            canvas._ids.append(canvas.create_text(x, y * .9 if self._style == 1 else y + (r - font[1]) * .5,
+            canvas._ids.append(canvas.create_text(x, y * .95 if self._style == 1 else y + (r - font[1]) * .5,
                                                   text=str(int(v)), fill=self._text_color, font=font))
         else:
             canvas._ids.append(canvas.create_text(hc, vc, text=str(int(v)), fill=self._text_color, font=font))
