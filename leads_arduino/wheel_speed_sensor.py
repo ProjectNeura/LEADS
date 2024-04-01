@@ -1,6 +1,7 @@
-from math import pi as _pi
 from time import time as _time
 from typing import override as _override
+
+from numpy import pi as _pi
 
 from leads import Device as _Device, get_device as _get_device, Odometer as _Odometer
 

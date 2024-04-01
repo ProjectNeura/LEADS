@@ -1,10 +1,10 @@
-from math import lcm as _lcm
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
 from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
     ThemeManager as _ThemeManager
+from numpy import lcm as _lcm
 
 from leads import require_config as _require_config
 from leads_gui.runtime import RuntimeData
