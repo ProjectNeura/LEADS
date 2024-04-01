@@ -40,6 +40,7 @@ def main() -> int:
                     fullscreen=cfg.fullscreen,
                     no_title_bar=cfg.no_title_bar)
     root = window.root()
+    root.configure(cursor="dot")
     m1 = StringVar(root, "")
     speed = DoubleVar(root, 0)
     voltage = StringVar(root, "")
