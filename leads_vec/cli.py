@@ -13,8 +13,6 @@ from leads_vec.__version__ import __version__
 
 class CustomRuntimeData(RuntimeData):
     m1_mode: int = 0
-    m2_mode: int = 0
-    m3_mode: int = 0
     control_system_switch_changed: bool = False
 
 
@@ -41,25 +39,29 @@ def main() -> int:
                     CustomRuntimeData(),
                     fullscreen=cfg.fullscreen,
                     no_title_bar=cfg.no_title_bar)
-    m1 = StringVar(window.root(), "")
-    m2 = DoubleVar(window.root(), 0)
-    m3 = StringVar(window.root(), "")
-    esc = StringVar(window.root(), "STANDARD")
+    root = window.root()
+    m1 = StringVar(root, "")
+    speed = DoubleVar(root, 0)
+    voltage = StringVar(root, "")
+    speed_trend = DoubleVar(root, 0)
+    g_force = GForceVar(root, 0, 0, 0)
+    esc = StringVar(root, "STANDARD")
 
     def render(manager: ContextManager):
-        root = manager.root()
-
         def switch_m1_mode(_):
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
 
-        def switch_m3_mode(_):
-            manager.rd().m3_mode = (manager.rd().m3_mode + 1) % 3
-
         manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, height=cfg.height * .3, clickable=True,
                                    command=switch_m1_mode, font=("Arial", cfg.font_size_small - 4))
-        manager["m2"] = Speedometer(root, variable=m2, height=cfg.height * .3)
-        manager["m3"] = Typography(root, theme_key="CTkButton", variable=m3, height=cfg.height * .3, clickable=True,
-                                   command=switch_m3_mode, font=("Arial", cfg.font_size_medium - 4))
+        manager["m2"] = Speedometer(root, variable=speed, height=cfg.height * .3)
+        manager["m3"] = ProxyCanvas(root, "CTkButton",
+                                    Typography(root, theme_key="CTkButton", variable=voltage,
+                                               font=("Arial", cfg.font_size_medium - 4)),
+                                    SpeedTrendMeter(root, theme_key="CTkButton", variable=speed_trend,
+                                                    font=("Arial", cfg.font_size_medium - 4)),
+                                    GForceMeter(root, theme_key="CTkButton", variable=g_force,
+                                                font=("Arial", cfg.font_size_medium - 4)),
+                                    height=cfg.height * .3)
 
         manager["comm_status"] = CTkLabel(root, text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
@@ -137,14 +139,12 @@ def main() -> int:
                        f"{"SRW MODE" if cfg.srw_mode else "DRW MODE"}\n"
                        f"{cfg.refresh_rate} FPS\n"
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{uim.rd().comm.port()}")
-            m2.set(d.speed)
-            if uim.rd().m3_mode == 0:
-                m3.set(f"{d.voltage:.1f} V")
-            elif uim.rd().m3_mode == 1:
-                m3.set("G Force")
-            elif uim.rd().m3_mode == 2:
-                m3.set("STrend\n"
-                       f"{(st := ctx.get_speed_trend() * 10):.1f} {"↑" if st > 0 else "↓"}")
+            speed.set(d.speed)
+            voltage.set(f"{d.voltage:.1f} V")
+            speed_trend.set(ctx.get_speed_trend())
+            m3_proxy = uim["m3"]
+            assert isinstance(m3_proxy, ProxyCanvas)
+            m3_proxy.render()
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:
@@ -180,11 +180,11 @@ def main() -> int:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
     ctx.set_event_listener(CustomListener())
-    uim["battery_fault"] = CTkLabel(uim.root(), text="")
-    uim["esc_fault"] = CTkLabel(uim.root(), text="")
-    uim["gps_fault"] = CTkLabel(uim.root(), text="")
-    uim["motor_fault"] = CTkLabel(uim.root(), text="")
-    uim["wheel_speed_fault"] = CTkLabel(uim.root(), text="")
+    uim["battery_fault"] = CTkLabel(root, text="")
+    uim["esc_fault"] = CTkLabel(root, text="")
+    uim["gps_fault"] = CTkLabel(root, text="")
+    uim["motor_fault"] = CTkLabel(root, text="")
+    uim["wheel_speed_fault"] = CTkLabel(root, text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
         if e.system == "ESC":

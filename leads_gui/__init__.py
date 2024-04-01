@@ -14,6 +14,7 @@ from leads_gui.prototype import *
 from leads_gui.runtime import *
 from leads_gui.config import *
 from leads_gui.icons import *
+from leads_gui.accelerometer import *
 from leads_gui.speedometer import *
 from leads_gui.typography import *
 from leads_gui.proxy import *
