@@ -7,6 +7,7 @@ from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_m
 from numpy import lcm as _lcm
 
 from leads import require_config as _require_config
+from leads_gui.performance_checker import PerformanceChecker
 from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH, get_system_platform as _get_system_platform
 from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
@@ -38,6 +39,7 @@ class Window(_Generic[T]):
         self._on_refresh: _Callable[[Window], None] = on_refresh
 
         self._active: bool = False
+        self._performance_checker: PerformanceChecker = PerformanceChecker()
 
     def root(self) -> _CTk:
         return self._root
@@ -47,6 +49,9 @@ class Window(_Generic[T]):
 
     def height(self) -> int:
         return self._height
+
+    def fps(self) -> float:
+        return self._performance_checker.fps()
 
     def refresh_rate(self) -> int:
         return self._refresh_rate
@@ -66,7 +71,8 @@ class Window(_Generic[T]):
         def wrapper() -> None:
             self._on_refresh(self)
             if self._active:
-                self._root.after(self._refresh_interval, wrapper)
+                self._root.after(int(2 * self._refresh_interval - self._performance_checker.average_delay()), wrapper)
+            self._performance_checker.record_frame()
 
         self._root.after(0, wrapper)
         self._root.mainloop()
@@ -123,6 +129,9 @@ class ContextManager(object):
 
     def active(self) -> bool:
         return self._window.active()
+
+    def fps(self) -> float:
+        return self._window.fps()
 
     def root(self) -> _CTk:
         return self._window.root()

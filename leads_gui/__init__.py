@@ -18,6 +18,7 @@ from leads_gui.accelerometer import *
 from leads_gui.speedometer import *
 from leads_gui.typography import *
 from leads_gui.proxy import *
+from leads_gui.performance_checker import *
 
 _set_default_color_theme(_abspath(__file__)[:-11] + "assets/leads-theme.json")
 
