@@ -238,7 +238,7 @@ See [reports](docs/reports).
 
 ![pin-config](docs/assets/pin-config.png)
 
-### Remote Controller
+### Remote Analyst
 
 ![comm-flowchart](docs/assets/comm-flowchart.png)
 
