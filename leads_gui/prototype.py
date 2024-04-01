@@ -1,9 +1,10 @@
 from math import lcm as _lcm
-from tkinter import Canvas as _Canvas, Misc as _Misc, Event as _Event
+from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
 from PIL import ImageTk as _ImageTk
-from customtkinter import CTk as _CTk, get_appearance_mode as _get_appearance_mode, ThemeManager as _ThemeManager
+from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
+    ThemeManager as _ThemeManager
 
 from leads import require_config as _require_config
 from leads_gui.runtime import RuntimeData
@@ -138,7 +139,7 @@ def parse_color(color: _Color) -> str:
     return parse_color(_ThemeManager.theme["CTk"]["fg_color"]) if c == "transparent" else c
 
 
-class CanvasBased(_Canvas):
+class CanvasBased(_CTkCanvas):
     def __init__(self,
                  master: _Misc,
                  theme_key: str,
