@@ -153,7 +153,7 @@ class CanvasBased(_CTkCanvas):
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
         super().__init__(master, width=width * master.winfo_width() if 0 < width < 1 else width,
                          height=height * master.winfo_height() if 0 < height < 1 else height,
-                         highlightthickness=0, cursor="hand2" if clickable else "arrow",
+                         highlightthickness=0, cursor="hand2" if clickable else None,
                          background=parse_color(bg_color if bg_color else _ThemeManager.theme["CTk"]["fg_color"]))
         self._fg_color: str = parse_color(fg_color if fg_color else _ThemeManager.theme[theme_key]["fg_color"])
         self._hovering: bool = False
