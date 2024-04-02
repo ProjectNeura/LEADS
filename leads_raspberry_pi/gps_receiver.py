@@ -57,7 +57,7 @@ class NMEAGPSReceiver(_Device, _Entity):
             self._num_satellites = int(data.data[6])
 
     @_override
-    def read(self) -> [bool, float, float, float, int]:
+    def read(self) -> [bool, float, float, float, int, int]:
         """
         :return: [validity, ground speed, latitude, longitude, quality, num of satellites]
         """
