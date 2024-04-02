@@ -17,6 +17,7 @@ if __name__ == "__main__":
     parser.add_argument("action", choices=("info", "run"))
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="service to register")
     parser.add_argument("-c", "--config", default=None, help="specified configuration file")
+    parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
     args = parser.parse_args()
     if args.action == "info":
@@ -58,10 +59,13 @@ if __name__ == "__main__":
         _L.info("Configuring X Window System...")
         _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
     try:
+        if args.emu:
+            raise AttributeError("User specifies to use emulator")
         from leads_vec.controller import _
-    except ImportError as e:
+    except (ImportError, AttributeError) as e:
         _L.debug(repr(e))
-        _L.warn("`leads_vec.controller` is not available, using emulation module instead...")
+        if isinstance(e, ImportError):
+            _L.warn("`leads_vec.controller` is not available, using emulation module instead...")
         try:
             if config.srw_mode:
                 from leads_emulation import SRWSin as _Controller
