@@ -6,8 +6,7 @@ from typing import override as _override, Any as _Any
 
 class Serializable(object):
     def to_dict(self) -> dict[str, _Any]:
-        attributes = dir(self)
-        return {n: v for n in attributes if not n.startswith("_") and not callable(v := getattr(self, n))}
+        return {n: v for n in dir(self) if not n.startswith("_") and not callable(v := getattr(self, n))}
 
 
 class DataContainer(Serializable, metaclass=_ABCMeta):
