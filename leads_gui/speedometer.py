@@ -65,11 +65,11 @@ class Speedometer(TextBased):
             canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                  style=_ARC, outline=color))
             canvas._ids.append(canvas.create_text(x, y - r * .6, text="KM / H", fill="gray",
-                                                  font=("Arial", font_size_span)))
+                                                  font=(font[0], font_size_span)))
             canvas._ids.append(canvas.create_text(x - r * .7, y + r * .4, text="0", fill="gray",
-                                                  font=("Arial", font_size_span)))
+                                                  font=(font[0], font_size_span)))
             canvas._ids.append(canvas.create_text(x + r * .7, y + r * .4, text=str(self._maximum), fill="gray",
-                                                  font=("Arial", font_size_span)))
+                                                  font=(font[0], font_size_span)))
             rad = p * 4 * _pi / 3 - _pi / 6
             canvas._ids.append(canvas.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
                                                                                     y - _sin(rad) * (r - 8)),
