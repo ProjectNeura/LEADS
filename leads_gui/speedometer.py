@@ -56,17 +56,20 @@ class Speedometer(TextBased):
             font = (font[0], target_font_size)
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         if self._style > 0:
-            r = min(hc, vc) + 10
+            r = min(hc, vc) * 1.25
             x, y = hc, vc + r * .25
+            font_size_span = int(h * .06)
             p = min(v / self._maximum, 1)
             color = parse_color(("#" + str(hex(int(0xbf - p * 0xbf)))[2:] * 3,
                                  "#" + str(hex(int(0x4d + 0xb2 * p)))[2:] * 3))
             canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                  style=_ARC, outline=color))
-            canvas._ids.append(canvas.create_text(x, y - r * .6, text="KM / H", fill="gray", font=("Arial", 8)))
-            canvas._ids.append(canvas.create_text(x - r * .7, y + r * .4, text="0", fill="gray", font=("Arial", 8)))
+            canvas._ids.append(canvas.create_text(x, y - r * .6, text="KM / H", fill="gray",
+                                                  font=("Arial", font_size_span)))
+            canvas._ids.append(canvas.create_text(x - r * .7, y + r * .4, text="0", fill="gray",
+                                                  font=("Arial", font_size_span)))
             canvas._ids.append(canvas.create_text(x + r * .7, y + r * .4, text=str(self._maximum), fill="gray",
-                                                  font=("Arial", 8)))
+                                                  font=("Arial", font_size_span)))
             rad = p * 4 * _pi / 3 - _pi / 6
             canvas._ids.append(canvas.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
                                                                                     y - _sin(rad) * (r - 8)),
