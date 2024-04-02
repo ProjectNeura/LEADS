@@ -14,7 +14,8 @@ class PerformanceChecker(object):
         return self._fps
 
     def record_frame(self) -> None:
-        delay = (t := _time()) - self._last_frame
+        # add .001 to avoid zero division
+        delay = .001 + (t := _time()) - self._last_frame
         self._fps = 1 / delay
         self._delay_offset = (self._delay_offset * (self._refresh_rate - 1) + delay) / self._refresh_rate
         self._last_frame = t
