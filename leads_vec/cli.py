@@ -45,7 +45,7 @@ def main() -> int:
     speed = DoubleVar(root, 0)
     voltage = StringVar(root, "")
     speed_trend = DoubleVar(root, 0)
-    g_force = GForceVar(root, 0, 0, 0)
+    g_force = GForceVar(root, 0, 0)
     esc = StringVar(root, "STANDARD")
 
     def render(manager: ContextManager):

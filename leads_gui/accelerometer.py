@@ -10,15 +10,15 @@ from leads_gui.types import Font as _Font, Color as _Color
 
 
 class GForceVar(_Variable):
-    def __init__(self, master: _Misc, *forces: float, name: str | None = None) -> None:
-        super().__init__(master, forces, name)
+    def __init__(self, master: _Misc, x: float = 0, y: float = 0, name: str | None = None) -> None:
+        super().__init__(master, (x, y), name)
 
     @_override
-    def set(self, *forces: float) -> None:
-        super().set(forces)
+    def set(self, value: tuple[float, float]) -> None:
+        super().set(value)
 
     @_override
-    def get(self) -> tuple[float, ...]:
+    def get(self) -> [float, float]:
         return super().get()
 
 
@@ -42,8 +42,18 @@ class GForceMeter(TextBased):
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear()
+        x, y = self._variable.get()
+        w, h = canvas.winfo_width(), canvas.winfo_height()
+        hc, vc = w * .5, h * .5
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
-        # todo
+        limit = min(hc, vc)
+        color = parse_color(("gray74", "gray60"))
+        canvas.create_text(hc, vc, text="G", fill=self._text_color, font=(self._font[0], int(h * .1)))
+        for factor in .9, .6, .3:
+            r = limit * factor
+            canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2)
+        x, y = max(min(hc + x, w), 0), max(min(vc + y, h), 0)
+        canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color)
 
 
 class SpeedTrendMeter(TextBased):
