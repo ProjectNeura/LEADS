@@ -3,7 +3,7 @@ from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Ge
 
 from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
-    ThemeManager as _ThemeManager
+    ThemeManager as _ThemeManager, Variable as _Variable
 from numpy import lcm as _lcm
 
 from leads import require_config as _require_config
@@ -224,3 +224,19 @@ class TextBased(CanvasBased):
                          command)
         self._font: _Font = font if font else ("Arial", _require_config().font_size_small)
         self._text_color: str = parse_color(text_color if text_color else _ThemeManager.theme[theme_key]["text_color"])
+
+
+class VariableControlled(object):
+    def __init__(self, variable: _Variable) -> None:
+        self._variable: _Variable = variable
+        self._trace_cb_name: str | None = None
+
+    def attach(self, callback: _Callable[[], None]) -> None:
+        if self._trace_cb_name:
+            raise RuntimeError("Duplicated attachment")
+        self._trace_cb_name = self._variable.trace_add("write", lambda _, __, ___: callback())
+
+    def detach(self) -> None:
+        if self._trace_cb_name:
+            self._variable.trace_remove("write", self._trace_cb_name)
+            self._trace_cb_name = None

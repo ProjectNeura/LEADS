@@ -5,7 +5,7 @@ from PIL import ImageTk as _ImageTk
 from customtkinter import Variable as _Variable, DoubleVar as _DoubleVar
 
 from leads_gui.icons import Color, Car
-from leads_gui.prototype import CanvasBased, TextBased, parse_color
+from leads_gui.prototype import CanvasBased, TextBased, VariableControlled, parse_color
 from leads_gui.types import Font as _Font, Color as _Color
 
 
@@ -22,7 +22,7 @@ class GForceVar(_Variable):
         return super().get()
 
 
-class GForceMeter(TextBased):
+class GForceMeter(TextBased, VariableControlled):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkButton",
@@ -35,9 +35,10 @@ class GForceMeter(TextBased):
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
                  corner_radius: int | None = None) -> None:
-        super().__init__(master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
-                         corner_radius)
-        self._variable: GForceVar = variable if variable else GForceVar(master)
+        TextBased.__init__(self, master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
+                           corner_radius)
+        VariableControlled.__init__(self, variable if variable else GForceVar(master))
+        self.attach(self.render)
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
@@ -56,7 +57,7 @@ class GForceMeter(TextBased):
         canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color)
 
 
-class SpeedTrendMeter(TextBased):
+class SpeedTrendMeter(TextBased, VariableControlled):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkButton",
@@ -69,9 +70,10 @@ class SpeedTrendMeter(TextBased):
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
                  corner_radius: int | None = None) -> None:
-        super().__init__(master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
-                         corner_radius)
-        self._variable: _DoubleVar = variable if variable else _DoubleVar(master)
+        TextBased.__init__(self, master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
+                           corner_radius)
+        VariableControlled.__init__(self, variable if variable else _DoubleVar(master))
+        self.attach(self.render)
         self._image: _ImageTk.PhotoImage | None = None
 
     @_override

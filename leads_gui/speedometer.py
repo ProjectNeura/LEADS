@@ -5,11 +5,11 @@ from customtkinter import DoubleVar as _DoubleVar
 from numpy import pi as _pi, sin as _sin, cos as _cos
 
 from leads import require_config as _require_config
-from leads_gui.prototype import parse_color, CanvasBased, TextBased
+from leads_gui.prototype import parse_color, CanvasBased, TextBased, VariableControlled
 from leads_gui.types import Font as _Font, Color as _Color
 
 
-class Speedometer(TextBased):
+class Speedometer(TextBased, VariableControlled):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkButton",
@@ -25,17 +25,17 @@ class Speedometer(TextBased):
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
                  corner_radius: int | None = None) -> None:
-        super().__init__(master, theme_key, width, height, None, text_color, fg_color, hover_color, bg_color,
-                         corner_radius, next_style_on_click,
-                         lambda _: self.next_style() if next_style_on_click else lambda _: None)
-        self._variable: _DoubleVar = variable if variable else _DoubleVar(master)
+        TextBased.__init__(self, master, theme_key, width, height, None, text_color, fg_color, hover_color, bg_color,
+                           corner_radius, next_style_on_click,
+                           lambda _: self.next_style() if next_style_on_click else lambda _: None)
+        VariableControlled.__init__(self, variable if variable else _DoubleVar(master))
+        self.attach(self.render)
         self._style: _Literal[0, 1, 2] = style
         self._maximum: float = maximum
         cfg = _require_config()
         self._font: tuple[_Font, _Font, _Font] = font if font else (("Arial", cfg.font_size_x_large),
                                                                     ("Arial", cfg.font_size_large),
                                                                     ("Arial", cfg.font_size_small))
-        self._variable.trace_add("write", lambda _, __, ___: self.render())
 
     def next_style(self) -> None:
         self._style = (self._style + 1) % 3
