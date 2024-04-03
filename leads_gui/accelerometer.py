@@ -21,6 +21,9 @@ class GForceVar(_Variable):
     def get(self) -> [float, float]:
         return super().get()
 
+    def magnitude(self) -> float:
+        return ((v := self.get())[0] ** 2 + v[1] ** 2) ** .5
+
 
 class GForceMeter(TextBased, VariableControlled):
     def __init__(self,
@@ -39,11 +42,15 @@ class GForceMeter(TextBased, VariableControlled):
                            corner_radius)
         VariableControlled.__init__(self, variable if variable else GForceVar(master))
         self.attach(self.render)
+        self._max_magnitude: float = variable.magnitude()
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear()
+        assert isinstance(self._variable, GForceVar)
         x, y = self._variable.get()
+        if (magnitude := self._variable.magnitude()) > self._max_magnitude:
+            self._max_magnitude = magnitude
         w, h = canvas.winfo_width(), canvas.winfo_height()
         hc, vc = w * .5, h * .5
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
@@ -54,6 +61,8 @@ class GForceMeter(TextBased, VariableControlled):
             r = limit * factor
             canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2)
         x, y = hc + max(min(x / 9.8, .9), -.9) * limit, vc + max(min(y / 9.8, .9), -.9) * limit
+        r = max(min(self._max_magnitude / 9.8, .9), -.9) * limit
+        canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline="green", width=2)
         canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color)
 
 

@@ -142,8 +142,9 @@ def main() -> int:
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{uim.rd().comm.port()}")
             speed.set(d.speed)
             voltage.set(f"{d.voltage:.1f} V")
-            speed_trend.set(ctx.get_speed_trend())
-            g_force.set((3, 2))
+            st = ctx.get_speed_trend()
+            speed_trend.set(st)
+            g_force.set((st * 5, st * 10))
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:
