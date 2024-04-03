@@ -150,7 +150,6 @@ def parse_color(color: _Color) -> str:
 
 
 def autoscale(master: _Misc, s: float) -> float:
-    print(_ScalingTracker.get_widget_scaling(master))
     return s * _ScalingTracker.get_widget_scaling(master)
 
 
