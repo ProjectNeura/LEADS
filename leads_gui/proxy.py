@@ -32,4 +32,4 @@ class ProxyCanvas(CanvasBased):
 
     @_override
     def raw_renderer(self, canvas: _Self) -> None:
-        self._canvases[self._mode].concurrent_raw_renderer(canvas)
+        self._canvases[self._mode].raw_renderer(canvas)
