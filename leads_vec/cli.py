@@ -143,6 +143,7 @@ def main() -> int:
             speed.set(d.speed)
             voltage.set(f"{d.voltage:.1f} V")
             speed_trend.set(ctx.get_speed_trend())
+            g_force.set((3, 2))
             if uim.rd().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:

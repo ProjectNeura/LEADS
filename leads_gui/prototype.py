@@ -1,5 +1,5 @@
 from tkinter import Misc as _Misc, Event as _Event
-from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
+from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any
 
 from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
@@ -9,8 +9,123 @@ from numpy import lcm as _lcm
 from leads import require_config as _require_config
 from leads_gui.performance_checker import PerformanceChecker
 from leads_gui.runtime import RuntimeData
-from leads_gui.system import _ASSETS_PATH, get_system_platform as _get_system_platform
+from leads_gui.system import _ASSETS_PATH
 from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
+
+
+def parse_color(color: _Color) -> str:
+    c = color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]
+    return parse_color(_ThemeManager.theme["CTk"]["fg_color"]) if c == "transparent" else c
+
+
+def autoscale(master: _Misc, s: float) -> float:
+    return s * _ScalingTracker.get_widget_scaling(master)
+
+
+def autoscale_font(master: _Misc, font: _Font) -> _Font:
+    return font[0], int(autoscale(master, font[1]))
+
+
+class CanvasBased(_CTkCanvas):
+    def __init__(self,
+                 master: _Misc,
+                 theme_key: str,
+                 width: float = 0,
+                 height: float = 0,
+                 fg_color: _Color | None = None,
+                 hover_color: _Color | None = None,
+                 bg_color: _Color | None = None,
+                 corner_radius: float | None = None,
+                 clickable: bool = False,
+                 command: _Callable[[_Event], None] = lambda _: None) -> None:
+        super().__init__(master, width=autoscale(master, width * master.winfo_width() if 0 < width < 1 else width),
+                         height=autoscale(master, height * master.winfo_height() if 0 < height < 1 else height),
+                         highlightthickness=0, cursor="hand2" if clickable else None,
+                         background=parse_color(bg_color if bg_color else "transparent"))
+        self._fg_color: str = parse_color(fg_color if fg_color else _ThemeManager.theme[theme_key]["fg_color"])
+        self._hovering: bool = False
+        try:
+            self._hover_color: str = parse_color(hover_color if hover_color else _ThemeManager.theme[theme_key][
+                "hover_color"])
+            if clickable:
+                def hover(_) -> None:
+                    self._hovering = not self._hovering
+                    self.render()
+
+                self.bind("<Enter>", hover)
+                self.bind("<Leave>", hover)
+        except KeyError:
+            self._hover_color: str = self._fg_color
+        self._corner_radius: float = autoscale(master, _ThemeManager.theme[theme_key][
+            "corner_radius"] if corner_radius is None else corner_radius)
+        if clickable:
+            self.bind("<Button-1>", command)
+        self._ids: list[int] = []
+        self.bind("<Configure>", lambda _: self.render())
+
+    def clear(self) -> None:
+        self.delete(*self._ids)
+        self._ids.clear()
+
+    def draw_fg(self, fg_color: _Color, hover_color: _Color, corner_radius: float) -> None:
+        w, h, r = self.winfo_width(), self.winfo_height(), corner_radius * 2
+        self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
+                                              h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
+                                              0, 0), smooth=True, fill=hover_color if self._hovering else fg_color))
+
+    def raw_renderer(self, canvas: _Self) -> None:
+        """
+        The raw renderer should only access the parameters from self, and then render on the specified canvas.
+        :param canvas: the canvas to render on
+        """
+        ...
+
+    def render(self) -> None:
+        self.raw_renderer(self)
+
+
+class TextBased(CanvasBased):
+    def __init__(self,
+                 master: _Misc,
+                 theme_key: str,
+                 width: float = 0,
+                 height: float = 0,
+                 font: _Font | None = None,
+                 text_color: _Color | None = None,
+                 fg_color: _Color | None = None,
+                 hover_color: _Color | None = None,
+                 bg_color: _Color | None = None,
+                 corner_radius: float | None = None,
+                 clickable: bool = False,
+                 command: _Callable[[_Event], None] = lambda _: None) -> None:
+        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, clickable,
+                         command)
+        self._font: _Font = autoscale_font(master, font if font else ("Arial", _require_config().font_size_small))
+        self._text_color: str = parse_color(text_color if text_color else _ThemeManager.theme[theme_key]["text_color"])
+
+
+class VariableControlled(object):
+    def __init__(self, variable: _Variable) -> None:
+        self._variable: _Variable = variable
+        self._history_value: _Any = variable.get()
+        self._trace_cb_name: str | None = None
+
+    def attach(self, callback: _Callable[[], None]) -> None:
+        if self._trace_cb_name:
+            raise RuntimeError("Duplicated attachment")
+
+        def unique(_, __, ___) -> None:
+            if (v := self._variable.get()) != self._history_value:
+                callback()
+                self._history_value = v
+
+        self._trace_cb_name = self._variable.trace_add("write", unique)
+
+    def detach(self) -> None:
+        if self._trace_cb_name:
+            self._variable.trace_remove("write", self._trace_cb_name)
+            self._trace_cb_name = None
+
 
 T = _TypeVar("T", bound=RuntimeData)
 
@@ -87,16 +202,12 @@ class ContextManager(object):
     def __init__(self, window: Window) -> None:
         self._window: Window = window
         self._widgets: dict[str, _Widget] = {}
-        self._system_platform: str = _get_system_platform()
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
         self._widgets[key] = widget
 
     def __getitem__(self, key: str) -> _Widget:
         return self._widgets[key]
-
-    def system_platform(self) -> str:
-        return self._system_platform
 
     def set(self, key: str, widget: _Widget) -> None:
         self[key] = widget
@@ -114,7 +225,7 @@ class ContextManager(object):
 
     def layout(self, layout: list[list[str | _Widget]]) -> None:
         layout = self.parse_layout(layout)
-        self.root().grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
+        self._window.root().grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
@@ -142,109 +253,3 @@ class ContextManager(object):
 
     def kill(self) -> None:
         self._window.kill()
-
-
-def parse_color(color: _Color) -> str:
-    c = color if isinstance(color, str) else color[0] if _get_appearance_mode() == "Light" else color[1]
-    return parse_color(_ThemeManager.theme["CTk"]["fg_color"]) if c == "transparent" else c
-
-
-def autoscale(master: _Misc, s: float) -> float:
-    return s * _ScalingTracker.get_widget_scaling(master)
-
-
-def autoscale_font(master: _Misc, font: _Font) -> _Font:
-    return font[0], int(autoscale(master, font[1]))
-
-
-class CanvasBased(_CTkCanvas):
-    def __init__(self,
-                 master: _Misc,
-                 theme_key: str,
-                 width: float = 0,
-                 height: float = 0,
-                 fg_color: _Color | None = None,
-                 hover_color: _Color | None = None,
-                 bg_color: _Color | None = None,
-                 corner_radius: float | None = None,
-                 clickable: bool = False,
-                 command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master, width=autoscale(master, width * master.winfo_width() if 0 < width < 1 else width),
-                         height=autoscale(master, height * master.winfo_height() if 0 < height < 1 else height),
-                         highlightthickness=0, cursor="hand2" if clickable else None,
-                         background=parse_color(bg_color if bg_color else "transparent"))
-        self._fg_color: str = parse_color(fg_color if fg_color else _ThemeManager.theme[theme_key]["fg_color"])
-        self._hovering: bool = False
-        try:
-            self._hover_color: str = parse_color(hover_color if hover_color else _ThemeManager.theme[theme_key][
-                "hover_color"])
-            if clickable:
-                def hover(_) -> None:
-                    self._hovering = not self._hovering
-                    self.render()
-
-                self.bind("<Enter>", hover)
-                self.bind("<Leave>", hover)
-        except KeyError:
-            self._hover_color: str = self._fg_color
-        self._corner_radius: float = autoscale(master, _ThemeManager.theme[theme_key][
-            "corner_radius"] if corner_radius is None else corner_radius)
-        if clickable:
-            self.bind("<Button-1>", command)
-        self._ids: list[int] = []
-
-    def clear(self) -> None:
-        self.delete(*self._ids)
-        self._ids.clear()
-
-    def draw_fg(self, fg_color: _Color, hover_color: _Color, corner_radius: float) -> None:
-        w, h, r = self.winfo_width(), self.winfo_height(), corner_radius * 2
-        self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
-                                              h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
-                                              0, 0), smooth=True, fill=hover_color if self._hovering else fg_color))
-
-    def raw_renderer(self, canvas: _Self) -> None:
-        """
-        The raw renderer should only access the parameters from self, and then render on the specified canvas.
-        :param canvas: the canvas to render on
-        """
-        ...
-
-    def render(self) -> None:
-        self.raw_renderer(self)
-
-
-class TextBased(CanvasBased):
-    def __init__(self,
-                 master: _Misc,
-                 theme_key: str,
-                 width: float = 0,
-                 height: float = 0,
-                 font: _Font | None = None,
-                 text_color: _Color | None = None,
-                 fg_color: _Color | None = None,
-                 hover_color: _Color | None = None,
-                 bg_color: _Color | None = None,
-                 corner_radius: float | None = None,
-                 clickable: bool = False,
-                 command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, clickable,
-                         command)
-        self._font: _Font = autoscale_font(master, font if font else ("Arial", _require_config().font_size_small))
-        self._text_color: str = parse_color(text_color if text_color else _ThemeManager.theme[theme_key]["text_color"])
-
-
-class VariableControlled(object):
-    def __init__(self, variable: _Variable) -> None:
-        self._variable: _Variable = variable
-        self._trace_cb_name: str | None = None
-
-    def attach(self, callback: _Callable[[], None]) -> None:
-        if self._trace_cb_name:
-            raise RuntimeError("Duplicated attachment")
-        self._trace_cb_name = self._variable.trace_add("write", lambda _, __, ___: callback())
-
-    def detach(self) -> None:
-        if self._trace_cb_name:
-            self._variable.trace_remove("write", self._trace_cb_name)
-            self._trace_cb_name = None

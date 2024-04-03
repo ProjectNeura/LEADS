@@ -39,6 +39,7 @@ class ProxyCanvas(CanvasBased):
         if isinstance(canvas := self._canvases[self._mode], VariableControlled):
             canvas.detach()
         self._mode = mode
+        self.render()
         self._attach()
 
     @_override

@@ -44,11 +44,13 @@ class Speedometer(TextBased, VariableControlled):
 
     def next_style(self) -> None:
         self._style = (self._style + 1) % 3
+        self.render()
 
     def style(self, style: _Literal[0, 1, 2] | None) -> _Literal[0, 1, 2] | None:
         if style is None:
             return self._style
         self._style = style
+        self.render()
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
