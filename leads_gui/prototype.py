@@ -1,3 +1,4 @@
+from threading import Lock as _Lock
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic
 
@@ -184,6 +185,7 @@ class CanvasBased(_CTkCanvas):
         if clickable:
             self.bind("<Button-1>", command)
         self._ids: list[int] = []
+        self._lock: _Lock = _Lock()
 
     def clear(self) -> None:
         self.delete(*self._ids)
@@ -202,8 +204,15 @@ class CanvasBased(_CTkCanvas):
         """
         ...
 
+    def concurrent_raw_renderer(self, canvas: _Self) -> None:
+        self._lock.acquire()
+        try:
+            self.raw_renderer(canvas)
+        finally:
+            self._lock.release()
+
     def render(self) -> None:
-        self.raw_renderer(self)
+        self.concurrent_raw_renderer(self)
 
 
 class TextBased(CanvasBased):
