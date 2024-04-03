@@ -3,7 +3,7 @@ from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Ge
 
 from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
-    ThemeManager as _ThemeManager, Variable as _Variable
+    ThemeManager as _ThemeManager, Variable as _Variable, ScalingTracker as _ScalingTracker
 from numpy import lcm as _lcm
 
 from leads import require_config as _require_config
@@ -149,6 +149,15 @@ def parse_color(color: _Color) -> str:
     return parse_color(_ThemeManager.theme["CTk"]["fg_color"]) if c == "transparent" else c
 
 
+def autoscale(master: _Misc, s: float) -> float:
+    print(_ScalingTracker.get_widget_scaling(master))
+    return s * _ScalingTracker.get_widget_scaling(master)
+
+
+def autoscale_font(master: _Misc, font: _Font) -> _Font:
+    return font[0], int(autoscale(master, font[1]))
+
+
 class CanvasBased(_CTkCanvas):
     def __init__(self,
                  master: _Misc,
@@ -158,18 +167,18 @@ class CanvasBased(_CTkCanvas):
                  fg_color: _Color | None = None,
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
-                 corner_radius: int | None = None,
+                 corner_radius: float | None = None,
                  clickable: bool = False,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
-        super().__init__(master, width=width * master.winfo_width() if 0 < width < 1 else width,
-                         height=height * master.winfo_height() if 0 < height < 1 else height,
+        super().__init__(master, width=autoscale(master, width * master.winfo_width() if 0 < width < 1 else width),
+                         height=autoscale(master, height * master.winfo_height() if 0 < height < 1 else height),
                          highlightthickness=0, cursor="hand2" if clickable else None,
                          background=parse_color(bg_color if bg_color else "transparent"))
         self._fg_color: str = parse_color(fg_color if fg_color else _ThemeManager.theme[theme_key]["fg_color"])
         self._hovering: bool = False
         try:
-            self._hover_color: str = parse_color(hover_color if hover_color else
-                                                 _ThemeManager.theme[theme_key]["hover_color"])
+            self._hover_color: str = parse_color(hover_color if hover_color else _ThemeManager.theme[theme_key][
+                "hover_color"])
             if clickable:
                 def hover(_) -> None:
                     self._hovering = not self._hovering
@@ -179,8 +188,8 @@ class CanvasBased(_CTkCanvas):
                 self.bind("<Leave>", hover)
         except KeyError:
             self._hover_color: str = self._fg_color
-        self._corner_radius: int = _ThemeManager.theme[theme_key][
-            "corner_radius"] if corner_radius is None else corner_radius
+        self._corner_radius: float = autoscale(master, _ThemeManager.theme[theme_key][
+            "corner_radius"] if corner_radius is None else corner_radius)
         if clickable:
             self.bind("<Button-1>", command)
         self._ids: list[int] = []
@@ -189,8 +198,8 @@ class CanvasBased(_CTkCanvas):
         self.delete(*self._ids)
         self._ids.clear()
 
-    def draw_fg(self, fg_color: _Color, hover_color: _Color, corner_radius: int) -> None:
-        w, h, r = self.winfo_width(), self.winfo_height(), corner_radius
+    def draw_fg(self, fg_color: _Color, hover_color: _Color, corner_radius: float) -> None:
+        w, h, r = self.winfo_width(), self.winfo_height(), corner_radius * 2
         self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
                                               h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
                                               0, 0), smooth=True, fill=hover_color if self._hovering else fg_color))
@@ -217,12 +226,12 @@ class TextBased(CanvasBased):
                  fg_color: _Color | None = None,
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
-                 corner_radius: int | None = None,
+                 corner_radius: float | None = None,
                  clickable: bool = False,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
         super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, clickable,
                          command)
-        self._font: _Font = font if font else ("Arial", _require_config().font_size_small)
+        self._font: _Font = autoscale_font(master, font if font else ("Arial", _require_config().font_size_small))
         self._text_color: str = parse_color(text_color if text_color else _ThemeManager.theme[theme_key]["text_color"])
 
 

@@ -19,7 +19,7 @@ class Typography(TextBased, VariableControlled):
                  fg_color: _Color | None = None,
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
-                 corner_radius: int | None = None,
+                 corner_radius: float | None = None,
                  clickable: bool = False,
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
         TextBased.__init__(self, master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,

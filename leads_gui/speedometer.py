@@ -5,7 +5,7 @@ from customtkinter import DoubleVar as _DoubleVar
 from numpy import pi as _pi, sin as _sin, cos as _cos
 
 from leads import require_config as _require_config
-from leads_gui.prototype import parse_color, CanvasBased, TextBased, VariableControlled
+from leads_gui.prototype import parse_color, CanvasBased, TextBased, VariableControlled, autoscale_font
 from leads_gui.types import Font as _Font, Color as _Color
 
 
@@ -24,7 +24,7 @@ class Speedometer(TextBased, VariableControlled):
                  fg_color: _Color | None = None,
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
-                 corner_radius: int | None = None) -> None:
+                 corner_radius: float | None = None) -> None:
         TextBased.__init__(self, master, theme_key, width, height, None, text_color, fg_color, hover_color, bg_color,
                            corner_radius, next_style_on_click,
                            lambda _: self.next_style() if next_style_on_click else lambda _: None)
@@ -36,6 +36,11 @@ class Speedometer(TextBased, VariableControlled):
         self._font: tuple[_Font, _Font, _Font] = font if font else (("Arial", cfg.font_size_x_large),
                                                                     ("Arial", cfg.font_size_large),
                                                                     ("Arial", cfg.font_size_small))
+        self._font: tuple[_Font, _Font, _Font] = (
+            autoscale_font(master, font[0]), autoscale_font(master, font[1]), autoscale_font(master, font[2])
+        ) if font else (autoscale_font(master, ("Arial", cfg.font_size_x_large)),
+                        autoscale_font(master, ("Arial", cfg.font_size_large)),
+                        autoscale_font(master, ("Arial", cfg.font_size_small)))
 
     def next_style(self) -> None:
         self._style = (self._style + 1) % 3

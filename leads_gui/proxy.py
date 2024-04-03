@@ -16,7 +16,7 @@ class ProxyCanvas(CanvasBased):
                  fg_color: _Color | None = None,
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
-                 corner_radius: int | None = None) -> None:
+                 corner_radius: float | None = None) -> None:
         super().__init__(master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius, True,
                          lambda _: self.next_mode())
         for canvas in canvases:
