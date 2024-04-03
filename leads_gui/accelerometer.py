@@ -53,7 +53,7 @@ class GForceMeter(TextBased, VariableControlled):
         for factor in .9, .6, .3:
             r = limit * factor
             canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2)
-        x, y = max(min(hc + x, w), 0), max(min(vc + y, h), 0)
+        x, y = hc + max(min(x / 9.8, .9), -.9) * limit, vc + max(min(y / 9.8, .9), -.9) * limit
         canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color)
 
 
