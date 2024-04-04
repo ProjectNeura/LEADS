@@ -60,8 +60,14 @@ class CanvasBased(_CTkCanvas):
             "corner_radius"] if corner_radius is None else corner_radius)
         if clickable:
             self.bind("<Button-1>", command)
+        self._ratio: float | None = None
+        self._history_width: float = self.meta()[0]
         self._ids: dict[str, int] = {}
         self.bind("<Configure>", lambda _: self.render())
+
+    def lock_ratio(self, ratio: float) -> _Self:
+        self._ratio = ratio
+        return self
 
     def meta(self) -> [float, float, float, float, float]:
         """
@@ -104,6 +110,9 @@ class CanvasBased(_CTkCanvas):
         ...
 
     def render(self) -> None:
+        if self._ratio and (w := self.meta()[0]) != self._history_width:
+            self.configure(height=w * self._ratio)
+            self._history_width = w
         self.raw_renderer(self)
 
 

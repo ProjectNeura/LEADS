@@ -52,18 +52,16 @@ def main() -> int:
         def switch_m1_mode(_):
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
 
-        height = cfg.height * (.6 if cfg.manual_mode else .3)
-        manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, height=height, clickable=True,
-                                   command=switch_m1_mode, font=("Arial", cfg.font_size_small - 4))
-        manager["m2"] = Speedometer(root, variable=speed, height=height)
+        manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, clickable=True,
+                                   command=switch_m1_mode, font=("Arial", cfg.font_size_small - 4)).lock_ratio(.7)
+        manager["m2"] = Speedometer(root, variable=speed).lock_ratio(.7)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
                                     Typography(root, theme_key="CTkButton", variable=voltage,
                                                font=("Arial", cfg.font_size_medium - 4)),
                                     SpeedTrendMeter(root, theme_key="CTkButton", variable=speed_trend,
                                                     font=("Arial", cfg.font_size_medium - 4)),
                                     GForceMeter(root, theme_key="CTkButton", variable=g_force,
-                                                font=("Arial", cfg.font_size_medium - 4)),
-                                    height=height)
+                                                font=("Arial", cfg.font_size_medium - 4))).lock_ratio(.7)
 
         manager["comm_status"] = CTkLabel(root, text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
