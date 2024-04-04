@@ -87,7 +87,7 @@ class Speedometer(TextBased, VariableControlled):
         if self._style > 0:
             r = min(hc, vc) * 1.25
             x, y = hc, vc + r * .25
-            font_size_span = int(h * .06)
+            font_size_span = int(min(h * .06, self._font[2][1] * .8))
             canvas.collect("f1", canvas.create_text(x, y - r * .6, text="KM / H", fill="gray",
                                                     font=(font[0], font_size_span)))
             canvas.collect("f2", canvas.create_text(x - r * .7, y + r * .4, text="0", fill="gray",
