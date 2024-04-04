@@ -52,9 +52,10 @@ def main() -> int:
         def switch_m1_mode(_):
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
 
-        manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, height=cfg.height * .3, clickable=True,
+        height = cfg.height * (.6 if cfg.manual_mode else .3)
+        manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, height=height, clickable=True,
                                    command=switch_m1_mode, font=("Arial", cfg.font_size_small - 4))
-        manager["m2"] = Speedometer(root, variable=speed, height=cfg.height * .3)
+        manager["m2"] = Speedometer(root, variable=speed, height=height)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
                                     Typography(root, theme_key="CTkButton", variable=voltage,
                                                font=("Arial", cfg.font_size_medium - 4)),
@@ -62,7 +63,7 @@ def main() -> int:
                                                     font=("Arial", cfg.font_size_medium - 4)),
                                     GForceMeter(root, theme_key="CTkButton", variable=g_force,
                                                 font=("Arial", cfg.font_size_medium - 4)),
-                                    height=cfg.height * .3)
+                                    height=height)
 
         manager["comm_status"] = CTkLabel(root, text="COMM OFFLINE", text_color="gray",
                                           font=("Arial", cfg.font_size_small))
@@ -216,7 +217,7 @@ def main() -> int:
     if cfg.manual_mode:
         layout = [
             ["m1", "m2", "m3"],
-            [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
+            ["comm_status"],
             ["time_lap", "hazard"],
             ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
         ]
