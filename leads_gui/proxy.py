@@ -1,5 +1,5 @@
 from tkinter import Misc as _Misc
-from typing import Self as _Self, override as _override
+from typing import override as _override
 
 from leads_gui.prototype import CanvasBased, VariableControlled
 from leads_gui.types import Color as _Color
@@ -28,7 +28,7 @@ class ProxyCanvas(CanvasBased):
 
     def _attach(self) -> None:
         if isinstance(canvas := self._canvases[self._mode], VariableControlled):
-            canvas.attach(self.render)
+            canvas.attach(self.partially_render)
 
     def next_mode(self) -> None:
         self.mode((self._mode + 1) % len(self._canvases))
@@ -43,5 +43,9 @@ class ProxyCanvas(CanvasBased):
         self._attach()
 
     @_override
-    def raw_renderer(self, canvas: _Self) -> None:
+    def dynamic_renderer(self, canvas: CanvasBased) -> None:
+        self._canvases[self._mode].dynamic_renderer(canvas)
+
+    @_override
+    def raw_renderer(self, canvas: CanvasBased) -> None:
         self._canvases[self._mode].raw_renderer(canvas)

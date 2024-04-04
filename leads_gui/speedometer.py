@@ -29,7 +29,7 @@ class Speedometer(TextBased, VariableControlled):
                            corner_radius, next_style_on_click,
                            lambda _: self.next_style() if next_style_on_click else lambda _: None)
         VariableControlled.__init__(self, variable if variable else _DoubleVar(master))
-        self.attach(self.render)
+        self.attach(self.partially_render)
         self._style: _Literal[0, 1, 2] = style
         self._maximum: float = maximum
         cfg = _require_config()
@@ -53,11 +53,33 @@ class Speedometer(TextBased, VariableControlled):
         self.render()
 
     @_override
+    def dynamic_renderer(self, canvas: CanvasBased) -> None:
+        canvas.clear("d")
+        v = self._variable.get()
+        w, h, hc, vc, limit = canvas.meta()
+        font = self._font[self._style]
+        if self._style > 0:
+            r = min(hc, vc) * 1.25
+            x, y = hc, vc + r * .25
+            p = min(v / self._maximum, 1)
+            rad = p * 4 * _pi / 3 - _pi / 6
+            color = parse_color(("#" + str(hex(int(0xbf - p * 0xbf)))[2:] * 3,
+                                 "#" + str(hex(int(0x4d + 0xb2 * p)))[2:] * 3))
+            canvas.collect("d0", canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
+                                                   style=_ARC, outline=color))
+            canvas.collect("d1", canvas.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
+                                                                                      y - _sin(rad) * (r - 8)),
+                                                    x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
+                                                    fill=color))
+            canvas.collect("d2", canvas.create_text(x, y * .95 if self._style == 1 else y + (r - font[1]) * .5,
+                                                    text=str(int(v)), fill=self._text_color, font=font))
+        else:
+            canvas.collect("d2", canvas.create_text(hc, vc, text=str(int(v)), fill=self._text_color, font=font))
+
+    @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear()
-        v = self._variable.get()
-        w, h = canvas.winfo_width(), canvas.winfo_height()
-        hc, vc = w * .5, h * .5
+        w, h, hc, vc, limit = canvas.meta()
         font = self._font[self._style]
         if (target_font_size := h - 28 if self._style == 0 else h - 48) < font[1]:
             font = (font[0], target_font_size)
@@ -66,23 +88,10 @@ class Speedometer(TextBased, VariableControlled):
             r = min(hc, vc) * 1.25
             x, y = hc, vc + r * .25
             font_size_span = int(h * .06)
-            p = min(v / self._maximum, 1)
-            color = parse_color(("#" + str(hex(int(0xbf - p * 0xbf)))[2:] * 3,
-                                 "#" + str(hex(int(0x4d + 0xb2 * p)))[2:] * 3))
-            canvas._ids.append(canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
-                                                 style=_ARC, outline=color))
-            canvas._ids.append(canvas.create_text(x, y - r * .6, text="KM / H", fill="gray",
-                                                  font=(font[0], font_size_span)))
-            canvas._ids.append(canvas.create_text(x - r * .7, y + r * .4, text="0", fill="gray",
-                                                  font=(font[0], font_size_span)))
-            canvas._ids.append(canvas.create_text(x + r * .7, y + r * .4, text=str(self._maximum), fill="gray",
-                                                  font=(font[0], font_size_span)))
-            rad = p * 4 * _pi / 3 - _pi / 6
-            canvas._ids.append(canvas.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
-                                                                                    y - _sin(rad) * (r - 8)),
-                                                  x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
-                                                  fill=color))
-            canvas._ids.append(canvas.create_text(x, y * .95 if self._style == 1 else y + (r - font[1]) * .5,
-                                                  text=str(int(v)), fill=self._text_color, font=font))
-        else:
-            canvas._ids.append(canvas.create_text(hc, vc, text=str(int(v)), fill=self._text_color, font=font))
+            canvas.collect("f1", canvas.create_text(x, y - r * .6, text="KM / H", fill="gray",
+                                                    font=(font[0], font_size_span)))
+            canvas.collect("f2", canvas.create_text(x - r * .7, y + r * .4, text="0", fill="gray",
+                                                    font=(font[0], font_size_span)))
+            canvas.collect("f3", canvas.create_text(x + r * .7, y + r * .4, text=str(self._maximum), fill="gray",
+                                                    font=(font[0], font_size_span)))
+        self.dynamic_renderer(canvas)

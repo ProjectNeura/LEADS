@@ -60,18 +60,41 @@ class CanvasBased(_CTkCanvas):
             "corner_radius"] if corner_radius is None else corner_radius)
         if clickable:
             self.bind("<Button-1>", command)
-        self._ids: list[int] = []
+        self._ids: dict[str, int] = {}
         self.bind("<Configure>", lambda _: self.render())
 
-    def clear(self) -> None:
-        self.delete(*self._ids)
-        self._ids.clear()
+    def meta(self) -> [float, float, float, float, float]:
+        """
+        :return: [w, h, hc, vc, limit]
+        """
+        return (w := self.winfo_width()), (h := self.winfo_height()), w * .5, h * .5, min(w, h)
+
+    def collect(self, tag: str, object_id: int) -> None:
+        self._ids[tag] = object_id
+
+    def clear(self, prefix: str = "") -> None:
+        if prefix:
+            for tag, object_id in self._ids.copy().items():
+                if tag.startswith(prefix):
+                    self.delete(object_id)
+                    self._ids.pop(tag)
+        else:
+            self.delete(*self._ids.values())
+            self._ids.clear()
 
     def draw_fg(self, fg_color: _Color, hover_color: _Color, corner_radius: float) -> None:
-        w, h, r = self.winfo_width(), self.winfo_height(), corner_radius * 2
-        self._ids.append(self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r, w,
-                                              h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r, 0, r,
-                                              0, 0), smooth=True, fill=hover_color if self._hovering else fg_color))
+        meta = self.meta()
+        w, h, r = meta[0], meta[1], corner_radius * 2
+        self.collect("_fg", self.create_polygon((r, 0, r, 0, w - r, 0, w - r, 0, w, 0, w, r, w, r, w, h - r, w, h - r,
+                                                 w, h, w - r, h, w - r, h, r, h, r, h, 0, h, 0, h - r, 0, h - r, 0, r,
+                                                 0, r, 0, 0), smooth=True,
+                                                fill=hover_color if self._hovering else fg_color))
+
+    def dynamic_renderer(self, canvas: _Self) -> None:
+        ...
+
+    def partially_render(self) -> None:
+        self.dynamic_renderer(self)
 
     def raw_renderer(self, canvas: _Self) -> None:
         """

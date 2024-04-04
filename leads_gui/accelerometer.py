@@ -41,30 +41,35 @@ class GForceMeter(TextBased, VariableControlled):
         TextBased.__init__(self, master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
                            corner_radius)
         VariableControlled.__init__(self, variable if variable else GForceVar(master))
-        self.attach(self.render)
+        self.attach(self.partially_render)
         self._max_magnitude: float = variable.magnitude()
 
     @_override
-    def raw_renderer(self, canvas: CanvasBased) -> None:
-        canvas.clear()
+    def dynamic_renderer(self, canvas: CanvasBased) -> None:
+        canvas.clear("d")
         assert isinstance(self._variable, GForceVar)
         x, y = self._variable.get()
         if (magnitude := self._variable.magnitude()) > self._max_magnitude:
             self._max_magnitude = magnitude
-        w, h = canvas.winfo_width(), canvas.winfo_height()
-        hc, vc = w * .5, h * .5
-        canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
-        limit = min(hc, vc)
-        color = parse_color(("gray74", "gray60"))
-        canvas._ids.append(
-            canvas.create_text(hc, vc, text="G", fill=self._text_color, font=(self._font[0], int(h * .1))))
-        for factor in .9, .6, .3:
-            r = limit * factor
-            canvas._ids.append(canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2))
+        w, h, hc, vc, limit = canvas.meta()
         x, y = hc + max(min(x / 9.8, .9), -.9) * limit, vc + max(min(y / 9.8, .9), -.9) * limit
         r = max(min(self._max_magnitude / 9.8, .9), -.9) * limit
-        canvas._ids.append(canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline="green", width=2))
-        canvas._ids.append(canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color))
+        canvas.collect("d0", canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline="green", width=2))
+        canvas.collect("d1", canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color))
+
+    @_override
+    def raw_renderer(self, canvas: CanvasBased) -> None:
+        canvas.clear()
+        w, h, hc, vc, limit = canvas.meta()
+        canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
+        color = parse_color(("gray74", "gray60"))
+        canvas.collect("f0", canvas.create_text(hc, vc, text="G", fill=self._text_color,
+                                                font=(self._font[0], int(h * .1))))
+        for factor in .9, .6, .3:
+            r = limit * .5 * factor
+            canvas.collect("f1" + str(factor), canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color,
+                                                                  width=2))
+        self.dynamic_renderer(canvas)
 
 
 class SpeedTrendMeter(TextBased, VariableControlled):
@@ -83,20 +88,24 @@ class SpeedTrendMeter(TextBased, VariableControlled):
         TextBased.__init__(self, master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
                            corner_radius)
         VariableControlled.__init__(self, variable if variable else _DoubleVar(master))
-        self.attach(self.render)
+        self.attach(self.partially_render)
         self._image: _ImageTk.PhotoImage | None = None
+
+    @_override
+    def dynamic_renderer(self, canvas: CanvasBased) -> None:
+        canvas.clear("d")
+        v = self._variable.get() * 5
+        w, h, hc, vc, limit = canvas.meta()
+        canvas.collect("d0", canvas.create_line(hc, vc, hc + max(min(v, .9), -.9) * hc, vc, fill=self._text_color,
+                                                arrow="last", width=4))
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear()
-        v = self._variable.get() * 5
-        w, h = canvas.winfo_width(), canvas.winfo_height()
-        hc, vc = w * .5, h * .5
-        limit = min(w, h)
+        w, h, hc, vc, limit = canvas.meta()
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         if self._image is None:
             self._image = _ImageTk.PhotoImage(Car.load_source(Color[parse_color(("BLACK", "WHITE"))]).resize((limit,
                                                                                                               limit)))
-        canvas._ids.append(canvas.create_image(hc, vc, image=self._image))
-        canvas._ids.append(canvas.create_line(hc, vc, hc + max(min(v, .9), -.9) * hc, vc, fill=self._text_color,
-                                              arrow="last", width=4))
+        canvas.collect("f0", canvas.create_image(hc, vc, image=self._image))
+        self.dynamic_renderer(canvas)

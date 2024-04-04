@@ -25,16 +25,21 @@ class Typography(TextBased, VariableControlled):
         TextBased.__init__(self, master, theme_key, width, height, font, text_color, fg_color, hover_color, bg_color,
                            corner_radius, clickable, command)
         VariableControlled.__init__(self, variable if variable else _StringVar(master))
-        self.attach(self.render)
+        self.attach(self.partially_render)
+
+    @_override
+    def dynamic_renderer(self, canvas: CanvasBased) -> None:
+        canvas.clear("d")
+        v = self._variable.get()
+        w, h, hc, vc, limit = canvas.meta()
+        font = self._font
+        if (target_font_size := h - 28) < font[1]:
+            font = (font[0], target_font_size)
+        canvas.collect("d0", canvas.create_text(w * .5, h * .5, text=v, justify="center", fill=self._text_color,
+                                                font=font))
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear()
-        v = self._variable.get()
-        w, h = canvas.winfo_width(), canvas.winfo_height()
-        font = self._font
-        if (target_font_size := h - 28) < font[1]:
-            font = (font[0], target_font_size)
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
-        canvas._ids.append(canvas.create_text(w * .5, h * .5, text=v, justify="center", fill=self._text_color,
-                                              font=font))
+        self.dynamic_renderer(canvas)
