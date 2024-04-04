@@ -56,14 +56,15 @@ class GForceMeter(TextBased, VariableControlled):
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         limit = min(hc, vc)
         color = parse_color(("gray74", "gray60"))
-        canvas.create_text(hc, vc, text="G", fill=self._text_color, font=(self._font[0], int(h * .1)))
+        canvas._ids.append(
+            canvas.create_text(hc, vc, text="G", fill=self._text_color, font=(self._font[0], int(h * .1))))
         for factor in .9, .6, .3:
             r = limit * factor
-            canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2)
+            canvas._ids.append(canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2))
         x, y = hc + max(min(x / 9.8, .9), -.9) * limit, vc + max(min(y / 9.8, .9), -.9) * limit
         r = max(min(self._max_magnitude / 9.8, .9), -.9) * limit
-        canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline="green", width=2)
-        canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color)
+        canvas._ids.append(canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline="green", width=2))
+        canvas._ids.append(canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color))
 
 
 class SpeedTrendMeter(TextBased, VariableControlled):
