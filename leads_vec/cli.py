@@ -215,7 +215,7 @@ def main() -> int:
     if cfg.manual_mode:
         layout = [
             ["m1", "m2", "m3"],
-            ["comm_status"],
+            [CTkLabel(root, text="MANUAL MODE"), CTkLabel(root, text="ASSISTANCE DISABLED"), "comm_status"],
             ["time_lap", "hazard"],
             ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
         ]
