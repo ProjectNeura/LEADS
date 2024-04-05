@@ -66,6 +66,11 @@ class CanvasBased(_CTkCanvas):
         self.bind("<Configure>", lambda _: self.render())
 
     def lock_ratio(self, ratio: float) -> _Self:
+        """
+        Adjust the height according to the width to keep a constant ratio.
+        :param ratio: height / width
+        :return: self
+        """
         self._ratio = ratio
         return self
 
@@ -76,9 +81,18 @@ class CanvasBased(_CTkCanvas):
         return (w := self.winfo_width()), (h := self.winfo_height()), w * .5, h * .5, min(w, h)
 
     def collect(self, tag: str, object_id: int) -> None:
+        """
+        Collect a widget and link it to the tag for recycling.
+        :param tag: the widget tag
+        :param object_id: the widget id returned during creation
+        """
         self._ids[tag] = object_id
 
     def clear(self, prefix: str = "") -> None:
+        """
+        Recycle the widgets linked to tags that start with the specified prefix.
+        :param prefix: the tag prefix
+        """
         if prefix:
             for tag, object_id in self._ids.copy().items():
                 if tag.startswith(prefix):
@@ -97,6 +111,11 @@ class CanvasBased(_CTkCanvas):
                                                 fill=hover_color if self._hovering else fg_color))
 
     def dynamic_renderer(self, canvas: _Self) -> None:
+        """
+        The dynamic renderer should only render the content-based components.
+        The dynamic renderer should only access the parameters from self, and then render on the specified canvas.
+        :param canvas: the canvas to render on
+        """
         ...
 
     def partially_render(self) -> None:
