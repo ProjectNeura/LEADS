@@ -257,13 +257,17 @@ class ContextManager(object):
 
     def layout(self, layout: list[list[str | _Widget]]) -> None:
         layout = self.parse_layout(layout)
-        self._window.root().grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
+        root = self._window.root()
+        root.grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
+        screen_width = root.winfo_screenwidth()
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
             for j in range(length):
+                widget = row[j]
                 s = int(t / length)
-                row[j].grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=4, padx=4, pady=4)
+                widget.configure(width=screen_width)
+                widget.grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=4, padx=4, pady=4)
 
     def window(self) -> Window:
         return self._window
