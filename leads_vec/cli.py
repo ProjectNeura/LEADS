@@ -81,9 +81,15 @@ def main() -> int:
                                         font=("Arial", cfg.font_size_small))
 
         def hazard():
-            ctx.hazard(not ctx.hazard())
-            get_device(LEFT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
-            get_device(RIGHT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
+            state = not ctx.hazard()
+            left, right = get_device(LEFT_INDICATOR), get_device(RIGHT_INDICATOR)
+            if state:
+                left.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
+                right.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
+            else:
+                left.write(LEDGroupCommand(LEDCommand.OFF, Entire))
+                right.write(LEDGroupCommand(LEDCommand.OFF, Entire))
+            ctx.hazard(state)
             manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
 
         manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=hazard)
