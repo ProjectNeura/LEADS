@@ -3,7 +3,7 @@ from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPE
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, require_config, \
     mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER, ConcurrentOdometer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
-from leads_raspberry_pi import NMEAGPSReceiver
+from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Transition
 
 config = require_config()
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -110,6 +110,18 @@ class GPS(NMEAGPSReceiver):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "GPS")
         super().initialize(*parent_tags)
+
+
+@device("left_turning_light", MAIN_CONTROLLER, (LED(5), LED(6)))
+class LeftTurningLight(LEDGroup):
+    def initialize(self, *parent_tags: str) -> None:
+        self.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right")))
+
+
+@device("right_turning_light", MAIN_CONTROLLER, (LED(17), LED(18)))
+class RightTurningLight(LEDGroup):
+    def initialize(self, *parent_tags: str) -> None:
+        self.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left")))
 
 
 _ = None  # null export
