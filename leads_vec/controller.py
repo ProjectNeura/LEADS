@@ -116,14 +116,14 @@ class GPS(NMEAGPSReceiver):
 class LeftTurningLight(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
-        self.write(LEDGroupCommand(LEDCommand.ON, Entire()))
+        self.write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))
 
 
 @device(RIGHT_INDICATOR, MAIN_CONTROLLER, (LED(17), LED(27), LED(22)))
 class RightTurningLight(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
-        self.write(LEDGroupCommand(LEDCommand.ON, Entire()))
+        self.write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))
 
 
 _ = None  # null export
