@@ -64,12 +64,12 @@ you do not satisfy the following requirements of skills and knowledge.
 Note that LEADS requires **Python >= 3.12**.
 
 ```shell
-pip install Pillow customtkinter keyboard pyserial gpiozero pynmea2 leads
+pip install Pillow customtkinter keyboard pyserial lgpio gpiozero pynmea2 leads
 ```
 
 `numpy` will be automatically installed with `leads`.
 
-`Pillow`, `customtkinter`, `keyboard`, `pyserial`, `gpiozero`, and `pynmea2` are optional.
+`Pillow`, `customtkinter`, `keyboard`, `pyserial`, `lgpio`, `gpiozero`, and `pynmea2` are optional.
 
 If you only want the framework, run the following.
 
