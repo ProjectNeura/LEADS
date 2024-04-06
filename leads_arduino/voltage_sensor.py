@@ -16,8 +16,9 @@ class VoltageSensor(_Device):
         self._voltage: float = 0
 
     @_override
-    def update(self, data: float) -> None:
-        self._voltage = data
+    def update(self, data: str) -> None:
+        if data.startswith(self._tag):
+            self._voltage = float(data[data.find(":") + 1:])
 
     @_override
     def read(self) -> float:
