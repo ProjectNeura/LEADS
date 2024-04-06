@@ -10,6 +10,7 @@ class LEDCommand(_IntEnum):
     OFF: int = 0
     ON: int = 1
     BLINK: int = 2
+    BLINK_ONCE: int = 3
 
 
 class LED(_Device):
@@ -36,3 +37,5 @@ class LED(_Device):
             self._led.on()
         elif payload == LEDCommand.BLINK:
             self._led.blink(self._blink_time_on, self._blink_time_off)
+        elif payload == LEDCommand.BLINK_ONCE:
+            self._led.blink(self._blink_time_on, self._blink_time_off, 1)
