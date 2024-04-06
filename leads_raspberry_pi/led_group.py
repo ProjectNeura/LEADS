@@ -39,7 +39,7 @@ class Transition(LEDGroupAnimation):
 
     @_override
     def do(self, command: LEDCommand, *leds: LED) -> None:
-        _Thread(target=self.async_do).start()
+        _Thread(name="transition", target=self.async_do, args=(command, *leds)).start()
 
 
 @_dataclass
