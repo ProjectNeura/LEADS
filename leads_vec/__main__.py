@@ -62,7 +62,7 @@ if __name__ == "__main__":
     try:
         if args.emu:
             raise AttributeError("User specifies to use emulator")
-        from leads_vec.controller import _
+        from leads_vec.controllers import _
     except (ImportError, AttributeError) as e:
         _reset()
         _L.debug(repr(e))
