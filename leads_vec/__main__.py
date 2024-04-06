@@ -6,7 +6,7 @@ from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, device as _device, \
-    GPS_RECEIVER as _GPS_RECEIVER
+    GPS_RECEIVER as _GPS_RECEIVER, reset as _reset
 from leads_gui import Config as _Config
 from leads_gui.system import get_system_platform as _get_system_platform
 
@@ -64,6 +64,7 @@ if __name__ == "__main__":
             raise AttributeError("User specifies to use emulator")
         from leads_vec.controller import _
     except (ImportError, AttributeError) as e:
+        _reset()
         _L.debug(repr(e))
         if isinstance(e, ImportError):
             _L.warn("`leads_vec.controller` is not available, using emulation module instead...")

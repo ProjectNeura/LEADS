@@ -76,5 +76,14 @@ def get_device(tag: str) -> Device:
     return _devices[tag]
 
 
+def reset() -> None:
+    for d in _devices.values():
+        d.close()
+    _devices.clear()
+    for c in _controllers.values():
+        c.close()
+    _controllers.clear()
+
+
 def initialize_main() -> None:
     get_controller(MAIN_CONTROLLER).initialize()
