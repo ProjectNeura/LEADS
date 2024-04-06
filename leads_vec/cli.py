@@ -8,6 +8,7 @@ from keyboard import add_hotkey
 from leads import *
 from leads.comm import *
 from leads_gui import *
+from leads_raspberry_pi import *
 from leads_vec.__version__ import __version__
 
 
@@ -81,6 +82,8 @@ def main() -> int:
 
         def hazard():
             ctx.hazard(not ctx.hazard())
+            get_device(LEFT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
+            get_device(RIGHT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
             manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
 
         manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=hazard)

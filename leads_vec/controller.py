@@ -1,9 +1,9 @@
 from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, require_config, \
-    mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER, ConcurrentOdometer
+    mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER, ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
-from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Transition
+from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
 config = require_config()
 BAUD_RATE: int = config.get("baud_rate", 9600)
@@ -112,16 +112,18 @@ class GPS(NMEAGPSReceiver):
         super().initialize(*parent_tags)
 
 
-@device("left_turning_light", MAIN_CONTROLLER, (LED(5), LED(6)))
+@device(LEFT_INDICATOR, MAIN_CONTROLLER, (LED(5), LED(6), LED(26)))
 class LeftTurningLight(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
-        self.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right")))
+        super().initialize(*parent_tags)
+        self.write(LEDGroupCommand(LEDCommand.ON, Entire()))
 
 
-@device("right_turning_light", MAIN_CONTROLLER, (LED(17), LED(18)))
+@device(RIGHT_INDICATOR, MAIN_CONTROLLER, (LED(17), LED(27), LED(22)))
 class RightTurningLight(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
-        self.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left")))
+        super().initialize(*parent_tags)
+        self.write(LEDGroupCommand(LEDCommand.ON, Entire()))
 
 
 _ = None  # null export
