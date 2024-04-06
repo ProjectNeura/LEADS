@@ -87,8 +87,8 @@ def main() -> int:
                 left.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
                 right.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
             else:
-                left.write(LEDGroupCommand(LEDCommand.OFF, Entire))
-                right.write(LEDGroupCommand(LEDCommand.OFF, Entire))
+                left.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
+                right.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
             ctx.hazard(state)
             manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
 

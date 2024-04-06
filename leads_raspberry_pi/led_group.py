@@ -1,7 +1,6 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
-from asyncio import run as _run
+from asyncio import run as _run, sleep as _sleep
 from dataclasses import dataclass as _dataclass
-from time import sleep as _sleep
 from typing import override as _override
 
 from leads import Controller as _Controller
@@ -31,11 +30,11 @@ class Transition(LEDGroupAnimation):
         if self._direction == "left2right":
             for led in leds:
                 led.write(command)
-                _sleep(self._interval)
+                await _sleep(self._interval)
         elif self._direction == "right2left":
             for led in leds[::-1]:
                 led.write(command)
-                _sleep(self._interval)
+                await _sleep(self._interval)
 
     @_override
     def do(self, command: LEDCommand, *leds: LED) -> None:
