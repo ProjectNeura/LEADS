@@ -82,7 +82,7 @@ def main() -> int:
 
         def hazard():
             state = not ctx.hazard()
-            left, right = get_controller(LEFT_INDICATOR), get_controller(RIGHT_INDICATOR)
+            left, right = get_device(LEFT_INDICATOR), get_device(RIGHT_INDICATOR)
             if state:
                 left.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
                 right.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))

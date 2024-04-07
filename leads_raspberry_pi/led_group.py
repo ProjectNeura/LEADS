@@ -4,7 +4,7 @@ from threading import Thread as _Thread
 from time import sleep as _sleep
 from typing import override as _override
 
-from leads import Controller as _Controller
+from leads import Device as _Device
 from leads_raspberry_pi.led import LED, LEDCommand
 from leads_raspberry_pi.types import TransitionDirection as _TransitionDirection
 
@@ -48,7 +48,7 @@ class LEDGroupCommand(object):
     animation: LEDGroupAnimation
 
 
-class LEDGroup(_Controller):
+class LEDGroup(_Device):
     def __init__(self, *leds: LED) -> None:
         super().__init__()
         self._leds: tuple[LED, ...] = leds
