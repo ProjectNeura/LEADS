@@ -6,7 +6,8 @@ from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, device as _device, \
-    GPS_RECEIVER as _GPS_RECEIVER, reset as _reset
+    GPS_RECEIVER as _GPS_RECEIVER, reset as _reset, LEFT_INDICATOR as _LEFT_INDICATOR, \
+    RIGHT_INDICATOR as _RIGHT_INDICATOR
 from leads_gui import Config as _Config
 from leads_gui.system import get_system_platform as _get_system_platform
 
@@ -75,11 +76,16 @@ if __name__ == "__main__":
                 from leads_emulation import DRWSin as _Controller
 
             _register_controller(_MAIN_CONTROLLER, _Controller())
-            from leads_emulation import GPSReceiver as _GPSReceiver
+            from leads_emulation import GPSReceiver as _GPSReceiver, DirectionIndicator as _DirectionIndicator
 
 
             @_device(_GPS_RECEIVER, _MAIN_CONTROLLER)
             class GPS(_GPSReceiver):
+                pass
+
+
+            @_device((_LEFT_INDICATOR, _RIGHT_INDICATOR), _MAIN_CONTROLLER)
+            class DirectionIndicators(_DirectionIndicator):
                 pass
         except ImportError:
             raise ImportError("At least one adapter has to be installed")

@@ -82,3 +82,9 @@ class GPSReceiver(_Device):
     @_override
     def read(self) -> [bool, float, float, float, int, int]:
         return False, 0, 0, 0, 0, 0
+
+
+class DirectionIndicator(_Device):
+    @_override
+    def write(self, _) -> None:
+        pass
