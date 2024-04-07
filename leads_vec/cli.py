@@ -49,6 +49,18 @@ def main() -> int:
     g_force = GForceVar(root, 0, 0)
     esc = StringVar(root, "STANDARD")
 
+    def hazard():
+        state = not ctx.hazard()
+        left, right = get_device(LEFT_INDICATOR), get_device(RIGHT_INDICATOR)
+        if state:
+            left.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
+            right.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
+        else:
+            left.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
+            right.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
+        ctx.hazard(state)
+        uim["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
+
     def render(manager: ContextManager):
         def switch_m1_mode(_):
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
@@ -79,19 +91,6 @@ def main() -> int:
 
         manager["time_lap"] = CTkButton(root, text="Time Lap", command=ctx.time_lap,
                                         font=("Arial", cfg.font_size_small))
-
-        def hazard():
-            state = not ctx.hazard()
-            left, right = get_device(LEFT_INDICATOR), get_device(RIGHT_INDICATOR)
-            if state:
-                left.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
-                right.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
-            else:
-                left.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
-                right.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
-            ctx.hazard(state)
-            manager["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
-
         manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=hazard)
 
         def switch_esc_mode(mode):
@@ -114,6 +113,8 @@ def main() -> int:
             self.super(service=service, msg=msg)
             if msg == b"time_lap":
                 ctx.time_lap()
+            elif msg == b"hazard":
+                hazard()
 
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 

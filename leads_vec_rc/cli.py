@@ -91,3 +91,9 @@ async def speed() -> list[float]:
 async def time_lap() -> str:
     client.send(b"time_lap")
     return "done"
+
+
+@app.get("/hazard")
+async def hazard() -> str:
+    client.send(b"hazard")
+    return "done"
