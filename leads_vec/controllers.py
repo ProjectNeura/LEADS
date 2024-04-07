@@ -1,7 +1,8 @@
 from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
     DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, \
     CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, require_config, \
-    mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER, ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR
+    mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER, ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, \
+    VOLTAGE_SENSOR
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
@@ -45,7 +46,7 @@ class PowerController(ArduinoMicro):
         super().write(str(payload).encode())
 
 
-@device("vot", POWER_CONTROLLER)
+@device(VOLTAGE_SENSOR, POWER_CONTROLLER)
 class BatteryVoltageSensor(VoltageSensor):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "POWER", "BATT")
