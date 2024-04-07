@@ -2,7 +2,7 @@ from typing import override as _override
 
 from serial import Serial as _Serial
 
-from leads import Controller as _Controller, SFT as _SFT
+from leads import Controller as _Controller, SFT as _SFT, L as _L
 from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
 from leads_comm_serial import SerialConnection as _SerialConnection
 
@@ -63,7 +63,10 @@ class _ArduinoCallback(_Callback):
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
-        self._arduino.update(msg.decode())
+        try:
+            self._arduino.update(msg.decode())
+        except UnicodeDecodeError:
+            _L.debug("Discarding this message: " + str(msg))
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:
