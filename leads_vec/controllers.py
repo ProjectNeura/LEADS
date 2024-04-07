@@ -1,8 +1,7 @@
-from leads import device, controller, MAIN_CONTROLLER, get_controller, WHEEL_SPEED_CONTROLLER, SRWDataContainer, \
-    DRWDataContainer, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, \
-    CENTER_REAR_WHEEL_SPEED_SENSOR, LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, require_config, \
-    mark_system, POWER_CONTROLLER, ODOMETER, GPS_RECEIVER, ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, \
-    VOLTAGE_SENSOR
+from leads import device, controller, MAIN_CONTROLLER, get_controller, SRWDataContainer, DRWDataContainer, \
+    LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, \
+    LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, GPS_RECEIVER, \
+    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
@@ -27,13 +26,13 @@ class VeCController(Controller):
             "gps_ground_speed": coords[1],
             "latitude": coords[2],
             "longitude": coords[3],
-            **get_controller(POWER_CONTROLLER).read()
+            **get_controller("pc").read()
         }
         return (SRWDataContainer if config.srw_mode else DRWDataContainer)(
-            **get_controller(WHEEL_SPEED_CONTROLLER).read(), **universal)
+            **get_controller("wsc").read(), **universal)
 
 
-@controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
+@controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
 class PowerController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "POWER", "BATT", "MOTOR")
@@ -46,13 +45,13 @@ class PowerController(ArduinoMicro):
         super().write(str(payload).encode())
 
 
-@device(VOLTAGE_SENSOR, POWER_CONTROLLER)
+@device(VOLTAGE_SENSOR, "pc")
 class BatteryVoltageSensor(VoltageSensor):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "POWER", "BATT")
 
 
-@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
+@controller("wsc", MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
 class WheelSpeedController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "WSC", "ESC")
@@ -85,7 +84,7 @@ class AverageOdometer(ConcurrentOdometer):
         (LEFT_FRONT_WHEEL_SPEED_SENSOR,
          RIGHT_FRONT_WHEEL_SPEED_SENSOR,
          CENTER_REAR_WHEEL_SPEED_SENSOR),
-        WHEEL_SPEED_CONTROLLER,
+        "wsc",
         [(FRONT_WHEEL_DIAMETER, ODOMETER),
          (FRONT_WHEEL_DIAMETER, ODOMETER),
          (REAR_WHEEL_DIAMETER, ODOMETER)
@@ -94,7 +93,7 @@ class AverageOdometer(ConcurrentOdometer):
          RIGHT_FRONT_WHEEL_SPEED_SENSOR,
          LEFT_REAR_WHEEL_SPEED_SENSOR,
          RIGHT_REAR_WHEEL_SPEED_SENSOR),
-        WHEEL_SPEED_CONTROLLER,
+        "wsc",
         [(FRONT_WHEEL_DIAMETER, ODOMETER),
          (FRONT_WHEEL_DIAMETER, ODOMETER),
          (REAR_WHEEL_DIAMETER, ODOMETER),
