@@ -4,6 +4,8 @@ from os.path import exists as _exists
 from subprocess import run as _run
 from sys import exit as _exit, version as _version
 
+from gpiozero import BadPinFactory as _BadPinFactory
+
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, device as _device, \
     GPS_RECEIVER as _GPS_RECEIVER, reset as _reset, LEFT_INDICATOR as _LEFT_INDICATOR, \
@@ -21,6 +23,8 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", default=None, help="specified configuration file")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
+    parser.add_argument("--ignore-pin-factory", action=_BooleanOptionalAction, default=False,
+                        help="ignore `BadPinFactory` error")
     args = parser.parse_args()
     if args.action == "info":
         from leads_vec.__version__ import __version__
@@ -64,6 +68,8 @@ if __name__ == "__main__":
         if args.emu:
             raise AttributeError("User specifies to use emulator")
         from leads_vec.controllers import _
+    except _BadPinFactory as e:
+        _L.debug("Ignoring pin factory: " + repr(e))
     except (ImportError, AttributeError) as e:
         _reset()
         _L.debug(repr(e))
