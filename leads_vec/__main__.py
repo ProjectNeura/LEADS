@@ -4,8 +4,6 @@ from os.path import exists as _exists
 from subprocess import run as _run
 from sys import exit as _exit, version as _version
 
-from gpiozero import BadPinFactory as _BadPinFactory
-
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, device as _device, \
     GPS_RECEIVER as _GPS_RECEIVER, reset as _reset, LEFT_INDICATOR as _LEFT_INDICATOR, \
@@ -23,7 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", default=None, help="specified configuration file")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
-    parser.add_argument("--ignore-pin-factory", action=_BooleanOptionalAction, default=False,
+    parser.add_argument("--ignore-import-error", action=_BooleanOptionalAction, default=False,
                         help="ignore `BadPinFactory` error")
     args = parser.parse_args()
     if args.action == "info":
@@ -64,17 +62,9 @@ if __name__ == "__main__":
 
         _L.info("Configuring X Window System...")
         _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
-    try:
-        if args.emu:
-            raise AttributeError("User specifies to use emulator")
-        from leads_vec.controllers import _
-    except _BadPinFactory as e:
-        _L.debug("Ignoring pin factory: " + repr(e))
-    except (ImportError, AttributeError) as e:
+
+    def emulate() -> None:
         _reset()
-        _L.debug(repr(e))
-        if isinstance(e, ImportError):
-            _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
         try:
             if config.srw_mode:
                 from leads_emulation import SRWSin as _Controller
@@ -84,17 +74,27 @@ if __name__ == "__main__":
             _register_controller(_MAIN_CONTROLLER, _Controller())
             from leads_emulation import GPSReceiver as _GPSReceiver, DirectionIndicator as _DirectionIndicator
 
-
             @_device(_GPS_RECEIVER, _MAIN_CONTROLLER)
             class GPS(_GPSReceiver):
                 pass
-
 
             @_device((_LEFT_INDICATOR, _RIGHT_INDICATOR), _MAIN_CONTROLLER)
             class DirectionIndicators(_DirectionIndicator):
                 pass
         except ImportError:
             raise ImportError("At least one adapter has to be installed")
+
+    if args.emu:
+        emulate()
+    try:
+        from leads_vec.controllers import _
+    except ImportError as e:
+        if args.ignore_import_error:
+            _L.debug("Ignoring import error: " + repr(e))
+        else:
+            _L.debug(repr(e))
+            _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
+            emulate()
     from leads_vec.cli import main
 
     _exit(main())
