@@ -8,10 +8,14 @@ then abort "Error: This script requires root permission"
 fi
 
 execute() {
-  if ! "sudo" "$@";
+  if ! "$@";
   then abort "$(printf "Failed: %s" "$@")"
   fi
 }
 
+execute_root() {
+  execute "sudo" "$@"
+}
+
 export MESA_GL_VERSION_OVERRIDE=3.3
-execute "obs"
+execute_root "obs"

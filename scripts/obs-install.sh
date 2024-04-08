@@ -8,13 +8,17 @@ then abort "Error: This script requires root permission"
 fi
 
 execute() {
-  if ! "sudo" "$@";
+  if ! "$@";
   then abort "$(printf "Failed: %s" "$@")"
   fi
 }
 
+execute_root() {
+  execute "sudo" "$@"
+}
+
 echo "Adding APT repository..."
-execute "add-apt-repository" "ppa:obsproject/obs-studio"
-execute "apt" "update"
+execute_root "add-apt-repository" "ppa:obsproject/obs-studio"
+execute_root "apt" "update"
 echo "Installing OBS Studio..."
-execute "apt" "-y" "install" "ffmpeg" "obs-studio"
+execute_root "apt" "-y" "install" "ffmpeg" "obs-studio"
