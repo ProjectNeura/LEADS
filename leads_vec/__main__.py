@@ -17,12 +17,13 @@ if __name__ == "__main__":
                              epilog="ProjectNeura: https://projectneura.org"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "run"))
-    parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="service to register")
-    parser.add_argument("-c", "--config", default=None, help="specified configuration file")
+    parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
+    parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
+    parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
     parser.add_argument("--ignore-import-error", action=_BooleanOptionalAction, default=False,
-                        help="ignore `BadPinFactory` error")
+                        help="ignore `ImportError`")
     args = parser.parse_args()
     if args.action == "info":
         from leads_vec.__version__ import __version__
@@ -56,6 +57,12 @@ if __name__ == "__main__":
         _L.info("Configuration file saved to \"config.json\"")
     _register_config(config := _load_config(args.config, _Config) if args.config else _Config({}))
     _L.debug("Configuration loaded:", str(config))
+    if f := args.magnify_font_sizes:
+        config.font_size_small = int(config.font_size_small * f)
+        config.font_size_medium = int(config.font_size_medium * f)
+        config.font_size_large = int(config.font_size_large * f)
+        config.font_size_x_large = int(config.font_size_x_large * f)
+        _L.debug("Font sizes magnified by " + str(f))
     if args.xws:
         from os import getuid as _getuid
         from pwd import getpwuid as _getpwuid
