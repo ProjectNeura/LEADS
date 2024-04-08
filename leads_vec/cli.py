@@ -3,7 +3,7 @@ from time import time
 from typing import Callable
 
 from customtkinter import CTkButton, CTkLabel, DoubleVar, StringVar, CTkSegmentedButton
-from keyboard import add_hotkey
+from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyCode
 
 from leads import *
 from leads.comm import *
@@ -85,8 +85,8 @@ def main() -> int:
             system_lower = system.lower()
             manager[system_lower + "_status"] = CTkLabel(root, text=system + " READY", text_color="green",
                                                          font=("Arial", cfg.font_size_small))
-            add_hotkey(str(i), switch := make_system_switch(ctx, SystemLiteral(system), manager.rd()))
-            manager[system_lower] = CTkButton(root, text=system + " ON", command=switch,
+            manager[system_lower] = CTkButton(root, text=system + " ON",
+                                              command=make_system_switch(ctx, SystemLiteral(system), manager.rd()),
                                               font=("Arial", cfg.font_size_small))
 
         manager["time_lap"] = CTkButton(root, text="Time Lap", command=ctx.time_lap,
@@ -242,5 +242,19 @@ def main() -> int:
         ]
     uim.layout(layout)
     initialize_main()
+
+    def on_press(key: _Key | _KeyCode) -> None:
+        if key == _KeyCode.from_char("1"):
+            make_system_switch(ctx, SystemLiteral.DTCS, uim.rd())()
+        elif key == _KeyCode.from_char("2"):
+            make_system_switch(ctx, SystemLiteral.ABS, uim.rd())()
+        elif key == _KeyCode.from_char("3"):
+            make_system_switch(ctx, SystemLiteral.EBI, uim.rd())()
+        elif key == _KeyCode.from_char("4"):
+            make_system_switch(ctx, SystemLiteral.ATBS, uim.rd())()
+        elif key == _Key.esc:
+            uim.kill()
+
+    _Listener(on_press=on_press).start()
     uim.show()
     return 0
