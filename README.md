@@ -61,7 +61,8 @@ you do not satisfy the following requirements of skills and knowledge.
 
 ### Python
 
-Note that LEADS requires **Python >= 3.12**.
+Note that LEADS requires **Python >= 3.12**. To set up the environment on a Raspberry Pi by a single line of command,
+see [Environment Setup](#environment-setup).
 
 ```shell
 pip install Pillow customtkinter pynput pyserial lgpio gpiozero pynmea2 leads
@@ -190,7 +191,7 @@ python -m leads_vec_rc -c path/to/the/config/file.json
 
 If not specified, all configurations will be default values.
 
-To learn about the configuration file, read [Configurations](#Configurations).
+To learn about the configuration file, read [Configurations](#configurations).
 
 If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
 because you have to specify the Python version such that `python3.12 ...` and `python3.12 -m pip ...`.
@@ -203,8 +204,8 @@ is available on [https://leads.projectneura.org](https://leads.projectneura.org)
 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, clone the repository or download the scripts
 from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
-You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything for you. If anything goes wrong, you
-can also manually install everything.
+You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including LEADS for you. If anything
+goes wrong, you can also manually install everything.
 
 ```shell
 /bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh
