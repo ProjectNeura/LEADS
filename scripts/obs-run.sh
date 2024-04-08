@@ -3,7 +3,7 @@ abort() {
   exit 1
 }
 
-if (( EUID ));
+if [ "${EUID:-$(id -u)}" -eq 0 ];
 then abort "Error: This script requires root permission"
 fi
 
