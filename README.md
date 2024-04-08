@@ -208,20 +208,21 @@ You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything
 goes wrong, you can also manually install everything.
 
 ```shell
-/bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh
+/bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
 
 We also use OBS Studio for streaming, but it is not required. If you want to install,
 run "[obs-install.sh](scripts/obs-install.sh)".
 
 ```shell
-/bin/sh "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-install.sh)" && rm obs-install.sh
+/bin/sh "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-install.sh)" && rm obs-install.sh || rm obs-install.sh
 ```
 
 Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
 
 ```shell
-/bin/sh "obs-run.sh$(wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-run.sh)" && rm obs-run.sh
+wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-run.sh
+/bin/sh obs-run.sh
 ```
 
 ## Configurations
