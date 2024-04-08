@@ -61,8 +61,8 @@ you do not satisfy the following requirements of skills and knowledge.
 
 ### Python
 
-Note that LEADS requires **Python >= 3.12**. To set up the environment on a Raspberry Pi by a single line of command,
-see [Environment Setup](#environment-setup).
+Note that LEADS requires **Python >= 3.12**. To set up the environment on a Raspberry Pi by only a single line of
+command, see [Environment Setup](#environment-setup).
 
 ```shell
 pip install Pillow customtkinter pynput pyserial lgpio gpiozero pynmea2 leads
