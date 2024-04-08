@@ -200,7 +200,7 @@ because you have to specify the Python version such that `python3.12 ...` and `p
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
 reproduction
-is available on [https://leads.projectneura.org](https://leads.projectneura.org), but first of all, we run an Ubuntu
+is available on https://leads.projectneura.org, but first of all, we run an Ubuntu
 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, clone the repository or download the scripts
 from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
