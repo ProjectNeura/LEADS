@@ -15,9 +15,9 @@ execute() {
 
 echo "Installing Python..."
 execute "wget" "https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh"
-execute "python-install.sh"
+execute "/bin/sh" "python-install.sh"
 echo "Cleaning up..."
-execute "rm" "python-install.sh"
+execute "rm" "python-install.sh*"
 echo "Installing dependencies..."
 execute "python3.12" "-m" "pip" "install" "Pillow" "customtkinter" "pynput" "pyserial" "lgpio" "gpiozero" "pynmea2" "leads"
 execute "python3.12" "-m" "leads_vec" "info"
