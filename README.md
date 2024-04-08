@@ -142,6 +142,22 @@ systemctl daemon-reload
 systemctl enable leads_vec
 ```
 
+##### Magnify Font Sizes
+
+```shell
+python -m leads_vec -mfs 1.5 run
+```
+
+This will magnify all font sizes by 1.5.
+
+##### Use Emulation
+
+```shell
+python -m leads_vec --emu run
+```
+
+This will force the program to use emulation even if the environment is available.
+
 ### Remote Analyst
 
 ```shell

@@ -17,8 +17,8 @@ if __name__ == "__main__":
                              epilog="ProjectNeura: https://projectneura.org"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "run"))
-    parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
+    parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
