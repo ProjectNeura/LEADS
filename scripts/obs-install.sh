@@ -1,9 +1,20 @@
-if ! sudo -v &>/dev/null;
-then
-  echo "Error: This script requires root permission"
+abort() {
+  printf "%s\n" "$@" >&2
   exit 1
+}
+
+if (( EUID ));
+then abort "Error: This script requires root permission"
 fi
-sudo su
-add-apt-repository ppa:obsproject/obs-studio
-apt update
-apt install ffmpeg obs-studio
+
+execute() {
+  if ! "sudo" "$@";
+  then abort "$(printf "Failed: %s" "$@")"
+  fi
+}
+
+echo "Adding APT repository..."
+execute "add-apt-repository" "ppa:obsproject/obs-studio"
+execute "apt" "update"
+echo "Installing OBS Studio..."
+execute "apt" "-y" "install" "ffmpeg" "obs-studio"

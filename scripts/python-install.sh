@@ -1,13 +1,27 @@
-if ! sudo -v &>/dev/null;
-then
-  echo "Error: This script requires root permission"
+abort() {
+  printf "%s\n" "$@" >&2
   exit 1
+}
+
+if (( EUID ));
+then abort "Error: This script requires root permission"
 fi
-sudo su
-add-apt-repository ppa:deadsnakes/ppa
-apt update
-apt install python3.12
-wget https://bootstrap.pypa.io/get-pip.py
-python3.12 get-pip.py
-apt install python3.12-tk
-apt install python3-gpiozero
+
+execute() {
+  if ! "sudo" "$@";
+  then abort "$(printf "Failed: %s" "$@")"
+  fi
+}
+
+echo "Adding APT repository..."
+execute "add-apt-repository" "ppa:deadsnakes/ppa"
+execute "apt" "update"
+echo "Installing Python 3.12..."
+execute "apt" "install" "-y" "python3.12"
+echo "Fixing Pip..."
+execute "wget" "https://bootstrap.pypa.io/get-pip.py"
+execute "python3.12" "get-pip.py"
+echo "Cleaning up..."
+execute "rm" "get-pip.py"
+echo "Installing Tcl/Tk..."
+execute "apt" "install" "-y" "python3.12-tk"
