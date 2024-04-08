@@ -1,6 +1,6 @@
 #include "LEADS.h"
 
-const int PIN_VOT[] = {2};
+const int PIN_VOT[] = {A0};
 
 VoltageSensor VOT(PIN_VOT);
 
