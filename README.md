@@ -226,8 +226,8 @@ Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.s
 
 ## Configurations
 
-The configuration is a JSON file that has the following columns. You can have an empty configuration file like the
-following as all the columns are optional.
+The configuration is a JSON file that has the following settings. You can have an empty configuration file like the
+following as all the settings are optional.
 
 ```json
 {}
@@ -235,7 +235,7 @@ following as all the columns are optional.
 
 Note that a purely empty file could cause an error.
 
-|                           | Type   | Usage                                                              | Used By      | Default       |
+| Index                     | Type   | Usage                                                              | Used By      | Default       |
 |---------------------------|--------|--------------------------------------------------------------------|--------------|---------------|
 | `w_debug_level`           | `str`  | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                           | Main, Remote | `"DEBUG"`     |
 | `srw_mode`                | `bool` | `True`: single rear wheel; `False`: dual rear wheel                | Main         | `True`        |
