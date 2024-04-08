@@ -14,7 +14,7 @@ execute() {
 }
 
 echo "Installing Python..."
-execute "wget" "https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh"
+execute "wget" "https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh"
 execute "python-install.sh"
 echo "Cleaning up..."
 execute "rm" "python-install.sh"
