@@ -37,13 +37,13 @@ wheel (SRW) mode and dual rear wheel (DRW) mode.
 - [ ] A data recording system with the following components
     - [x] A speed recording system
     - [ ] A G force recording system
-  - [x] A GPS recording system
-  - [x] A battery voltage recording system
+    - [x] A GPS recording system
+    - [x] A battery voltage recording system
 - [ ] A control system with the following components
     - [x] DTCS (Dynamic Traction Control System)
     - [x] ABS (Anti-lock Braking System)
-  - [ ] EBI (Emergency Braking Intervention)
-  - [ ] ATBS (Automatic Trail Braking System)
+    - [ ] EBI (Emergency Braking Intervention)
+    - [ ] ATBS (Automatic Trail Braking System)
 - [x] A remote analyst
 
 ## To High School Students
