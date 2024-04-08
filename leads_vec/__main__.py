@@ -70,6 +70,8 @@ if __name__ == "__main__":
         _L.info("Configuring X Window System...")
         _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
 
+    from leads_vec.cli import main
+
     try:
         if args.emu:
             raise SystemError("User specifies to use emulator")
@@ -79,6 +81,7 @@ if __name__ == "__main__":
         if isinstance(e, ImportError):
             if args.ignore_import_error:
                 _L.debug("Ignoring import error: " + repr(e))
+                _exit(main())
             else:
                 _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
         _reset()
@@ -103,6 +106,4 @@ if __name__ == "__main__":
         except ImportError as e:
             _L.error("Emulator error: " + repr(e))
             _exit(1)
-    from leads_vec.cli import main
-
     _exit(main())
