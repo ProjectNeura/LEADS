@@ -253,6 +253,8 @@ def main() -> int:
             make_system_switch(ctx, SystemLiteral.EBI, uim.rd())()
         elif key == _KeyCode.from_char("4"):
             make_system_switch(ctx, SystemLiteral.ATBS, uim.rd())()
+        elif key == _KeyCode.from_char("t"):
+            ctx.time_lap()
         elif key == _Key.esc:
             uim.kill()
 
