@@ -63,7 +63,17 @@ if __name__ == "__main__":
         _L.info("Configuring X Window System...")
         _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
 
-    def emulate() -> None:
+    try:
+        if args.emu:
+            raise SystemError("User specifies to use emulator")
+        from leads_vec.controllers import _
+    except (ImportError, SystemError) as e:
+        _L.debug(repr(e))
+        if isinstance(e, ImportError):
+            if args.ignore_import_error:
+                _L.debug("Ignoring import error: " + repr(e))
+            else:
+                _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
         _reset()
         try:
             if config.srw_mode:
@@ -74,27 +84,18 @@ if __name__ == "__main__":
             _register_controller(_MAIN_CONTROLLER, _Controller())
             from leads_emulation import GPSReceiver as _GPSReceiver, DirectionIndicator as _DirectionIndicator
 
+
             @_device(_GPS_RECEIVER, _MAIN_CONTROLLER)
             class GPS(_GPSReceiver):
                 pass
 
+
             @_device((_LEFT_INDICATOR, _RIGHT_INDICATOR), _MAIN_CONTROLLER)
             class DirectionIndicators(_DirectionIndicator):
                 pass
-        except ImportError:
-            raise ImportError("At least one adapter has to be installed")
-
-    if args.emu:
-        emulate()
-    try:
-        from leads_vec.controllers import _
-    except ImportError as e:
-        if args.ignore_import_error:
-            _L.debug("Ignoring import error: " + repr(e))
-        else:
-            _L.debug(repr(e))
-            _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
-            emulate()
+        except ImportError as e:
+            _L.error("Emulator error: " + repr(e))
+            _exit(1)
     from leads_vec.cli import main
 
     _exit(main())
