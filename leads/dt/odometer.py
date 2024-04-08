@@ -5,7 +5,7 @@ from leads.dt.device import Device
 
 
 class Odometer(Device):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._milage: float = 0
 
@@ -19,7 +19,7 @@ class Odometer(Device):
 
 
 class ConcurrentOdometer(Odometer):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._lock: _Lock = _Lock()
 

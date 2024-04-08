@@ -25,6 +25,10 @@ def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeD
     return switch
 
 
+def format_lap_time(t: int) -> str:
+    return f"{(t := int(t * .001)) // 60} MIN {t % 60} SEC"
+
+
 def main() -> int:
     cfg = require_config()
     ctx = LEADS(srw_mode=cfg.srw_mode, data_seq_size=cfg.data_seq_size)
@@ -49,7 +53,7 @@ def main() -> int:
     g_force = GForceVar(root, 0, 0)
     esc = StringVar(root, "STANDARD")
 
-    def hazard():
+    def hazard() -> None:
         state = not ctx.hazard()
         left, right = get_device(LEFT_INDICATOR), get_device(RIGHT_INDICATOR)
         if state:
@@ -61,8 +65,8 @@ def main() -> int:
         ctx.hazard(state)
         uim["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
 
-    def render(manager: ContextManager):
-        def switch_m1_mode(_):
+    def render(manager: ContextManager) -> None:
+        def switch_m1_mode(_) -> None:
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
 
         manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, clickable=True,
@@ -93,7 +97,7 @@ def main() -> int:
                                         font=("Arial", cfg.font_size_small))
         manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=hazard)
 
-        def switch_esc_mode(mode):
+        def switch_esc_mode(mode) -> None:
             manager["esc"].configure(selected_color=(c := "green" if (esc_mode := ESCMode[mode]) < 2 else "red"),
                                      selected_hover_color=c)
             ctx.esc_mode(esc_mode)
@@ -117,9 +121,6 @@ def main() -> int:
                 hazard()
 
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
-
-    def format_lap_time(t: int) -> str:
-        return f"{(t := int(t * .001)) // 60} MIN {t % 60} SEC"
 
     class CustomListener(EventListener):
         def pre_push(self, e: DataPushedEvent) -> None:
