@@ -88,34 +88,6 @@ python -m leads_vec info
 You can install [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino) from Arduino Library Manager. Note that
 it is named "LEADS", not "LEADS-Arduino", in the index.
 
-## Environment Setup
-
-This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
-reproduction
-is available on [https://leads.projectneura.org](https://leads.projectneura.org), but first of all, we run an Ubuntu
-22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, clone the repository or download the scripts
-from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
-
-You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything for you. If anything goes wrong, you
-can also manually install everything.
-
-```shell
-/bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh
-```
-
-We also use OBS Studio for streaming, but it is not required. If you want to install,
-run "[obs-install.sh](scripts/obs-install.sh)".
-
-```shell
-/bin/sh "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-install.sh)" && rm obs-install.sh
-```
-
-Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
-
-```shell
-/bin/sh "obs-run.sh$(wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-run.sh)" && rm obs-run.sh
-```
-
 ## LEADS Framework
 
 See [Read the Docs](https://leads.projectneura.org) (TBC) for the documentation of how to customize and make use of the
@@ -222,6 +194,34 @@ To learn about the configuration file, read [Configurations](#Configurations).
 
 If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
 because you have to specify the Python version such that `python3.12 ...` and `python3.12 -m pip ...`.
+
+## Environment Setup
+
+This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
+reproduction
+is available on [https://leads.projectneura.org](https://leads.projectneura.org), but first of all, we run an Ubuntu
+22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, clone the repository or download the scripts
+from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
+
+You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything for you. If anything goes wrong, you
+can also manually install everything.
+
+```shell
+/bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh
+```
+
+We also use OBS Studio for streaming, but it is not required. If you want to install,
+run "[obs-install.sh](scripts/obs-install.sh)".
+
+```shell
+/bin/sh "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-install.sh)" && rm obs-install.sh
+```
+
+Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
+
+```shell
+/bin/sh "obs-run.sh$(wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-run.sh)" && rm obs-run.sh
+```
 
 ## Configurations
 
