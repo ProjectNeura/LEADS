@@ -1,5 +1,5 @@
 from enum import StrEnum as _StrEnum
-from typing import Callable as _Callable
+from typing import Callable as _Callable, override as _override
 
 from PIL import Image as _Image
 from customtkinter import CTkImage as _CTkImage
@@ -30,6 +30,23 @@ class _Icon(_Callable[[int, Color | None], _CTkImage]):
                          None if color else self.load_source(Color.WHITE),
                          size=(size, size))
 
+
+class _Logo(_Icon):
+    def __init__(self) -> None:
+        super().__init__("logo")
+
+    @_override
+    def load_source(self, color: Color) -> _Image:
+        return _Image.open(_ASSETS_PATH + "/logo.png")
+
+    @_override
+    def __call__(self, size: int | None = None, color: Color | None = None) -> _CTkImage:
+        if size is None:
+            size = _require_config().font_size_medium
+        return _CTkImage(self.load_source(Color.BLACK), size=(size, size))
+
+
+Logo: _Logo = _Logo()
 
 Battery: _Icon = _Icon("battery")
 Brake: _Icon = _Icon("brake")
