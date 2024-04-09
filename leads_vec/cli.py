@@ -195,7 +195,6 @@ def main() -> int:
             uim["hazard"].configure(image=Hazard(color=Color.RED if state else None))
 
     ctx.set_event_listener(CustomListener())
-    uim["logo"] = CTkLabel(root, text="", image=Logo(cfg.font_size_large))
     uim["battery_fault"] = CTkLabel(root, text="")
     uim["brake_fault"] = CTkLabel(root, text="")
     uim["esc_fault"] = CTkLabel(root, text="")
@@ -237,24 +236,23 @@ def main() -> int:
     if cfg.manual_mode:
         layout = [
             ["m1", "m2", "m3"],
+            ["left", "time_lap", "hazard", "right"],
             [CTkLabel(root, text="MANUAL MODE"), CTkLabel(root, text="ASSISTANCE DISABLED"), "comm_status"],
-            ["battery_fault", "brake_fault", "esc_fault", "logo", "gps_fault", "motor_fault", "wsc_fault"],
-            ["left", "time_lap", "hazard", "right"]
+            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"]
         ]
         ctx.esc_mode(ESCMode.OFF)
         uim.rd().control_system_switch_changed = True
     else:
         layout = [
             ["m1", "m2", "m3"],
+            ["left", "time_lap", "hazard", "right"],
+            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"],
             [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
             list(map(lambda s: s.lower(), SystemLiteral)),
-            ["esc"],
-            ["battery_fault", "brake_fault", "esc_fault", "logo", "gps_fault", "motor_fault", "wsc_fault"],
-            ["left", "time_lap", "hazard", "right"]
+            ["esc"]
         ]
     uim.layout(layout)
-    CTkLabel(root, text="").grid(row=(placeholder_row := len(layout) - 2))
-    root.grid_rowconfigure(placeholder_row, weight=1)
+    root.grid_rowconfigure(2, weight=1)
     initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
