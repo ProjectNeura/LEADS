@@ -83,8 +83,7 @@ def main() -> int:
 
         manager["left"] = CTkButton(root, text="", image=Left(cfg.font_size_large),
                                     command=lambda: ctx.left_indicator(not ctx.left_indicator()))
-        manager["time_lap"] = CTkButton(root, text="Time Lap", command=ctx.time_lap,
-                                        font=("Arial", cfg.font_size_small))
+        manager["time_lap"] = CTkButton(root, text="", image=Stopwatch(), command=ctx.time_lap)
         manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
         manager["right"] = CTkButton(root, text="", image=Right(cfg.font_size_large),
                                      command=lambda: ctx.right_indicator(not ctx.right_indicator()))
@@ -196,44 +195,50 @@ def main() -> int:
             uim["hazard"].configure(image=Hazard(color=Color.RED if state else None))
 
     ctx.set_event_listener(CustomListener())
+    uim["logo"] = CTkLabel(root, text="", image=Logo(cfg.font_size_large))
     uim["battery_fault"] = CTkLabel(root, text="")
+    uim["brake_fault"] = CTkLabel(root, text="")
     uim["esc_fault"] = CTkLabel(root, text="")
     uim["gps_fault"] = CTkLabel(root, text="")
     uim["motor_fault"] = CTkLabel(root, text="")
-    uim["wheel_speed_fault"] = CTkLabel(root, text="")
+    uim["wsc_fault"] = CTkLabel(root, text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
-        if e.system == "ESC":
-            uim["esc_fault"].configure(image=ESC(color=Color.RED))
-        elif e.system == "BATT":
+        if e.system == "BATT":
             uim["battery_fault"].configure(image=Battery(color=Color.RED))
+        elif e.system == "BRAKE":
+            uim["brake_fault"].configure(image=Brake(color=Color.RED))
+        elif e.system == "ESC":
+            uim["esc_fault"].configure(image=ESC(color=Color.RED))
+        elif e.system == "GPS":
+            uim["gps_fault"].configure(image=Satellite(color=Color.RED))
         elif e.system == "MOTOR":
             uim["motor_fault"].configure(image=Motor(color=Color.RED))
         elif e.system == "WSC":
-            uim["wheel_speed_fault"].configure(image=Speed(color=Color.RED))
-        elif e.system == "GPS":
-            uim["gps_fault"].configure(image=Satellite(color=Color.RED))
+            uim["wsc_fault"].configure(image=Speed(color=Color.RED))
 
     SFT.on_fail = on_fail
 
     def on_recover(_, e: SuspensionEvent) -> None:
-        if e.system == "ESC":
-            uim["esc_fault"].configure(image=None)
-        elif e.system == "BATT":
+        if e.system == "BATT":
             uim["battery_fault"].configure(image=None)
+        elif e.system == "BRAKE":
+            uim["brake_fault"].configure(image=None)
+        elif e.system == "ESC":
+            uim["esc_fault"].configure(image=None)
+        elif e.system == "GPS":
+            uim["gps_fault"].configure(image=None)
         elif e.system == "MOTOR":
             uim["motor_fault"].configure(image=None)
         elif e.system == "WSC":
-            uim["wheel_speed_fault"].configure(image=None)
-        elif e.system == "GPS":
-            uim["gps_fault"].configure(image=None)
+            uim["wsc_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
     if cfg.manual_mode:
         layout = [
             ["m1", "m2", "m3"],
             [CTkLabel(root, text="MANUAL MODE"), CTkLabel(root, text="ASSISTANCE DISABLED"), "comm_status"],
-            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"],
+            ["battery_fault", "brake_fault", "esc_fault", "logo", "gps_fault", "motor_fault", "wsc_fault"],
             ["left", "time_lap", "hazard", "right"]
         ]
         ctx.esc_mode(ESCMode.OFF)
@@ -244,10 +249,12 @@ def main() -> int:
             [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
             list(map(lambda s: s.lower(), SystemLiteral)),
             ["esc"],
-            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"],
+            ["battery_fault", "brake_fault", "esc_fault", "logo", "gps_fault", "motor_fault", "wsc_fault"],
             ["left", "time_lap", "hazard", "right"]
         ]
     uim.layout(layout)
+    CTkLabel(root, text="").grid(row=(placeholder_row := len(layout) - 2))
+    root.grid_rowconfigure(placeholder_row, weight=1)
     initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
