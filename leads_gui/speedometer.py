@@ -59,7 +59,7 @@ class Speedometer(TextBased, VariableControlled):
         w, h, hc, vc, limit = canvas.meta()
         font = self._font[self._style]
         if self._style > 0:
-            r = min(hc, vc) * 1.25
+            r = min(hc, vc) * 1.2
             x, y = hc, vc + r * .25
             p = min(v / self._maximum, 1)
             rad = p * 4 * _pi / 3 - _pi / 6
@@ -85,7 +85,7 @@ class Speedometer(TextBased, VariableControlled):
             font = (font[0], target_font_size)
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         if self._style > 0:
-            r = min(hc, vc) * 1.25
+            r = min(hc, vc) * 1.2
             x, y = hc, vc + r * .25
             font_size_span = int(min(h * .06, self._font[2][1] * .8))
             canvas.collect("f1", canvas.create_text(x, y - r * .6, text="KM / H", fill="gray",
