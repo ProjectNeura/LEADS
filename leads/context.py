@@ -41,6 +41,8 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_timed + 1)
         self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
         self._esc_mode: ESCMode = ESCMode.STANDARD
+        self._left_indicator: bool = False
+        self._right_indicator: bool = False
         self._hazard: bool = False
 
     def data(self) -> T:
@@ -99,6 +101,16 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def overwrite_brake(self, force: float) -> float:
         # todo
         return 0
+
+    def left_indicator(self, left_indicator: bool | None = None) -> bool | None:
+        if left_indicator is None:
+            return self._left_indicator
+        self._left_indicator = left_indicator
+
+    def right_indicator(self, right_indicator: bool | None = None) -> bool | None:
+        if right_indicator is None:
+            return self._right_indicator
+        self._right_indicator = right_indicator
 
     def hazard(self, hazard: bool | None = None) -> bool | None:
         if hazard is None:

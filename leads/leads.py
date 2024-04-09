@@ -2,7 +2,7 @@ from typing import TypeVar as _TypeVar, Any as _Any, override as _override, Lite
 
 from leads.context import Context
 from leads.data import DataContainer
-from leads.event import EventListener, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
+from leads.event import EventListener, Event, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
 from leads.plugin import Plugin
 
@@ -84,3 +84,21 @@ class LEADS(Context[T]):
             return super().overwrite_brake(force)
         finally:
             self.intervene(InterventionExitEvent(self, "BRAKE", force))
+
+    @_override
+    def left_indicator(self, left_indicator: bool | None = None) -> bool | None:
+        if left_indicator is not None:
+            self._event_listener.left_indicator(Event("LEFT_INDICATOR", self), left_indicator)
+        return super().left_indicator(left_indicator)
+
+    @_override
+    def right_indicator(self, right_indicator: bool | None = None) -> bool | None:
+        if right_indicator is not None:
+            self._event_listener.right_indicator(Event("RIGHT_INDICATOR", self), right_indicator)
+        return super().right_indicator(right_indicator)
+
+    @_override
+    def hazard(self, hazard: bool | None = None) -> bool | None:
+        if hazard is not None:
+            self._event_listener.hazard(Event("HAZARD", self), hazard)
+        return super().hazard(hazard)

@@ -1,4 +1,4 @@
-from typing import Any as _Any, override as _override
+from typing import Any as _Any, override as _override, overload as _overload
 
 from leads.callback import CallbackChain
 from leads.context import Context
@@ -6,6 +6,10 @@ from leads.data import DataContainer
 
 
 class Event(object):
+    @_overload
+    def __init__(self, *args, **kwargs) -> None:  # real signature unknown
+        ...
+
     def __init__(self, t: str, context: Context) -> None:
         self.t: str = t
         self.context: Context = context
@@ -67,3 +71,11 @@ class EventListener(CallbackChain):
     def pre_suspend(self, event: SuspensionEvent) -> None: ...
 
     def post_suspend(self, event: SuspensionEvent) -> None: ...
+
+    def left_indicator(self, event: Event, state: bool) -> None: ...
+
+    def right_indicator(self, event: Event, state: bool) -> None: ...
+
+    def hazard(self, event: Event, state: bool) -> None:
+        self.left_indicator(event, state)
+        self.right_indicator(event, state)

@@ -53,18 +53,6 @@ def main() -> int:
     g_force = GForceVar(root, 0, 0)
     esc = StringVar(root, "STANDARD")
 
-    def hazard() -> None:
-        state = not ctx.hazard()
-        left, right = get_device(LEFT_INDICATOR), get_device(RIGHT_INDICATOR)
-        if state:
-            left.write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .2)))
-            right.write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .2)))
-        else:
-            left.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
-            right.write(LEDGroupCommand(LEDCommand.OFF, Entire()))
-        ctx.hazard(state)
-        uim["hazard"].configure(image=Hazard(color=Color.RED if ctx.hazard() else None))
-
     def render(manager: ContextManager) -> None:
         def switch_m1_mode(_) -> None:
             manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
@@ -93,9 +81,13 @@ def main() -> int:
                                               command=make_system_switch(ctx, SystemLiteral(system), manager.rd()),
                                               font=("Arial", cfg.font_size_small))
 
+        manager["left"] = CTkButton(root, text="", image=Left(cfg.font_size_large),
+                                    command=lambda: ctx.left_indicator(not ctx.left_indicator()))
         manager["time_lap"] = CTkButton(root, text="Time Lap", command=ctx.time_lap,
                                         font=("Arial", cfg.font_size_small))
-        manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=hazard)
+        manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
+        manager["right"] = CTkButton(root, text="", image=Right(cfg.font_size_large),
+                                     command=lambda: ctx.right_indicator(not ctx.right_indicator()))
 
         def switch_esc_mode(mode) -> None:
             manager["esc"].configure(selected_color=(c := "green" if (esc_mode := ESCMode[mode]) < 2 else "red"),
@@ -118,7 +110,7 @@ def main() -> int:
             if msg == b"time_lap":
                 ctx.time_lap()
             elif msg == b"hazard":
-                hazard()
+                ctx.hazard(not ctx.hazard())
 
     uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
@@ -189,6 +181,20 @@ def main() -> int:
             if e.system in SystemLiteral:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
+        def left_indicator(self, e: Event, state: bool) -> None:
+            get_device(LEFT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .1)
+                                                             ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+            uim["left"].configure(image=Left(cfg.font_size_large, Color.RED if state else None))
+
+        def right_indicator(self, e: Event, state: bool) -> None:
+            get_device(RIGHT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .1)
+                                                              ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+            uim["right"].configure(image=Right(cfg.font_size_large, Color.RED if state else None))
+
+        def hazard(self, e: Event, state: bool) -> None:
+            super().hazard(e, state)
+            uim["hazard"].configure(image=Hazard(color=Color.RED if state else None))
+
     ctx.set_event_listener(CustomListener())
     uim["battery_fault"] = CTkLabel(root, text="")
     uim["esc_fault"] = CTkLabel(root, text="")
@@ -227,8 +233,8 @@ def main() -> int:
         layout = [
             ["m1", "m2", "m3"],
             [CTkLabel(root, text="MANUAL MODE"), CTkLabel(root, text="ASSISTANCE DISABLED"), "comm_status"],
-            ["time_lap", "hazard"],
-            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
+            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"],
+            ["left", "time_lap", "hazard", "right"]
         ]
         ctx.esc_mode(ESCMode.OFF)
         uim.rd().control_system_switch_changed = True
@@ -238,8 +244,8 @@ def main() -> int:
             [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
             list(map(lambda s: s.lower(), SystemLiteral)),
             ["esc"],
-            ["time_lap", "hazard"],
-            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"]
+            ["battery_fault", "esc_fault", "gps_fault", "motor_fault", "wheel_speed_fault"],
+            ["left", "time_lap", "hazard", "right"]
         ]
     uim.layout(layout)
     initialize_main()
