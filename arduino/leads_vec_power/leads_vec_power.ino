@@ -10,6 +10,6 @@ void setup() {
 }
 
 void loop() {
-    returnFloat("vot", VOT.read());
+    returnFloat(VOLTAGE_SENSOR, VOT.read());
     delay(100);
 }

@@ -39,7 +39,7 @@ class PowerController(ArduinoMicro):
         super().initialize(*parent_tags)
 
     def read(self) -> dict[str, float]:
-        return {"voltage": self.device("vot").read()}
+        return {"voltage": self.device(VOLTAGE_SENSOR).read()}
 
     def write(self, payload: float) -> None:
         super().write(str(payload).encode())
