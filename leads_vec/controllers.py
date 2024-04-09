@@ -112,7 +112,9 @@ class GPS(NMEAGPSReceiver):
         super().initialize(*parent_tags)
 
 
-@device((LEFT_INDICATOR, RIGHT_INDICATOR), MAIN_CONTROLLER, [(LED(5), LED(6), LED(26)), (LED(17), LED(27), LED(22))])
+@device((LEFT_INDICATOR, RIGHT_INDICATOR), MAIN_CONTROLLER, [
+    (LED(5, .5, .5), LED(6, .5, .5), LED(26, .5, .5)), (LED(17, .5, .5), LED(27, .5, .5), LED(22, .5, .5))
+])
 class DirectionIndicators(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
