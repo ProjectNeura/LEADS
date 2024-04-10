@@ -266,7 +266,7 @@ def main() -> int:
             make_system_switch(ctx, SystemLiteral.ATBS, uim.rd())()
         elif key == _KeyCode.from_char("t"):
             ctx.time_lap()
-        elif key == _Key.num_lock:
+        elif key == _Key.esc:
             uim.kill()
 
     _Listener(on_press=on_press).start()
