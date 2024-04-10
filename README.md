@@ -242,6 +242,7 @@ Note that a purely empty file could cause an error.
 | `srw_mode`                | `bool`  | `True`: single rear wheel; `False`: dual rear wheel                | Main         | `True`        |
 | `data_seq_size`           | `int`   | Buffer size of history data                                        | Main         | `100`         |
 | `enable_data_persistence` | `bool`  | `True`: enable data persistence; `False`: disable data persistence | Main, Remote | `True`        |
+| `data_dir`                | `str`   | The directory for the data recording system                        | Remote       | `"data"`      |
 | `width`                   | `int`   | Window width                                                       | Main         | `720`         |
 | `height`                  | `int`   | Window height                                                      | Main         | `480`         |
 | `fullscreen`              | `bool`  | `True`: auto maximize; `False`: window mode                        | Main         | `False`       |
@@ -255,7 +256,6 @@ Note that a purely empty file could cause an error.
 | `font_size_x_large`       | `int`   | Extra large font size                                              | Main         | `56`          |
 | `comm_addr`               | `str`   | Communication server address                                       | Remote       | `"127.0.0.1"` |
 | `comm_port`               | `int`   | The port on which the communication system runs on                 | Main, Remote | `16900`       |
-| `data_dir`                | `str`   | The directory for the data recording system                        | Remote       | `"data"`    |
 
 ## Submodules
 

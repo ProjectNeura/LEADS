@@ -17,6 +17,7 @@ class ConfigTemplate(Serializable):
         self.srw_mode: bool = True
         self.data_seq_size: int = 100
         self.enable_data_persistence: bool = True
+        self.data_dir: str = "data"
         self.refresh()
 
     def __getitem__(self, name: str) -> _Any | None:
