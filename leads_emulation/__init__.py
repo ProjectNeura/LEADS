@@ -28,7 +28,7 @@ class SRWRandom(_EmulatedController):
                                  min_speed=(fws := _randint(self.minimum, self.maximum)),
                                  gps_valid=True,
                                  latitude=_randint(4265, 4465) / 100,
-                                 longitude=_randint(-7838, -7958) / 100,
+                                 longitude=-_randint(7838, 7958) / 100,
                                  front_wheel_speed=fws,
                                  rear_wheel_speed=self.generate_rear_wheel_speed(fws))
 
@@ -40,7 +40,7 @@ class DRWRandom(_EmulatedController):
                                  min_speed=(fws := _randint(self.minimum, self.maximum)),
                                  gps_valid=True,
                                  latitude=_randint(4265, 4465) / 100,
-                                 longitude=_randint(-7838, -7958) / 100,
+                                 longitude=-_randint(7838, 7958) / 100,
                                  front_wheel_speed=fws,
                                  left_rear_wheel_speed=(rws := self.generate_rear_wheel_speed(fws)),
                                  right_rear_wheel_speed=rws)
@@ -67,7 +67,7 @@ class SRWSin(_SinController):
                                      min_speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
                                      gps_valid=True,
                                      latitude=_randint(4265, 4465) / 100,
-                                     longitude=_randint(-7838, -7958) / 100,
+                                     longitude=-_randint(7838, 7958) / 100,
                                      front_wheel_speed=fws,
                                      rear_wheel_speed=self.generate_rear_wheel_speed(fws))
         finally:
@@ -82,7 +82,7 @@ class DRWSin(_SinController):
                                      min_speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
                                      gps_valid=True,
                                      latitude=_randint(4265, 4465) / 100,
-                                     longitude=_randint(-7838, -7958) / 100,
+                                     longitude=-_randint(7838, 7958) / 100,
                                      front_wheel_speed=fws,
                                      left_rear_wheel_speed=(rws := self.generate_rear_wheel_speed(fws)),
                                      right_rear_wheel_speed=rws)
