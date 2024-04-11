@@ -14,6 +14,10 @@ class Dataset(object):
         self._data_dir: str = data_dir
         self._instruction_file: str = instruction_file
 
+    def load(self) -> None:
+        # Todo
+        pass
+
 
 class ReplayController(_Controller):
     def __init__(self, dataset: Dataset) -> None:
