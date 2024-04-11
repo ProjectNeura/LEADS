@@ -74,7 +74,9 @@ async def index() -> str:
 
 @app.get("/current")
 async def current() -> dict[str, Any]:
-    return data_record[-1]
+    return data_record[-1] if len(data_record) > 0 else SRWDataContainer(
+    ).to_dict() if config.srw_mode else DRWDataContainer(
+    ).to_dict()
 
 
 @app.get("/time_stamp")
