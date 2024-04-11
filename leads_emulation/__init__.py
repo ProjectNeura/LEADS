@@ -4,7 +4,7 @@ from typing import override as _override
 from numpy import sin as _sin, pi as _pi
 
 from leads import Controller as _Controller, SRWDataContainer as _SRWDataContainer, \
-    DRWDataContainer as _DRWDataContainer, Device as _Device
+    DRWDataContainer as _DRWDataContainer
 
 
 class _EmulatedController(_Controller):
@@ -92,15 +92,3 @@ class DRWSin(_SinController):
                                      right_rear_wheel_speed=rws)
         finally:
             self.counter = (self.counter + self.acceleration) % _pi
-
-
-class GPSReceiver(_Device):
-    @_override
-    def read(self) -> [bool, float, float, float, int, int]:
-        return False, 0, 0, 0, 0, 0
-
-
-class DirectionIndicator(_Device):
-    @_override
-    def write(self, _) -> None:
-        pass

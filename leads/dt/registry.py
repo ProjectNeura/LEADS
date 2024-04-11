@@ -57,6 +57,10 @@ def register_controller(tag: str, c: Controller, parent: str | None = None) -> N
     _controllers[tag] = c
 
 
+def has_controller(tag: str) -> bool:
+    return tag in _controllers.keys()
+
+
 def get_controller(tag: str) -> Controller:
     return _controllers[tag]
 
@@ -70,6 +74,10 @@ def _register_device(prototype: type[Device],
     instance.parent_tags(parent.parent_tags() + [parent.tag()])
     parent.device(tag, instance)
     _devices[tag] = instance
+
+
+def has_device(tag: str) -> bool:
+    return tag in _devices.keys()
 
 
 def get_device(tag: str) -> Device:

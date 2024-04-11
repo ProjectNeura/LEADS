@@ -129,10 +129,15 @@ def main() -> int:
                 m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
                                                                                                       lap_time_list))))
             elif uim.rd().m1_mode == 1:
-                gps = get_device(GPS_RECEIVER).read()
-                m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n\n"
-                       f"{d.gps_ground_speed:.1f} KM / H\n"
-                       f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
+                if has_device(GPS_RECEIVER):
+                    gps = get_device(GPS_RECEIVER).read()
+                    m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n\n"
+                           f"{d.gps_ground_speed:.1f} KM / H\n"
+                           f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
+                else:
+                    m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - !NF!\n\n"
+                           f"{d.gps_ground_speed:.1f} KM / H\n"
+                           f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
             elif uim.rd().m1_mode == 2:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
@@ -181,13 +186,17 @@ def main() -> int:
                 uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
 
         def left_indicator(self, e: Event, state: bool) -> None:
-            get_device(LEFT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("left2right", .1)
-                                                             ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+            if has_device(LEFT_INDICATOR):
+                get_device(LEFT_INDICATOR).write(LEDGroupCommand(
+                    LEDCommand.BLINK, Transition("left2right", .1)
+                ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
             uim["left"].configure(image=Left(cfg.font_size_large, Color.RED if state else None))
 
         def right_indicator(self, e: Event, state: bool) -> None:
-            get_device(RIGHT_INDICATOR).write(LEDGroupCommand(LEDCommand.BLINK, Transition("right2left", .1)
-                                                              ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+            if has_device(RIGHT_INDICATOR):
+                get_device(RIGHT_INDICATOR).write(LEDGroupCommand(
+                    LEDCommand.BLINK, Transition("right2left", .1)
+                ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
             uim["right"].configure(image=Right(cfg.font_size_large, Color.RED if state else None))
 
         def hazard(self, e: Event, state: bool) -> None:
