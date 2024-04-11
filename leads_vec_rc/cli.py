@@ -1,4 +1,4 @@
-from json import loads
+from json import loads, JSONDecodeError
 from os import mkdir
 from os.path import abspath, exists
 from typing import Any
@@ -41,12 +41,15 @@ class CommCallback(Callback):
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
-        d = loads(msg.decode())
-        data_record.append(d)
-        time_stamp_record.append(d["t"])
-        speed_record.append(d["front_wheel_speed"])
-        voltage_record.append(d["voltage"])
-        gps_record.append(Vector(d["latitude"], d["longitude"]))
+        try:
+            d = loads(msg.decode())
+            data_record.append(d)
+            time_stamp_record.append(d["t"])
+            speed_record.append(d["front_wheel_speed"])
+            voltage_record.append(d["voltage"])
+            gps_record.append(Vector(d["latitude"], d["longitude"]))
+        except JSONDecodeError as e:
+            L.error(repr(e))
 
     def on_disconnect(self, service: Service, connection: Connection) -> None:
         self.super(service=service, connection=connection)
