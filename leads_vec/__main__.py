@@ -68,6 +68,17 @@ if __name__ == "__main__":
         _L.info("Configuring X Window System...")
         _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
 
+    if args.action == "replay":
+        from leads_emulation.replay import Dataset as _Dataset
+
+        if config.srw_mode:
+            from leads_emulation.replay import SRWReplayController as _Controller
+        else:
+            from leads_emulation.replay import DRWReplayController as _Controller
+        _register_controller(_MAIN_CONTROLLER, _Controller(
+            _Dataset(config.data_dir, config.data_dir + "/.instruction")
+        ))
+
     from leads_vec.cli import main
 
     try:
