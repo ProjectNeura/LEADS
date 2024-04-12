@@ -75,6 +75,7 @@ if __name__ == "__main__":
         from leads_emulation.replay import ReplayController as _Controller
 
         _register_controller(_MAIN_CONTROLLER, _Controller(_Dataset(config.data_dir + "/main.csv")))
+        _L.info("Replay started")
         _exit(main())
 
     try:
