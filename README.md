@@ -20,9 +20,6 @@ dedicated circuit board, but generic development kits such as Raspberry Pi and A
 high-level system running on a host computer, the software framework has the ability to adapt to any type of hardware
 component if you are willing to write some codes.
 
-Before you start, please note that LEADS only supports rear drive and two drive-wheel configurations: single rear
-wheel (SRW) mode and dual rear wheel (DRW) mode.
-
 ![demo](docs/assets/preview.png)
 
 :link: [Docs](https://leads.projectneura.org)
@@ -239,7 +236,6 @@ Note that a purely empty file could cause an error.
 | Index               | Type    | Usage                                                     | Used By      | Default       |
 |---------------------|---------|-----------------------------------------------------------|--------------|---------------|
 | `w_debug_level`     | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
-| `srw_mode`          | `bool`  | `True`: single rear wheel; `False`: dual rear wheel       | Main         | `True`        |
 | `data_seq_size`     | `int`   | Buffer size of history data                               | Main         | `100`         |
 | `save_data`         | `bool`  | `True`: save data; `False`: discard data                  | Main, Remote | `False`       |
 | `data_dir`          | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
