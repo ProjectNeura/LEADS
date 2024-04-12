@@ -100,7 +100,7 @@ if __name__ == "__main__":
         try:
             from leads_emulation import SinController as _Controller
 
-            _register_controller(_MAIN_CONTROLLER, _Controller())
+            _register_controller(_MAIN_CONTROLLER, _Controller(10, 100, .05))
         except ImportError as e:
             _L.error("Emulator error: " + repr(e))
             _exit(1)
