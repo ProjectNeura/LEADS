@@ -3,8 +3,7 @@ from typing import override as _override
 
 from numpy import sin as _sin, pi as _pi
 
-from leads import Controller as _Controller, SRWDataContainer as _SRWDataContainer, \
-    DRWDataContainer as _DRWDataContainer
+from leads import Controller as _Controller, DataContainer as _DataContainer
 
 
 class _EmulatedController(_Controller):
@@ -21,34 +20,20 @@ class _EmulatedController(_Controller):
         return front_wheel_speed + int(_randint(1, int(1 / self.skid_possibility)) * self.skid_possibility)
 
 
-class SRWRandom(_EmulatedController):
+class RandomController(_EmulatedController):
     @_override
-    def read(self) -> _SRWDataContainer:
-        return _SRWDataContainer(voltage=48.0,
-                                 speed=(fws := _randint(self.minimum, self.maximum)),
-                                 gps_valid=True,
-                                 gps_ground_speed=fws,
-                                 latitude=_randint(4315, 4415) / 100,
-                                 longitude=-_randint(7888, 7988) / 100,
-                                 front_wheel_speed=fws,
-                                 rear_wheel_speed=self.generate_rear_wheel_speed(fws))
+    def read(self) -> _DataContainer:
+        return _DataContainer(voltage=48.0,
+                              speed=(fws := _randint(self.minimum, self.maximum)),
+                              front_wheel_speed=fws,
+                              rear_wheel_speed=self.generate_rear_wheel_speed(fws),
+                              gps_valid=True,
+                              gps_ground_speed=fws,
+                              latitude=_randint(4315, 4415) / 100,
+                              longitude=-_randint(7888, 7988) / 100)
 
 
-class DRWRandom(_EmulatedController):
-    @_override
-    def read(self) -> _DRWDataContainer:
-        return _DRWDataContainer(voltage=48.0,
-                                 speed=(fws := _randint(self.minimum, self.maximum)),
-                                 gps_valid=True,
-                                 gps_ground_speed=fws,
-                                 latitude=_randint(4315, 4415) / 100,
-                                 longitude=-_randint(7888, 7988) / 100,
-                                 front_wheel_speed=fws,
-                                 left_rear_wheel_speed=(rws := self.generate_rear_wheel_speed(fws)),
-                                 right_rear_wheel_speed=rws)
-
-
-class _SinController(_EmulatedController):
+class SinController(_EmulatedController):
     def __init__(self,
                  minimum: int = 30,
                  maximum: int = 40,
@@ -60,35 +45,16 @@ class _SinController(_EmulatedController):
         self.offset: int = minimum
         self.counter: float = 0
 
-
-class SRWSin(_SinController):
     @_override
-    def read(self) -> _SRWDataContainer:
+    def read(self) -> _DataContainer:
         try:
-            return _SRWDataContainer(voltage=48.0,
-                                     speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
-                                     gps_valid=True,
-                                     gps_ground_speed=fws,
-                                     latitude=_randint(4315, 4415) / 100,
-                                     longitude=-_randint(7888, 7988) / 100,
-                                     front_wheel_speed=fws,
-                                     rear_wheel_speed=self.generate_rear_wheel_speed(fws))
-        finally:
-            self.counter = (self.counter + self.acceleration) % _pi
-
-
-class DRWSin(_SinController):
-    @_override
-    def read(self) -> _DRWDataContainer:
-        try:
-            return _DRWDataContainer(voltage=48.0,
-                                     speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
-                                     gps_valid=True,
-                                     gps_ground_speed=fws,
-                                     latitude=_randint(4315, 4415) / 100,
-                                     longitude=-_randint(7888, 7988) / 100,
-                                     front_wheel_speed=fws,
-                                     left_rear_wheel_speed=(rws := self.generate_rear_wheel_speed(fws)),
-                                     right_rear_wheel_speed=rws)
+            return _DataContainer(voltage=48.0,
+                                  speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
+                                  front_wheel_speed=fws,
+                                  rear_wheel_speed=self.generate_rear_wheel_speed(fws),
+                                  gps_valid=True,
+                                  gps_ground_speed=fws,
+                                  latitude=_randint(4315, 4415) / 100,
+                                  longitude=-_randint(7888, 7988) / 100)
         finally:
             self.counter = (self.counter + self.acceleration) % _pi

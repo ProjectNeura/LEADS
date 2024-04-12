@@ -3,16 +3,15 @@ from typing import Any as _Any
 from leads.constant import ESCMode
 from leads.context import Context
 from leads.registry import require_context
-from leads.types import RequiredData as _RequiredData
 
 
 class Plugin(object):
-    def __init__(self, required_data: _RequiredData) -> None:
+    def __init__(self, required_data: tuple[str, ...]) -> None:
         """
-        :param required_data: required data or (required data in srw mode, required data in drw mode)
+        :param required_data: required data entries
         """
         super().__init__()
-        self._required_data: _RequiredData = required_data
+        self._required_data: tuple[str, ...] = required_data
         self.state: dict[str, _Any] = {}
         self._enabled: bool = True
 
@@ -27,9 +26,8 @@ class Plugin(object):
             return require_context().esc_mode() != ESCMode.OFF and self._enabled
         self._enabled = enabled
 
-    def required_data(self) -> list[str]:
-        return (self._required_data if isinstance(self._required_data, list) else
-                self._required_data[0] if require_context().srw_mode() else self._required_data[1])
+    def required_data(self) -> tuple[str, ...]:
+        return self._required_data
 
     def on_load(self, context: Context) -> None: ...
 

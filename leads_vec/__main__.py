@@ -72,10 +72,8 @@ if __name__ == "__main__":
     from leads_vec.cli import main
 
     if args.action == "replay":
-        if config.srw_mode:
-            from leads_emulation.replay import SRWReplayController as _Controller
-        else:
-            from leads_emulation.replay import DRWReplayController as _Controller
+        from leads_emulation.replay import ReplayController as _Controller
+
         _register_controller(_MAIN_CONTROLLER, _Controller(_Dataset(config.data_dir + "/main.csv")))
         _exit(main())
 
@@ -93,10 +91,7 @@ if __name__ == "__main__":
                 _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
         _reset()
         try:
-            if config.srw_mode:
-                from leads_emulation import SRWSin as _Controller
-            else:
-                from leads_emulation import DRWSin as _Controller
+            from leads_emulation import SinController as _Controller
 
             _register_controller(_MAIN_CONTROLLER, _Controller())
         except ImportError as e:

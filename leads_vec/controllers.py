@@ -1,7 +1,6 @@
-from leads import device, controller, MAIN_CONTROLLER, get_controller, SRWDataContainer, DRWDataContainer, \
-    LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, \
-    LEFT_REAR_WHEEL_SPEED_SENSOR, RIGHT_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, GPS_RECEIVER, \
-    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR
+from leads import device, controller, MAIN_CONTROLLER, get_controller, LEFT_FRONT_WHEEL_SPEED_SENSOR, \
+    RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, GPS_RECEIVER, ConcurrentOdometer, \
+    LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
@@ -19,7 +18,7 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 
 @controller(MAIN_CONTROLLER)
 class VeCController(Controller):
-    def read(self) -> SRWDataContainer | DRWDataContainer:
+    def read(self) -> DataContainer:
         universal = {
             "mileage": self.device(ODOMETER).read(),
             "gps_valid": (coords := self.device(GPS_RECEIVER).read())[0],
@@ -28,8 +27,7 @@ class VeCController(Controller):
             "longitude": coords[3],
             **get_controller("pc").read()
         }
-        return (SRWDataContainer if config.srw_mode else DRWDataContainer)(
-            **get_controller("wsc").read(), **universal)
+        return DataContainer(**get_controller("wsc").read(), **universal)
 
 
 @controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
@@ -61,44 +59,18 @@ class WheelSpeedController(ArduinoMicro):
         lfws = self.device(LEFT_FRONT_WHEEL_SPEED_SENSOR).read()
         rfws = self.device(RIGHT_FRONT_WHEEL_SPEED_SENSOR).read()
         front_wheel_speed = (lfws + rfws) * .5
-        return {
-            "speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
-            "front_wheel_speed": front_wheel_speed,
-            "rear_wheel_speed": rws
-        } if config.srw_mode else {
-            "speed": min(lfws, rfws, lrws := self.device(LEFT_REAR_WHEEL_SPEED_SENSOR).read(),
-                         rrws := self.device(RIGHT_REAR_WHEEL_SPEED_SENSOR).read()),
-            "front_wheel_speed": front_wheel_speed,
-            "left_rear_wheel_speed": lrws,
-            "right_rear_wheel_speed": rrws
-        }
+        return {"speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
+                "front_wheel_speed": front_wheel_speed, "rear_wheel_speed": rws}
 
 
 @device(ODOMETER, MAIN_CONTROLLER)
 class AverageOdometer(ConcurrentOdometer):
     def read(self) -> float:
-        return super().read() / (3 if config.srw_mode else 4)
+        return super().read() / 3
 
 
-@device(*((
-        (LEFT_FRONT_WHEEL_SPEED_SENSOR,
-         RIGHT_FRONT_WHEEL_SPEED_SENSOR,
-         CENTER_REAR_WHEEL_SPEED_SENSOR),
-        "wsc",
-        [(FRONT_WHEEL_DIAMETER, ODOMETER),
-         (FRONT_WHEEL_DIAMETER, ODOMETER),
-         (REAR_WHEEL_DIAMETER, ODOMETER)
-         ]) if config.srw_mode else (
-        (LEFT_FRONT_WHEEL_SPEED_SENSOR,
-         RIGHT_FRONT_WHEEL_SPEED_SENSOR,
-         LEFT_REAR_WHEEL_SPEED_SENSOR,
-         RIGHT_REAR_WHEEL_SPEED_SENSOR),
-        "wsc",
-        [(FRONT_WHEEL_DIAMETER, ODOMETER),
-         (FRONT_WHEEL_DIAMETER, ODOMETER),
-         (REAR_WHEEL_DIAMETER, ODOMETER),
-         (REAR_WHEEL_DIAMETER, ODOMETER)]
-)))
+@device(*(((LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, CENTER_REAR_WHEEL_SPEED_SENSOR), "wsc",
+           [(FRONT_WHEEL_DIAMETER, ODOMETER), (FRONT_WHEEL_DIAMETER, ODOMETER), (REAR_WHEEL_DIAMETER, ODOMETER)])))
 class WheelSpeedSensors(WheelSpeedSensor):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "WSC", "ESC")

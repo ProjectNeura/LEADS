@@ -6,7 +6,7 @@ from typing import TypeVar as _TypeVar, Generic as _Generic
 from numpy import diff as _diff, average as _average, array as _array
 
 from leads.constant import ESCMode
-from leads.data import DataContainer, SRWDataContainer, DRWDataContainer
+from leads.data import DataContainer
 
 T = _TypeVar("T", bound=DataContainer)
 
@@ -18,17 +18,15 @@ def _check_data_type(data: T, superclass: type[DataContainer] = DataContainer) -
 
 class Context(_Generic[T], metaclass=_ABCMeta):
     def __init__(self,
-                 srw_mode: bool = True,
                  initial_data: T | None = None,
                  data_seq_size: int = 100,
                  num_laps_timed: int = 3) -> None:
         """
-        :param srw_mode: True: single rear wheel mode; False: double rear wheel mode
         :param initial_data: initial data
         :param data_seq_size: buffer size of history data
+        :param num_laps_timed: number of timed laps retained
         """
-        self._srw_mode: bool = srw_mode
-        dct = SRWDataContainer if srw_mode else DRWDataContainer
+        dct = DataContainer
         if initial_data:
             _check_data_type(initial_data, dct)
         else:
@@ -39,7 +37,6 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._data_seq: _deque[dct] = _deque((initial_data,), maxlen=data_seq_size)
         self._speed_seq: _deque[float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_timed + 1)
-        self._torque_mapping: list[float] = [1] if srw_mode else [1, 1]
         self._esc_mode: ESCMode = ESCMode.STANDARD
         self._left_indicator: bool = False
         self._right_indicator: bool = False
@@ -59,9 +56,6 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         _check_data_type(data, self._initial_data_type)
         self._data_seq.append(data)
         self._speed_seq.append(data.speed)
-
-    def srw_mode(self) -> bool:
-        return self._srw_mode
 
     def esc_mode(self, esc_mode: ESCMode | None = None) -> ESCMode | None:
         if esc_mode is None:
@@ -88,11 +82,6 @@ class Context(_Generic[T], metaclass=_ABCMeta):
 
     def get_speed_trend(self) -> float:
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
-
-    def torque_mapping(self, torque_mapping: list[float] | None = None) -> list[float] | None:
-        if torque_mapping is None:
-            return self._torque_mapping
-        self._torque_mapping = torque_mapping
 
     def overwrite_throttle(self, force: float) -> float:
         # todo

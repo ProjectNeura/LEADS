@@ -1,7 +1,6 @@
 from typing import override as _override, Iterator as _Iterator, Any as _Any
 
-from leads import Controller as _Controller, SRWDataContainer as _SRWDataContainer, \
-    DRWDataContainer as _DRWDataContainer
+from leads import Controller as _Controller, DataContainer as _DataContainer
 from leads.data_persistence import Dataset as _Dataset
 
 
@@ -16,28 +15,13 @@ class ReplayController(_Controller):
         super().initialize(*parent_tags)
         self._dataset.load()
 
-
-class SRWReplayController(ReplayController):
     @_override
-    def read(self) -> _SRWDataContainer:
+    def read(self) -> _DataContainer:
         try:
             d = next(self._iterator)
         except StopIteration:
-            return _SRWDataContainer()
+            return _DataContainer()
         t = d.pop("time_stamp")
-        dc = _SRWDataContainer(**d)
-        dc._time_stamp = t
-        return dc
-
-
-class DRWReplayController(ReplayController):
-    @_override
-    def read(self) -> _DRWDataContainer:
-        try:
-            d = next(self._iterator)
-        except StopIteration:
-            return _DRWDataContainer()
-        t, speed = d.pop("time_stamp")
-        dc = _DRWDataContainer(**d)
+        dc = _DataContainer(**d)
         dc._time_stamp = t
         return dc

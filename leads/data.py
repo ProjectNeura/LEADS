@@ -1,4 +1,3 @@
-from abc import ABCMeta as _ABCMeta
 from json import dumps as _dumps
 from time import time as _time
 from typing import override as _override, Any as _Any
@@ -9,20 +8,24 @@ class Serializable(object):
         return {n: v for n in dir(self) if not n.startswith("_") and not callable(v := getattr(self, n))}
 
 
-class DataContainer(Serializable, metaclass=_ABCMeta):
+class DataContainer(Serializable):
     def __init__(self,
-                 voltage: float,
-                 speed: float,
-                 forward_acceleration: float,
-                 lateral_acceleration: float,
-                 mileage: float,
-                 gps_valid: bool,
-                 gps_ground_speed: float,
-                 latitude: float,
-                 longitude: float) -> None:
+                 voltage: float = 0,
+                 speed: float = 0,
+                 front_wheel_speed: float = 0,
+                 rear_wheel_speed: float = 0,
+                 forward_acceleration: float = 0,
+                 lateral_acceleration: float = 0,
+                 mileage: float = 0,
+                 gps_valid: bool = False,
+                 gps_ground_speed: float = 0,
+                 latitude: float = 0,
+                 longitude: float = 0) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.voltage: float = voltage
         self.speed: float = speed
+        self.front_wheel_speed: float = front_wheel_speed
+        self.rear_wheel_speed: float = rear_wheel_speed
         self.forward_acceleration: float = forward_acceleration
         self.lateral_acceleration: float = lateral_acceleration
         self.mileage: float = mileage
@@ -63,43 +66,3 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
         :return: JSON in bytes
         """
         return str(self).encode()
-
-
-class SRWDataContainer(DataContainer):
-    def __init__(self,
-                 voltage: float = 0,
-                 speed: float = 0,
-                 forward_acceleration: float = 0,
-                 lateral_acceleration: float = 0,
-                 mileage: float = 0,
-                 gps_valid: bool = False,
-                 gps_ground_speed: float = 0,
-                 latitude: float = 0,
-                 longitude: float = 0,
-                 front_wheel_speed: float = 0,
-                 rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, speed, forward_acceleration, lateral_acceleration, mileage, gps_valid,
-                         gps_ground_speed, latitude, longitude)
-        self.front_wheel_speed: float = front_wheel_speed
-        self.rear_wheel_speed: float = rear_wheel_speed
-
-
-class DRWDataContainer(DataContainer):
-    def __init__(self,
-                 voltage: float = 0,
-                 speed: float = 0,
-                 forward_acceleration: float = 0,
-                 lateral_acceleration: float = 0,
-                 mileage: float = 0,
-                 gps_valid: bool = False,
-                 gps_ground_speed: float = 0,
-                 latitude: float = 0,
-                 longitude: float = 0,
-                 front_wheel_speed: float = 0,
-                 left_rear_wheel_speed: float = 0,
-                 right_rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, speed, forward_acceleration, lateral_acceleration, mileage, gps_valid,
-                         gps_ground_speed, latitude, longitude)
-        self.front_wheel_speed: float = front_wheel_speed
-        self.left_rear_wheel_speed: float = left_rear_wheel_speed
-        self.right_rear_wheel_speed: float = right_rear_wheel_speed
