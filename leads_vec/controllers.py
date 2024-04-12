@@ -1,6 +1,6 @@
 from leads import device, controller, MAIN_CONTROLLER, get_controller, LEFT_FRONT_WHEEL_SPEED_SENSOR, \
-    RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, GPS_RECEIVER, ConcurrentOdometer, \
-    LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
+    RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, \
+    GPS_RECEIVER, ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
