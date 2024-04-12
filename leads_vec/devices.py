@@ -91,6 +91,3 @@ class DirectionIndicators(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
         self.write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))
-
-
-_ = None  # null export
