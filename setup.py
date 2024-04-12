@@ -20,5 +20,5 @@ setup(
         "leads_vec": ["_bootloader/leads_vec.service.sh"]
     },
     include_package_data=True,
-    install_requires=["numpy"]
+    install_requires=["numpy", "pandas"]
 )

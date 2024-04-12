@@ -62,12 +62,12 @@ class WheelSpeedController(ArduinoMicro):
         rfws = self.device(RIGHT_FRONT_WHEEL_SPEED_SENSOR).read()
         front_wheel_speed = (lfws + rfws) * .5
         return {
-            "min_speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
+            "speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
             "front_wheel_speed": front_wheel_speed,
             "rear_wheel_speed": rws
         } if config.srw_mode else {
-            "min_speed": min(lfws, rfws, lrws := self.device(LEFT_REAR_WHEEL_SPEED_SENSOR).read(),
-                             rrws := self.device(RIGHT_REAR_WHEEL_SPEED_SENSOR).read()),
+            "speed": min(lfws, rfws, lrws := self.device(LEFT_REAR_WHEEL_SPEED_SENSOR).read(),
+                         rrws := self.device(RIGHT_REAR_WHEEL_SPEED_SENSOR).read()),
             "front_wheel_speed": front_wheel_speed,
             "left_rear_wheel_speed": lrws,
             "right_rear_wheel_speed": rrws

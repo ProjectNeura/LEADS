@@ -25,7 +25,7 @@ class SRWRandom(_EmulatedController):
     @_override
     def read(self) -> _SRWDataContainer:
         return _SRWDataContainer(voltage=48.0,
-                                 min_speed=(fws := _randint(self.minimum, self.maximum)),
+                                 speed=(fws := _randint(self.minimum, self.maximum)),
                                  gps_valid=True,
                                  gps_ground_speed=fws,
                                  latitude=_randint(4315, 4415) / 100,
@@ -38,7 +38,7 @@ class DRWRandom(_EmulatedController):
     @_override
     def read(self) -> _DRWDataContainer:
         return _DRWDataContainer(voltage=48.0,
-                                 min_speed=(fws := _randint(self.minimum, self.maximum)),
+                                 speed=(fws := _randint(self.minimum, self.maximum)),
                                  gps_valid=True,
                                  gps_ground_speed=fws,
                                  latitude=_randint(4315, 4415) / 100,
@@ -66,7 +66,7 @@ class SRWSin(_SinController):
     def read(self) -> _SRWDataContainer:
         try:
             return _SRWDataContainer(voltage=48.0,
-                                     min_speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
+                                     speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
                                      gps_valid=True,
                                      gps_ground_speed=fws,
                                      latitude=_randint(4315, 4415) / 100,
@@ -82,7 +82,7 @@ class DRWSin(_SinController):
     def read(self) -> _DRWDataContainer:
         try:
             return _DRWDataContainer(voltage=48.0,
-                                     min_speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
+                                     speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
                                      gps_valid=True,
                                      gps_ground_speed=fws,
                                      latitude=_randint(4315, 4415) / 100,

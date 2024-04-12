@@ -1,3 +1,5 @@
+from atexit import register
+from datetime import datetime
 from json import loads, JSONDecodeError
 from os import mkdir
 from os.path import abspath, exists
@@ -15,19 +17,15 @@ if not exists(config.data_dir):
     mkdir(config.data_dir)
     L.info(f"Data dir \"{abspath(config.data_dir)}\" created")
 
-data_record: DataPersistence[DataContainer] = DataPersistence(max_size=1, compressor=lambda o, s: o[-s:])
-time_stamp_record: DataPersistence[int] = DataPersistence(config.data_dir + "/time_stamp.csv",
-                                                          persistence=config.enable_data_persistence,
-                                                          max_size=2000)
-speed_record: DataPersistence[float] = DataPersistence(config.data_dir + "/speed.csv",
-                                                       persistence=config.enable_data_persistence,
-                                                       max_size=2000)
-voltage_record: DataPersistence[float] = DataPersistence(config.data_dir + "/voltage.csv",
-                                                         persistence=config.enable_data_persistence,
-                                                         max_size=2000)
-gps_record: DataPersistence[Vector[float]] = DataPersistence(config.data_dir + "/gps.csv",
-                                                             persistence=config.enable_data_persistence,
-                                                             max_size=2000)
+data_record: DataPersistence[DataContainer] = DataPersistence(1, compressor=lambda o, s: o[-s:])
+time_stamp_record: DataPersistence[int] = DataPersistence(2000)
+speed_record: DataPersistence[float] = DataPersistence(2000)
+voltage_record: DataPersistence[float] = DataPersistence(2000)
+gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
+csv = CSVCollection(config.data_dir + "/" + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ".csv", (
+    "time_stamp", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "gps_valid", "gps_ground_speed",
+    "latitude", "longitude"
+), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None)
 
 
 class CommCallback(Callback):
@@ -44,22 +42,20 @@ class CommCallback(Callback):
         try:
             d = loads(msg.decode())
             data_record.append(d)
-            time_stamp_record.append(d["t"])
-            speed_record.append(d["front_wheel_speed"])
-            voltage_record.append(d["voltage"])
             gps_record.append(Vector(d["latitude"], d["longitude"]))
+            if config.save_data:
+                csv.write_frame(*(d[key] for key in csv.header()))
+            else:
+                time_stamp_record.append(d["t"])
+                speed_record.append(d["speed"])
+                voltage_record.append(d["voltage"])
         except JSONDecodeError as e:
             L.error(repr(e))
-
-    def on_disconnect(self, service: Service, connection: Connection) -> None:
-        self.super(service=service, connection=connection)
-        time_stamp_record.close()
-        speed_record.close()
 
 
 client = start_client(config.comm_addr, create_client(config.comm_port, CommCallback()), True)
 
-app = FastAPI(title="LEADS VeC Remote Controller")
+app = FastAPI(title="LEADS VeC Remote Analyst")
 
 app.add_middleware(
     CORSMiddleware,
@@ -102,3 +98,8 @@ async def time_lap() -> str:
 async def hazard() -> str:
     client.send(b"hazard")
     return "done"
+
+
+@register
+def cleanup() -> None:
+    csv.close()

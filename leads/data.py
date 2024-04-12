@@ -12,7 +12,7 @@ class Serializable(object):
 class DataContainer(Serializable, metaclass=_ABCMeta):
     def __init__(self,
                  voltage: float,
-                 min_speed: float,
+                 speed: float,
                  forward_acceleration: float,
                  lateral_acceleration: float,
                  mileage: float,
@@ -22,7 +22,7 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
                  longitude: float) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.voltage: float = voltage
-        self.speed: float = min_speed
+        self.speed: float = speed
         self.forward_acceleration: float = forward_acceleration
         self.lateral_acceleration: float = lateral_acceleration
         self.mileage: float = mileage
@@ -68,7 +68,7 @@ class DataContainer(Serializable, metaclass=_ABCMeta):
 class SRWDataContainer(DataContainer):
     def __init__(self,
                  voltage: float = 0,
-                 min_speed: float = 0,
+                 speed: float = 0,
                  forward_acceleration: float = 0,
                  lateral_acceleration: float = 0,
                  mileage: float = 0,
@@ -78,7 +78,7 @@ class SRWDataContainer(DataContainer):
                  longitude: float = 0,
                  front_wheel_speed: float = 0,
                  rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, min_speed, forward_acceleration, lateral_acceleration, mileage, gps_valid,
+        super().__init__(voltage, speed, forward_acceleration, lateral_acceleration, mileage, gps_valid,
                          gps_ground_speed, latitude, longitude)
         self.front_wheel_speed: float = front_wheel_speed
         self.rear_wheel_speed: float = rear_wheel_speed
@@ -87,7 +87,7 @@ class SRWDataContainer(DataContainer):
 class DRWDataContainer(DataContainer):
     def __init__(self,
                  voltage: float = 0,
-                 min_speed: float = 0,
+                 speed: float = 0,
                  forward_acceleration: float = 0,
                  lateral_acceleration: float = 0,
                  mileage: float = 0,
@@ -98,7 +98,7 @@ class DRWDataContainer(DataContainer):
                  front_wheel_speed: float = 0,
                  left_rear_wheel_speed: float = 0,
                  right_rear_wheel_speed: float = 0) -> None:
-        super().__init__(voltage, min_speed, forward_acceleration, lateral_acceleration, mileage, gps_valid,
+        super().__init__(voltage, speed, forward_acceleration, lateral_acceleration, mileage, gps_valid,
                          gps_ground_speed, latitude, longitude)
         self.front_wheel_speed: float = front_wheel_speed
         self.left_rear_wheel_speed: float = left_rear_wheel_speed
