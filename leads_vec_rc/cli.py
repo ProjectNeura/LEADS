@@ -55,7 +55,7 @@ class CommCallback(Callback):
 
 client = start_client(config.comm_addr, create_client(config.comm_port, CommCallback()), True)
 
-app = FastAPI(title="LEADS VeC Remote Controller")
+app = FastAPI(title="LEADS VeC Remote Analyst")
 
 app.add_middleware(
     CORSMiddleware,
