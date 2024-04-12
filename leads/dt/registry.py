@@ -12,7 +12,7 @@ def controller(tag: str,
                parent: str | None = None,
                args: tuple[_Any, ...] = (),
                kwargs: dict[str, _Any] | None = None) -> _Callable[[type[Controller]], None]:
-    if not kwargs:
+    if kwargs is None:
         kwargs = {}
 
     def _(target: type[Controller]) -> None:
@@ -34,7 +34,7 @@ def device(tag: str | _Sequence[str],
         parent = [parent] * n
     if isinstance(args, tuple):
         args = [args] * n
-    if not kwargs:
+    if kwargs is None:
         kwargs = [{}] * n
     elif isinstance(kwargs, dict):
         kwargs = [kwargs] * n

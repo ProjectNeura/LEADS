@@ -14,7 +14,6 @@ class ConfigTemplate(Serializable):
         self._d: dict[str, _Any] = base
         self._frozen: bool = False
         self.w_debug_level: str = "DEBUG"
-        self.srw_mode: bool = True
         self.data_seq_size: int = 100
         self.save_data: bool = False
         self.data_dir: str = "data"
