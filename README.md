@@ -236,26 +236,26 @@ following as all the settings are optional.
 
 Note that a purely empty file could cause an error.
 
-| Index                     | Type    | Usage                                                              | Used By      | Default       |
-|---------------------------|---------|--------------------------------------------------------------------|--------------|---------------|
-| `w_debug_level`           | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                           | Main, Remote | `"DEBUG"`     |
-| `srw_mode`                | `bool`  | `True`: single rear wheel; `False`: dual rear wheel                | Main         | `True`        |
-| `data_seq_size`           | `int`   | Buffer size of history data                                        | Main         | `100`         |
-| `enable_data_persistence` | `bool`  | `True`: enable data persistence; `False`: disable data persistence | Main, Remote | `True`        |
-| `data_dir`                | `str`   | The directory for the data recording system                        | Remote       | `"data"`      |
-| `width`                   | `int`   | Window width                                                       | Main         | `720`         |
-| `height`                  | `int`   | Window height                                                      | Main         | `480`         |
-| `fullscreen`              | `bool`  | `True`: auto maximize; `False`: window mode                        | Main         | `False`       |
-| `no_title_bar`            | `bool`  | `True`: no title bar; `False`: default title bar                   | Main         | `False`       |
-| `manual_mode`             | `bool`  | `True`: hide control system; `False`: show control system          | Main         | `False`       |
-| `refresh_rate`            | `int`   | GUI frame per second                                               | Main         | `30`          |
-| `m_ratio`                 | `float` | Meter component size ratio                                         | Main         | `0.7`         |
-| `font_size_small`         | `int`   | Small font size                                                    | Main         | `14`          |
-| `font_size_medium`        | `int`   | Medium font size                                                   | Main         | `28`          |
-| `font_size_large`         | `int`   | Large font size                                                    | Main         | `42`          |
-| `font_size_x_large`       | `int`   | Extra large font size                                              | Main         | `56`          |
-| `comm_addr`               | `str`   | Communication server address                                       | Remote       | `"127.0.0.1"` |
-| `comm_port`               | `int`   | The port on which the communication system runs on                 | Main, Remote | `16900`       |
+| Index               | Type    | Usage                                                     | Used By      | Default       |
+|---------------------|---------|-----------------------------------------------------------|--------------|---------------|
+| `w_debug_level`     | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
+| `srw_mode`          | `bool`  | `True`: single rear wheel; `False`: dual rear wheel       | Main         | `True`        |
+| `data_seq_size`     | `int`   | Buffer size of history data                               | Main         | `100`         |
+| `save_data`         | `bool`  | `True`: save data; `False`: discard data                  | Main, Remote | `False`       |
+| `data_dir`          | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
+| `width`             | `int`   | Window width                                              | Main         | `720`         |
+| `height`            | `int`   | Window height                                             | Main         | `480`         |
+| `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode               | Main         | `False`       |
+| `no_title_bar`      | `bool`  | `True`: no title bar; `False`: default title bar          | Main         | `False`       |
+| `manual_mode`       | `bool`  | `True`: hide control system; `False`: show control system | Main         | `False`       |
+| `refresh_rate`      | `int`   | GUI frame per second                                      | Main         | `30`          |
+| `m_ratio`           | `float` | Meter component size ratio                                | Main         | `0.7`         |
+| `font_size_small`   | `int`   | Small font size                                           | Main         | `14`          |
+| `font_size_medium`  | `int`   | Medium font size                                          | Main         | `28`          |
+| `font_size_large`   | `int`   | Large font size                                           | Main         | `42`          |
+| `font_size_x_large` | `int`   | Extra large font size                                     | Main         | `56`          |
+| `comm_addr`         | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
+| `comm_port`         | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
 
 ## Submodules
 
