@@ -42,6 +42,7 @@ component if you are willing to write some codes.
     - [ ] EBI (Emergency Braking Intervention)
     - [ ] ATBS (Automatic Trail Braking System)
 - [x] A remote analyst
+- [x] Replaying recorded data
 
 ## To High School Students
 
@@ -245,7 +246,6 @@ Note that a purely empty file could cause an error.
 |---------------------|---------|-----------------------------------------------------------|--------------|---------------|
 | `w_debug_level`     | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
 | `data_seq_size`     | `int`   | Buffer size of history data                               | Main         | `100`         |
-| `save_data`         | `bool`  | `True`: save data; `False`: discard data                  | Main, Remote | `False`       |
 | `data_dir`          | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
 | `width`             | `int`   | Window width                                              | Main         | `720`         |
 | `height`            | `int`   | Window height                                             | Main         | `480`         |
@@ -260,6 +260,7 @@ Note that a purely empty file could cause an error.
 | `font_size_x_large` | `int`   | Extra large font size                                     | Main         | `56`          |
 | `comm_addr`         | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
 | `comm_port`         | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
+| `save_data`         | `bool`  | `True`: save data; `False`: discard data                  | Remote       | `False`       |
 
 ## Devices Module
 
