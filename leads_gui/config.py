@@ -18,4 +18,5 @@ class Config(_ConfigTemplate):
         self.font_size_x_large: int = 56
         self.comm_addr: str = "127.0.0.1"
         self.comm_port: int = 16900
+        self.save_data: bool = False
         super().__init__(base)

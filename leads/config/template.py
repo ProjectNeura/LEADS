@@ -15,7 +15,6 @@ class ConfigTemplate(Serializable):
         self._frozen: bool = False
         self.w_debug_level: str = "DEBUG"
         self.data_seq_size: int = 100
-        self.save_data: bool = False
         self.data_dir: str = "data"
         self.refresh()
 
@@ -24,6 +23,11 @@ class ConfigTemplate(Serializable):
 
     def __setitem__(self, name: str, value: _Any) -> None:
         self.set(name, value)
+
+    @_override
+    def __setattr__(self, name: str, value: _Any) -> None:
+        if self._writable(name):
+            super().__setattr__(name, value)
 
     @_override
     def __str__(self) -> str:
