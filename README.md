@@ -20,6 +20,8 @@ dedicated circuit board, but generic development kits such as Raspberry Pi and A
 high-level system running on a host computer, the software framework has the ability to adapt to any type of hardware
 component if you are willing to write some codes.
 
+This document will guide you through LEADS VeC.
+
 LEADS VeC Demo
 
 ![demo](docs/assets/demo.png)
@@ -34,21 +36,22 @@ LEADS VeC Demo (Manual Mode)
 
 ## Key Features
 
-- [x] A basic instrumentation system
-- [x] A basic communication system
-- [x] A basic control system
-- [ ] A data recording system with the following components
+- [x] Modern UI design
+- [x] Auto dark mode support
+- [x] Fancy widgets
+- [x] TCP communication system
+- [x] Remote analyst
+- [x] Replaying recorded data
+- [ ] Data recording system with the following components
     - [x] A speed recording system
     - [ ] A G force recording system
     - [x] A GPS recording system
     - [x] A battery voltage recording system
-- [ ] A control system with the following components
+- [ ] ESC with the following components
     - [x] DTCS (Dynamic Traction Control System)
     - [x] ABS (Anti-lock Braking System)
     - [ ] EBI (Emergency Braking Intervention)
     - [ ] ATBS (Automatic Trail Braking System)
-- [x] A remote analyst
-- [x] Replaying recorded data
 
 ## To High School Students
 
@@ -259,7 +262,7 @@ Note that a purely empty file could cause an error.
 | `no_title_bar`      | `bool`  | `True`: no title bar; `False`: default title bar          | Main         | `False`       |
 | `manual_mode`       | `bool`  | `True`: hide control system; `False`: show control system | Main         | `False`       |
 | `refresh_rate`      | `int`   | GUI frame per second                                      | Main         | `30`          |
-| `m_ratio`           | `float` | Meter component size ratio                                | Main         | `0.7`         |
+| `m_ratio`           | `float` | Meter widget size ratio                                   | Main         | `0.7`         |
 | `font_size_small`   | `int`   | Small font size                                           | Main         | `14`          |
 | `font_size_medium`  | `int`   | Medium font size                                          | Main         | `28`          |
 | `font_size_large`   | `int`   | Large font size                                           | Main         | `42`          |
