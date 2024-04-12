@@ -66,7 +66,7 @@ command, see [Environment Setup](#environment-setup).
 pip install Pillow customtkinter pynput pyserial lgpio gpiozero pynmea2 leads
 ```
 
-`numpy` will be automatically installed with `leads`.
+`numpy` and `pandas` will be automatically installed with `leads`.
 
 `Pillow`, `customtkinter`, `pynput`, `pyserial`, `lgpio`, `gpiozero`, and `pynmea2` are optional.
 
