@@ -1,5 +1,7 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
+from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
 from os import mkdir as _mkdir, chmod as _chmod
+from os.path import abspath as _abspath
 from os.path import exists as _exists
 from subprocess import run as _run
 from sys import exit as _exit, version as _version
@@ -17,6 +19,8 @@ if __name__ == "__main__":
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
+    parser.add_argument("-d", "--devices", default=_abspath(__file__)[:-11] + "devices.py",
+                        help="specify a devices module")
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
@@ -81,7 +85,8 @@ if __name__ == "__main__":
     try:
         if args.emu:
             raise SystemError("User specifies to use emulator")
-        from leads_vec.devices import _
+        spec = _spec_from_file_location("_", args.devices)
+        spec.loader.exec_module(_module_from_spec(spec))
     except (ImportError, SystemError) as e:
         _L.debug(repr(e))
         if isinstance(e, ImportError):
@@ -89,7 +94,8 @@ if __name__ == "__main__":
                 _L.debug("Ignoring import error: " + repr(e))
                 _exit(main())
             else:
-                _L.warn("`leads_vec.controllers` is not available, using emulation module instead...")
+                _L.warn(
+                    f"Specified devices module ({args.devices}) is not available, using emulation module instead...")
         _reset()
         try:
             from leads_emulation import SinController as _Controller
