@@ -170,15 +170,18 @@ class Vector(_Sequence[E], _Iterable[E], _Generic[E]):
 
 
 class CSVCollection(object):
-    def __init__(self, file: str | _TextIO, header: tuple[str, ...], *columns: DataPersistence) -> None:
+    def __init__(self, file: str | _TextIO, header: tuple[str, ...], *columns: DataPersistence | None) -> None:
         self._file: _TextIO = open(file, "w") if isinstance(file, str) else file
         self._d: int = len(header)
         self._header: tuple[str, ...] = header
         if len(columns) != self._d:
             raise ValueError("Unmatched columns and header")
-        self._columns: tuple[DataPersistence, ...] = columns
+        self._columns: tuple[DataPersistence | None, ...] = columns
         self._i: int = 0
         self.write_header()
+
+    def header(self) -> tuple[str, ...]:
+        return self._header
 
     def write_header(self) -> None:
         self._file.write(",".join(self._header) + "\n")
@@ -188,8 +191,9 @@ class CSVCollection(object):
             raise ValueError("Unmatched data and header")
         frame = {}
         for i in range(self._d):
-            self._columns[i].append(d := data[i])
-            frame[self._header[i]] = d
+            frame[self._header[i]] = d = data[i]
+            if column := self._columns[i]:
+                column.append(d)
         _DataFrame(data=frame, index=[self._i]).to_csv(self._file, mode="a", header=False)
         self._i += 1
 
@@ -212,7 +216,6 @@ class Dataset(_Iterable[dict[str, _Any]]):
                 chunk = next(self._csv)
             except StopIteration:
                 break
-            print(len(chunk))
             for i in range(len(chunk)):
                 yield chunk.iloc[i].to_dict()
 

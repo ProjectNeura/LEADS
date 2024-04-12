@@ -6,6 +6,7 @@ from sys import exit as _exit, version as _version
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
+from leads.data_persistence import Dataset as _Dataset
 from leads_gui import Config as _Config
 from leads_gui.system import get_system_platform as _get_system_platform
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
                              description="Lightweight Embedded Assisted Driving System VeC",
                              epilog="ProjectNeura: https://projectneura.org"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
-    parser.add_argument("action", choices=("info", "run"))
+    parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
@@ -68,18 +69,15 @@ if __name__ == "__main__":
         _L.info("Configuring X Window System...")
         _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
 
-    if args.action == "replay":
-        from leads_emulation.replay import Dataset as _Dataset
+    from leads_vec.cli import main
 
+    if args.action == "replay":
         if config.srw_mode:
             from leads_emulation.replay import SRWReplayController as _Controller
         else:
             from leads_emulation.replay import DRWReplayController as _Controller
-        _register_controller(_MAIN_CONTROLLER, _Controller(
-            _Dataset(config.data_dir, config.data_dir + "/.instruction")
-        ))
-
-    from leads_vec.cli import main
+        _register_controller(_MAIN_CONTROLLER, _Controller(_Dataset(config.data_dir + "/main.csv")))
+        _exit(main())
 
     try:
         if args.emu:
