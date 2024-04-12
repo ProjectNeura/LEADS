@@ -117,6 +117,14 @@ If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#Configurations).
 
+##### Specify a Devices Module
+
+```shell
+python -m leads_vec -d path/to/the/devices.py run
+```
+
+To learn about the devices module, read [Devices Module](#devices-module)
+
 ##### Generate a Configuration File
 
 ```shell
@@ -252,6 +260,23 @@ Note that a purely empty file could cause an error.
 | `font_size_x_large` | `int`   | Extra large font size                                     | Main         | `56`          |
 | `comm_addr`         | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
 | `comm_port`         | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
+
+## Devices Module
+
+### Example
+
+```python
+from leads import controller, MAIN_CONTROLLER
+from leads_emulation import RandomController
+
+
+@controller(MAIN_CONTROLLER)
+class MainController(RandomController):
+  pass
+```
+
+The devices module will be executed after configuration registration. Register your devices in this module using AOP
+paradigm.
 
 ## Submodules
 
