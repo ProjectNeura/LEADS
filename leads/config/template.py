@@ -16,7 +16,7 @@ class ConfigTemplate(Serializable):
         self.w_debug_level: str = "DEBUG"
         self.srw_mode: bool = True
         self.data_seq_size: int = 100
-        self.enable_data_persistence: bool = True
+        self.save_data: bool = False
         self.data_dir: str = "data"
         self.refresh()
 

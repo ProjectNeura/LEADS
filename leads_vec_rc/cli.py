@@ -43,7 +43,7 @@ class CommCallback(Callback):
             data_record.append(d)
             ts, fws, vot, lat, lon = d["t"], d["front_wheel_speed"], d["voltage"], d["latitude"], d["longitude"]
             gps_record.append(Vector(lat, lon))
-            if config.enable_data_persistence:
+            if config.save_data:
                 csv.write_frame(ts, fws, vot, lat, lon)
             else:
                 time_stamp_record.append(ts)
