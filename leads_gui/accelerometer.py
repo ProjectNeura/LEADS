@@ -94,7 +94,7 @@ class SpeedTrendMeter(TextBased, VariableControlled):
     @_override
     def dynamic_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear("d")
-        v = self._variable.get() * 5
+        v = self._variable.get()
         w, h, hc, vc, limit = canvas.meta()
         canvas.collect("d0", canvas.create_line(hc, vc, hc + max(min(v, .9), -.9) * hc, vc, fill=self._text_color,
                                                 arrow="last", width=4))
