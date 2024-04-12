@@ -20,7 +20,10 @@ class ReplayController(_Controller):
 class SRWReplayController(ReplayController):
     @_override
     def read(self) -> _SRWDataContainer:
-        d = next(self._iterator)
+        try:
+            d = next(self._iterator)
+        except StopIteration:
+            return _SRWDataContainer()
         t = d.pop("time_stamp")
         dc = _SRWDataContainer(**d)
         dc._time_stamp = t
@@ -30,7 +33,10 @@ class SRWReplayController(ReplayController):
 class DRWReplayController(ReplayController):
     @_override
     def read(self) -> _DRWDataContainer:
-        d = next(self._iterator)
+        try:
+            d = next(self._iterator)
+        except StopIteration:
+            return _DRWDataContainer()
         t, speed = d.pop("time_stamp")
         dc = _DRWDataContainer(**d)
         dc._time_stamp = t
