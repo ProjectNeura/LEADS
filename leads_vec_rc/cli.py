@@ -3,7 +3,6 @@ from datetime import datetime
 from json import loads, JSONDecodeError
 from os import mkdir
 from os.path import abspath, exists
-from traceback import print_exc
 from typing import Any
 
 from fastapi import FastAPI
@@ -36,7 +35,6 @@ class CommCallback(Callback):
 
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
-        print_exc()
         L.error("Comm client error: " + repr(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:
