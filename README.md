@@ -133,7 +133,7 @@ To learn about the configuration file, read [Configurations](#Configurations).
 python -m leads_vec -d path/to/the/devices.py run
 ```
 
-To learn about the devices module, read [Devices Module](#devices-module)
+To learn about the devices module, read [Devices Module](#devices-module).
 
 ##### Generate a Configuration File
 
