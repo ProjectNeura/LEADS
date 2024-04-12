@@ -3,6 +3,7 @@ from datetime import datetime
 from json import loads, JSONDecodeError
 from os import mkdir
 from os.path import abspath, exists
+from traceback import print_exc
 from typing import Any
 
 from fastapi import FastAPI
@@ -23,8 +24,8 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
 csv = CSVCollection(config.data_dir + "/" + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ".csv", (
-    "time_stamp", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "gps_valid", "gps_ground_speed",
-    "latitude", "longitude"
+    "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "gps_valid", "gps_ground_speed", "latitude",
+    "longitude"
 ), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None)
 
 
@@ -35,6 +36,7 @@ class CommCallback(Callback):
 
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
+        print_exc()
         L.error("Comm client error: " + repr(error))
 
     def on_receive(self, service: Service, msg: bytes) -> None:

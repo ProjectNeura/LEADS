@@ -21,7 +21,7 @@ class ReplayController(_Controller):
             d = next(self._iterator)
         except StopIteration:
             return _DataContainer()
-        t = d.pop("time_stamp")
+        t = d.pop("t")
         dc = _DataContainer(**d)
         dc._time_stamp = t
         return dc
