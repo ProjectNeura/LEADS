@@ -2,12 +2,15 @@ from copy import copy as _copy
 from operator import add as _add, sub as _sub, mul as _mul, truediv as _truediv, floordiv as _floordiv, lt as _lt, \
     le as _le, gt as _gt, ge as _ge
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
-    override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable
+    override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
+    Generator as _Generator, Any as _Any
 
 from numpy import mean as _mean, array as _array
 from numpy.linalg import norm as _norm
+from pandas import read_csv as _read_csv, DataFrame as _DataFrame
+from pandas.io.parsers import TextFileReader as _TextFileReader
 
-from leads.types import Compressor as _Compressor, Stringifier as _Stringifier
+from leads.types import Compressor as _Compressor
 
 T = _TypeVar("T")
 
@@ -29,36 +32,19 @@ def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
     return r
 
 
-def csv_stringifier(element: T) -> str:
-    """
-    Dump an element as a CSV string.
-    :param element: the element to stringify
-    :return: CSV string
-    """
-    return str(element) + ","
-
-
 class DataPersistence(_Sequence[T], _Generic[T]):
     def __init__(self,
-                 file: str | _TextIO | None = None,
                  max_size: int = -1,
                  chunk_scale: int = 1,
-                 persistence: bool = False,
-                 compressor: _Compressor[T] = mean_compressor,
-                 stringifier: _Stringifier[T] = csv_stringifier) -> None:
+                 compressor: _Compressor[T] = mean_compressor) -> None:
         """
-        :param file: the file into which the data is written
         :param max_size: maximum cached size
         :param chunk_scale: chunk scaling factor (compression)
         :param compressor: compressor interface
-        :param stringifier: stringifier interface
         """
-        self._file: _TextIO | None = open(file, "a") if isinstance(file, str) else file
         self._max_size: int = max_size
         self._chunk_scale: int = chunk_scale
-        self._persistence: bool = persistence if file else False
         self._compressor: _Compressor[T] = compressor
-        self._stringifier: _Stringifier[T] = stringifier
         self._data: list[T] = []
         self._chunk: list[T] = []
         self._chunk_size: int = chunk_scale
@@ -74,10 +60,6 @@ class DataPersistence(_Sequence[T], _Generic[T]):
     @_override
     def __str__(self) -> str:
         return str(self._data)
-
-    def close(self) -> None:
-        if self._file:
-            self._file.close()
 
     def get_chunk_size(self) -> int:
         return self._chunk_size
@@ -97,8 +79,6 @@ class DataPersistence(_Sequence[T], _Generic[T]):
             self._chunk_size *= 2
 
     def append(self, element: T) -> None:
-        if self._persistence:
-            self._file.write(self._stringifier(element))
         if self._chunk_size == 1:
             return self._push_to_data(element)
         self._chunk.append(element)
@@ -111,7 +91,7 @@ class DataPersistence(_Sequence[T], _Generic[T]):
 E = _TypeVar("E")
 
 
-class Vector(_Sequence[E], _Generic[E]):
+class Vector(_Sequence[E], _Iterable[E], _Generic[E]):
     def __init__(self, *coordinates: E) -> None:
         self._d: int = len(coordinates)
         self._coordinates: tuple[E, ...] = coordinates
@@ -187,3 +167,54 @@ class Vector(_Sequence[E], _Generic[E]):
 
     def __ge__(self, other: _Self | E) -> bool:
         return self._compare(other, _ge)
+
+
+class CSVCollection(object):
+    def __init__(self, file: str | _TextIO, header: tuple[str, ...], *columns: DataPersistence) -> None:
+        self._file: _TextIO = open(file, "w") if isinstance(file, str) else file
+        self._d: int = len(header)
+        self._header: tuple[str, ...] = header
+        if len(columns) != self._d:
+            raise ValueError("Unmatched columns and header")
+        self._columns: tuple[DataPersistence, ...] = columns
+        self._i: int = 0
+        self.write_header()
+
+    def write_header(self) -> None:
+        self._file.write(",".join(self._header) + "\n")
+
+    def write_frame(self, *data: _Any) -> None:
+        if len(data) != self._d:
+            raise ValueError("Unmatched data and header")
+        frame = {}
+        for i in range(self._d):
+            self._columns[i].append(d := data[i])
+            frame[self._header[i]] = d
+        _DataFrame(data=frame, index=[self._i]).to_csv(self._file, mode="a", header=False)
+        self._i += 1
+
+    def close(self) -> None:
+        self._file.close()
+
+
+class Dataset(_Iterable[dict[str, _Any]]):
+    def __init__(self, file: str, chunk_size: int = 100) -> None:
+        self._file: str = file
+        self._chunk_size: int = chunk_size
+        self._csv: _TextFileReader | None = None
+
+    @_override
+    def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
+        if self._csv is None:
+            raise EOFError("Dataset not loaded")
+        while True:
+            try:
+                chunk = next(self._csv)
+            except StopIteration:
+                break
+            print(len(chunk))
+            for i in range(len(chunk)):
+                yield chunk.iloc[i].to_dict()
+
+    def load(self) -> None:
+        self._csv = _read_csv(self._file, chunksize=self._chunk_size, low_memory=False)
