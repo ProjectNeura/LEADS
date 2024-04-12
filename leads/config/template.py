@@ -46,7 +46,7 @@ class ConfigTemplate(Serializable):
         self.refresh()
 
     def _writable(self, name: str) -> bool:
-        return not self._frozen or name.startswith("w_")
+        return not hasattr(self, "_frozen") or not self._frozen or name.startswith("w_")
 
     def set(self, name: str, value: _Any) -> None:
         """
