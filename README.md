@@ -22,7 +22,7 @@ component if you are willing to write some codes.
 
 ![demo](docs/assets/preview.png)
 
-:link: [Docs](https://leads.projectneura.org)
+:link: [Docs](https://leads-docs.projectneura.org)
 
 :link: [Remote Analyst Online Dashboard](https://leads-vec-rc.projectneura.org)
 
@@ -89,7 +89,8 @@ it is named "LEADS", not "LEADS-Arduino", in the index.
 
 ## LEADS Framework
 
-See [Read the Docs](https://leads.projectneura.org) (TBC) for the documentation of how to customize and make use of the
+See [Read the Docs](https://leads-docs.projectneura.org) (TBC) for the documentation of how to customize and make use of
+the
 framework in your project.
 
 ## Quick Start
@@ -205,7 +206,7 @@ because you have to specify the Python version such that `python3.12 ...` and `p
 ## Environment Setup
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
-reproduction is available on https://leads.projectneura.org, but first of all, we run an Ubuntu 22.04 LTS on a
+reproduction is available on https://leads-docs.projectneura.org/vec, but first of all, we run an Ubuntu 22.04 LTS on a
 Raspberry Pi 4 Model B 8GB. After the OS is set up, just run the one-line commands listed below. You may also choose to
 clone the repository or download the scripts from [releases](https://github.com/ProjectNeura/LEADS/releases) (only
 stable releases provide scripts).
