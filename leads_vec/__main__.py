@@ -81,7 +81,7 @@ if __name__ == "__main__":
     try:
         if args.emu:
             raise SystemError("User specifies to use emulator")
-        from leads_vec.controllers import _
+        from leads_vec.devices import _
     except (ImportError, SystemError) as e:
         _L.debug(repr(e))
         if isinstance(e, ImportError):
