@@ -29,7 +29,6 @@ LEADS VeC Demo (Manual Mode)
 ![demo](docs/assets/demo-manual.png)
 
 :link: [Docs](https://leads-docs.projectneura.org)
-Demo
 
 :link: [Remote Analyst Online Dashboard](https://leads-vec-rc.projectneura.org)
 
@@ -97,8 +96,7 @@ it is named "LEADS", not "LEADS-Arduino", in the index.
 ## LEADS Framework
 
 See [Read the Docs](https://leads-docs.projectneura.org) (TBC) for the documentation of how to customize and make use of
-the
-framework in your project.
+the framework in your project.
 
 ## Quick Start
 
@@ -281,7 +279,7 @@ from leads_emulation import RandomController
 
 @controller(MAIN_CONTROLLER)
 class MainController(RandomController):
-  pass
+    pass
 ```
 
 The devices module will be executed after configuration registration. Register your devices in this module using AOP
