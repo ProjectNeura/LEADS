@@ -1,7 +1,5 @@
 # LEADS: Lightweight Embedded Assisted Driving System
 
-<img src="https://projectneura.org/img/logo.png" alt="logo" style="zoom:25%;" />
-
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ProjectNeura/LEADS)
 ![PyPI](https://img.shields.io/pypi/v/leads)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/leads)
