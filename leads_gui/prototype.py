@@ -196,9 +196,11 @@ class Window(_Generic[T]):
         self._root.wm_iconbitmap()
         self._root.iconphoto(True, _ImageTk.PhotoImage(file=_ASSETS_PATH + "/logo.png"))
         self._root.overrideredirect(no_title_bar)
-        self._width: int = self._root.winfo_screenwidth() if fullscreen else width
-        self._height: int = self._root.winfo_screenheight() if fullscreen else height
-        self._root.geometry(str(self._width) + "x" + str(self._height))
+        sw, sh = self._root.winfo_screenwidth(), self._root.winfo_screenheight()
+        self._width: int = sw if fullscreen else width
+        self._height: int = sh if fullscreen else height
+        self._root.geometry(
+            f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}")
         self._refresh_rate: int = refresh_rate
         self._refresh_interval: int = int(1000 / refresh_rate)
         self._runtime_data: T = runtime_data
