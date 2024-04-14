@@ -58,14 +58,17 @@ if __name__ == "__main__":
         with open("config.json", "w") as f:
             f.write(str(_Config({})))
         _L.info("Configuration file saved to \"config.json\"")
-    _register_config(config := _load_config(args.config, _Config) if args.config else _Config({}))
+    config = _load_config(args.config, _Config) if args.config else _Config({})
     _L.debug("Configuration loaded:", str(config))
     if f := args.magnify_font_sizes:
+        config._frozen = False
         config.font_size_small = int(config.font_size_small * f)
         config.font_size_medium = int(config.font_size_medium * f)
         config.font_size_large = int(config.font_size_large * f)
         config.font_size_x_large = int(config.font_size_x_large * f)
+        config._frozen = True
         _L.debug("Font sizes magnified by " + str(f))
+    _register_config(config)
     if args.xws:
         from os import getuid as _getuid
         from pwd import getpwuid as _getpwuid
