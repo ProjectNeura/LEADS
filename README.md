@@ -8,10 +8,10 @@
 LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the
 instrumentation and control system for electric vehicles. It is written in well-organized Python and C/C++ with
 impressive performance. It is not only plug-and-play
-(the [VeC Project](https://www.villanovacollege.org/giving/vec-project)) but also fully customizable. It
-provides multiple abstract layers that allow users to pull out the components and rearrange them into a new project.
-You can either configure the existing executable module `leads_vec` and `leads_vec_rc` simply through a JSON file
-or write your own codes based on the framework as easily as building a LEGO.
+(the [VeC Project](https://www.villanovacollege.org/giving/vec-project)) but also fully customizable. It provides
+multiple abstract layers that allow users to pull out the components and rearrange them into a new project. You can
+either configure the existing executable module `leads_vec` and `leads_vec_rc` simply through a JSON file or write your
+own codes based on the framework as easily as building a LEGO.
 
 The hardware components chosen for this project are geared towards amateur developers. It uses neither a CAN bus nor any
 dedicated circuit board, but generic development kits such as Raspberry Pi and Arduino instead. However, as it is a
@@ -314,8 +314,8 @@ See [reports](docs/reports).
 
 #### Issues
 
-Our team management completely relies on GitHub. Tasks are published and assigned
-as [issues](https://github.com/ProjectNeura/LEADS/issues). You will be notified if you are assigned to certain tasks.
+Our team management completely relies on GitHub. Tasks are published and assigned as
+[issues](https://github.com/ProjectNeura/LEADS/issues). You will be notified if you are assigned to certain tasks.
 However, you may also join other discussions for which you are not responsible.
 
 There are a few labels that classify the issues.
