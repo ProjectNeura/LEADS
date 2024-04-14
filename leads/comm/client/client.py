@@ -5,7 +5,7 @@ from leads.comm.prototype import Entity, Connection
 
 class Client(Entity):
     """
-    You should use `create_client()` and start_client()` instead of directly calling any method.
+    You should use `create_client()` and `start_client()` instead of directly calling any method.
     """
     _connection: Connection | None = None
 

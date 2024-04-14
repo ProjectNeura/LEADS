@@ -7,7 +7,7 @@ from leads.os import _thread_flags
 
 class Server(Entity):
     """
-    You should use `create_server()` and start_server()` instead of directly calling any method.
+    You should use `create_server()` and `start_server()` instead of directly calling any method.
     """
     _connections: list[Connection] = []
 
