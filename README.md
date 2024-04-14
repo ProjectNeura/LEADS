@@ -212,10 +212,10 @@ because you have to specify the Python version such that `python3.12 ...` and `p
 ## Environment Setup
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
-reproduction is available on https://leads-docs.projectneura.org/vec, but first of all, we run an Ubuntu 22.04 LTS on a
-Raspberry Pi 4 Model B 8GB. After the OS is set up, just run the one-line commands listed below. You may also choose to
-clone the repository or download the scripts from [releases](https://github.com/ProjectNeura/LEADS/releases) (only
-stable releases provide scripts).
+reproduction is available on https://leads-docs.projectneura.org/en/latest/vec, but first of all, we run an
+Ubuntu 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, just run the one-line commands listed below.
+You may also choose to clone the repository or download the scripts from
+[releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
 You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including LEADS for you. If anything
 goes wrong, you can also manually install everything.
