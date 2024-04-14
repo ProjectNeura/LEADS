@@ -96,7 +96,7 @@ it is named "LEADS", not "LEADS-Arduino", in the index.
 
 ## LEADS Framework
 
-See [Read the Docs](https://leads-docs.projectneura.org) (TBC) for the documentation of how to customize and make use of
+See [Read the Docs](https://leads-docs.projectneura.org) for the documentation of how to customize and make use of
 the framework in your project.
 
 ## Quick Start
