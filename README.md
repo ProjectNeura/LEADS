@@ -285,17 +285,7 @@ class MainController(RandomController):
 ```
 
 The devices module will be executed after configuration registration. Register your devices in this module using AOP
-paradigm.
-
-## Submodules
-
-- [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino)
-- [leads-docs](https://github.com/ProjectNeura/leads-docs)
-- [leads-vec-rc](https://github.com/ProjectNeura/leads-vec-rc) (Private)
-
-## Periodic Report
-
-See [reports](docs/reports).
+paradigm. A more detailed explanation can be found [here](https://leads-docs.projectneura.org/en/latest/device.html).
 
 ## Architecture
 
