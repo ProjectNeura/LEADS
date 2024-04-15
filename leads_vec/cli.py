@@ -31,7 +31,7 @@ def format_lap_time(t: int) -> str:
 
 def main() -> int:
     cfg = require_config()
-    ctx = LEADS(data_seq_size=cfg.data_seq_size)
+    ctx = LEADS(data_seq_size=cfg.data_seq_size, num_laps_timed=cfg.num_laps_timed)
     register_context(ctx)
     ctx.plugin(SystemLiteral.DTCS, DTCS())
     ctx.plugin(SystemLiteral.ABS, ABS())
