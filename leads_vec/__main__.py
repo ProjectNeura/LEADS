@@ -70,6 +70,8 @@ if __name__ == "__main__":
         _L.debug("Font sizes magnified by " + str(f))
     _register_config(config)
     if args.xws:
+        if _get_system_platform() != "linux":
+            _exit("Error: Unsupported operating system")
         from os import getuid as _getuid
         from pwd import getpwuid as _getpwuid
 
