@@ -15,6 +15,7 @@ class ConfigTemplate(Serializable):
         self._frozen: bool = False
         self.w_debug_level: str = "DEBUG"
         self.data_seq_size: int = 100
+        self.num_laps_timed: int = 3
         self.data_dir: str = "data"
         self.refresh()
 
