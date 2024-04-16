@@ -23,6 +23,10 @@ class Service(metaclass=_ABCMeta):
         self._main_thread: _Thread | None = None
 
     def port(self) -> int:
+        """
+        Get the port that the service listens on or connects to.
+        :return:
+        """
         return self._port
 
     @_abstractmethod
@@ -36,9 +40,9 @@ class Service(metaclass=_ABCMeta):
 
     def _run(self, *args, **kwargs) -> None:
         """
-        This method is equivalent to `Service.run()`. It leaves a middle layer for possible features in subclasses.
-        :param args: args passed to `Service.run()`
-        :param kwargs: kwargs passed to `Service.run()`
+        This method is equivalent to `run()`. It leaves a middle layer for possible features in subclasses.
+        :param args: args passed to `run()`
+        :param kwargs: kwargs passed to `run()`
         """
         self.run(*args, **kwargs)
         self.close()
@@ -46,8 +50,8 @@ class Service(metaclass=_ABCMeta):
     def _register_process(self, *args, **kwargs) -> None:
         """
         Register the multithread worker.
-        :param args: args passed to `Service.run()`
-        :param kwargs: kwargs passed to `Service.run()`
+        :param args: args passed to `run()`
+        :param kwargs: kwargs passed to `run()`
         """
         self._lock.acquire()
         if self._main_thread:
@@ -61,8 +65,8 @@ class Service(metaclass=_ABCMeta):
     def _parallel_run(self, *args, **kwargs) -> None:
         """
         This method is similar to `Service._run()` except that it runs the workflow in a child thread.
-        :param args: args passed to `Service.run()`
-        :param kwargs: kwargs passed to `Service.run()`
+        :param args: args passed to `run()`
+        :param kwargs: kwargs passed to `run()`
         """
         self._register_process(*args, **kwargs)
         self._main_thread.start()
@@ -70,9 +74,9 @@ class Service(metaclass=_ABCMeta):
     def start(self, parallel: bool = False, *args, **kwargs) -> _Self:
         """
         This is the publicly exposed interface to start the service.
-        :param parallel: True: main thread not blocked; False: main thread blocked
-        :param args: args passed to `Service.run()`
-        :param kwargs: kwargs passed to `Service.run()`
+        :param parallel: True: run in a separate thread; False: run in the caller thread
+        :param args: args passed to `run()`
+        :param kwargs: kwargs passed to `run()`
         :return: self
         """
         try:
@@ -173,10 +177,17 @@ class Connection(ConnectionBase):
 
     @_override
     def __str__(self) -> str:
+        """
+        :return: "{address}:{port}"
+        """
         return self._address[0] + ":" + str(self._address[1])
 
     @_override
     def closed(self) -> bool:
+        """
+        Return the status of the connection.
+        :return: True: closed; False: active
+        """
         return self._socket.fileno() == -1
 
     def _require_open_socket(self, mandatory: bool = True) -> _socket:
@@ -207,12 +218,19 @@ class Connection(ConnectionBase):
 
     @_override
     def send(self, msg: bytes) -> None:
+        """
+        Send the message to the peer.
+        :param msg: the message to send
+        """
         self._require_open_socket().send(msg + self._separator)
         if msg == b"disconnect":
             self.close()
 
     @_override
     def close(self) -> None:
+        """
+        Close the connection.
+        """
         self._on_close(self)
         self._require_open_socket(False).close()
 
@@ -239,10 +257,17 @@ class Entity(Service, metaclass=_ABCMeta):
         self._callback: Callback = callback
 
     def set_callback(self, callback: Callback) -> None:
+        """
+        :param callback: the callback methods
+        """
         callback.bind_chain(self._callback)
         self._callback = callback
 
     def _stage(self, connection: ConnectionBase) -> None:
+        """
+        Stage the connection. It loops and blocks to listen for income messages.
+        :param connection: the connection to stage
+        """
         while _thread_flags.active:
             msg = connection.receive()
             if msg is None or msg == b"disconnect":
@@ -252,6 +277,11 @@ class Entity(Service, metaclass=_ABCMeta):
 
     @_override
     def _run(self, *args, **kwargs) -> None:
+        """
+        This handles any exception raised by `super()._run()` and call the callback method `on_fail()`.
+        :param args: args passed to `run()`
+        :param kwargs: kwargs passed to `run()`
+        """
         try:
             return super()._run(*args, **kwargs)
         except Exception as e:
