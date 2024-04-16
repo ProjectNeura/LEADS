@@ -1,6 +1,6 @@
-from leads import device, controller, MAIN_CONTROLLER, get_controller, LEFT_FRONT_WHEEL_SPEED_SENSOR, \
-    RIGHT_FRONT_WHEEL_SPEED_SENSOR, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, \
-    GPS_RECEIVER, ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
+from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
+    Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, GPS_RECEIVER, \
+    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
@@ -25,9 +25,9 @@ class VeCController(Controller):
             "gps_ground_speed": coords[1],
             "latitude": coords[2],
             "longitude": coords[3],
-            **get_controller("pc").read()
+            **self.device("pc").read()
         }
-        return DataContainer(**get_controller("wsc").read(), **universal)
+        return DataContainer(**self.device("wsc").read(), **universal)
 
 
 @controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
