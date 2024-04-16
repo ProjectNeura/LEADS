@@ -77,10 +77,10 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def time_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
 
-    def get_lap_time_list(self) -> list[int]:
+    def lap_time_list(self) -> list[int]:
         return [self._lap_time_seq[i] - self._lap_time_seq[i - 1] for i in range(1, len(self._lap_time_seq))]
 
-    def get_speed_trend(self) -> float:
+    def speed_trend(self) -> float:
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
 
     def overwrite_throttle(self, force: float) -> float:

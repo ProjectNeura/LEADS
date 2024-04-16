@@ -117,15 +117,15 @@ def main() -> int:
         def pre_push(self, e: DataPushedEvent) -> None:
             self.super(e)
             d = e.data.to_dict()
-            d["speed_trend"] = ctx.get_speed_trend()
-            d["lap_times"] = ctx.get_lap_time_list()
+            d["speed_trend"] = ctx.speed_trend()
+            d["lap_times"] = ctx.lap_time_list()
             uim.rd().comm_notify(d)
 
         def on_update(self, e: UpdateEvent) -> None:
             self.super(e)
             d = e.context.data()
             if uim.rd().m1_mode == 0:
-                lap_time_list = ctx.get_lap_time_list()
+                lap_time_list = ctx.lap_time_list()
                 m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
                                                                                                       lap_time_list))))
             elif uim.rd().m1_mode == 1:
@@ -147,7 +147,7 @@ def main() -> int:
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{uim.rd().comm.port()}")
             speed.set(d.speed)
             voltage.set(f"{d.voltage:.1f} V")
-            st = ctx.get_speed_trend()
+            st = ctx.speed_trend()
             speed_trend.set(st)
             g_force.set((d.lateral_acceleration, d.forward_acceleration))
             if uim.rd().comm.num_connections() < 1:

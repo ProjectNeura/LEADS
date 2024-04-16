@@ -44,7 +44,7 @@ class DataContainer(Serializable):
         """
         self._time_stamp = int(_time() * 1000)
 
-    def get_time_stamp(self) -> int:
+    def time_stamp(self) -> int:
         """
         Get the data's time stamp.
         :return: the time stamp (ms)

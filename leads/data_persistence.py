@@ -61,14 +61,8 @@ class DataPersistence(_Sequence[T], _Generic[T]):
     def __str__(self) -> str:
         return str(self._data)
 
-    def get_chunk_size(self) -> int:
-        return self._chunk_size
-
     def to_list(self) -> list[T]:
         return _copy(self._data)
-
-    def get_chunk(self) -> list[T]:
-        return _copy(self._chunk)
 
     def _push_to_data(self, element: T) -> None:
         self._data.append(element)
