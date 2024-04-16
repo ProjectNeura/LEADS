@@ -12,6 +12,12 @@ class GPSSpeedCorrection(Plugin):
         self._n: int = 0
 
     @_override
+    def enabled(self, enabled: bool | None = None) -> bool | None:
+        if enabled is None:
+            return self._enabled
+        self._enabled = enabled
+
+    @_override
     def pre_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
         d = context.data()
         if not d.gps_valid:
