@@ -18,10 +18,6 @@ class Device(object):
     def tag(self, tag: str | None = None) -> str | None:
         """
         Set or get the tag of the device.
-        ```python
-        tag(a_tag) # set a tag
-        tag() # get the tag
-        ```
         :param tag: the tag or None if getter mode
         :return: the tag or None if setter mode
         """
@@ -32,10 +28,6 @@ class Device(object):
     def parent_tags(self, parent_tags: list[str] | None = None) -> list[str] | None:
         """
         Set or get the parent tags of the device.
-        ```python
-        parent_tags(a_parent_tag_list) # set the parent tags
-        parent_tags() # get the parent tags
-        ```
         :param parent_tags: the parent tags or None if getter mode
         :return: the parent tags or None if setter mode
         """

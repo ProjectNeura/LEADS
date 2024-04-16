@@ -32,6 +32,10 @@ class ConfigTemplate(Serializable):
 
     @_override
     def __str__(self) -> str:
+        """
+        Convert to a JSON string.
+        :return: the JSON string
+        """
         return _dumps(self.to_dict())
 
     @_override
@@ -47,6 +51,10 @@ class ConfigTemplate(Serializable):
         self.refresh()
 
     def _writable(self, name: str) -> bool:
+        """
+        :param name: the configuration name
+        :return: True: writable; False: readonly
+        """
         return not hasattr(self, "_frozen") or not self._frozen or name.startswith("_") or name.startswith("w_")
 
     def set(self, name: str, value: _Any) -> None:

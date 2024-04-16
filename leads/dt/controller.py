@@ -28,10 +28,6 @@ class Controller(Device):
     def device(self, tag: str, device: Device | None = None) -> Device | None:
         """
         Set or get a device by tag. The device's tag will be overwritten.
-        ```python
-        device(a_tag, a_device) # set a device
-        device(a_tag) # get the device
-        ```
         :param tag: tag of the device (it shares the global namespace)
         :param device: the device or None if getter mode
         :return: the device or None if setter mode
