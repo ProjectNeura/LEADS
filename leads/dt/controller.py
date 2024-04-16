@@ -12,9 +12,6 @@ class Controller(Device):
         super().__init__()
         self._devices: dict[str, Device] = {}
 
-    def level(self) -> int:
-        return len(self._parent_tags)
-
     def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
         device.tag(tag)
@@ -38,5 +35,6 @@ class Controller(Device):
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
         for device in self._devices.values():
             device.initialize(*self._parent_tags, self._tag)

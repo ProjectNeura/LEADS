@@ -33,9 +33,9 @@ class WheelSpeedSensor(_Device):
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        super().initialize(*parent_tags)
         if self._odometer_tag:
             self._odometer = _get_device(self._odometer_tag)
+        super().initialize(*parent_tags)
 
     @_override
     def update(self, data: str) -> None:

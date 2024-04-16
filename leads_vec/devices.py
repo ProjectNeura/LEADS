@@ -47,6 +47,7 @@ class PowerController(ArduinoMicro):
 class BatteryVoltageSensor(VoltageSensor):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "POWER", "BATT")
+        super().initialize(*parent_tags)
 
 
 @controller("wsc", MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))

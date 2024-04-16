@@ -12,8 +12,15 @@ class Device(object):
 
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""
-        self._parent_tags: list[str] = []
+        self._parent_tags: tuple[str, ...] = ()
         self._pins: tuple[int | str, ...] = pins
+
+    def level(self) -> int:
+        """
+        Get the level of the device in the device tree.
+        :return: the number of parents
+        """
+        return len(self._parent_tags)
 
     def tag(self, tag: str | None = None) -> str | None:
         """
@@ -25,24 +32,19 @@ class Device(object):
             return self._tag
         self._tag = tag
 
-    def parent_tags(self, parent_tags: list[str] | None = None) -> list[str] | None:
+    def parent_tags(self) -> tuple[str, ...]:
         """
-        Set or get the parent tags of the device.
-        :param parent_tags: the parent tags or None if getter mode
-        :return: the parent tags or None if setter mode
+        Get the parent tags of the device.
+        :return: the parent tags
         """
-        if parent_tags is None:
-            return self._parent_tags[:]
-        if len(self._parent_tags) > 0:
-            raise RuntimeError("Duplicated initialization")
-        self._parent_tags = parent_tags
+        return self._parent_tags[:]
 
     def pins_check(self, required_num: int) -> None:
         if len(self._pins) != required_num:
             raise ValueError(f"`{self.__class__.__name__}` only takes in {required_num} pins")
 
     def initialize(self, *parent_tags: str) -> None:
-        ...
+        self._parent_tags = parent_tags
 
     def read(self) -> _Any:
         raise NotImplementedError
@@ -74,3 +76,4 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
     def initialize(self, *parent_tags: str) -> None:
         self._shadow_thread = _Thread(name=str(id(self)) + " shadow", target=self.run, daemon=True)
         self._shadow_thread.start()
+        super().initialize(*parent_tags)
