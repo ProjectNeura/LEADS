@@ -34,8 +34,8 @@ class NMEAGPSReceiver(_Device, _Entity):
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        self.start(True)
         super().initialize(*parent_tags)
+        self.start(True)
 
     @_override
     def update(self, data: _TalkerSentence) -> None:

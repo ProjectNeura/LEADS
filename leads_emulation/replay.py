@@ -12,8 +12,8 @@ class ReplayController(_Controller):
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        self._dataset.load()
         super().initialize(*parent_tags)
+        self._dataset.load()
 
     @_override
     def read(self) -> _DataContainer:

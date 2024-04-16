@@ -33,8 +33,8 @@ class VeCController(Controller):
 @controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
 class PowerController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER", "BATT", "MOTOR")
         super().initialize(*parent_tags)
+        mark_system(self, "POWER", "BATT", "MOTOR")
 
     def read(self) -> dict[str, float]:
         return {"voltage": self.device(VOLTAGE_SENSOR).read()}
@@ -46,15 +46,15 @@ class PowerController(ArduinoMicro):
 @device(VOLTAGE_SENSOR, "pc")
 class BatteryVoltageSensor(VoltageSensor):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER", "BATT")
         super().initialize(*parent_tags)
+        mark_system(self, "POWER", "BATT")
 
 
 @controller("wsc", MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
 class WheelSpeedController(ArduinoMicro):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC", "ESC")
         super().initialize(*parent_tags)
+        mark_system(self, "WSC", "ESC")
 
     def read(self) -> dict[str, float]:
         lfws = self.device(LEFT_FRONT_WHEEL_SPEED_SENSOR).read()
@@ -74,15 +74,15 @@ class AverageOdometer(ConcurrentOdometer):
            [(FRONT_WHEEL_DIAMETER, ODOMETER), (FRONT_WHEEL_DIAMETER, ODOMETER), (REAR_WHEEL_DIAMETER, ODOMETER)])))
 class WheelSpeedSensors(WheelSpeedSensor):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC", "ESC")
         super().initialize(*parent_tags)
+        mark_system(self, "WSC", "ESC")
 
 
 @device(GPS_RECEIVER, MAIN_CONTROLLER, (GPS_RECEIVER_PORT,))
 class GPS(NMEAGPSReceiver):
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "GPS")
         super().initialize(*parent_tags)
+        mark_system(self, "GPS")
 
 
 @device((LEFT_INDICATOR, RIGHT_INDICATOR), MAIN_CONTROLLER, [
@@ -91,4 +91,5 @@ class GPS(NMEAGPSReceiver):
 class DirectionIndicators(LEDGroup):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
+        mark_system(self, "DI")
         self.write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))
