@@ -281,6 +281,7 @@ class ContextManager(object):
         root = self._window.root()
         root.grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
         screen_width = root.winfo_screenwidth()
+        p = int(self._window.width() * .005)
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
@@ -288,7 +289,7 @@ class ContextManager(object):
                 widget = row[j]
                 s = int(t / length)
                 widget.configure(width=screen_width)
-                widget.grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=4, ipady=4, padx=4, pady=4)
+                widget.grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=p, ipady=p, padx=p, pady=p)
 
     def window(self) -> Window:
         return self._window
