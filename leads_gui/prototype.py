@@ -63,7 +63,7 @@ class CanvasBased(_CTkCanvas):
         if clickable:
             self.bind("<Button-1>", command)
         self._ratio: float | None = None
-        self._history_width: float = self.meta()[0]
+        self._last_width: float = self.meta()[0]
         self._ids: dict[str, int] = {}
         self.bind("<Configure>", lambda _: self.render())
 
@@ -131,9 +131,9 @@ class CanvasBased(_CTkCanvas):
         ...
 
     def render(self) -> None:
-        if self._ratio and (w := self.meta()[0]) != self._history_width:
+        if self._ratio and (w := self.meta()[0]) != self._last_width:
             self.configure(height=w * self._ratio)
-            self._history_width = w
+            self._last_width = w
         self.raw_renderer(self)
 
 
@@ -160,7 +160,7 @@ class TextBased(CanvasBased):
 class VariableControlled(object):
     def __init__(self, variable: _Variable) -> None:
         self._variable: _Variable = variable
-        self._history_value: _Any = variable.get()
+        self._last_value: _Any = variable.get()
         self._trace_cb_name: str | None = None
 
     def attach(self, callback: _Callable[[], None]) -> None:
@@ -168,9 +168,9 @@ class VariableControlled(object):
             raise RuntimeError("Duplicated attachment")
 
         def unique(_, __, ___) -> None:
-            if (v := self._variable.get()) != self._history_value:
+            if (v := self._variable.get()) != self._last_value:
                 callback()
-                self._history_value = v
+                self._last_value = v
 
         self._trace_cb_name = self._variable.trace_add("write", unique)
 
