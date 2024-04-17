@@ -157,6 +157,12 @@ systemctl daemon-reload
 systemctl enable leads_vec
 ```
 
+##### Specify a Theme
+
+```shell
+python -m leads_vec -t path/to/the/theme.json run
+```
+
 ##### Magnify Font Sizes
 
 ```shell
