@@ -6,6 +6,8 @@ from os.path import exists as _exists
 from subprocess import run as _run
 from sys import exit as _exit, version as _version
 
+from customtkinter import set_default_color_theme as _set_default_color_theme
+
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
 from leads.data_persistence import Dataset as _Dataset
@@ -22,6 +24,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--devices", default=_abspath(__file__)[:-11] + "devices.py",
                         help="specify a devices module")
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
+    parser.add_argument("-t", "--theme", default=None, help="specify a theme")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
@@ -60,6 +63,8 @@ if __name__ == "__main__":
         _L.info("Configuration file saved to \"config.json\"")
     config = _load_config(args.config, _Config) if args.config else _Config({})
     _L.debug("Configuration loaded:", str(config))
+    if t := args.theme:
+        _set_default_color_theme(t)
     if f := args.magnify_font_sizes:
         config._frozen = False
         config.font_size_small = int(config.font_size_small * f)
