@@ -1,5 +1,5 @@
 from json import dumps as _dumps
-from typing import Any as _Any, override as _override
+from typing import Any as _Any, override as _override, Literal as _Literal
 
 from leads.data import Serializable
 
@@ -9,11 +9,11 @@ class ConfigTemplate(Serializable):
         """
         All custom attributes should be public (not named after "_").
         Writable attributes should start with "w_" such as "w_debug_level".
-        :param base: base dictionary
+        :param base: the base dictionary
         """
         self._d: dict[str, _Any] = base
         self._frozen: bool = False
-        self.w_debug_level: str = "DEBUG"
+        self.w_debug_level: _Literal["DEBUG", "INFO", "WARN", "ERROR"] = "DEBUG"
         self.data_seq_size: int = 100
         self.num_laps_timed: int = 3
         self.data_dir: str = "data"
@@ -60,8 +60,8 @@ class ConfigTemplate(Serializable):
     def set(self, name: str, value: _Any) -> None:
         """
         Set the value with a given name in the dictionary.
-        :param name: dictionary key
-        :param value: value to set
+        :param name: the dictionary key
+        :param value: the value to set
         """
         if self._writable(name):
             self._d[name] = value
@@ -70,8 +70,8 @@ class ConfigTemplate(Serializable):
     def get(self, name: str, default: _Any | None = None) -> _Any | None:
         """
         Get the value of a given name from the dictionary.
-        :param name: dictionary key
-        :param default: default value if the value does not exist
+        :param name: the dictionary key
+        :param default: the default value if the value does not exist
         :return: the value if it exists or else the default value
         """
         return self._d.get(name, default)

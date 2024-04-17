@@ -1,4 +1,4 @@
-from typing import Any as _Any
+from typing import Any as _Any, Literal as _Literal
 
 from leads import ConfigTemplate as _ConfigTemplate
 
@@ -9,6 +9,7 @@ class Config(_ConfigTemplate):
         self.height: int = 480
         self.fullscreen: bool = False
         self.no_title_bar: bool = False
+        self.theme_mode: _Literal["system", "light", "dark"] = "system"
         self.manual_mode: bool = False
         self.refresh_rate: int = 30
         self.m_ratio: float = .7
