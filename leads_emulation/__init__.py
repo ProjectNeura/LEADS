@@ -42,14 +42,13 @@ class SinController(_EmulatedController):
         super().__init__(minimum, maximum, skid_possibility)
         self.acceleration: float = acceleration
         self.magnitude: int = int((maximum - minimum) * .5)
-        self.offset: int = minimum
         self.counter: float = 0
 
     @_override
     def read(self) -> _DataContainer:
         try:
             return _DataContainer(voltage=48.0,
-                                  speed=(fws := (_sin(self.counter) + .5) * self.magnitude + self.offset),
+                                  speed=(fws := (_sin(self.counter) * self.magnitude + self.magnitude)),
                                   front_wheel_speed=fws,
                                   rear_wheel_speed=self.generate_rear_wheel_speed(fws),
                                   gps_valid=True,
@@ -57,4 +56,4 @@ class SinController(_EmulatedController):
                                   latitude=_randint(4315, 4415) / 100,
                                   longitude=-_randint(7888, 7988) / 100)
         finally:
-            self.counter = (self.counter + self.acceleration) % _pi
+            self.counter = (self.counter + self.acceleration) % (2 * _pi)
