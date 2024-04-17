@@ -52,8 +52,9 @@ class GForceMeter(TextBased, VariableControlled):
         if (magnitude := self._variable.magnitude()) > self._max_magnitude:
             self._max_magnitude = magnitude
         w, h, hc, vc, limit = canvas.meta()
-        x, y = hc + max(min(x / 9.8, .9), -.9) * limit, vc + max(min(y / 9.8, .9), -.9) * limit
-        r = max(min(self._max_magnitude / 9.8, .9), -.9) * limit
+        limit *= .5
+        x, y = hc + max(min(x / 29.4, .9), -.9) * limit, vc + max(min(y / 29.4, .9), -.9) * limit
+        r = max(min(self._max_magnitude / 29.4, .9), -.9) * limit
         canvas.collect("d0", canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline="green", width=2))
         canvas.collect("d1", canvas.create_oval(x - 4, y - 4, x + 4, y + 4, fill=self._text_color))
 
