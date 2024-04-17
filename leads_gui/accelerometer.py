@@ -67,8 +67,7 @@ class GForceMeter(TextBased, VariableControlled):
                                                 font=(self._font[0], int(h * .1))))
         for factor in .9, .6, .3:
             r = limit * .5 * factor
-            canvas.collect("f1" + str(factor), canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color,
-                                                                  width=2))
+            canvas.collect(f"f1{factor}", canvas.create_oval(hc - r, vc - r, hc + r, vc + r, outline=color, width=2))
         self.dynamic_renderer(canvas)
 
 

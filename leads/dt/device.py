@@ -75,5 +75,5 @@ class ShadowDevice(Device, metaclass=_ABCMeta):
     @_override
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
-        self._shadow_thread = _Thread(name=str(id(self)) + " shadow", target=self.run, daemon=True)
+        self._shadow_thread = _Thread(name=f"{id(self)} shadow", target=self.run, daemon=True)
         self._shadow_thread.start()

@@ -20,7 +20,7 @@ from leads_gui.typography import *
 from leads_gui.proxy import *
 from leads_gui.performance_checker import *
 
-_set_default_color_theme(_abspath(__file__)[:-11] + "assets/leads-theme.json")
+_set_default_color_theme(f"{_abspath(__file__)[:-11]}assets/leads-theme.json")
 
 
 def initialize(window: Window,

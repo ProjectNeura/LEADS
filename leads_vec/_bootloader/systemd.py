@@ -4,7 +4,7 @@ from pwd import getpwuid as _getpwuid
 
 
 def create_service() -> None:
-    _chmod(script := _abspath(__file__)[:-10] + "leads_vec.service.sh", 777)
+    _chmod(f"{(script := _abspath(__file__)[:-10])}leads_vec.service.sh", 777)
     with open("/etc/systemd/system/leads_vec.service", "w") as f:
         f.write(
             "[Unit]\n"

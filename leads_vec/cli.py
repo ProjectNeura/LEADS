@@ -75,9 +75,9 @@ def main() -> int:
         for system in SystemLiteral:
             i += 1
             system_lower = system.lower()
-            manager[system_lower + "_status"] = CTkLabel(root, text=system + " READY", text_color="green",
+            manager[f"{system_lower}_status"] = CTkLabel(root, text=f"{system} READY", text_color="green",
                                                          font=("Arial", cfg.font_size_small))
-            manager[system_lower] = CTkButton(root, text=system + " ON",
+            manager[system_lower] = CTkButton(root, text=f"{system} ON",
                                               command=make_system_switch(ctx, SystemLiteral(system), manager.rd()),
                                               font=("Arial", cfg.font_size_small))
 
@@ -102,7 +102,7 @@ def main() -> int:
     class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
             self.super(service=service, error=error)
-            L.error("Comm server error: " + repr(error))
+            L.error(f"Comm server error: {repr(error)}")
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             self.super(service=service, msg=msg)
@@ -126,8 +126,8 @@ def main() -> int:
             d = e.context.data()
             if uim.rd().m1_mode == 0:
                 lap_time_list = ctx.lap_time_list()
-                m1.set("LAP TIMES\n\n" + ("No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
-                                                                                                      lap_time_list))))
+                m1.set(f"LAP TIMES\n\n{"No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
+                                                                                                   lap_time_list))}")
             elif uim.rd().m1_mode == 1:
                 if has_device(GPS_RECEIVER):
                     gps = get_device(GPS_RECEIVER).read()
@@ -158,31 +158,31 @@ def main() -> int:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
                     if ctx.plugin(SystemLiteral(system)).enabled():
-                        uim[system_lowercase].configure(text=system + " ON")
+                        uim[system_lowercase].configure(text=f"{system} ON")
                     else:
-                        uim[system_lowercase].configure(text=system + " OFF")
-                        uim[system_lowercase + "_status"].configure(text=system + " OFF", text_color=("black", "white"))
+                        uim[system_lowercase].configure(text=f"{system} OFF")
+                        uim[f"{system_lowercase}_status"].configure(text=f"{system} OFF", text_color=("black", "white"))
                 uim.rd().control_system_switch_changed = False
 
         def pre_intervene(self, e: InterventionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
-                uim[e.system.lower() + "_status"].configure(text=e.system + " INTEV", text_color="red")
+                uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} INTEV", text_color="red")
 
         def post_intervene(self, e: InterventionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
-                uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
+                uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
 
         def pre_suspend(self, e: SuspensionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
-                uim[e.system.lower() + "_status"].configure(text=e.system + " SUSPD", text_color="gray")
+                uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} SUSPD", text_color="gray")
 
         def post_suspend(self, e: SuspensionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
-                uim[e.system.lower() + "_status"].configure(text=e.system + " READY", text_color="green")
+                uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
 
         def left_indicator(self, e: Event, state: bool) -> None:
             if has_device(LEFT_INDICATOR):
@@ -255,7 +255,7 @@ def main() -> int:
             ["m1", "m2", "m3"],
             ["left", "time_lap", "hazard", "right"],
             ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"],
-            [*map(lambda s: s.lower() + "_status", SystemLiteral), "comm_status"],
+            [*map(lambda s: f"{s.lower()}_status", SystemLiteral), "comm_status"],
             list(map(lambda s: s.lower(), SystemLiteral)),
             ["esc"]
         ]

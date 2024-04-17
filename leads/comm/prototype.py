@@ -57,7 +57,7 @@ class Service(metaclass=_ABCMeta):
         if self._main_thread:
             raise RuntimeWarning("A service can only run once")
         try:
-            self._main_thread = _Thread(name="service" + str(hash(self)), target=self._run, daemon=True, args=args,
+            self._main_thread = _Thread(name=f"service{hash(self)}", target=self._run, daemon=True, args=args,
                                         kwargs=kwargs)
         finally:
             self._lock.release()
@@ -180,7 +180,7 @@ class Connection(ConnectionBase):
         """
         :return: "{address}:{port}"
         """
-        return self._address[0] + ":" + str(self._address[1])
+        return f"{self._address[0]}:{self._address[1]}"
 
     @_override
     def closed(self) -> bool:

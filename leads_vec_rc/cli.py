@@ -23,7 +23,7 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-csv = CSVCollection(config.data_dir + "/" + datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ".csv", (
+csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv", (
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
     "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
 ), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None, None, None, None)
@@ -36,7 +36,7 @@ class CommCallback(Callback):
 
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
-        L.error("Comm client error: " + repr(error))
+        L.error(f"Comm client error: {repr(error)}")
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)

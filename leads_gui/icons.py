@@ -7,7 +7,7 @@ from customtkinter import CTkImage as _CTkImage
 from leads import require_config as _require_config
 from leads_gui.system import _ASSETS_PATH
 
-_ICONS_PATH: str = _ASSETS_PATH + "/icons"
+_ICONS_PATH: str = f"{_ASSETS_PATH}/icons"
 
 
 class Color(_StrEnum):
@@ -37,7 +37,7 @@ class _Logo(_Icon):
 
     @_override
     def load_source(self, color: Color) -> _Image:
-        return _Image.open(_ASSETS_PATH + "/logo.png")
+        return _Image.open(f"{_ASSETS_PATH}/logo.png")
 
     @_override
     def __call__(self, size: int | None = None, color: Color | None = None) -> _CTkImage:

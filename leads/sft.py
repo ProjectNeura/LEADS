@@ -26,7 +26,7 @@ class SystemFailureTracer(object):
         if isinstance(error, Exception):
             error = repr(error)
         if not (systems := read_marked_system(device)):
-            raise RuntimeWarning("No system marked for device " + str(device))
+            raise RuntimeWarning(f"No system marked for device {device}")
         for system in systems:
             self.on_fail(device, e := SuspensionEvent(context := require_context(), system, error))
             context.suspend(e)
@@ -34,10 +34,10 @@ class SystemFailureTracer(object):
 
     def recover(self, device: Device) -> None:
         if not (systems := read_marked_system(device)):
-            raise RuntimeWarning("System not marked for device " + str(device))
+            raise RuntimeWarning(f"System not marked for device {device}")
         for system in systems:
             self.on_recover(device, SuspensionEvent(require_context(), system, "Recovered"))
-            L.info(system + " recovered")
+            L.info(f"{system} recovered")
 
 
 SFT: SystemFailureTracer = SystemFailureTracer()

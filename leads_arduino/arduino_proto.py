@@ -66,7 +66,7 @@ class _ArduinoCallback(_Callback):
         try:
             self._arduino.update(msg.decode())
         except UnicodeDecodeError:
-            _L.debug("Discarding this message: " + str(msg))
+            _L.debug(f"Discarding this message: {msg}")
 
     @_override
     def on_fail(self, service: _Service, error: Exception) -> None:

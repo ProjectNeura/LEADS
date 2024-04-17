@@ -6,4 +6,4 @@ def get_system_platform() -> str:
     return _system().lower()
 
 
-_ASSETS_PATH: str = _abspath(__file__)[:-9] + "assets"
+_ASSETS_PATH: str = f"{_abspath(__file__)[:-9]}assets"

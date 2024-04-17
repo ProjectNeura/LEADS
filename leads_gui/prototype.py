@@ -194,7 +194,7 @@ class Window(_Generic[T]):
         self._root: _CTk = _CTk()
         self._root.title(title)
         self._root.wm_iconbitmap()
-        self._root.iconphoto(True, _ImageTk.PhotoImage(file=_ASSETS_PATH + "/logo.png"))
+        self._root.iconphoto(True, _ImageTk.PhotoImage(file=f"{_ASSETS_PATH}/logo.png"))
         self._root.overrideredirect(no_title_bar)
         sw, sh = self._root.winfo_screenwidth(), self._root.winfo_screenheight()
         self._width: int = sw if fullscreen else width

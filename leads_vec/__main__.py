@@ -21,7 +21,7 @@ if __name__ == "__main__":
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
-    parser.add_argument("-d", "--devices", default=_abspath(__file__)[:-11] + "devices.py",
+    parser.add_argument("-d", "--devices", default=f"{_abspath(__file__)[:-11]}devices.py",
                         help="specify a devices module")
     parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
     parser.add_argument("-t", "--theme", default=None, help="specify a theme")
@@ -34,9 +34,9 @@ if __name__ == "__main__":
     if args.action == "info":
         from leads_vec.__version__ import __version__
 
-        _L.info("LEADS Version: " + __version__,
-                "System Platform: " + _get_system_platform(),
-                "Python Version: " + _version,
+        _L.info(f"LEADS Version: {__version__}",
+                f"System Platform: {_get_system_platform()}",
+                f"Python Version: {_version}",
                 sep="\n")
         _exit()
     if args.register == "systemd":
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         config.font_size_large = int(config.font_size_large * f)
         config.font_size_x_large = int(config.font_size_x_large * f)
         config._frozen = True
-        _L.debug("Font sizes magnified by " + str(f))
+        _L.debug(f"Font sizes magnified by {f}")
     _register_config(config)
     if args.xws:
         if _get_system_platform() != "linux":
@@ -81,14 +81,14 @@ if __name__ == "__main__":
         from pwd import getpwuid as _getpwuid
 
         _L.info("Configuring X Window System...")
-        _run(("/usr/bin/xhost", "+SI:localuser:" + _getpwuid(_getuid()).pw_name))
+        _run(("/usr/bin/xhost", f"+SI:localuser:{_getpwuid(_getuid()).pw_name}"))
 
     from leads_vec.cli import main
 
     if args.action == "replay":
         from leads_emulation.replay import ReplayController as _Controller
 
-        _register_controller(_MAIN_CONTROLLER, _Controller(_Dataset(config.data_dir + "/main.csv")))
+        _register_controller(_MAIN_CONTROLLER, _Controller(_Dataset(f"{config.data_dir}/main.csv")))
         _L.info("Replay started")
         _exit(main())
 
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         _L.debug(repr(e))
         if isinstance(e, ImportError):
             if args.ignore_import_error:
-                _L.debug("Ignoring import error: " + repr(e))
+                _L.debug(f"Ignoring import error: {repr(e)}")
                 _exit(main())
             else:
                 _L.warn(
@@ -110,8 +110,8 @@ if __name__ == "__main__":
         try:
             from leads_emulation import SinController as _Controller
 
-            _register_controller(_MAIN_CONTROLLER, _Controller(10, 100, .05))
+            _register_controller(_MAIN_CONTROLLER, _Controller(0, 200, .05))
         except ImportError as e:
-            _L.error("Emulator error: " + repr(e))
+            _L.error(f"Emulator error: {repr(e)}")
             _exit(1)
     _exit(main())
