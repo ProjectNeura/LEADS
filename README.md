@@ -163,6 +163,8 @@ systemctl enable leads_vec
 python -m leads_vec -t path/to/the/theme.json run
 ```
 
+To learn about themes, read [Color and Themes](https://customtkinter.tomschimansky.com/documentation/color).
+
 ##### Magnify Font Sizes
 
 ```shell
@@ -265,6 +267,7 @@ Note that a purely empty file could cause an error.
 | `height`            | `int`   | Window height                                             | Main         | `480`         |
 | `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode               | Main         | `False`       |
 | `no_title_bar`      | `bool`  | `True`: no title bar; `False`: default title bar          | Main         | `False`       |
+| `theme_mode`        | `bool`  | `"system"`, `"light"`, `"dark`"                           | Main         | `False`       |
 | `manual_mode`       | `bool`  | `True`: hide control system; `False`: show control system | Main         | `False`       |
 | `refresh_rate`      | `int`   | GUI frame per second                                      | Main         | `30`          |
 | `m_ratio`           | `float` | Meter widget size ratio                                   | Main         | `0.7`         |
