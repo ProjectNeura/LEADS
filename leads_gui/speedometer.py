@@ -63,8 +63,8 @@ class Speedometer(TextBased, VariableControlled):
             x, y = hc, vc + r * .25
             p = min(v / self._maximum, 1)
             rad = p * 4 * _pi / 3 - _pi / 6
-            color = parse_color(("#" + str(hex(int(0xbf - p * 0xbf)))[2:] * 3,
-                                 "#" + str(hex(int(0x4d + 0xb2 * p)))[2:] * 3))
+            color = parse_color((f"#{f"{int(0xbf - p * 0xbf):02x}" * 3}",
+                                 f"#{f"{int(0x4d + 0xb2 * p):02x}" * 3}"))
             canvas.collect("d0", canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                    style=_ARC, outline=color))
             canvas.collect("d1", canvas.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
