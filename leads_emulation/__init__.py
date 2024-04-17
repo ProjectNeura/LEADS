@@ -48,9 +48,10 @@ class SinController(_EmulatedController):
     def read(self) -> _DataContainer:
         try:
             return _DataContainer(voltage=48.0,
-                                  speed=(fws := (_sin(self.counter) * self.magnitude + self.magnitude)),
+                                  speed=(fws := ((p := _sin(self.counter)) * self.magnitude + self.magnitude)),
                                   front_wheel_speed=fws,
                                   rear_wheel_speed=self.generate_rear_wheel_speed(fws),
+                                  forward_acceleration=p,
                                   gps_valid=True,
                                   gps_ground_speed=fws,
                                   latitude=_randint(4315, 4415) / 100,
