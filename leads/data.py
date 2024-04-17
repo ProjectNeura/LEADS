@@ -34,6 +34,9 @@ class DataContainer(Serializable):
         self.latitude: float = latitude
         self.longitude: float = longitude
 
+        self.throttle: float = 0
+        self.brake: float = 0
+
     @_override
     def __str__(self) -> str:
         return _dumps(self.to_dict())
