@@ -7,6 +7,7 @@ from numpy import diff as _diff, average as _average, array as _array
 
 from leads.constant import ESCMode
 from leads.data import DataContainer
+from leads.dt import get_device, MOTOR_CONTROLLER, BRAKE_CONTROLLER
 
 T = _TypeVar("T", bound=DataContainer)
 
@@ -84,11 +85,11 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
 
     def overwrite_throttle(self, force: float) -> float:
-        # todo
+        get_device(MOTOR_CONTROLLER).write(force)
         return 0
 
     def overwrite_brake(self, force: float) -> float:
-        # todo
+        get_device(BRAKE_CONTROLLER).write(force)
         return 0
 
     def left_indicator(self, left_indicator: bool | None = None) -> bool | None:
