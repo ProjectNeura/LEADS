@@ -64,12 +64,6 @@ class LEADS(Context[T]):
         self._do_plugin_callback("post_update")
 
     @_override
-    def time_lap(self) -> None:
-        self.intervene(InterventionEvent(self, "LAP RECORDING"))
-        super().time_lap()
-        return self.intervene(InterventionExitEvent(self, "LAP RECORDING"))
-
-    @_override
     def overwrite_throttle(self, force: float) -> float:
         self.intervene(InterventionEvent(self, "THROTTLE", force))
         try:
