@@ -6,7 +6,7 @@ from leads.dt.device import Device
 class Controller(Device):
     @_overload
     def __init__(self, *args, **kwargs) -> None:  # real signature unknown
-        ...
+        raise NotImplementedError
 
     def __init__(self) -> None:
         super().__init__()

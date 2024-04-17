@@ -8,7 +8,7 @@ from leads.os import _thread_flags
 class Device(object):
     @_overload
     def __init__(self, *args, **kwargs) -> None:  # real signature unknown
-        ...
+        raise NotImplementedError
 
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""

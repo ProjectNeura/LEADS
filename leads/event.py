@@ -1,4 +1,4 @@
-from typing import Any as _Any, override as _override
+from typing import Any as _Any, override as _override, overload as _overload
 
 from leads.callback import CallbackChain
 from leads.context import Context
@@ -6,6 +6,10 @@ from leads.data import DataContainer
 
 
 class Event(object):
+    @_overload
+    def __init__(self, *args, **kwargs) -> None:  # real signature unknown
+        raise NotImplementedError
+
     def __init__(self, t: str, context: Context) -> None:
         self.t: str = t
         self.context: Context = context
