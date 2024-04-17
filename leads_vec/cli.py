@@ -43,7 +43,8 @@ def main() -> int:
                     cfg.refresh_rate,
                     CustomRuntimeData(),
                     fullscreen=cfg.fullscreen,
-                    no_title_bar=cfg.no_title_bar)
+                    no_title_bar=cfg.no_title_bar,
+                    theme_mode=cfg.theme_mode)
     root = window.root()
     root.configure(cursor="dot")
     m1 = StringVar(root, "")
