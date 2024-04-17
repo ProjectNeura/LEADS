@@ -10,7 +10,8 @@ def do_dtcs(context: Context,
             front_wheel_speed: float,
             rear_wheel_speed: float) -> InterventionEvent:
     if front_wheel_speed < rear_wheel_speed:
-        context.overwrite_throttle(0)
+        d = context.data()
+        d.throttle = 0
         return InterventionEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
     return InterventionExitEvent(context, SystemLiteral.DTCS, front_wheel_speed, rear_wheel_speed)
 

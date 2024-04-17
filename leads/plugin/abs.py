@@ -10,7 +10,8 @@ def do_abs(context: Context,
            front_wheel_speed: float,
            rear_wheel_speed: float) -> InterventionEvent:
     if front_wheel_speed > rear_wheel_speed:
-        context.overwrite_brake(0)
+        d = context.data()
+        d.brake = 0
         return InterventionEvent(context, SystemLiteral.ABS, front_wheel_speed, rear_wheel_speed)
     return InterventionExitEvent(context, SystemLiteral.ABS, front_wheel_speed, rear_wheel_speed)
 

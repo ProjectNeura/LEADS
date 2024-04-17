@@ -64,22 +64,6 @@ class LEADS(Context[T]):
         self._do_plugin_callback("post_update")
 
     @_override
-    def overwrite_throttle(self, force: float) -> float:
-        self.intervene(InterventionEvent(self, "THROTTLE", force))
-        try:
-            return super().overwrite_throttle(force)
-        finally:
-            self.intervene(InterventionExitEvent(self, "THROTTLE", force))
-
-    @_override
-    def overwrite_brake(self, force: float) -> float:
-        self.intervene(InterventionEvent(self, "BRAKE", force))
-        try:
-            return super().overwrite_brake(force)
-        finally:
-            self.intervene(InterventionExitEvent(self, "BRAKE", force))
-
-    @_override
     def left_indicator(self, left_indicator: bool | None = None) -> bool | None:
         if left_indicator is not None:
             self._event_listener.left_indicator(Event("LEFT_INDICATOR", self), left_indicator)
