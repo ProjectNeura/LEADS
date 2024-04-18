@@ -27,6 +27,8 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--theme", default=None, help="specify a theme")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
+    parser.add_argument("--auto-mfs", action=_BooleanOptionalAction, default=False,
+                        help="automatically magnify font sizes to match the original proportion")
     parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
     parser.add_argument("--ignore-import-error", action=_BooleanOptionalAction, default=False,
                         help="ignore `ImportError`")
@@ -66,13 +68,9 @@ if __name__ == "__main__":
     if t := args.theme:
         _set_default_color_theme(t)
     if f := args.magnify_font_sizes:
-        config._frozen = False
-        config.font_size_small = int(config.font_size_small * f)
-        config.font_size_medium = int(config.font_size_medium * f)
-        config.font_size_large = int(config.font_size_large * f)
-        config.font_size_x_large = int(config.font_size_x_large * f)
-        config._frozen = True
-        _L.debug(f"Font sizes magnified by {f}")
+        config.magnify_font_sizes(f)
+    if args.auto_mfs:
+        config.auto_magnify_font_sizes()
     _register_config(config)
     if args.xws:
         if _get_system_platform() != "linux":
