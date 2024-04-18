@@ -20,7 +20,8 @@ class _EmulatedController(_Controller):
         self._last_time: float = _time()
 
     def generate_rear_wheel_speed(self, front_wheel_speed: float) -> float:
-        return front_wheel_speed + int(_randint(1, int(1 / self.skid_possibility)) * self.skid_possibility)
+        return front_wheel_speed if self.skid_possibility <= 0 else front_wheel_speed + int(_randint(
+            1, int(1 / self.skid_possibility)) * self.skid_possibility)
 
     def generate_forward_acceleration(self, speed: float) -> float:
         t = _time()
