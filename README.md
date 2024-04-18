@@ -181,6 +181,15 @@ python -m leads_vec --emu run
 
 This will force the program to use emulation even if the environment is available.
 
+##### Automatically Magnify Font Sizes
+
+```shell
+python -m leads_vec --auto-mfs run
+```
+
+Similar to [Magnify Font Sizes](#magnify-font-sizes), but instead of manually deciding the factor, the program will
+automatically calculate the best factor to keep the original proportion as designed.
+
 ### Remote Analyst
 
 ```shell
