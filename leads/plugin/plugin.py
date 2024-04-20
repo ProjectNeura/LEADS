@@ -1,4 +1,4 @@
-from typing import Any as _Any
+from typing import Any as _Any, override as _override
 
 from leads.constant import ESCMode
 from leads.context import Context
@@ -23,7 +23,7 @@ class Plugin(object):
 
     def enabled(self, enabled: bool | None = None) -> bool | None:
         if enabled is None:
-            return require_context().esc_mode() != ESCMode.OFF and self._enabled
+            return self._enabled
         self._enabled = enabled
 
     def required_data(self) -> tuple[str, ...]:
@@ -59,3 +59,11 @@ class Plugin(object):
         :param kwargs: {required data: its value}
         """
         ...
+
+
+class ESCPlugin(Plugin):
+    @_override
+    def enabled(self, enabled: bool | None = None) -> bool | None:
+        if enabled is None:
+            return require_context().esc_mode() != ESCMode.OFF and super().enabled()
+        super().enabled(enabled)
