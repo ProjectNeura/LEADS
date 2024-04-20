@@ -67,3 +67,7 @@ class ESCPlugin(Plugin):
         if enabled is None:
             return require_context().esc_mode() != ESCMode.OFF and super().enabled()
         super().enabled(enabled)
+
+    @staticmethod
+    def adjudicate(d: float, base: float, absolute: float, percentage: float) -> bool:
+        return d > 0 and ((absolute and d > absolute) or (percentage and d > base * percentage))
