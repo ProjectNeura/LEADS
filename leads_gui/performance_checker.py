@@ -10,7 +10,7 @@ class PerformanceChecker(object):
     def __init__(self) -> None:
         self._refresh_rate: int = _require_config().refresh_rate
         self._original_interval: float = 1 / self._refresh_rate
-        self._double_orignial_interval: float = 2 * self._original_interval
+        self._double_original_interval: float = 2 * self._original_interval
         self._fps: float = 0
         self._offset: float = 0
         self._delay_seq: _deque[float] = _deque(maxlen=self._refresh_rate * 10)
@@ -27,7 +27,7 @@ class PerformanceChecker(object):
         mark = len(self._delay_seq)
         self._offset = max(min(_poly1d(_polyfit(range(mark), self._delay_seq, 5))(mark + 1)
                                if mark > self._refresh_rate else self._original_interval,
-                               self._double_orignial_interval), self._original_interval)
+                               self._double_original_interval), self._original_interval)
         self._last_frame = t
 
     def next_interval(self) -> int:
