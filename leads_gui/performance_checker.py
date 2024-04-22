@@ -31,5 +31,5 @@ class PerformanceChecker(object):
         self._last_frame = t
 
     def next_interval(self) -> int:
-        # 1070 is determined by experiences
-        return int(3000 * self._original_interval - 1000 * self._offset - 1070 / self._fps)
+        # 1200 is determined by experiences
+        return int(3000 * self._original_interval - 1000 * self._offset - 1200 / self._fps)
