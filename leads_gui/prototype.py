@@ -206,7 +206,6 @@ class Window(_Generic[T]):
         self._root.geometry(
             f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}")
         self._refresh_rate: int = refresh_rate
-        self._refresh_interval: int = int(1000 / refresh_rate)
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
 
@@ -244,8 +243,7 @@ class Window(_Generic[T]):
             self._on_refresh(self)
             self._performance_checker.record_frame()
             if self._active:
-                self._root.after(max(0, int(2 * self._refresh_interval - self._performance_checker.delay_offset())),
-                                 wrapper)
+                self._root.after(self._performance_checker.next_interval(), wrapper)
 
         self._root.after(0, wrapper)
         self._root.mainloop()
