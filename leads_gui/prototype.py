@@ -211,6 +211,7 @@ class Window(_Generic[T]):
 
         self._active: bool = False
         self._performance_checker: PerformanceChecker = PerformanceChecker()
+        self._last_interval: float = 0
 
     def root(self) -> _CTk:
         return self._root
@@ -241,9 +242,10 @@ class Window(_Generic[T]):
 
         def wrapper() -> None:
             self._on_refresh(self)
-            self._performance_checker.record_frame()
+            self._performance_checker.record_frame(self._last_interval)
             if self._active:
-                self._root.after(self._performance_checker.next_interval(), wrapper)
+                self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
+                self._last_interval = ni
 
         self._root.after(0, wrapper)
         self._root.mainloop()
