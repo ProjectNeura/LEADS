@@ -1,4 +1,3 @@
-from copy import copy as _copy
 from operator import add as _add, sub as _sub, mul as _mul, truediv as _truediv, floordiv as _floordiv, lt as _lt, \
     le as _le, gt as _gt, ge as _ge
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
@@ -62,7 +61,7 @@ class DataPersistence(_Sequence[T], _Generic[T]):
         return str(self._data)
 
     def to_list(self) -> list[T]:
-        return _copy(self._data)
+        return self._data.copy()
 
     def _push_to_data(self, element: T) -> None:
         self._data.append(element)
