@@ -206,12 +206,12 @@ class Window(_Generic[T]):
         self._root.geometry(
             f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}")
         self._refresh_rate: int = refresh_rate
-        self._refresh_interval: int = int(1000 / refresh_rate)
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
 
         self._active: bool = False
         self._performance_checker: PerformanceChecker = PerformanceChecker()
+        self._last_interval: float = 0
 
     def root(self) -> _CTk:
         return self._root
@@ -224,6 +224,9 @@ class Window(_Generic[T]):
 
     def fps(self) -> float:
         return self._performance_checker.fps()
+
+    def net_delay(self) -> float:
+        return self._performance_checker.net_delay()
 
     def refresh_rate(self) -> int:
         return self._refresh_rate
@@ -242,10 +245,10 @@ class Window(_Generic[T]):
 
         def wrapper() -> None:
             self._on_refresh(self)
-            self._performance_checker.record_frame()
+            self._performance_checker.record_frame(self._last_interval)
             if self._active:
-                self._root.after(max(0, int(2 * self._refresh_interval - self._performance_checker.delay_offset())),
-                                 wrapper)
+                self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
+                self._last_interval = ni
 
         self._root.after(0, wrapper)
         self._root.mainloop()
@@ -306,6 +309,9 @@ class ContextManager(object):
 
     def fps(self) -> float:
         return self._window.fps()
+
+    def net_delay(self) -> float:
+        return self._window.net_delay()
 
     def root(self) -> _CTk:
         return self._window.root()
