@@ -225,6 +225,9 @@ class Window(_Generic[T]):
     def fps(self) -> float:
         return self._performance_checker.fps()
 
+    def net_delay(self) -> float:
+        return self._performance_checker.net_delay()
+
     def refresh_rate(self) -> int:
         return self._refresh_rate
 
@@ -306,6 +309,9 @@ class ContextManager(object):
 
     def fps(self) -> float:
         return self._window.fps()
+
+    def net_delay(self) -> float:
+        return self._window.net_delay()
 
     def root(self) -> _CTk:
         return self._window.root()
