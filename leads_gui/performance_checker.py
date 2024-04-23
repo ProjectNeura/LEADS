@@ -10,9 +10,9 @@ class PerformanceChecker(object):
     def __init__(self) -> None:
         self._refresh_rate: int = _require_config().refresh_rate
         self._original_interval: float = 1 / self._refresh_rate
-        self._double_original_interval: float = 2 * self._original_interval
         self._fps: float = 0
-        self._offset: float = 0
+        self._predicted_offset: float = 0
+        self._interval_seq: _deque[float] = _deque(maxlen=self._refresh_rate * 10)
         self._delay_seq: _deque[float] = _deque(maxlen=self._refresh_rate * 10)
         self._last_frame: float = _time()
 
@@ -20,16 +20,15 @@ class PerformanceChecker(object):
         return self._fps
 
     def record_frame(self) -> None:
-        # add .001 to avoid zero division
-        delay = .001 + (t := _time()) - self._last_frame
-        self._delay_seq.append(delay)
-        self._fps = 1 / _average(self._delay_seq)
+        # add .0000000001 to avoid zero division
+        self._interval_seq.append(interval := .0000000001 + (t := _time()) - self._last_frame)
+        self._delay_seq.append(interval - self._predicted_offset)
+        self._fps = 1 / _average(self._interval_seq)
         mark = len(self._delay_seq)
-        self._offset = max(min(_poly1d(_polyfit(range(mark), self._delay_seq, 5))(mark + 1)
-                               if mark > self._refresh_rate else self._original_interval,
-                               self._double_original_interval), self._original_interval)
+        self._predicted_offset = max(min(_poly1d(_polyfit(range(mark), self._delay_seq, 5))(mark + 1)
+                                         if mark > self._refresh_rate else 0,
+                                         self._original_interval), 0)
         self._last_frame = t
 
     def next_interval(self) -> int:
-        # 1200 is determined by experiences
-        return int(3000 * self._original_interval - 1000 * self._offset - 1200 / self._fps)
+        return int(1000 * self._original_interval - 1000 * self._predicted_offset)
