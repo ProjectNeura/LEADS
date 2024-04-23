@@ -27,8 +27,7 @@ class PerformanceChecker(object):
         self._net_delay_seq.append(delay - interval)
         mark = len(self._net_delay_seq)
         self._predicted_offset = max(min(_poly1d(_polyfit(range(mark), self._net_delay_seq, 5))(mark + 1)
-                                         if mark > self._refresh_rate else 0,
-                                         self._interval), 0)
+                                         if mark > self._refresh_rate else 0, self._interval), 0)
         self._last_frame = t
 
     def next_interval(self) -> float:
