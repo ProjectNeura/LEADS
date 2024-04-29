@@ -190,7 +190,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         self._last_run: float = 0
 
     @_abstractmethod
-    def run(self) -> None:
+    def do(self) -> None:
         raise NotImplementedError
 
     def attempt(self) -> bool:
@@ -201,7 +201,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         if self._loops == 0:
             return False
         if _time() - self._last_run < self._interval * .001:
-            self.run()
+            self.do()
             self._loops -= 1
         return True
 
