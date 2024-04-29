@@ -71,12 +71,12 @@ Note that LEADS requires **Python >= 3.12**. To set up the environment on a Rasp
 command, see [Environment Setup](#environment-setup).
 
 ```shell
-pip install Pillow customtkinter pynput pyserial lgpio gpiozero pynmea2 leads
+pip install Pillow PySDL2 customtkinter gpiozero lgpio pynmea2 pynput pyserial leads
 ```
 
 `numpy` and `pandas` will be automatically installed with `leads`.
 
-`Pillow`, `customtkinter`, `pynput`, `pyserial`, `lgpio`, `gpiozero`, and `pynmea2` are optional.
+`Pillow`, `PySDL2`, `customtkinter`, `gpiozero`, `lgpio`, `pynmea2`, `pynput`, and `pyserial` are optional.
 
 If you only want the framework, run the following.
 
