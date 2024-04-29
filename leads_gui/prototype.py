@@ -1,3 +1,4 @@
+from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from json import dumps as _dumps
 from time import time as _time
 from tkinter import Misc as _Misc, Event as _Event
@@ -182,6 +183,29 @@ class VariableControlled(object):
             self._trace_cb_name = None
 
 
+class FrequencyGenerator(object, metaclass=_ABCMeta):
+    def __init__(self, interval: int, loops: int) -> None:
+        self._interval: int = interval
+        self._loops: int = loops
+        self._last_run: float = 0
+
+    @_abstractmethod
+    def run(self) -> None:
+        raise NotImplementedError
+
+    def attempt(self) -> bool:
+        """
+        Attempt to run.
+        :return: `True`: active; `False`: deprecated
+        """
+        if self._loops == 0:
+            return False
+        if _time() - self._last_run < self._interval * .001:
+            self.run()
+            self._loops -= 1
+        return True
+
+
 class RuntimeData(object):
     start_time: int = int(_time())
     lap_time: list[int] = []
@@ -216,10 +240,12 @@ class Window(_Generic[T]):
         self._width: int = sw if fullscreen else width
         self._height: int = sh if fullscreen else height
         self._root.geometry(
-            f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}")
+            f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}"
+        )
         self._refresh_rate: int = refresh_rate
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
+        self._frequency_generators: list[FrequencyGenerator] = []
 
         self._active: bool = False
         self._performance_checker: PerformanceChecker = PerformanceChecker()
@@ -249,6 +275,16 @@ class Window(_Generic[T]):
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
         self._on_refresh = on_refresh
 
+    def add_frequency_generator(self, frequency_generator: FrequencyGenerator) -> int:
+        self._frequency_generators.append(frequency_generator)
+        return len(self._frequency_generators) - 1
+
+    def remove_frequency_generator(self, index: int) -> None:
+        self._frequency_generators.pop(index)
+
+    def clear_frequency_generators(self) -> None:
+        self._frequency_generators.clear()
+
     def active(self) -> bool:
         return self._active
 
@@ -257,6 +293,9 @@ class Window(_Generic[T]):
 
         def wrapper() -> None:
             self._on_refresh(self)
+            for i in range(len(self._frequency_generators)):
+                if not self._frequency_generators[i].attempt():
+                    self.remove_frequency_generator(i)
             self._performance_checker.record_frame(self._last_interval)
             if self._active:
                 self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
@@ -276,16 +315,16 @@ class ContextManager(object):
         self._widgets: dict[str, _Widget] = {}
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
-        self._widgets[key] = widget
+        self.set(key, widget)
 
     def __getitem__(self, key: str) -> _Widget:
-        return self._widgets[key]
+        return self.get(key)
 
     def set(self, key: str, widget: _Widget) -> None:
-        self[key] = widget
+        self._widgets[key] = widget
 
     def get(self, key: str) -> _Widget:
-        return self[key]
+        return self._widgets[key]
 
     def parse_layout(self, layout: list[list[str | _Widget]]) -> list[list[_Widget]]:
         for i in range(len(layout)):
@@ -312,21 +351,6 @@ class ContextManager(object):
 
     def window(self) -> Window:
         return self._window
-
-    def rd(self) -> T:
-        return self._window.runtime_data()
-
-    def active(self) -> bool:
-        return self._window.active()
-
-    def fps(self) -> float:
-        return self._window.fps()
-
-    def net_delay(self) -> float:
-        return self._window.net_delay()
-
-    def root(self) -> _CTk:
-        return self._window.root()
 
     def show(self) -> None:
         self._window.show()

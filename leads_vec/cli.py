@@ -38,14 +38,14 @@ def main() -> int:
     ctx.plugin(SystemLiteral.EBI, EBI())
     ctx.plugin(SystemLiteral.ATBS, ATBS())
     ctx.plugin("GPS_SPEED_CORRECTION", GPSSpeedCorrection())
-    window = Window(cfg.width,
-                    cfg.height,
-                    cfg.refresh_rate,
-                    CustomRuntimeData(),
-                    fullscreen=cfg.fullscreen,
-                    no_title_bar=cfg.no_title_bar,
-                    theme_mode=cfg.theme_mode)
-    root = window.root()
+    w = Window(cfg.width,
+               cfg.height,
+               cfg.refresh_rate,
+               CustomRuntimeData(),
+               fullscreen=cfg.fullscreen,
+               no_title_bar=cfg.no_title_bar,
+               theme_mode=cfg.theme_mode)
+    root = w.root()
     root.configure(cursor="dot")
     m1 = StringVar(root, "")
     speed = DoubleVar(root, 0)
@@ -56,7 +56,7 @@ def main() -> int:
 
     def render(manager: ContextManager) -> None:
         def switch_m1_mode(_) -> None:
-            manager.rd().m1_mode = (manager.rd().m1_mode + 1) % 3
+            w.runtime_data().m1_mode = (w.runtime_data().m1_mode + 1) % 3
 
         manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, clickable=True, command=switch_m1_mode,
                                    font=("Arial", cfg.font_size_small - 4)).lock_ratio(cfg.m_ratio)
@@ -79,7 +79,7 @@ def main() -> int:
             manager[f"{system_lower}_status"] = CTkLabel(root, text=f"{system} READY", text_color="green",
                                                          font=("Arial", cfg.font_size_small))
             manager[system_lower] = CTkButton(root, text=f"{system} ON",
-                                              command=make_system_switch(ctx, SystemLiteral(system), manager.rd()),
+                                              command=make_system_switch(ctx, SystemLiteral(system), w.runtime_data()),
                                               font=("Arial", cfg.font_size_small))
 
         manager["left"] = CTkButton(root, text="", image=Left(cfg.font_size_large),
@@ -93,12 +93,12 @@ def main() -> int:
             manager["esc"].configure(selected_color=(c := "green" if (esc_mode := ESCMode[mode]) < 2 else "red"),
                                      selected_hover_color=c)
             ctx.esc_mode(esc_mode)
-            manager.rd().control_system_switch_changed = True
+            w.runtime_data().control_system_switch_changed = True
 
         manager["esc"] = CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=esc,
                                             command=switch_esc_mode, font=("Arial", cfg.font_size_small))
 
-    uim = initialize(window, render, ctx, get_controller(MAIN_CONTROLLER))
+    uim = initialize(w, render, ctx, get_controller(MAIN_CONTROLLER))
 
     class CommCallback(Callback):
         def on_fail(self, service: Service, error: Exception) -> None:
@@ -112,7 +112,7 @@ def main() -> int:
             elif msg == b"hazard":
                 ctx.hazard(not ctx.hazard())
 
-    uim.rd().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
+    w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
     class CustomListener(EventListener):
         def pre_push(self, e: DataPushedEvent) -> None:
@@ -120,16 +120,16 @@ def main() -> int:
             d = e.data.to_dict()
             d["speed_trend"] = ctx.speed_trend()
             d["lap_times"] = ctx.lap_time_list()
-            uim.rd().comm_notify(d)
+            w.runtime_data().comm_notify(d)
 
         def on_update(self, e: UpdateEvent) -> None:
             self.super(e)
             d = e.context.data()
-            if uim.rd().m1_mode == 0:
+            if w.runtime_data().m1_mode == 0:
                 lap_time_list = ctx.lap_time_list()
                 m1.set(f"LAP TIMES\n\n{"No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
                                                                                                    lap_time_list))}")
-            elif uim.rd().m1_mode == 1:
+            elif w.runtime_data().m1_mode == 1:
                 if has_device(GPS_RECEIVER):
                     gps = get_device(GPS_RECEIVER).read()
                     m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n\n"
@@ -139,23 +139,23 @@ def main() -> int:
                     m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - !NF!\n\n"
                            f"{d.gps_ground_speed:.1f} KM / H\n"
                            f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
-            elif uim.rd().m1_mode == 2:
+            elif w.runtime_data().m1_mode == 2:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                       f"{(duration := int(time()) - uim.rd().start_time) // 60} MIN {duration % 60} SEC\n"
+                       f"{(duration := int(time()) - w.runtime_data().start_time) // 60} MIN {duration % 60} SEC\n"
                        f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
-                       f"{cfg.refresh_rate} - {uim.fps():.2f} FPS - {uim.net_delay() * 1000:.1f} MS\n"
-                       f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{uim.rd().comm.port()}")
+                       f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
+                       f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{w.runtime_data().comm.port()}")
             speed.set(d.speed)
             voltage.set(f"{d.voltage:.1f} V")
             st = ctx.speed_trend()
             speed_trend.set(st)
             g_force.set((d.lateral_acceleration, d.forward_acceleration))
-            if uim.rd().comm.num_connections() < 1:
+            if w.runtime_data().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:
                 uim["comm_status"].configure(text="COMM ONLINE", text_color=["black", "white"])
-            if uim.rd().control_system_switch_changed:
+            if w.runtime_data().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
                     if ctx.plugin(SystemLiteral(system)).enabled():
@@ -163,7 +163,7 @@ def main() -> int:
                     else:
                         uim[system_lowercase].configure(text=f"{system} OFF")
                         uim[f"{system_lowercase}_status"].configure(text=f"{system} OFF", text_color=("black", "white"))
-                uim.rd().control_system_switch_changed = False
+                w.runtime_data().control_system_switch_changed = False
 
         def pre_intervene(self, e: InterventionEvent) -> None:
             self.super(e)
@@ -250,7 +250,7 @@ def main() -> int:
             ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"]
         ]
         ctx.esc_mode(ESCMode.OFF)
-        uim.rd().control_system_switch_changed = True
+        w.runtime_data().control_system_switch_changed = True
     else:
         layout = [
             ["m1", "m2", "m3"],
@@ -266,13 +266,13 @@ def main() -> int:
 
     def on_press(key: _Key | _KeyCode) -> None:
         if key == _KeyCode.from_char("1"):
-            make_system_switch(ctx, SystemLiteral.DTCS, uim.rd())()
+            make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
         elif key == _KeyCode.from_char("2"):
-            make_system_switch(ctx, SystemLiteral.ABS, uim.rd())()
+            make_system_switch(ctx, SystemLiteral.ABS, w.runtime_data())()
         elif key == _KeyCode.from_char("3"):
-            make_system_switch(ctx, SystemLiteral.EBI, uim.rd())()
+            make_system_switch(ctx, SystemLiteral.EBI, w.runtime_data())()
         elif key == _KeyCode.from_char("4"):
-            make_system_switch(ctx, SystemLiteral.ATBS, uim.rd())()
+            make_system_switch(ctx, SystemLiteral.ATBS, w.runtime_data())()
         elif key == _KeyCode.from_char("t"):
             ctx.time_lap()
         elif key == _Key.esc:
