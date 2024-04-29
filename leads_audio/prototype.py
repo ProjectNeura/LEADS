@@ -33,7 +33,7 @@ class _SoundEffect(object):
         return self._source
 
     def play(self) -> None:
-        _ensure(_play_music(self.load_source(), 1))
+        _ensure(_play_music(self.load_source(), 0))
 
     def stop(self) -> None:
         _ensure(_free_music(self.load_source()))
