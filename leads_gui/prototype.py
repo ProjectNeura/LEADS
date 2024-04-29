@@ -1,3 +1,5 @@
+from json import dumps as _dumps
+from time import time as _time
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any, \
     Literal as _Literal
@@ -8,9 +10,9 @@ from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_m
     set_appearance_mode as _set_appearance_mode
 from numpy import lcm as _lcm
 
-from leads import require_config as _require_config
+from leads import require_config as _require_config, DataContainer as _DataContainer
+from leads.comm import Server as _Server
 from leads_gui.performance_checker import PerformanceChecker
-from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH
 from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
 
@@ -178,6 +180,16 @@ class VariableControlled(object):
         if self._trace_cb_name:
             self._variable.trace_remove("write", self._trace_cb_name)
             self._trace_cb_name = None
+
+
+class RuntimeData(object):
+    start_time: int = int(_time())
+    lap_time: list[int] = []
+    comm: _Server | None = None
+
+    def comm_notify(self, d: _DataContainer | dict[str, _Any]) -> None:
+        if self.comm:
+            self.comm.broadcast(d.encode() if isinstance(d, _DataContainer) else _dumps(d).encode())
 
 
 T = _TypeVar("T", bound=RuntimeData)
