@@ -54,6 +54,14 @@ def main() -> int:
     g_force = GForceVar(root, 0, 0)
     esc = StringVar(root, "STANDARD")
 
+    class LeftIndicator(FrequencyGenerator):
+        def do(self) -> None:
+            uim["left"].configure(image=Left(cfg.font_size_large, Color.RED if self._loops % 2 == 1 else None))
+
+    class RightIndicator(FrequencyGenerator):
+        def do(self) -> None:
+            uim["right"].configure(image=Right(cfg.font_size_large, Color.RED if self._loops % 2 == 1 else None))
+
     def render(manager: ContextManager) -> None:
         def switch_m1_mode(_) -> None:
             w.runtime_data().m1_mode = (w.runtime_data().m1_mode + 1) % 3
@@ -188,16 +196,24 @@ def main() -> int:
         def left_indicator(self, e: Event, state: bool) -> None:
             if has_device(LEFT_INDICATOR):
                 get_device(LEFT_INDICATOR).write(LEDGroupCommand(
-                    LEDCommand.BLINK, Transition("left2right", .1)
+                    LEDCommand.BLINK, Transition("left2right", 100)
                 ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
-            uim["left"].configure(image=Left(cfg.font_size_large, Color.RED if state else None))
+            if state:
+                w.add_frequency_generator("left_indicator", LeftIndicator(500))
+            else:
+                w.remove_frequency_generator("left_indicator")
+                uim["left"].configure(image=Left(cfg.font_size_large, None))
 
         def right_indicator(self, e: Event, state: bool) -> None:
             if has_device(RIGHT_INDICATOR):
                 get_device(RIGHT_INDICATOR).write(LEDGroupCommand(
-                    LEDCommand.BLINK, Transition("right2left", .1)
+                    LEDCommand.BLINK, Transition("right2left", 100)
                 ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
-            uim["right"].configure(image=Right(cfg.font_size_large, Color.RED if state else None))
+            if state:
+                w.add_frequency_generator("right_indicator", RightIndicator(500))
+            else:
+                w.remove_frequency_generator("right_indicator")
+                uim["right"].configure(image=Right(cfg.font_size_large, None))
 
         def hazard(self, e: Event, state: bool) -> None:
             super().hazard(e, state)
