@@ -284,7 +284,10 @@ class Window(_Generic[T]):
         self._frequency_generators[tag] = frequency_generator
 
     def remove_frequency_generator(self, tag: str) -> None:
-        self._frequency_generators.pop(tag)
+        try:
+            self._frequency_generators.pop(tag)
+        except KeyError:
+            pass
 
     def clear_frequency_generators(self) -> None:
         self._frequency_generators.clear()
