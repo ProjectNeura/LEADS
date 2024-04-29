@@ -39,6 +39,7 @@ class _SoundEffect(object):
         _ensure(_free_music(self.load_source()))
 
 
+CONFIRM: _SoundEffect = _SoundEffect("confirm")
 DIRECTION_INDICATOR_ON: _SoundEffect = _SoundEffect("direction-indicator-on")
 DIRECTION_INDICATOR_OFF: _SoundEffect = _SoundEffect("direction-indicator-off")
 WARNING: _SoundEffect = _SoundEffect("warning")
