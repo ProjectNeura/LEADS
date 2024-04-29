@@ -246,7 +246,7 @@ class Window(_Generic[T]):
         self._refresh_rate: int = refresh_rate
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
-        self._frequency_generators: list[FrequencyGenerator] = []
+        self._frequency_generators: dict[str, FrequencyGenerator] = {}
 
         self._active: bool = False
         self._performance_checker: PerformanceChecker = PerformanceChecker()
@@ -276,12 +276,11 @@ class Window(_Generic[T]):
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
         self._on_refresh = on_refresh
 
-    def add_frequency_generator(self, frequency_generator: FrequencyGenerator) -> int:
-        self._frequency_generators.append(frequency_generator)
-        return len(self._frequency_generators) - 1
+    def add_frequency_generator(self, tag: str, frequency_generator: FrequencyGenerator) -> None:
+        self._frequency_generators[tag] = frequency_generator
 
-    def remove_frequency_generator(self, index: int) -> None:
-        self._frequency_generators.pop(index)
+    def remove_frequency_generator(self, tag: str) -> None:
+        self._frequency_generators.pop(tag)
 
     def clear_frequency_generators(self) -> None:
         self._frequency_generators.clear()
@@ -294,9 +293,9 @@ class Window(_Generic[T]):
 
         def wrapper() -> None:
             self._on_refresh(self)
-            for i in range(len(self._frequency_generators)):
-                if not self._frequency_generators[i].attempt():
-                    self.remove_frequency_generator(i)
+            for tag, fg in self._frequency_generators.items():
+                if not fg.attempt():
+                    self.remove_frequency_generator(tag)
             self._performance_checker.record_frame(self._last_interval)
             if self._active:
                 self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
