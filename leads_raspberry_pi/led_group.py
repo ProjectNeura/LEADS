@@ -23,9 +23,9 @@ class Entire(LEDGroupAnimation):
 
 
 class Transition(LEDGroupAnimation):
-    def __init__(self, direction: _TransitionDirection, interval: float = 1) -> None:
+    def __init__(self, direction: _TransitionDirection, interval: int = 1000) -> None:
         self._direction: _TransitionDirection = direction
-        self._interval: float = interval
+        self._interval: float = interval * .001
 
     def async_do(self, command: LEDCommand, *leds: LED) -> None:
         if self._direction == "left2right":
