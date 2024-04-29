@@ -184,8 +184,12 @@ class VariableControlled(object):
 
 
 class FrequencyGenerator(object, metaclass=_ABCMeta):
-    def __init__(self, interval: int, loops: int = -1) -> None:
-        self._interval: int = interval
+    def __init__(self, period: int, loops: int = -1) -> None:
+        """
+        :param period: the period in milliseconds
+        :param loops: the number of loops or -1 to indicate infinite loops
+        """
+        self._period: int = period
         self._loops: int = loops
         self._last_run: float = 0
 
@@ -200,7 +204,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         """
         if self._loops == 0:
             return False
-        if (t := _time()) - self._last_run >= self._interval * .001:
+        if (t := _time()) - self._last_run >= self._period * .001:
             self.do()
             self._loops -= 1
             self._last_run = t
