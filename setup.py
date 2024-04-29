@@ -16,6 +16,7 @@ setup(
     url="https://github.com/ProjectNeura/LEADS",
     packages=find_packages(),
     package_data={
+        "leads_audio": ["assets/*"],
         "leads_gui": ["assets/*", "assets/icons/*"],
         "leads_vec": ["_bootloader/leads_vec.service.sh"]
     },
