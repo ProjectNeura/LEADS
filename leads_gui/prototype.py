@@ -184,7 +184,7 @@ class VariableControlled(object):
 
 
 class FrequencyGenerator(object, metaclass=_ABCMeta):
-    def __init__(self, interval: int, loops: int) -> None:
+    def __init__(self, interval: int, loops: int = -1) -> None:
         self._interval: int = interval
         self._loops: int = loops
         self._last_run: float = 0
