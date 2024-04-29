@@ -1,3 +1,6 @@
+from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
+from json import dumps as _dumps
+from time import time as _time
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any, \
     Literal as _Literal
@@ -8,9 +11,9 @@ from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_m
     set_appearance_mode as _set_appearance_mode
 from numpy import lcm as _lcm
 
-from leads import require_config as _require_config
+from leads import require_config as _require_config, DataContainer as _DataContainer
+from leads.comm import Server as _Server
 from leads_gui.performance_checker import PerformanceChecker
-from leads_gui.runtime import RuntimeData
 from leads_gui.system import _ASSETS_PATH
 from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
 
@@ -180,6 +183,44 @@ class VariableControlled(object):
             self._trace_cb_name = None
 
 
+class FrequencyGenerator(object, metaclass=_ABCMeta):
+    def __init__(self, period: int, loops: int = -1) -> None:
+        """
+        :param period: the period in milliseconds
+        :param loops: the number of loops or -1 to indicate infinite loops
+        """
+        self._period: int = period
+        self._loops: int = loops
+        self._last_run: float = 0
+
+    @_abstractmethod
+    def do(self) -> None:
+        raise NotImplementedError
+
+    def attempt(self) -> bool:
+        """
+        Attempt to run.
+        :return: `True`: active; `False`: deprecated
+        """
+        if self._loops == 0:
+            return False
+        if (t := _time()) - self._last_run >= self._period * .001:
+            self.do()
+            self._loops -= 1
+            self._last_run = t
+        return True
+
+
+class RuntimeData(object):
+    start_time: int = int(_time())
+    lap_time: list[int] = []
+    comm: _Server | None = None
+
+    def comm_notify(self, d: _DataContainer | dict[str, _Any]) -> None:
+        if self.comm:
+            self.comm.broadcast(d.encode() if isinstance(d, _DataContainer) else _dumps(d).encode())
+
+
 T = _TypeVar("T", bound=RuntimeData)
 
 
@@ -204,10 +245,12 @@ class Window(_Generic[T]):
         self._width: int = sw if fullscreen else width
         self._height: int = sh if fullscreen else height
         self._root.geometry(
-            f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}")
+            f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}"
+        )
         self._refresh_rate: int = refresh_rate
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
+        self._frequency_generators: dict[str, FrequencyGenerator] = {}
 
         self._active: bool = False
         self._performance_checker: PerformanceChecker = PerformanceChecker()
@@ -237,6 +280,18 @@ class Window(_Generic[T]):
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
         self._on_refresh = on_refresh
 
+    def add_frequency_generator(self, tag: str, frequency_generator: FrequencyGenerator) -> None:
+        self._frequency_generators[tag] = frequency_generator
+
+    def remove_frequency_generator(self, tag: str) -> None:
+        try:
+            self._frequency_generators.pop(tag)
+        except KeyError:
+            pass
+
+    def clear_frequency_generators(self) -> None:
+        self._frequency_generators.clear()
+
     def active(self) -> bool:
         return self._active
 
@@ -245,6 +300,9 @@ class Window(_Generic[T]):
 
         def wrapper() -> None:
             self._on_refresh(self)
+            for tag, fg in self._frequency_generators.items():
+                if not fg.attempt():
+                    self.remove_frequency_generator(tag)
             self._performance_checker.record_frame(self._last_interval)
             if self._active:
                 self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
@@ -264,16 +322,16 @@ class ContextManager(object):
         self._widgets: dict[str, _Widget] = {}
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
-        self._widgets[key] = widget
+        self.set(key, widget)
 
     def __getitem__(self, key: str) -> _Widget:
-        return self._widgets[key]
+        return self.get(key)
 
     def set(self, key: str, widget: _Widget) -> None:
-        self[key] = widget
+        self._widgets[key] = widget
 
     def get(self, key: str) -> _Widget:
-        return self[key]
+        return self._widgets[key]
 
     def parse_layout(self, layout: list[list[str | _Widget]]) -> list[list[_Widget]]:
         for i in range(len(layout)):
@@ -300,21 +358,6 @@ class ContextManager(object):
 
     def window(self) -> Window:
         return self._window
-
-    def rd(self) -> T:
-        return self._window.runtime_data()
-
-    def active(self) -> bool:
-        return self._window.active()
-
-    def fps(self) -> float:
-        return self._window.fps()
-
-    def net_delay(self) -> float:
-        return self._window.net_delay()
-
-    def root(self) -> _CTk:
-        return self._window.root()
 
     def show(self) -> None:
         self._window.show()
