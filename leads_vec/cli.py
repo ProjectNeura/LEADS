@@ -7,6 +7,7 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 
 from leads import *
 from leads.comm import *
+from leads_audio import *
 from leads_gui import *
 from leads_raspberry_pi import *
 from leads_vec.__version__ import __version__
@@ -62,6 +63,13 @@ def main() -> int:
         def do(self) -> None:
             uim["right"].configure(image=Right(cfg.font_size_large, Color.RED if self._loops % 2 == 1 else None))
 
+    class DirectionIndicatorSound(FrequencyGenerator):
+        def do(self) -> None:
+            if self._loops % 2 == 1:
+                DIRECTION_INDICATOR_ON.play()
+            else:
+                DIRECTION_INDICATOR_OFF.play()
+
     def render(manager: ContextManager) -> None:
         def switch_m1_mode(_) -> None:
             w.runtime_data().m1_mode = (w.runtime_data().m1_mode + 1) % 3
@@ -92,14 +100,22 @@ def main() -> int:
 
         manager["left"] = CTkButton(root, text="", image=Left(cfg.font_size_large),
                                     command=lambda: ctx.left_indicator(not ctx.left_indicator()))
-        manager["time_lap"] = CTkButton(root, text="", image=Stopwatch(), command=ctx.time_lap)
-        manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
         manager["right"] = CTkButton(root, text="", image=Right(cfg.font_size_large),
                                      command=lambda: ctx.right_indicator(not ctx.right_indicator()))
 
-        def switch_esc_mode(mode) -> None:
-            manager["esc"].configure(selected_color=(c := "green" if (esc_mode := ESCMode[mode]) < 2 else "red"),
-                                     selected_hover_color=c)
+        def time_lap() -> None:
+            ctx.time_lap()
+            CONFIRM.play()
+
+        manager["time_lap"] = CTkButton(root, text="", image=Stopwatch(), command=time_lap)
+        manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
+
+        def switch_esc_mode(mode: str) -> None:
+            if (esc_mode := ESCMode[mode]) < 2:
+                manager["esc"].configure(selected_color="green", selected_hover_color="green")
+            else:
+                manager["esc"].configure(selected_color="red", selected_hover_color="red")
+                WARNING.play()
             ctx.esc_mode(esc_mode)
             w.runtime_data().control_system_switch_changed = True
 
@@ -200,8 +216,10 @@ def main() -> int:
                 ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
             if state:
                 w.add_frequency_generator("left_indicator", LeftIndicator(500))
+                w.add_frequency_generator("direction_indicator_sound", DirectionIndicatorSound(500))
             else:
                 w.remove_frequency_generator("left_indicator")
+                w.remove_frequency_generator("direction_indicator_sound")
                 uim["left"].configure(image=Left(cfg.font_size_large, None))
 
         def right_indicator(self, e: Event, state: bool) -> None:
@@ -211,8 +229,10 @@ def main() -> int:
                 ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
             if state:
                 w.add_frequency_generator("right_indicator", RightIndicator(500))
+                w.add_frequency_generator("direction_indicator_sound", DirectionIndicatorSound(500))
             else:
                 w.remove_frequency_generator("right_indicator")
+                w.remove_frequency_generator("direction_indicator_sound")
                 uim["right"].configure(image=Right(cfg.font_size_large, None))
 
         def hazard(self, e: Event, state: bool) -> None:
