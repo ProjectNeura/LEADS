@@ -200,9 +200,10 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         """
         if self._loops == 0:
             return False
-        if _time() - self._last_run >= self._interval * .001:
+        if (t := _time()) - self._last_run >= self._interval * .001:
             self.do()
             self._loops -= 1
+            self._last_run = t
         return True
 
 
