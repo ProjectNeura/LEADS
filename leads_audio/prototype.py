@@ -14,7 +14,7 @@ def _ensure(flag: int) -> None:
 
 
 _init(_MIX_INIT_MP3)
-_ensure(_open_audio_device(44100, _AUDIO_S16, 2, 2048, b"System", 1))
+_ensure(_open_audio_device(44100, _AUDIO_S16, 2, 2048, None, 1))
 
 
 @_register
