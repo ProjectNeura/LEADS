@@ -5,6 +5,7 @@ from os.path import abspath as _abspath
 from os.path import exists as _exists
 from subprocess import run as _run
 from sys import exit as _exit, version as _version
+from warnings import filterwarnings as _filterwarnings
 
 from customtkinter import set_default_color_theme as _set_default_color_theme
 
@@ -15,6 +16,8 @@ from leads_gui import Config as _Config
 from leads_gui.system import get_system_platform as _get_system_platform
 
 if __name__ == "__main__":
+    _filterwarnings("ignore")
+
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
                              epilog="ProjectNeura: https://projectneura.org"
