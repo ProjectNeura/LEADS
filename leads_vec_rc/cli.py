@@ -47,10 +47,9 @@ class CommCallback(Callback):
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
         L.error(f"Comm client error: {repr(error)}")
-        if isinstance(error, ConnectionRefusedError):
-            sleep(10)
-            assert isinstance(service, Client)
-            self.client = retry(service)
+        sleep(10)
+        assert isinstance(service, Client)
+        self.client = retry(service)
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
