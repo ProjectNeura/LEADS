@@ -3,6 +3,7 @@ from datetime import datetime
 from json import loads, JSONDecodeError
 from os import mkdir
 from os.path import abspath, exists
+from time import sleep
 from typing import Any
 
 from fastapi import FastAPI
@@ -29,14 +30,27 @@ csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d %H:%M
 ), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None, None, None, None)
 
 
+def retry(service: Service) -> Client:
+    L.warn("Retrying connection...")
+    return start_client(config.comm_addr, create_client(service.port(), callback), True)
+
+
 class CommCallback(Callback):
+    def __init__(self) -> None:
+        super().__init__()
+        self.client: Client = start_client(config.comm_addr, create_client(config.comm_port, self), True)
+
     def on_connect(self, service: Service, connection: Connection) -> None:
         self.super(service=service, connection=connection)
-        L.debug("Connected")
+        L.info("Connected")
 
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
         L.error(f"Comm client error: {repr(error)}")
+        if isinstance(error, ConnectionRefusedError):
+            sleep(3)
+            assert isinstance(service, Client)
+            self.client = retry(service)
 
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
@@ -54,10 +68,17 @@ class CommCallback(Callback):
         except JSONDecodeError as e:
             L.error(repr(e))
 
+    def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
+        self.super(service=service, connection=connection)
+        L.info("Disconnected")
+        sleep(3)
+        assert isinstance(service, Client)
+        self.client = retry(service)
 
-client = start_client(config.comm_addr, create_client(config.comm_port, CommCallback()), True)
 
-app = FastAPI(title="LEADS VeC Remote Analyst")
+callback: CommCallback = CommCallback()
+
+app: FastAPI = FastAPI(title="LEADS VeC Remote Analyst")
 
 app.add_middleware(
     CORSMiddleware,
@@ -90,13 +111,13 @@ async def speed() -> list[float]:
 
 @app.get("/time_lap")
 async def time_lap() -> str:
-    client.send(b"time_lap")
+    callback.client.send(b"time_lap")
     return "done"
 
 
 @app.get("/hazard")
 async def hazard() -> str:
-    client.send(b"hazard")
+    callback.client.send(b"hazard")
     return "done"
 
 
