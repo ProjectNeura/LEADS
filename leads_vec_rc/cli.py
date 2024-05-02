@@ -48,7 +48,7 @@ class CommCallback(Callback):
         self.super(service=service, error=error)
         L.error(f"Comm client error: {repr(error)}")
         if isinstance(error, ConnectionRefusedError):
-            sleep(3)
+            sleep(10)
             assert isinstance(service, Client)
             self.client = retry(service)
 
@@ -71,7 +71,7 @@ class CommCallback(Callback):
     def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
         self.super(service=service, connection=connection)
         L.info("Disconnected")
-        sleep(3)
+        sleep(10)
         assert isinstance(service, Client)
         self.client = retry(service)
 
