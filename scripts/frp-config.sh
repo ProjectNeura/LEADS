@@ -19,24 +19,28 @@ execute_root() {
   execute "sudo" "$@"
 }
 
+require_argument() {
+  if [ -n "$1" ];
+  then echo "$1"
+  else abort "Required argument $2 does not exist"
+  fi
+}
+
 argument_exists_or() {
   if [ -n "$1" ];
-  then
-    echo "$1"
-  else
-    echo "$2"
+  then echo "$1"
+  else echo "$2"
   fi
 }
 if ! test -d "/usr/local/frp";
-then
-  abort "frp is not installed yet"
+then abort "frp is not installed yet"
 fi
 echo "Configuring client..."
-echo "serverAddr = \"$1\"" > "/usr/local/frp/frpc.toml"
+echo "serverAddr = \"$(require_argument "$1" "frp server IP")\"" > "/usr/local/frp/frpc.toml"
 {
   echo "serverPort = $(argument_exists_or "$3" "7000")"
   echo "auth.method = \"token\""
-  echo "auth.token = \"$2\""
+  echo "auth.token = \"$(require_argument "$2" "token")\""
   echo "[[proxies]]"
   echo "name = \"leads-vec-comm\""
   echo "type = \"tcp\""
@@ -53,7 +57,7 @@ echo "Configuring server..."
 echo "bindPort = $(argument_exists_or "$3" "7000")" > "/usr/local/frp/frps.toml"
 {
   echo "auth.method = \"token\""
-  echo "auth.token = \"$2\""
+  echo "auth.token = \"$(require_argument "$2" "token")\""
   echo "vhostHTTPPort = 80"
   echo "vhostHTTPSPort = 443"
 } >> "/usr/local/frp/frps.toml"
