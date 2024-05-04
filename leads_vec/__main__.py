@@ -26,7 +26,8 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
     parser.add_argument("-d", "--devices", default=f"{_abspath(__file__)[:-11]}devices.py",
                         help="specify a devices module")
-    parser.add_argument("-r", "--register", choices=("systemd", "config"), default=None, help="register a service")
+    parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
+                        help="register a service")
     parser.add_argument("-t", "--theme", default=None, help="specify a theme")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
@@ -54,9 +55,9 @@ if __name__ == "__main__":
                 f.write(str(_Config({})))
             _L.info("Using \"/usr/local/leads/config.json\"")
         _chmod("/usr/local/leads/config.json", 777)
-        from ._bootloader import create_service
+        from ._bootloader import create_service as _create_service
 
-        create_service()
+        _create_service()
         _L.info("Service registered")
     elif args.register == "config":
         if _exists("config.json"):
@@ -66,6 +67,12 @@ if __name__ == "__main__":
         with open("config.json", "w") as f:
             f.write(str(_Config({})))
         _L.info("Configuration file saved to \"config.json\"")
+    elif args.register == "reverse_proxy":
+        if _get_system_platform() != "linux":
+            _exit("Error: Unsupported operating system")
+        from ._bootloader import start_frpc as _start_frpc
+
+        _start_frpc()
     config = _load_config(args.config, _Config) if args.config else _Config({})
     _L.debug("Configuration loaded:", str(config))
     if t := args.theme:
