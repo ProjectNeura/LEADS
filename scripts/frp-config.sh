@@ -33,7 +33,7 @@ argument_exists_or() {
   fi
 }
 if ! test -d "/usr/local/frp";
-then abort "frp is not installed yet"
+then abort "frp not found"
 fi
 echo "Configuring client..."
 echo "serverAddr = \"$(require_argument "$1" "frp server IP")\"" > "/usr/local/frp/frpc.toml"
