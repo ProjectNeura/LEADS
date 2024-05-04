@@ -40,7 +40,7 @@ echo "serverAddr = \"$(require_argument "$1" "frp server IP")\"" > "/usr/local/f
 {
   echo "serverPort = $(argument_exists_or "$3" "7000")"
   echo "auth.method = \"token\""
-  echo "auth.token = \"$(require_argument "$2" "token")\""
+  echo "auth.token = \"$(require_argument "$2" "frp token")\""
   echo "[[proxies]]"
   echo "name = \"leads-vec-comm\""
   echo "type = \"tcp\""
@@ -57,7 +57,7 @@ echo "Configuring server..."
 echo "bindPort = $(argument_exists_or "$3" "7000")" > "/usr/local/frp/frps.toml"
 {
   echo "auth.method = \"token\""
-  echo "auth.token = \"$(require_argument "$2" "token")\""
+  echo "auth.token = \"$(require_argument "$2" "frp token")\""
   echo "vhostHTTPPort = 80"
   echo "vhostHTTPSPort = 443"
 } >> "/usr/local/frp/frps.toml"
