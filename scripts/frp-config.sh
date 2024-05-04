@@ -27,7 +27,7 @@ argument_exists_or() {
     echo "$2"
   fi
 }
-if test -d "/usr/local/frp";
+if ! test -d "/usr/local/frp";
 then
   abort "frp is not installed yet"
 fi
