@@ -26,8 +26,7 @@ then
 fi
 latest_release=$(curl -s "https://api.github.com/repos/fatedier/frp/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")' | cut -c 2-)
 if [ -z "$latest_release" ];
-then
-  abort "Failed to retrieve the latest release"
+then abort "Failed to retrieve the latest release"
 fi
 echo "Downloading frp@${latest_release}..."
 execute_root "wget" "-O" "frp.tar.gz" "https://github.com/fatedier/frp/releases/download/v${latest_release}/frp_${latest_release}_linux_amd64.tar.gz"
