@@ -19,6 +19,9 @@ execute_root() {
   execute "sudo" "$@"
 }
 
+if test -d "/usr/local/frp";
+then abort "/usr/local/frp already exists"
+fi
 if ! command -v curl &> /dev/null;
 then
   echo "cURL is not available, installing..."
@@ -35,4 +38,4 @@ execute_root "tar" "-xzvf" "frp.tar.gz"
 echo "Moving frp_${latest_release}_linux_amd64 to /usr/local/frp..."
 execute_root "mv" "frp_${latest_release}_linux_amd64" "/usr/local/frp"
 echo "Cleaning up..."
-execute_root "rm" "frp.tar.gz" "frp_${latest_release}_linux_amd64"
+execute_root "rm" "frp.tar.gz"
