@@ -33,6 +33,6 @@ execute_root "wget" "-O" "frp.tar.gz" "https://github.com/fatedier/frp/releases/
 echo "Extracting..."
 execute_root "tar" "-xzvf" "frp.tar.gz"
 echo "Moving frp_${latest_release} to /usr/local/frp..."
-execute_root "mv" "frp_${latest_release}" "/usr/local/frp"
+execute_root "mv" "/usr/local/frp"
 echo "Cleaning up..."
 execute_root "rm" "frp.tar.gz" "frp_${latest_release}"
