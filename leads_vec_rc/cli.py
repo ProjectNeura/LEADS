@@ -64,8 +64,8 @@ class CommCallback(Callback):
                 time_stamp_record.append(d["t"])
                 speed_record.append(d["speed"])
                 voltage_record.append(d["voltage"])
-        except JSONDecodeError as e:
-            L.error(repr(e))
+        except JSONDecodeError:
+            pass
 
     def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
         self.super(service=service, connection=connection)
