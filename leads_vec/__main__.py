@@ -13,7 +13,7 @@ from leads import register_controller as _register_controller, MAIN_CONTROLLER a
     L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
 from leads.data_persistence import Dataset as _Dataset
 from leads_gui import Config as _Config
-from leads_gui.system import get_system_platform as _get_system_platform
+from leads_gui.system import get_system_kernel as _get_system_platform
 
 if __name__ == "__main__":
     _filterwarnings("ignore")

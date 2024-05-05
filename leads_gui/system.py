@@ -2,7 +2,7 @@ from os.path import abspath as _abspath
 from platform import system as _system
 
 
-def get_system_platform() -> str:
+def get_system_kernel() -> str:
     return _system().lower()
 
 
