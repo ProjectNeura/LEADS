@@ -142,7 +142,7 @@ python -m leads_vec -r config run
 
 This will generate a default "config.json" file under the current directory.
 
-##### Register as a Systemd Service
+##### Register a Systemd Service
 
 ```shell
 python -m leads_vec -r systemd run
@@ -155,6 +155,12 @@ To enable auto-start at boot, run the following.
 ```shell
 systemctl daemon-reload
 systemctl enable leads_vec
+```
+
+##### Run Reverse Proxy
+
+```shell
+python -m leads_vec -r reverse_proxy run
 ```
 
 ##### Specify a Theme
@@ -235,12 +241,47 @@ Ubuntu 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, just r
 You may also choose to clone the repository or download the scripts from
 [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
-You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including LEADS for you. If anything
-goes wrong, you can also manually install everything.
+These scripts currently only support Ubuntu.
+
+### Python and LEADS
+
+You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including all the optional dependencies
+of LEADS for you.
 
 ```shell
 /bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
+
+### Python Only
+
+[python-install.sh](scripts/python-install.sh) will only install Python 3.12 and Tcl/Tk.
+
+```shell
+/bin/sh "python-install.sh$(wget -O python-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh)" && rm python-install.sh || rm python-install.sh
+```
+
+### frp
+
+We use frp for reverse proxy. This is optional if you do not need public connections. If you want, install it through
+"[frp-install.sh](scripts/frp-install.sh)".
+
+```shell
+/bin/sh "frp-install.sh$(wget -O frp-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-install.sh)" && rm frp-install.sh || rm frp-install.sh
+```
+
+To configure frp, use "[frp-config.sh](scripts/frp-config.sh)".
+
+```shell
+/bin/sh "frp-config.sh$(wget -O frp-config.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-config.sh)" && rm frp-config.sh || rm frp-config.sh
+```
+
+There are 4 arguments for this script, of which the first 2 are required.
+
+```shell
+/bin/sh "frp-config.sh$(...)" ${frp server IP} ${frp token} ${frp port} ${LEADS comm port} && rm frp-config.sh || rm frp-config.sh
+```
+
+### OBS Studio
 
 We also use OBS Studio for streaming, but it is not required. If you want to install,
 run "[obs-install.sh](scripts/obs-install.sh)".
