@@ -68,8 +68,6 @@ if __name__ == "__main__":
             f.write(str(_Config({})))
         _L.info("Configuration file saved to \"config.json\"")
     elif args.register == "reverse_proxy":
-        if _get_system_platform() != "linux":
-            _exit("Error: Unsupported operating system")
         from ._bootloader import start_frpc as _start_frpc
 
         _start_frpc()
