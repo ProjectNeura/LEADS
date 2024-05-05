@@ -71,6 +71,7 @@ if __name__ == "__main__":
         from ._bootloader import start_frpc as _start_frpc
 
         _start_frpc()
+        _L.info("`frpc` started")
     config = _load_config(args.config, _Config) if args.config else _Config({})
     _L.debug("Configuration loaded:", str(config))
     if t := args.theme:
