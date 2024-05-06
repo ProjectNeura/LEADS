@@ -10,7 +10,7 @@ def start_frpc() -> None:
     path = "%AppData%/frp" if _get_system_kernel() == "windows" else "/usr/local/frp"
 
     if not _exists(f"{path}/frpc") or not _exists(f"{path}/frpc.toml"):
-        raise FileNotFoundError("frp not found")
+        raise FileNotFoundError("`frp` not found")
 
     def wrapper() -> None:
         r = _run((f"{path}/frpc", "-c", f"{path}/frpc.toml"), stdout=_PIPE, stderr=_PIPE)
