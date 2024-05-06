@@ -22,7 +22,7 @@ execute_root() {
 if test -d "/usr/local/frp";
 then abort "/usr/local/frp already exists"
 fi
-if ! command -v curl &> /dev/null;
+if ! command -v curl > /dev/null;
 then
   echo "cURL is not available, installing..."
   execute_root "apt" "install" "-y" "curl"
