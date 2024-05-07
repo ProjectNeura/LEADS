@@ -14,7 +14,7 @@ from leads import register_controller as _register_controller, MAIN_CONTROLLER a
     L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
 from leads.data_persistence import Dataset as _Dataset
 from leads_gui import Config as _Config
-from leads_gui.system import get_system_kernel as _get_system_platform
+from leads_gui.system import get_system_kernel as _get_system_kernel
 
 if __name__ == "__main__":
     _filterwarnings("ignore")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         except _PackageNotFoundError:
             _L.warn("Failed to retrieve package version (did you install through pip?)")
         _L.info(f"LEADS VeC",
-                f"System Platform: {_get_system_platform()}",
+                f"System Kernel: {_get_system_kernel().upper()}",
                 f"Python Version: {_version}",
                 f"`frpc` Available: {_frpc_exists()}",
                 f"Module Path: {_MODULE_PATH}",
@@ -58,7 +58,7 @@ if __name__ == "__main__":
                 sep="\n")
         _exit()
     if args.register == "systemd":
-        if _get_system_platform() != "linux":
+        if _get_system_kernel() != "linux":
             _exit("Error: Unsupported operating system")
         if not _exists("/usr/local/leads/config.json"):
             _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
@@ -94,7 +94,7 @@ if __name__ == "__main__":
         config.auto_magnify_font_sizes()
     _register_config(config)
     if args.xws:
-        if _get_system_platform() != "linux":
+        if _get_system_kernel() != "linux":
             _exit("Error: Unsupported operating system")
         from os import getuid as _getuid
         from pwd import getpwuid as _getpwuid
