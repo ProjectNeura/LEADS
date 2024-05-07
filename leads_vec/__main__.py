@@ -1,4 +1,5 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
+from importlib.metadata import version as _package_version, PackageNotFoundError as _PackageNotFoundError
 from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
 from os import mkdir as _mkdir, chmod as _chmod
 from os.path import abspath as _abspath
@@ -42,11 +43,18 @@ if __name__ == "__main__":
         from leads_vec.__version__ import __version__
         from ._bootloader import frpc_exists as _frpc_exists
 
-        _L.info(f"System Platform: {_get_system_platform()}",
-                f"Python Version: {_version}"
+        leads_version = "Unknown"
+        try:
+            leads_version = _package_version("leads")
+        except _PackageNotFoundError:
+            _L.warn("Failed to retrieve package version (did you install through pip?)")
+        _L.info(f"LEADS VeC",
+                f"System Platform: {_get_system_platform()}",
+                f"Python Version: {_version}",
                 f"`frpc` Available: {_frpc_exists()}",
                 f"Module Path: {_MODULE_PATH}",
-                f"LEADS Version: {__version__}",
+                f"LEADS Version: {leads_version}",
+                f"LEADS VeC Version: {__version__}",
                 sep="\n")
         _exit()
     if args.register == "systemd":
