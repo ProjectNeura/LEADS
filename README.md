@@ -157,11 +157,13 @@ systemctl daemon-reload
 systemctl enable leads_vec
 ```
 
-##### Run Reverse Proxy
+##### Use Reverse Proxy
 
 ```shell
 python -m leads_vec -r reverse_proxy run
 ```
+
+This will start the corresponding reverse proxy program as a subprocess in the background.
 
 ##### Specify a Theme
 
