@@ -157,11 +157,13 @@ systemctl daemon-reload
 systemctl enable leads_vec
 ```
 
-##### Run Reverse Proxy
+##### Use Reverse Proxy
 
 ```shell
 python -m leads_vec -r reverse_proxy run
 ```
+
+This will start the corresponding reverse proxy program as a subprocess in the background.
 
 ##### Specify a Theme
 
@@ -292,9 +294,22 @@ run "[obs-install.sh](scripts/obs-install.sh)".
 
 Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
 
+Download it through this simple line of code below.
+
 ```shell
 wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-run.sh
+```
+
+Run the script as shown.
+
+```shell
 /bin/sh obs-run.sh
+```
+
+If you want the identical layout configuration, see the following.
+
+```shell
+wget -O obs-config.json https://raw.githubusercontent.com/ProjectNeura/LEADS/master/design/obs-config.json
 ```
 
 ## Configurations

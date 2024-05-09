@@ -1,8 +1,9 @@
-from datetime import datetime
-from time import time
-from typing import Callable
+from datetime import datetime as _datetime
+from time import time as _time
+from typing import Callable as _Callable
 
-from customtkinter import CTkButton, CTkLabel, DoubleVar, StringVar, CTkSegmentedButton
+from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as _DoubleVar, StringVar as _StringVar, \
+    CTkSegmentedButton as _CTkSegmentedButton
 from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyCode
 
 from leads import *
@@ -18,7 +19,7 @@ class CustomRuntimeData(RuntimeData):
     control_system_switch_changed: bool = False
 
 
-def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> Callable[[], None]:
+def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> _Callable[[], None]:
     def switch() -> None:
         ctx.plugin(system).enabled(not ctx.plugin(system).enabled())
         runtime_data.control_system_switch_changed = True
@@ -48,12 +49,12 @@ def main() -> int:
                theme_mode=cfg.theme_mode)
     root = w.root()
     root.configure(cursor="dot")
-    m1 = StringVar(root, "")
-    speed = DoubleVar(root, 0)
-    voltage = StringVar(root, "")
-    speed_trend = DoubleVar(root, 0)
+    m1 = _StringVar(root, "")
+    speed = _DoubleVar(root, 0)
+    voltage = _StringVar(root, "")
+    speed_trend = _DoubleVar(root, 0)
     g_force = GForceVar(root, 0, 0)
-    esc = StringVar(root, "STANDARD")
+    esc = _StringVar(root, "STANDARD")
 
     class LeftIndicator(FrequencyGenerator):
         def do(self) -> None:
@@ -85,30 +86,30 @@ def main() -> int:
                                     GForceMeter(root, theme_key="CTkButton", variable=g_force,
                                                 font=("Arial", cfg.font_size_medium - 4))).lock_ratio(cfg.m_ratio)
 
-        manager["comm_status"] = CTkLabel(root, text="COMM OFFLINE", text_color="gray",
-                                          font=("Arial", cfg.font_size_small))
+        manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
+                                        font=("Arial", cfg.font_size_small))
 
         i = 0
         for system in SystemLiteral:
             i += 1
             system_lower = system.lower()
-            manager[f"{system_lower}_status"] = CTkLabel(root, text=f"{system} READY", text_color="green",
-                                                         font=("Arial", cfg.font_size_small))
-            manager[system_lower] = CTkButton(root, text=f"{system} ON",
-                                              command=make_system_switch(ctx, SystemLiteral(system), w.runtime_data()),
-                                              font=("Arial", cfg.font_size_small))
+            manager[f"{system_lower}_status"] = _Label(root, text=f"{system} READY", text_color="green",
+                                                       font=("Arial", cfg.font_size_small))
+            manager[system_lower] = _Button(root, text=f"{system} ON",
+                                            command=make_system_switch(ctx, SystemLiteral(system), w.runtime_data()),
+                                            font=("Arial", cfg.font_size_small))
 
-        manager["left"] = CTkButton(root, text="", image=Left(cfg.font_size_large),
-                                    command=lambda: ctx.left_indicator(not ctx.left_indicator()))
-        manager["right"] = CTkButton(root, text="", image=Right(cfg.font_size_large),
-                                     command=lambda: ctx.right_indicator(not ctx.right_indicator()))
+        manager["left"] = _Button(root, text="", image=Left(cfg.font_size_large),
+                                  command=lambda: ctx.left_indicator(not ctx.left_indicator()))
+        manager["right"] = _Button(root, text="", image=Right(cfg.font_size_large),
+                                   command=lambda: ctx.right_indicator(not ctx.right_indicator()))
 
         def time_lap() -> None:
             ctx.time_lap()
             CONFIRM.play()
 
-        manager["time_lap"] = CTkButton(root, text="", image=Stopwatch(), command=time_lap)
-        manager["hazard"] = CTkButton(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
+        manager["time_lap"] = _Button(root, text="", image=Stopwatch(), command=time_lap)
+        manager["hazard"] = _Button(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
 
         def switch_esc_mode(mode: str) -> None:
             if (esc_mode := ESCMode[mode]) < 2:
@@ -119,8 +120,8 @@ def main() -> int:
             ctx.esc_mode(esc_mode)
             w.runtime_data().control_system_switch_changed = True
 
-        manager["esc"] = CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=esc,
-                                            command=switch_esc_mode, font=("Arial", cfg.font_size_small))
+        manager["esc"] = _CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=esc,
+                                             command=switch_esc_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(w, render, ctx, get_controller(MAIN_CONTROLLER))
 
@@ -165,8 +166,8 @@ def main() -> int:
                            f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
             elif w.runtime_data().m1_mode == 2:
                 m1.set(f"VeC {__version__.upper()}\n\n"
-                       f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                       f"{(duration := int(time()) - w.runtime_data().start_time) // 60} MIN {duration % 60} SEC\n"
+                       f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
+                       f"{(duration := int(_time()) - w.runtime_data().start_time) // 60} MIN {duration % 60} SEC\n"
                        f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
                        f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{w.runtime_data().comm.port()}")
@@ -240,12 +241,12 @@ def main() -> int:
             uim["hazard"].configure(image=Hazard(color=Color.RED if state else None))
 
     ctx.set_event_listener(CustomListener())
-    uim["battery_fault"] = CTkLabel(root, text="")
-    uim["brake_fault"] = CTkLabel(root, text="")
-    uim["esc_fault"] = CTkLabel(root, text="")
-    uim["gps_fault"] = CTkLabel(root, text="")
-    uim["motor_fault"] = CTkLabel(root, text="")
-    uim["wsc_fault"] = CTkLabel(root, text="")
+    uim["battery_fault"] = _Label(root, text="")
+    uim["brake_fault"] = _Label(root, text="")
+    uim["esc_fault"] = _Label(root, text="")
+    uim["gps_fault"] = _Label(root, text="")
+    uim["motor_fault"] = _Label(root, text="")
+    uim["wsc_fault"] = _Label(root, text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
         if e.system == "BATT":
@@ -282,7 +283,7 @@ def main() -> int:
         layout = [
             ["m1", "m2", "m3"],
             ["left", "time_lap", "hazard", "right"],
-            [CTkLabel(root, text="MANUAL MODE"), CTkLabel(root, text="ASSISTANCE DISABLED"), "comm_status"],
+            [_Label(root, text="MANUAL MODE"), _Label(root, text="ASSISTANCE DISABLED"), "comm_status"],
             ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"]
         ]
         ctx.esc_mode(ESCMode.OFF)

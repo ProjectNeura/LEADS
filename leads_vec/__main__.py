@@ -1,4 +1,5 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
+from importlib.metadata import version as _package_version, PackageNotFoundError as _PackageNotFoundError
 from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
 from os import mkdir as _mkdir, chmod as _chmod
 from os.path import abspath as _abspath
@@ -13,10 +14,11 @@ from leads import register_controller as _register_controller, MAIN_CONTROLLER a
     L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
 from leads.data_persistence import Dataset as _Dataset
 from leads_gui import Config as _Config
-from leads_gui.system import get_system_kernel as _get_system_platform
+from leads_gui.system import get_system_kernel as _get_system_kernel
 
 if __name__ == "__main__":
     _filterwarnings("ignore")
+    _MODULE_PATH = _abspath(__file__)[:-12]
 
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
@@ -24,7 +26,7 @@ if __name__ == "__main__":
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
-    parser.add_argument("-d", "--devices", default=f"{_abspath(__file__)[:-11]}devices.py",
+    parser.add_argument("-d", "--devices", default=f"{_MODULE_PATH}/devices.py",
                         help="specify a devices module")
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
@@ -39,14 +41,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.action == "info":
         from leads_vec.__version__ import __version__
+        from ._bootloader import frpc_exists as _frpc_exists
 
-        _L.info(f"LEADS Version: {__version__}",
-                f"System Platform: {_get_system_platform()}",
+        leads_version = "Unknown"
+        try:
+            leads_version = _package_version("leads")
+        except _PackageNotFoundError:
+            _L.warn("Failed to retrieve package version (did you install through pip?)")
+        _L.info(f"LEADS VeC",
+                f"System Kernel: {_get_system_kernel().upper()}",
                 f"Python Version: {_version}",
+                f"`frpc` Available: {_frpc_exists()}",
+                f"Module Path: {_MODULE_PATH}",
+                f"LEADS Version: {leads_version}",
+                f"LEADS VeC Version: {__version__}",
                 sep="\n")
         _exit()
     if args.register == "systemd":
-        if _get_system_platform() != "linux":
+        if _get_system_kernel() != "linux":
             _exit("Error: Unsupported operating system")
         if not _exists("/usr/local/leads/config.json"):
             _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
@@ -82,7 +94,7 @@ if __name__ == "__main__":
         config.auto_magnify_font_sizes()
     _register_config(config)
     if args.xws:
-        if _get_system_platform() != "linux":
+        if _get_system_kernel() != "linux":
             _exit("Error: Unsupported operating system")
         from os import getuid as _getuid
         from pwd import getpwuid as _getpwuid

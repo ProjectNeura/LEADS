@@ -19,5 +19,4 @@ execute_root() {
   execute "sudo" "$@"
 }
 
-export MESA_GL_VERSION_OVERRIDE=3.3
-execute_root "obs"
+execute_root "MESA_GL_VERSION_OVERRIDE=3.3" "obs"
