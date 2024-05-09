@@ -24,8 +24,6 @@ execute_root "wget" "-O" "python-install.sh" "https://raw.githubusercontent.com/
 execute_root "/bin/sh" "python-install.sh"
 echo "Cleaning up..."
 execute_root "rm" "python-install.sh"
-echo "Exiting root"
-execute "exit"
 echo "Installing dependencies..."
 execute "python3.12" "-m" "pip" "install" "Pillow" "PySDL2" "customtkinter" "gpiozero" "lgpio" "pynmea2" "pynput" "pysdl2-dll" "pyserial" "leads"
 execute "python3.12" "-m" "leads_vec" "info"
