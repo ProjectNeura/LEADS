@@ -18,8 +18,8 @@ dedicated circuit board, but generic development kits such as Raspberry Pi and A
 high-level system running on a host computer, the software framework has the ability to adapt to any type of hardware
 component if you are willing to write some codes.
 
-This document will guide you through LEADS VeC. You will find a detailed
-version [here](https://leads-docs.projectneura.org/en/latest/vec).
+This document will guide you through LEADS VeC. You will find a detailed version
+[here](https://leads-docs.projectneura.org/en/latest/vec).
 
 LEADS VeC Demo
 
