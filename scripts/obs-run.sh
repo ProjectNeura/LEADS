@@ -5,12 +5,12 @@ abort() {
   exit 1
 }
 
-if [ "${EUID:-$(id -u)}" -ne 0 ];
+if [ "${EUID:-$(id -u)}" -ne 0 ]
 then abort "Error: This script requires root permission"
 fi
 
 execute() {
-  if ! "$@";
+  if ! "$@"
   then abort "$(printf "Failed: %s" "$@")"
   fi
 }
