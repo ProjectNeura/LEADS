@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
-                             epilog="ProjectNeura: https://projectneura.org"
+                             epilog="ProjectNeura: https://projectneura.org\n"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
