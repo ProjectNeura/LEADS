@@ -255,6 +255,9 @@ dependencies of LEADS for you.
 /bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
 
+This will create a shortcut to save you from typing `python-leads -m leads_vec ...`, instead, you will just need to call
+`leads_vec ...`.
+
 ### Python
 
 [python-install.sh](scripts/python-install.sh) will only install Python 3.12 and Tcl/Tk.
