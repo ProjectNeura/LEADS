@@ -250,8 +250,7 @@ because you have to specify the Python environment such that `/usr/local/leads/v
 ### LEADS
 
 You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including Python 3.12 all the optional
-dependencies
-of LEADS for you.
+dependencies of LEADS for you.
 
 ```shell
 /bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
@@ -274,7 +273,7 @@ Run it like this.
 
 It specifies to use this configuration file: "usr/local/leads/config.json". If the file does not exist an error will be
 raised. You must [create](#configurations) or [generate](#generate-a-configuration-file) a configuration file with the
-exact path.
+exact same path.
 
 You can always pass other optional arguments additionally to that.
 
