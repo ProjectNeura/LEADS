@@ -5,5 +5,5 @@ then
 fi
 
 # change the interpreter or adjust the arguments according to your needs
-# but do not remove `--xws`
-/usr/local/leads/venv/bin/python -m leads_vec -c /usr/local/leads/config.json --xws run
+# do not remove `--xws`
+python-leads -m leads_vec -c /usr/local/leads/config.json --xws run
