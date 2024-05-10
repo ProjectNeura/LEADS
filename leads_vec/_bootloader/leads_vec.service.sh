@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -x "/usr/local/leads/config.json" ];
+if [ ! -r "/usr/local/leads/config.json" ];
 then
   echo "Error: Config file does not exist"
   exit 1
