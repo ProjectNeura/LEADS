@@ -15,8 +15,8 @@ def create_service() -> None:
             _mkdir("/usr/local/leads")
         with open("/usr/local/leads/config.json", "w") as f:
             f.write(str(_Config({})))
-    _chmod("/usr/local/leads/config.json", 0x666)
-    _chmod(script := f"{_abspath(__file__)[:-10]}leads_vec.service.sh", 0o555)
+    _chmod("/usr/local/leads/config.json", 0x644)
+    _chmod(script := f"{_abspath(__file__)[:-10]}leads_vec.service.sh", 0o755)
     with open("/etc/systemd/system/leads_vec.service", "w") as f:
         f.write(
             "[Unit]\n"
