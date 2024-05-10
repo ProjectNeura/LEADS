@@ -11,7 +11,8 @@ def create_service() -> None:
         raise SystemError("Unsupported operating system")
     if not _exists("/usr/local/leads/config.json"):
         _L.debug("Config file not found. Creating \"/usr/local/leads/config.json\"...")
-        _mkdir("/usr/local/leads")
+        if not _exists("/usr/local/leads"):
+            _mkdir("/usr/local/leads")
         with open("/usr/local/leads/config.json", "w") as f:
             f.write(str(_Config({})))
     _chmod("/usr/local/leads/config.json", 777)
