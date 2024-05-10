@@ -233,7 +233,8 @@ If not specified, all configurations will be default values.
 To learn about the configuration file, read [Configurations](#configurations).
 
 If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
-because you have to specify the Python version such that `python3.12 ...` and `python3.12 -m pip ...`.
+because you have to specify the Python environment such that `/usr/local/leads/venv/bin/python ...`
+and `/usr/local/leads/venv/bin/pip ...`.
 
 ## Environment Setup
 
