@@ -1,11 +1,11 @@
 #!/bin/bash
 
-if [ ! -x "/usr/local/leads/config.json" ];
+if [ ! -r "/usr/local/leads/config.json" ]
 then
   echo "Error: Config file does not exist"
   exit 1
 fi
-while ! xhost >& /dev/null;
+while ! xhost >& /dev/null
 do sleep 1
 done
 # change the interpreter or adjust the arguments according to your needs
