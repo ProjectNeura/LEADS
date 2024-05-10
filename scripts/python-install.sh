@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 abort() {
   printf "%s\n" "$@" >&2
@@ -29,7 +29,7 @@ execute_root "apt" "install" "-y" "python3.12-tk"
 echo "Creating Virtual Environment..."
 execute_root "python3.12" "-m" "venv" "/usr/local/leads/venv"
 echo "Creating Soft Links..."
-echo "#!/bin/sh" > "/bin/python-leads"
+echo "#!/bin/bash" > "/bin/python-leads"
 echo '/usr/local/leads/venv/bin/python "$@"' >> "/bin/python-leads"
 execute_root "chmod" "+x" "/bin/python-leads"
 execute_root "ln" "-s" "/usr/local/leads/venv/bin/pip" "/bin/pip-leads"

@@ -28,7 +28,7 @@ def create_service() -> None:
             f"User={(user := _get_login())}\n"
             "Environment=\"DISPLAY=:0\"\n"
             f"Environment=\"XAUTHORITY=/home/{user}/.Xauthority\"\n"
-            f"ExecStart=/bin/sh {script}\n"
+            f"ExecStart=/bin/bash {script}\n"
             "[Install]\n"
             "WantedBy=graphical.target"
         )

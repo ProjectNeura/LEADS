@@ -252,7 +252,7 @@ You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything
 dependencies of LEADS for you.
 
 ```shell
-/bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
+bash "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
 
 This will create a shortcut to save you from typing `python-leads -m leads_vec ...`, instead, you will just need to call
@@ -263,7 +263,7 @@ This will create a shortcut to save you from typing `python-leads -m leads_vec .
 [python-install.sh](scripts/python-install.sh) will only install Python 3.12 and Tcl/Tk.
 
 ```shell
-/bin/sh "python-install.sh$(wget -O python-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh)" && rm python-install.sh || rm python-install.sh
+bash "python-install.sh$(wget -O python-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh)" && rm python-install.sh || rm python-install.sh
 ```
 
 ### frp
@@ -272,19 +272,19 @@ We use frp for reverse proxy. This is optional if you do not need public connect
 "[frp-install.sh](scripts/frp-install.sh)".
 
 ```shell
-/bin/sh "frp-install.sh$(wget -O frp-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-install.sh)" && rm frp-install.sh || rm frp-install.sh
+bash "frp-install.sh$(wget -O frp-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-install.sh)" && rm frp-install.sh || rm frp-install.sh
 ```
 
 To configure frp, use "[frp-config.sh](scripts/frp-config.sh)".
 
 ```shell
-/bin/sh "frp-config.sh$(wget -O frp-config.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-config.sh)" && rm frp-config.sh || rm frp-config.sh
+bash "frp-config.sh$(wget -O frp-config.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-config.sh)" && rm frp-config.sh || rm frp-config.sh
 ```
 
 There are 4 arguments for this script, of which the first 2 are required.
 
 ```shell
-/bin/sh "frp-config.sh$(...)" {frp_server_ip} {frp_token} {frp_port} {comm_port} && rm frp-config.sh || rm frp-config.sh
+bash "frp-config.sh$(...)" {frp_server_ip} {frp_token} {frp_port} {comm_port} && rm frp-config.sh || rm frp-config.sh
 ```
 
 ### OBS Studio
@@ -293,7 +293,7 @@ We also use OBS Studio for streaming, but it is not required. If you want to ins
 run "[obs-install.sh](scripts/obs-install.sh)".
 
 ```shell
-/bin/sh "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-install.sh)" && rm obs-install.sh || rm obs-install.sh
+bash "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-install.sh)" && rm obs-install.sh || rm obs-install.sh
 ```
 
 Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
@@ -307,7 +307,7 @@ wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/s
 Run the script as shown.
 
 ```shell
-/bin/sh obs-run.sh
+bash obs-run.sh
 ```
 
 If you want the identical layout configuration, see the following.

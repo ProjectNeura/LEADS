@@ -1,10 +1,13 @@
 from atexit import register as _register
+from threading import Thread as _Thread
+from time import sleep as _sleep
 
 from sdl2 import AUDIO_S16 as _AUDIO_S16
 from sdl2.sdlmixer import Mix_Init as _init, Mix_OpenAudioDevice as _open_audio_device, MIX_INIT_MP3 as _MIX_INIT_MP3, \
     Mix_LoadMUS as _load_music, Mix_PlayMusic as _play_music, Mix_Music as _Music, \
     Mix_GetError as _get_error, Mix_FreeMusic as _free_music, Mix_CloseAudio as _close_audio
 
+from leads import L as _L
 from leads_audio.system import _ASSETS_PATH
 
 
@@ -14,7 +17,19 @@ def _ensure(flag: int) -> None:
 
 
 _init(_MIX_INIT_MP3)
-_ensure(_open_audio_device(44100, _AUDIO_S16, 2, 2048, None, 1))
+
+
+def _try_open_audio_device() -> None:
+    flag = -1
+    while flag < 0:
+        try:
+            _ensure(flag := _open_audio_device(44100, _AUDIO_S16, 2, 2048, None, 1))
+        except RuntimeError as e:
+            _L.error(repr(e))
+            _sleep(10)
+
+
+_Thread(name="sdl initializer", target=_try_open_audio_device, daemon=True).start()
 
 
 @_register
