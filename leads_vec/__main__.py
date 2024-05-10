@@ -51,6 +51,7 @@ if __name__ == "__main__":
         _L.info(f"LEADS VeC",
                 f"System Kernel: {_get_system_kernel().upper()}",
                 f"Python Version: {_version}",
+                f"User: {_get_login()}",
                 f"`frpc` Available: {_frpc_exists()}",
                 f"Module Path: {_MODULE_PATH}",
                 f"LEADS Version: {leads_version}",
