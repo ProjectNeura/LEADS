@@ -256,7 +256,7 @@ dependencies of LEADS for you.
 ```
 
 This will create a shortcut to save you from typing `python-leads -m leads_vec ...`, instead, you will just need to call
-`leads_vec ...`.
+`leads-vec ...`.
 
 ### Python
 
