@@ -76,7 +76,8 @@ pip install Pillow PySDL2 customtkinter gpiozero lgpio pynmea2 pynput pysdl2-dll
 
 `numpy` and `pandas` will be automatically installed with `leads`.
 
-`Pillow`, `PySDL2`, `customtkinter`, `gpiozero`, `lgpio`, `pynmea2`, `pynput`, `pysdl2-dll`, and `pyserial` are optional.
+`Pillow`, `PySDL2`, `customtkinter`, `gpiozero`, `lgpio`, `pynmea2`, `pynput`, `pysdl2-dll`, and `pyserial` are
+optional.
 
 If you only want the framework, run the following.
 
@@ -232,10 +233,6 @@ If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#configurations).
 
-If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
-because you have to specify the Python environment such that `/usr/local/leads/venv/bin/python ...`
-and `/usr/local/leads/venv/bin/pip ...`.
-
 ## Environment Setup
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
@@ -244,18 +241,44 @@ Ubuntu 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, just r
 You may also choose to clone the repository or download the scripts from
 [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
-These scripts currently only support Ubuntu.
+These scripts currently only support `apt` as the package manager.
 
-### Python and LEADS
+If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
+because you have to specify the Python environment such that `/usr/local/leads/venv/bin/python ...` and
+`/usr/local/leads/venv/bin/pip ...`.
 
-You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including all the optional dependencies
+### LEADS
+
+You can simply run "[setup.sh](scripts/setup.sh)" and it will install everything including Python 3.12 all the optional
+dependencies
 of LEADS for you.
 
 ```shell
 /bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
 
-### Python Only
+To save your time from typing `/usr/local/leads/venv/bin/python -m leads_vec -c /usr/local/leads/config.json run` a
+thousand times, we provide a boot script "[leads.sh](scripts/leads.sh)".
+
+Download it to wherever you feel convenient.
+
+```shell
+wget -O leads.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/leads.sh
+```
+
+Run it like this.
+
+```shell
+/bin/sh leads.sh {arg1} {arg2} {arg3} ...
+```
+
+It specifies to use this configuration file: "usr/local/leads/config.json". If the file does not exist an error will be
+raised. You must [create](#configurations) or [generate](#generate-a-configuration-file) a configuration file with the
+exact path.
+
+You can always pass other optional arguments additionally to that.
+
+### Python
 
 [python-install.sh](scripts/python-install.sh) will only install Python 3.12 and Tcl/Tk.
 
