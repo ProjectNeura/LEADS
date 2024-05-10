@@ -1,10 +1,9 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
 from importlib.metadata import version as _package_version, PackageNotFoundError as _PackageNotFoundError
 from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
-from os import mkdir as _mkdir, chmod as _chmod, getlogin as _get_login
+from os import getlogin as _get_login
 from os.path import abspath as _abspath
 from os.path import exists as _exists
-from subprocess import run as _run
 from sys import exit as _exit, version as _version
 from warnings import filterwarnings as _filterwarnings
 
@@ -59,15 +58,6 @@ if __name__ == "__main__":
                 sep="\n")
         _exit()
     if args.register == "systemd":
-        if _get_system_kernel() != "linux":
-            _exit("Error: Unsupported operating system")
-        if not _exists("/usr/local/leads/config.json"):
-            _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
-            _mkdir("/usr/local/leads")
-            with open("/usr/local/leads/config.json", "w") as f:
-                f.write(str(_Config({})))
-            _L.info("Using \"/usr/local/leads/config.json\"")
-        _chmod("/usr/local/leads/config.json", 777)
         from ._bootloader import create_service as _create_service
 
         _create_service()
@@ -95,10 +85,10 @@ if __name__ == "__main__":
         config.auto_magnify_font_sizes()
     _register_config(config)
     if args.xws:
-        if _get_system_kernel() != "linux":
-            _exit("Error: Unsupported operating system")
-        _L.info("Configuring X Window System...")
-        _run(("/usr/bin/xhost", f"+SI:localuser:{_get_login()}"))
+        from ._bootloader import configure_xws as _configure_xws
+
+        _configure_xws()
+        _L.info("X Window System configured")
 
     from leads_vec.cli import main
 
