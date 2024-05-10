@@ -9,6 +9,10 @@ if [ "${EUID:-$(id -u)}" -ne 0 ];
 then abort "Error: This script requires root permission"
 fi
 
+if test -d "/usr/local/frp";
+then abort "Error: /usr/local/frp already exists"
+fi
+
 execute() {
   if ! "$@";
   then abort "$(printf "Failed: %s" "$@")"
@@ -19,9 +23,6 @@ execute_root() {
   execute "sudo" "$@"
 }
 
-if test -d "/usr/local/frp";
-then abort "/usr/local/frp already exists"
-fi
 if ! command -v curl > /dev/null;
 then
   echo "cURL is not available, installing..."

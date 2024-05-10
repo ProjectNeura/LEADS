@@ -1,10 +1,9 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
 from importlib.metadata import version as _package_version, PackageNotFoundError as _PackageNotFoundError
 from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
-from os import mkdir as _mkdir, chmod as _chmod
+from os import getlogin as _get_login
 from os.path import abspath as _abspath
 from os.path import exists as _exists
-from subprocess import run as _run
 from sys import exit as _exit, version as _version
 from warnings import filterwarnings as _filterwarnings
 
@@ -22,7 +21,7 @@ if __name__ == "__main__":
 
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
-                             epilog="ProjectNeura: https://projectneura.org"
+                             epilog="ProjectNeura: https://projectneura.org\n"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
@@ -51,6 +50,7 @@ if __name__ == "__main__":
         _L.info(f"LEADS VeC",
                 f"System Kernel: {_get_system_kernel().upper()}",
                 f"Python Version: {_version}",
+                f"User: {_get_login()}",
                 f"`frpc` Available: {_frpc_exists()}",
                 f"Module Path: {_MODULE_PATH}",
                 f"LEADS Version: {leads_version}",
@@ -58,19 +58,11 @@ if __name__ == "__main__":
                 sep="\n")
         _exit()
     if args.register == "systemd":
-        if _get_system_kernel() != "linux":
-            _exit("Error: Unsupported operating system")
-        if not _exists("/usr/local/leads/config.json"):
-            _L.info("Config file not found. Creating \"/usr/local/leads/config.json\"...")
-            _mkdir("/usr/local/leads")
-            with open("/usr/local/leads/config.json", "w") as f:
-                f.write(str(_Config({})))
-            _L.info("Using \"/usr/local/leads/config.json\"")
-        _chmod("/usr/local/leads/config.json", 777)
         from ._bootloader import create_service as _create_service
 
         _create_service()
         _L.info("Service registered")
+        _L.info(f"Service script is located at \"{_MODULE_PATH}/_bootloader/leads_vec.service.sh\"")
     elif args.register == "config":
         if _exists("config.json"):
             r = input("\"config.json\" already exists. Overwrite? (y/N) >>>").lower()
@@ -94,13 +86,10 @@ if __name__ == "__main__":
         config.auto_magnify_font_sizes()
     _register_config(config)
     if args.xws:
-        if _get_system_kernel() != "linux":
-            _exit("Error: Unsupported operating system")
-        from os import getuid as _getuid
-        from pwd import getpwuid as _getpwuid
+        from ._bootloader import configure_xws as _configure_xws
 
-        _L.info("Configuring X Window System...")
-        _run(("/usr/bin/xhost", f"+SI:localuser:{_getpwuid(_getuid()).pw_name}"))
+        _configure_xws()
+        _L.info("X Window System configured")
 
     from leads_vec.cli import main
 

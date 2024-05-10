@@ -8,6 +8,9 @@ abort() {
 if [ "${EUID:-$(id -u)}" -ne 0 ];
 then abort "Error: This script requires root permission"
 fi
+if ! test -d "/usr/local/frp";
+then abort "Error: /usr/local/frp not found"
+fi
 
 execute() {
   if ! "$@";
@@ -32,15 +35,13 @@ argument_exists_or() {
   else echo "$2"
   fi
 }
-if ! test -d "/usr/local/frp";
-then abort "frp not found"
-fi
+
 echo "Configuring client..."
-echo "serverAddr = \"$(require_argument "$1" "frp server IP")\"" > "/usr/local/frp/frpc.toml"
+echo "serverAddr = \"$(require_argument "$1" "frp_server_ip")\"" > "/usr/local/frp/frpc.toml"
 {
   echo "serverPort = $(argument_exists_or "$3" "7000")"
   echo "auth.method = \"token\""
-  echo "auth.token = \"$(require_argument "$2" "frp token")\""
+  echo "auth.token = \"$(require_argument "$2" "frp_token")\""
   echo "[[proxies]]"
   echo "name = \"leads-vec-comm\""
   echo "type = \"tcp\""
@@ -52,7 +53,7 @@ echo "Configuring server..."
 echo "bindPort = $(argument_exists_or "$3" "7000")" > "/usr/local/frp/frps.toml"
 {
   echo "auth.method = \"token\""
-  echo "auth.token = \"$(require_argument "$2" "frp token")\""
+  echo "auth.token = \"$(require_argument "$2" "frp_token")\""
   echo "vhostHTTPPort = 80"
   echo "vhostHTTPSPort = 443"
 } >> "/usr/local/frp/frps.toml"
