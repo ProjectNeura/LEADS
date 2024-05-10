@@ -29,5 +29,6 @@ execute "pip-leads" "install" "Pillow" "PySDL2" "customtkinter" "gpiozero" "lgpi
 echo "Creating Shortcut..."
 echo "#!/bin/sh" > "/bin/leads_vec"
 echo 'python-leads -m leads_vec "$@"' >> "/bin/leads_vec"
+execute_root "chmod" "+x" "/bin/leads_vec"
 echo "Verifying..."
 execute "leads_vec" "info"
