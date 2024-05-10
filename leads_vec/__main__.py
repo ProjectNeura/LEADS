@@ -1,7 +1,7 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
 from importlib.metadata import version as _package_version, PackageNotFoundError as _PackageNotFoundError
 from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
-from os import mkdir as _mkdir, chmod as _chmod
+from os import mkdir as _mkdir, chmod as _chmod, getlogin as _get_login
 from os.path import abspath as _abspath
 from os.path import exists as _exists
 from subprocess import run as _run
@@ -96,11 +96,8 @@ if __name__ == "__main__":
     if args.xws:
         if _get_system_kernel() != "linux":
             _exit("Error: Unsupported operating system")
-        from os import getuid as _getuid
-        from pwd import getpwuid as _getpwuid
-
         _L.info("Configuring X Window System...")
-        _run(("/usr/bin/xhost", f"+SI:localuser:{_getpwuid(_getuid()).pw_name}"))
+        _run(("/usr/bin/xhost", f"+SI:localuser:{_get_login()}"))
 
     from leads_vec.cli import main
 
