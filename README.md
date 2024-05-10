@@ -281,7 +281,7 @@ To configure frp, use "[frp-config.sh](scripts/frp-config.sh)".
 There are 4 arguments for this script, of which the first 2 are required.
 
 ```shell
-/bin/sh "frp-config.sh$(...)" ${frp server IP} ${frp token} ${frp port} ${LEADS comm port} && rm frp-config.sh || rm frp-config.sh
+/bin/sh "frp-config.sh$(...)" {frp_server_ip} {frp_token} {frp_port} {comm_port} && rm frp-config.sh || rm frp-config.sh
 ```
 
 ### OBS Studio
