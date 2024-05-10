@@ -244,8 +244,7 @@ You may also choose to clone the repository or download the scripts from
 These scripts currently only support `apt` as the package manager.
 
 If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
-because you have to specify the Python environment such that `/usr/local/leads/venv/bin/python ...` and
-`/usr/local/leads/venv/bin/pip ...`.
+because you have to specify the Python interpreter such that `python-leads ...` and `pip-leads ...`.
 
 ### LEADS
 
