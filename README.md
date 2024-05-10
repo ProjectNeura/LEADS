@@ -244,8 +244,7 @@ You may also choose to clone the repository or download the scripts from
 These scripts currently only support `apt` as the package manager.
 
 If you install Python using the scripts, you will not find `python ...`, `python3 ...`, `pip ...`, or `pip3 ...` working
-because you have to specify the Python environment such that `/usr/local/leads/venv/bin/python ...` and
-`/usr/local/leads/venv/bin/pip ...`.
+because you have to specify the Python interpreter such that `python-leads ...` and `pip-leads ...`.
 
 ### LEADS
 
@@ -255,27 +254,6 @@ dependencies of LEADS for you.
 ```shell
 /bin/sh "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
-
-To save your time from typing `/usr/local/leads/venv/bin/python -m leads_vec -c /usr/local/leads/config.json run` a
-thousand times, we provide a boot script "[leads.sh](scripts/leads.sh)".
-
-Download it to wherever you feel convenient.
-
-```shell
-wget -O leads.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/leads.sh
-```
-
-Run it like this.
-
-```shell
-/bin/sh leads.sh {arg1} {arg2} {arg3} ...
-```
-
-It specifies to use this configuration file: "usr/local/leads/config.json". If the file does not exist an error will be
-raised. You must [create](#configurations) or [generate](#generate-a-configuration-file) a configuration file with the
-exact same path.
-
-You can always pass other optional arguments additionally to that.
 
 ### Python
 
