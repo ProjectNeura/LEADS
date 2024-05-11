@@ -57,7 +57,7 @@ if __name__ == "__main__":
                 sep="\n")
         _exit()
     if args.register == "systemd":
-        from ._bootloader import create_service as _create_service
+        from ._bootloader import register_leads_vec as _create_service
 
         _create_service()
         _L.info("Service registered")
