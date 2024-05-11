@@ -18,7 +18,7 @@ setup(
     package_data={
         "leads_audio": ["assets/*"],
         "leads_gui": ["assets/*", "assets/icons/*"],
-        "leads_vec": ["_bootloader/leads_vec.service.sh"]
+        "leads_vec": ["_bootloader/leads-vec.service.sh"]
     },
     include_package_data=True,
     install_requires=["numpy", "pandas"]
