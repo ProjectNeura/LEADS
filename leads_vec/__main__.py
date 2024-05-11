@@ -57,11 +57,11 @@ if __name__ == "__main__":
                 sep="\n")
         _exit()
     if args.register == "systemd":
-        from ._bootloader import create_service as _create_service
+        from ._bootloader import register_leads_vec as _create_service
 
         _create_service()
         _L.info("Service registered")
-        _L.info(f"Service script is located at \"{_MODULE_PATH}/_bootloader/leads_vec.service.sh\"")
+        _L.info(f"Service script is located at \"{_MODULE_PATH}/_bootloader/leads-vec.service.sh\"")
     elif args.register == "config":
         if _exists("config.json"):
             r = input("\"config.json\" already exists. Overwrite? (y/N) >>>").lower()

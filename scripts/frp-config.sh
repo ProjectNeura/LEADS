@@ -8,7 +8,7 @@ abort() {
 if [ "${EUID:-$(id -u)}" -ne 0 ]
 then abort "Error: This script requires root permission"
 fi
-if ! test -d "/usr/local/frp"
+if test ! -d "/usr/local/frp"
 then abort "Error: /usr/local/frp not found"
 fi
 
@@ -23,16 +23,16 @@ execute_root() {
 }
 
 require_argument() {
-  if [ -n "$1" ]
-  then echo "$1"
-  else abort "Required argument $2 does not exist"
+  if test -z "$1"
+  then abort "Required argument $2 does not exist"
+  else echo "$1"
   fi
 }
 
 argument_exists_or() {
-  if [ -n "$1" ]
-  then echo "$1"
-  else echo "$2"
+  if test -z "$1"
+  then echo "$2"
+  else echo "$1"
   fi
 }
 

@@ -29,7 +29,7 @@ then
   execute_root "apt" "install" "-y" "curl"
 fi
 latest_release=$(curl -s "https://api.github.com/repos/fatedier/frp/releases/latest" | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$' | cut -c 2-)
-if [ -z "$latest_release" ]
+if test -z "$latest_release"
 then abort "Failed to retrieve the latest release"
 fi
 filename="frp_${latest_release}_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m)"
