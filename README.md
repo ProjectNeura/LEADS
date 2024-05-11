@@ -343,7 +343,7 @@ Note that a purely empty file could cause an error.
 |---------------------|---------|-----------------------------------------------------------|--------------|---------------|
 | `w_debug_level`     | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
 | `data_seq_size`     | `int`   | Buffer size of history data                               | Main         | `100`         |
-| `data_dir`          | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
+| `data_dir`          | `str`   | The directory for the data recording system               | Main, Remote | `"data"`      |
 | `width`             | `int`   | Window width                                              | Main         | `720`         |
 | `height`            | `int`   | Window height                                             | Main         | `480`         |
 | `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode               | Main         | `False`       |
