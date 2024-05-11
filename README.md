@@ -249,9 +249,9 @@ To learn about the configuration file, read [Configurations](#configurations).
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
 reproduction is available [here](https://leads-docs.projectneura.org/en/latest/vec), but first of all, we run an
-Ubuntu 22.04 LTS on a Raspberry Pi 4 Model B 8GB. After the OS is set up, just run the one-line commands listed below.
-You may also choose to clone the repository or download the scripts from
-[releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
+Ubuntu on a Raspberry Pi 4 Model B 8GB. After the OS is set up, just run the one-line commands listed below. You may
+also choose to clone the repository or download the scripts
+from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
 These scripts currently only support `apt` as the package manager.
 
