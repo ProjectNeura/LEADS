@@ -298,7 +298,7 @@ bash "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/P
 
 Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
 
-Download it through this simple line of code below.
+Download it through this simple command below.
 
 ```shell
 wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/obs-run.sh
