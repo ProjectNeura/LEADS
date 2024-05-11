@@ -1,5 +1,6 @@
-from os import chmod as _chmod, getlogin as _get_login, mkdir as _mkdir
+from os import chmod as _chmod, getlogin as _get_login, mkdir as _mkdir, environ as _environ
 from os.path import abspath as _abspath, exists as _exists
+from subprocess import run as _run, CalledProcessError as _CalledProcessError
 
 from leads import L as _L
 from leads_gui import Config as _Config
@@ -28,7 +29,7 @@ def create_service() -> None:
             f"User={(user := _get_login())}\n"
             f"Environment=\"USERNAME={user}\"\n"
             "Environment=\"DISPLAY=:0\"\n"
-            f"Environment=\"XAUTHORITY=/home/{user}/.Xauthority\"\n"
+            f"Environment=\"XAUTHORITY={_environ["XAUTHORITY"]}\"\n"
             f"ExecStart=/bin/bash {script}\n"
             "[Install]\n"
             "WantedBy=graphical.target"
