@@ -1,7 +1,7 @@
 from atexit import register
 from datetime import datetime
 from json import loads, JSONDecodeError
-from os import mkdir
+from os import makedirs
 from os.path import abspath, exists
 from time import sleep
 from typing import Any
@@ -15,8 +15,8 @@ from leads.data_persistence import *
 
 config = require_config()
 if not exists(config.data_dir):
-    mkdir(config.data_dir)
-    L.info(f"Data dir \"{abspath(config.data_dir)}\" created")
+    L.debug(f"Data directory not found, creating \"{abspath(config.data_dir)}\"...")
+    makedirs(config.data_dir)
 
 data_record: DataPersistence[DataContainer] = DataPersistence(1, compressor=lambda o, s: o[-s:])
 time_stamp_record: DataPersistence[int] = DataPersistence(2000)

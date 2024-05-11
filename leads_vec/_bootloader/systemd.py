@@ -1,4 +1,4 @@
-from os import chmod as _chmod, getlogin as _get_login, mkdir as _mkdir
+from os import chmod as _chmod, getlogin as _get_login, makedirs as _mkdirs
 from os.path import abspath as _abspath, exists as _exists
 
 from leads import L as _L
@@ -12,15 +12,15 @@ def register_leads_vec() -> None:
     if not _exists("/usr/local/leads/config.json"):
         _L.debug("Config file not found. Creating \"/usr/local/leads/config.json\"...")
         if not _exists("/usr/local/leads"):
-            _mkdir("/usr/local/leads")
+            _mkdirs("/usr/local/leads")
         with open("/usr/local/leads/config.json", "w") as f:
             f.write(str(_Config({})))
     _chmod("/usr/local/leads/config.json", 0x644)
     _chmod(script := f"{_abspath(__file__)[:-10]}leads-vec.service.sh", 0o755)
-    if not _exists(systemd_path := f"/home/{_get_login()}/.config/systemd/user"):
-        _L.debug(f"User systemd not found. Creating \"{systemd_path}\"...")
-        _mkdir(systemd_path)
-    with open(f"{systemd_path}/leads-vec.service", "w") as f:
+    if not _exists(user_systemd := f"/home/{_get_login()}/.config/systemd/user"):
+        _L.debug(f"User systemd not found. Creating \"{user_systemd}\"...")
+        _mkdirs(user_systemd)
+    with open(f"{user_systemd}/leads-vec.service", "w") as f:
         f.write(
             "[Unit]\n"
             "Description=LEADS VeC\n"
