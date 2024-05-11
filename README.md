@@ -149,13 +149,25 @@ This will generate a default "config.json" file under the current directory.
 python -m leads_vec -r systemd run
 ```
 
-This will register a system service to start the program.
+This will register a user systemd service to start the program.
 
 To enable auto-start at boot, run the following.
 
 ```shell
-systemctl daemon-reload
-systemctl enable leads_vec
+systemctl --user daemon-reload
+systemctl --user enable leads-vec
+```
+
+You will have to stop the service by this command otherwise it will automatically restart when it exits.
+
+```shell
+systemctl --user stop leads-vec
+```
+
+Use the following to disable the service.
+
+```shell
+systemctl --user disable leads-vec
 ```
 
 ##### Use Reverse Proxy
