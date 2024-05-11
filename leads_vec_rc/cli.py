@@ -15,7 +15,7 @@ from leads.data_persistence import *
 
 config = require_config()
 if not exists(config.data_dir):
-    L.debug(f"Data directory not found, creating \"{abspath(config.data_dir)}\"...")
+    L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
     makedirs(config.data_dir)
 
 data_record: DataPersistence[DataContainer] = DataPersistence(1, compressor=lambda o, s: o[-s:])
