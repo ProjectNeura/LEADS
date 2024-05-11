@@ -27,11 +27,9 @@ def register_leads_vec() -> None:
             "After=graphical-session.target\n"
             "[Service]\n"
             "Type=simple\n"
-            f"User={(user := _get_login())}\n"
-            f"Environment=\"USERNAME={user}\"\n"
-            "Environment=\"DISPLAY=:0\"\n"
-            f"Environment=\"XAUTHORITY={_environ["XAUTHORITY"]}\"\n"
             f"ExecStart=/bin/bash {script}\n"
+            f"Restart=always\n"
+            f"RestartSec=1s\n"
             "[Install]\n"
             "WantedBy=default.target"
         )
