@@ -26,6 +26,7 @@ def create_service() -> None:
             "[Service]\n"
             "Type=simple\n"
             f"User={(user := _get_login())}\n"
+            f"Environment=\"USERNAME={user}\"\n"
             "Environment=\"DISPLAY=:0\"\n"
             f"Environment=\"XAUTHORITY=/home/{user}/.Xauthority\"\n"
             f"ExecStart=/bin/bash {script}\n"

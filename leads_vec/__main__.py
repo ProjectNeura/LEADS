@@ -34,7 +34,6 @@ if __name__ == "__main__":
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--auto-mfs", action=_BooleanOptionalAction, default=False,
                         help="automatically magnify font sizes to match the original proportion")
-    parser.add_argument("--xws", action=_BooleanOptionalAction, default=False, help="use X Window System")
     parser.add_argument("--ignore-import-error", action=_BooleanOptionalAction, default=False,
                         help="ignore `ImportError`")
     args = parser.parse_args()
@@ -85,12 +84,6 @@ if __name__ == "__main__":
     if args.auto_mfs:
         config.auto_magnify_font_sizes()
     _register_config(config)
-    if args.xws:
-        from ._bootloader import configure_xws as _configure_xws
-
-        _configure_xws()
-        _L.info("X Window System configured")
-
     from leads_vec.cli import main
 
     if args.action == "replay":

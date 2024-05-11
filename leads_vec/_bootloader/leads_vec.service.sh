@@ -8,6 +8,7 @@ fi
 while ! xhost >& /dev/null
 do sleep 1
 done
+# configure xws
+/usr/bin/xhost +SI:localuser:"$USERNAME"
 # change the interpreter or adjust the arguments according to your needs
-# do not use `--xws`
 python-leads -m leads_vec -c /usr/local/leads/config.json run
