@@ -8,6 +8,6 @@
 
 Required Environment: [Python](https://python.org) >= 3.12
 
-Recommended Package Management: [Anaconda](https://www.anaconda.com/)
+Recommended Package Management: [Anaconda](https://www.anaconda.com)
 
 Recommended IDE: [PyCharm](https://www.jetbrains.com/pycharm)

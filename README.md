@@ -418,7 +418,7 @@ Label your issue with at least one of the labels above before you submit.
 #### Projects
 
 You can have a look at the whole schedule of each project in a timeline using
-the [projects](https://github.com/orgs/ProjectNeura/projects/) feature.
+the [projects](https://github.com/orgs/ProjectNeura/projects) feature.
 
 ### Code Contributions
 
