@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
     parser.add_argument("-t", "--theme", default=None, help="specify a theme")
-    parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=None, help="magnify font sizes by a factor")
+    parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=1, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--auto-mfs", action=_BooleanOptionalAction, default=False,
                         help="automatically magnify font sizes to match the original proportion")
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     _L.debug("Configuration loaded:", str(config))
     if t := args.theme:
         _set_default_color_theme(t)
-    if f := args.magnify_font_sizes:
+    if (f := args.magnify_font_sizes) != 1:
         config.magnify_font_sizes(f)
     if args.auto_mfs:
         config.auto_magnify_font_sizes()
