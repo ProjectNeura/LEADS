@@ -149,7 +149,7 @@ This will generate a default "config.json" file under the current directory.
 python -m leads_vec -r systemd run
 ```
 
-This will register a user systemd service to start the program.
+This will register a user Systemd service to start the program.
 
 To enable auto-start at boot, run the following.
 
