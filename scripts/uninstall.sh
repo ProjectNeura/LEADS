@@ -81,7 +81,7 @@ fi
 
 if test -e "/usr/local/leads/venv"
 then
-  echo "Removing virtual environment"
+  echo "Removing virtual environment..."
   execute_root "rm" "-r" "/usr/local/leads/venv"
 else echo "Virtual environment not detected, skipping..."
 fi
