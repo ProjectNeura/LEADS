@@ -55,6 +55,13 @@ then
 else echo "Configuration file not detected, skipping..."
 fi
 
+if test -e "/bin/leads-vec"
+then
+  echo "Removing soft link /bin/leads-vec..."
+  execute_root "rm" "/bin/leads-vec"
+else echo "Soft link /bin/leads-vec not detected, skipping..."
+fi
+
 if test -e "/bin/pip-leads"
 then
   echo "Removing soft link /bin/pip-leads..."
