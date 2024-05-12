@@ -5,9 +5,10 @@ abort() {
   exit 1
 }
 
-if [ "${EUID:-$(id -u)}" -ne 0 ]
-then abort "Error: This script requires root permission"
+if test "${EUID:-$(id -u)}" -eq 0
+then abort "Error: Do not execute this script as root"
 fi
+
 if test ! -d "/usr/local/frp"
 then abort "Error: /usr/local/frp not found"
 fi
