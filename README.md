@@ -52,17 +52,6 @@ LEADS VeC Demo (Manual Mode)
     - [ ] EBI (Emergency Braking Intervention)
     - [ ] ATBS (Automatic Trail Braking System)
 
-## To High School Students
-
-The codes are never designed for average high school students to understand. You may find it hard to read the codes if
-you do not satisfy the following requirements of skills and knowledge.
-
-- Advanced Python knowledge (you should be familiar with everything and even programming philosophy in Python)
-- Solid knowledge of Physics (you should understand how a car moves in reality)
-- Basic embedded development experience (C/C++, Raspberry Pi, Arduino, serial communication, PWM)
-- Rich experience in Web development (React, Next.js, FastAPI, TCP/IP, sockets)
-- Basic machine learning knowledge (linear regression, polynomial regression)
-
 ## Installation
 
 ### Python
