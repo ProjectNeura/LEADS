@@ -317,6 +317,15 @@ If you want the identical layout configuration, see the following.
 wget -O obs-config.json https://raw.githubusercontent.com/ProjectNeura/LEADS/master/design/obs-config.json
 ```
 
+### Uninstall
+
+To uninstall LEADS, we provide an easy solution as well. However, it uninstalls a component only if it is installed
+through the way listed in [Environment Setup](#environment-setup). OBS Studio will not be uninstalled anyway.
+
+```shell
+bash "uninstall.sh$(wget -O uninstall.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/uninstall.sh)" && rm uninstall.sh || rm uninstall.sh
+```
+
 ## Configurations
 
 The configuration is a JSON file that has the following settings. You can have an empty configuration file like the
