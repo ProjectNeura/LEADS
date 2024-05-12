@@ -1,1 +1,1 @@
-__version__: str = "85240402"
+__version__: str = "1493eb29"
