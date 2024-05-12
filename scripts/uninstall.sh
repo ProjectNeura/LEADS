@@ -27,15 +27,14 @@ ask() {
 
 if test -e "/home/$(logname)/.config/systemd/user/leads-vec.service"
 then
-  if systemctl --user status "leads-vec" &> /dev/null
+  if systemctl --user is-enabled --quiet "leads-vec"
   then
     echo "Disabling Systemd service leads-vec..."
     execute_root "systemctl" "--user" "disable" "leads-vec"
-  else echo "Systemd service leads-vec not loaded, skipping..."
+  else echo "Systemd service leads-vec not enabled, skipping..."
   fi
   echo "Removing Systemd service leads-vec..."
   execute_root "rm" "/home/$(logname)/.config/systemd/user/leads-vec.service"
-  echo
 else echo "Systemd service leads-vec not detected, skipping..."
 fi
 
