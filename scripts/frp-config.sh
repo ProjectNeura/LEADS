@@ -25,7 +25,7 @@ execute_root() {
 
 require_argument() {
   if test -z "$1"
-  then abort "Required argument $2 does not exist"
+  then abort "Error: Required argument $2 does not exist"
   else echo "$1"
   fi
 }
