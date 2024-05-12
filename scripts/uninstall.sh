@@ -25,10 +25,14 @@ ask() {
   echo "$input" | tr "[:upper:]" "[:lower:]"
 }
 
-if systemctl --user status "leads-vec" &> /dev/null
+if test -e "/home/$(logname)/.config/systemd/user/leads-vec.service"
 then
-  echo "Disabling Systemd service leads-vec..."
-  execute_root "systemctl" "--user" "disable" "leads-vec"
+  if systemctl --user status "leads-vec" &> /dev/null
+  then
+    echo "Disabling Systemd service leads-vec..."
+    execute_root "systemctl" "--user" "disable" "leads-vec"
+  else echo "Systemd service leads-vec not loaded, skipping..."
+  fi
   echo "Removing Systemd service leads-vec..."
   execute_root "rm" "/home/$(logname)/.config/systemd/user/leads-vec.service"
   echo
