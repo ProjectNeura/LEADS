@@ -278,16 +278,16 @@ This will create a shortcut to save you from typing `python-leads -m leads_vec .
 bash "python-install.sh$(wget -O python-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh)" && rm python-install.sh || rm python-install.sh
 ```
 
-### frp
+### FRP
 
-We use frp for reverse proxy. This is optional if you do not need public connections. If you want, install it through
+We use FRP for reverse proxy. This is optional if you do not need public connections. If you want, install it through
 "[frp-install.sh](scripts/frp-install.sh)".
 
 ```shell
 bash "frp-install.sh$(wget -O frp-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-install.sh)" && rm frp-install.sh || rm frp-install.sh
 ```
 
-To configure frp, use "[frp-config.sh](scripts/frp-config.sh)".
+To configure FRP, use "[frp-config.sh](scripts/frp-config.sh)".
 
 ```shell
 bash "frp-config.sh$(wget -O frp-config.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/frp-config.sh)" && rm frp-config.sh || rm frp-config.sh
