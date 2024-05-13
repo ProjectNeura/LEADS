@@ -20,7 +20,7 @@ execute_root() {
 }
 
 echo "Installing Python..."
-execute_root "wget" "-O" "python-install.sh" "https://raw.githubusercontent.com/ProjectNeura/LEADS/master/scripts/python-install.sh"
+execute_root "wget" "-O" "python-install.sh" "https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/python-install.sh"
 execute_root "/bin/bash" "python-install.sh"
 echo "Cleaning up..."
 execute_root "rm" "python-install.sh"
