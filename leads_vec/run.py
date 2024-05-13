@@ -12,6 +12,7 @@ from leads_gui import Config as _Config
 
 def run(config: str,
         devices: str,
+        main: str,
         register: _Literal["systemd", "config", "reverse_proxy"],
         theme: str,
         magnify_font_sizes: float,
@@ -47,7 +48,12 @@ def run(config: str,
     if auto_mfs:
         config.auto_magnify_font_sizes()
     _register_config(config)
-    from leads_vec.cli import main
+    spec = _spec_from_file_location("main", main)
+    spec.loader.exec_module(main := _module_from_spec(spec))
+    try:
+        main = getattr(main, "main")
+    except AttributeError:
+        raise ImportError(f"No main function in \"{main}\"")
 
     try:
         if emu:

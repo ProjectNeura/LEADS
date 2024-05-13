@@ -125,6 +125,24 @@ python -m leads_vec -d path/to/the/devices.py run
 
 To learn about the devices module, read [Devices Module](#devices-module).
 
+##### Specify a Main Module
+
+```shell
+python -m leads_vec -m path/to/the/main.py run
+```
+
+Function `main()` must exist in the main module, otherwise an `ImportError` will be raised.
+
+It needs to have the identical signature as the following.
+
+```python
+def main() -> int:
+  """
+  :return: 0: success; 1: error
+  """
+  ...
+```
+
 ##### Generate a Configuration File
 
 ```shell
