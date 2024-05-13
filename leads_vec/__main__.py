@@ -21,6 +21,8 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
     parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py",
                         help="specify a devices module")
+    parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py",
+                        help="specify a main module")
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
     parser.add_argument("-t", "--theme", default=None, help="specify a theme")
@@ -54,6 +56,6 @@ if __name__ == "__main__":
             args.devices = f"{MODULE_PATH}/replay.py"
             args.emu = False
             _L.debug("Replay mode enabled")
-        _exit(run(args.config, args.devices, args.register, args.theme, args.magnify_font_sizes, args.emu,
+        _exit(run(args.config, args.devices, args.main, args.register, args.theme, args.magnify_font_sizes, args.emu,
                   args.auto_mfs, args.ignore_import_error))
     _exit()
