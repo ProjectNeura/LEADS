@@ -1,23 +1,17 @@
 from argparse import ArgumentParser as _ArgumentParser, BooleanOptionalAction as _BooleanOptionalAction
 from importlib.metadata import version as _package_version, PackageNotFoundError as _PackageNotFoundError
-from importlib.util import spec_from_file_location as _spec_from_file_location, module_from_spec as _module_from_spec
 from os import getlogin as _get_login
 from os.path import abspath as _abspath
-from os.path import exists as _exists
 from sys import exit as _exit, version as _version
 from warnings import filterwarnings as _filterwarnings
 
-from customtkinter import set_default_color_theme as _set_default_color_theme
-
-from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
-    L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
-from leads.data_persistence import Dataset as _Dataset
-from leads_gui import Config as _Config
+from leads import L as _L
 from leads_gui.system import get_system_kernel as _get_system_kernel
+from leads_vec.run import run
 
 if __name__ == "__main__":
     _filterwarnings("ignore")
-    _MODULE_PATH = _abspath(__file__)[:-12]
+    MODULE_PATH = _abspath(__file__)[:-12]
 
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
@@ -25,7 +19,7 @@ if __name__ == "__main__":
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
-    parser.add_argument("-d", "--devices", default=f"{_MODULE_PATH}/devices.py",
+    parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py",
                         help="specify a devices module")
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
@@ -51,68 +45,15 @@ if __name__ == "__main__":
                 f"Python Version: {_version}",
                 f"User: {_get_login()}",
                 f"`frpc` Available: {_frpc_exists()}",
-                f"Module Path: {_MODULE_PATH}",
+                f"Module Path: {MODULE_PATH}",
                 f"LEADS Version: {leads_version}",
                 f"LEADS VeC Version: {__version__}",
                 sep="\n")
-        _exit()
-    if args.register == "systemd":
-        from ._bootloader import register_leads_vec as _create_service
-
-        _create_service()
-        _L.info("Service registered")
-        _L.info(f"Service script is located at \"{_MODULE_PATH}/_bootloader/leads-vec.service.sh\"")
-    elif args.register == "config":
-        if _exists("config.json"):
-            r = input("\"config.json\" already exists. Overwrite? (y/N) >>>").lower()
-            if r.lower() != "y":
-                _exit("Error: Aborted")
-        with open("config.json", "w") as f:
-            f.write(str(_Config({})))
-        _L.info("Configuration file saved to \"config.json\"")
-    elif args.register == "reverse_proxy":
-        from ._bootloader import start_frpc as _start_frpc
-
-        _start_frpc()
-        _L.info("`frpc` started")
-    config = _load_config(args.config, _Config) if args.config else _Config({})
-    _L.debug("Configuration loaded:", str(config))
-    if t := args.theme:
-        _set_default_color_theme(t)
-    if (f := args.magnify_font_sizes) != 1:
-        config.magnify_font_sizes(f)
-    if args.auto_mfs:
-        config.auto_magnify_font_sizes()
-    _register_config(config)
-    from leads_vec.cli import main
-
-    if args.action == "replay":
-        from leads_emulation.replay import ReplayController as _Controller
-
-        _register_controller(_MAIN_CONTROLLER, _Controller(_Dataset(f"{config.data_dir}/main.csv")))
-        _L.info("Replay started")
-        _exit(main())
-
-    try:
-        if args.emu:
-            raise SystemError("User specifies to use emulator")
-        spec = _spec_from_file_location("_", args.devices)
-        spec.loader.exec_module(_module_from_spec(spec))
-    except (ImportError, SystemError) as e:
-        _L.debug(repr(e))
-        if isinstance(e, ImportError):
-            if args.ignore_import_error:
-                _L.debug(f"Ignoring import error: {repr(e)}")
-                _exit(main())
-            else:
-                _L.warn(
-                    f"Specified devices module ({args.devices}) is not available, using emulation module instead...")
-        _reset()
-        try:
-            from leads_emulation import SinController as _Controller
-
-            _register_controller(_MAIN_CONTROLLER, _Controller(0, 200, .05))
-        except ImportError as e:
-            _L.error(f"Emulator error: {repr(e)}")
-            _exit(1)
-    _exit(main())
+    else:
+        if args.action == "replay":
+            args.devices = f"{MODULE_PATH}/replay.py"
+            args.emu = False
+            _L.debug("Replay mode enabled")
+        _exit(run(args.config, args.devices, args.register, args.theme, args.magnify_font_sizes, args.emu,
+                  args.auto_mfs, args.ignore_import_error))
+    _exit()
