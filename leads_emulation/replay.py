@@ -11,11 +11,6 @@ class ReplayController(_Controller):
         self._iterator: _Iterator[dict[str, _Any]] = iter(dataset)
 
     @_override
-    def initialize(self, *parent_tags: str) -> None:
-        super().initialize(*parent_tags)
-        self._dataset.load()
-
-    @_override
     def read(self) -> _DataContainer:
         try:
             d = next(self._iterator)

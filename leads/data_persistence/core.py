@@ -197,10 +197,13 @@ class Dataset(_Iterable[dict[str, _Any]]):
         self._chunk_size: int = chunk_size
         self._csv: _TextFileReader | None = None
 
+    def require_loaded(self) -> None:
+        if self._csv is None:
+            self.load()
+
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
-        if self._csv is None:
-            raise EOFError("Dataset not loaded")
+        self.require_loaded()
         while True:
             try:
                 chunk = next(self._csv)
