@@ -177,7 +177,7 @@ class CSVCollection(object):
         return self._header
 
     def write_header(self) -> None:
-        self._file.write(f"{",".join(self._header)}\n")
+        self._file.write(f"index,{",".join(self._header)}\n")
 
     def write_frame(self, *data: _Any) -> None:
         if len(data) != self._d:
