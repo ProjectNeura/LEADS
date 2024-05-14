@@ -24,7 +24,7 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d %H:%M")}.csv", (
+csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", (
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
     "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
 ), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None, None, None, None)
