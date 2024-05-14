@@ -4,11 +4,8 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
     override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
     Generator as _Generator, Any as _Any
 
-from numpy import mean as _mean, array as _array
-from numpy.linalg import norm as _norm
-from pandas import read_csv as _read_csv, DataFrame as _DataFrame
-from pandas.io.parsers import TextFileReader as _TextFileReader
-
+from leads.data_persistence.computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
+    DataFrame as _DataFrame, TextFileReader as _TextFileReader
 from leads.types import Compressor as _Compressor
 
 T = _TypeVar("T")
