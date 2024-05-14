@@ -76,6 +76,4 @@ class EventListener(CallbackChain):
 
     def right_indicator(self, event: Event, state: bool) -> None: ...
 
-    def hazard(self, event: Event, state: bool) -> None:
-        self.left_indicator(event, state)
-        self.right_indicator(event, state)
+    def hazard(self, event: Event, state: bool) -> None: ...

@@ -64,19 +64,19 @@ class LEADS(Context[T]):
         self._do_plugin_callback("post_update")
 
     @_override
-    def left_indicator(self, left_indicator: bool | None = None) -> bool | None:
-        if left_indicator is not None:
+    def left_indicator(self, left_indicator: bool | None = None, override: bool = False) -> bool | None:
+        if (r := super().left_indicator(left_indicator, override)) is None:
             self._event_listener.left_indicator(Event("LEFT_INDICATOR", self), left_indicator)
-        return super().left_indicator(left_indicator)
+        return r
 
     @_override
-    def right_indicator(self, right_indicator: bool | None = None) -> bool | None:
-        if right_indicator is not None:
+    def right_indicator(self, right_indicator: bool | None = None, override: bool = False) -> bool | None:
+        if (r := super().right_indicator(right_indicator, override)) is None:
             self._event_listener.right_indicator(Event("RIGHT_INDICATOR", self), right_indicator)
-        return super().right_indicator(right_indicator)
+        return r
 
     @_override
     def hazard(self, hazard: bool | None = None) -> bool | None:
-        if hazard is not None:
+        if (r := super().hazard(hazard)) is None:
             self._event_listener.hazard(Event("HAZARD", self), hazard)
-        return super().hazard(hazard)
+        return r
