@@ -27,7 +27,7 @@ gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
 csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", (
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
     "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
-), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None, None, None, None)
+), time_stamp_record, voltage_record, speed_record)
 
 
 def retry(service: Service) -> Client:
