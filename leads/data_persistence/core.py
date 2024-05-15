@@ -227,6 +227,13 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
         header_csv.close()
         self._csv = _read_csv(self._file, chunksize=self._chunk_size, low_memory=False)
 
+    def save(self, file: str | _TextIO) -> None:
+        self.require_loaded()
+        csv = CSV(file, self._header)
+        for row in self:
+            csv.write_frame(*tuple(row.values()))
+        csv.close()
+
 
 DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str] = (
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
