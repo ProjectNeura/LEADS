@@ -19,7 +19,7 @@ class GForceVar(_Variable):
         super().set(value)
 
     @_override
-    def get(self) -> [float, float]:
+    def get(self) -> tuple[float, float]:
         return super().get()
 
     def magnitude(self) -> float:

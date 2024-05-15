@@ -79,7 +79,7 @@ class CanvasBased(_CTkCanvas):
         self._ratio = ratio
         return self
 
-    def meta(self) -> [float, float, float, float, float]:
+    def meta(self) -> tuple[float, float, float, float, float]:
         """
         :return: [w, h, hc, vc, limit]
         """
