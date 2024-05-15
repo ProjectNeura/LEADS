@@ -176,7 +176,10 @@ class CSV(object):
         return self._header
 
     def write_header(self) -> None:
-        self._file.write(f"index,{",".join(self._header)}\n")
+        header = f"{",".join(self._header)}\n"
+        if not header.startswith("index"):
+            header = f"index,{header}"
+        self._file.write(header)
 
     def write_frame(self, *data: _Any) -> None:
         if len(data) != self._d:
@@ -199,6 +202,7 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
         self._chunk_size: int = chunk_size
         self._csv: _TextFileReader | None = None
         self._header: tuple[str, ...] | None = None
+        self._contains_index: bool = False
 
     def require_loaded(self) -> None:
         if not self._csv or not self._header:
@@ -224,6 +228,9 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
             self._csv.close()
         header_csv = _read_csv(self._file, chunksize=1)
         self._header = tuple(header_csv.get_chunk().columns)
+        if self._header[0] == "index":
+            self._header = self._header[1:]
+            self._contains_index = True
         header_csv.close()
         self._csv = _read_csv(self._file, chunksize=self._chunk_size, low_memory=False)
 
@@ -231,7 +238,7 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
         self.require_loaded()
         csv = CSV(file, self._header)
         for row in self:
-            csv.write_frame(*tuple(row.values()))
+            csv.write_frame(*(tuple(row.values())[1:] if self._contains_index else row.values()))
         csv.close()
 
     def close(self) -> None:
