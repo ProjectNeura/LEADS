@@ -7,15 +7,15 @@ from leads.dt.device import Device
 class Odometer(Device):
     def __init__(self) -> None:
         super().__init__()
-        self._milage: float = 0
+        self._mileage: float = 0
 
     @_override
     def write(self, payload: float) -> None:
-        self._milage += payload
+        self._mileage += payload
 
     @_override
     def read(self) -> float:
-        return self._milage
+        return self._mileage
 
 
 class ConcurrentOdometer(Odometer):
