@@ -150,6 +150,24 @@ class InferredDataset(CSVDataset):
         for key in inferred.keys():
             raw[key] = inferred[key]
 
+    def _complete(self, inferences: tuple[Inference, ...], enhanced: bool, backward: bool) -> None:
+        length = len(self._raw_data)
+        for i in range(length):
+            if backward:
+                i = length - i - 1
+            for inference in inferences:
+                p, f = inference.depth()
+                p, f = i + p, i + f + 1
+                d = []
+                if 0 <= p < length and 0 <= f <= length:
+                    for j in range(p, f):
+                        row = self._raw_data[j]
+                        if enhanced:
+                            InferredDataset.merge(row, self._inferred_data[j])
+                        d.append(row)
+                    if (r := inference.complete(*d, backward=backward)) is not None:
+                        InferredDataset.merge(self._inferred_data[i], r)
+
     def complete(self, *inferences: Inference, enhanced: bool = False) -> None:
         """
         Infer the missing values in the dataset.
@@ -161,21 +179,9 @@ class InferredDataset(CSVDataset):
         self.require_loaded()
         for row in super().__iter__():
             self._raw_data.append(row)
-        length = len(self._raw_data)
-        self._inferred_data = [{} for _ in range(length)]
-        for i in range(length):
-            for inference in inferences:
-                p, f = inference.depth()
-                p, f = i + p, i + f + 1
-                d = []
-                if 0 <= p < length and 0 <= f <= length:
-                    for j in range(p, f):
-                        row = self._raw_data[j]
-                        if enhanced:
-                            InferredDataset.merge(row, self._inferred_data[j])
-                        d.append(row)
-                    if (r := inference.complete(*d)) is not None:
-                        InferredDataset.merge(self._inferred_data[i], r)
+        self._inferred_data = [{} for _ in range(len(self._raw_data))]
+        self._complete(inferences, enhanced, False)
+        self._complete(inferences, enhanced, True)
 
     def __len__(self) -> int:
         return len(self._raw_data)
