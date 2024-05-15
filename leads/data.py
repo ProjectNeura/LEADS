@@ -2,7 +2,7 @@ from json import dumps as _dumps
 from time import time as _time
 from typing import override as _override, Any as _Any
 
-from numpy import radians as _radians, cos as _cos
+from numpy import radians as _radians, degrees as _degrees, cos as _cos
 
 
 class Serializable(object):
@@ -77,5 +77,13 @@ def dlat2meters(dlat: float) -> float:
     return dlat * 111320
 
 
-def dlon2meters(dlon: float) -> float:
-    return _radians(6378137 * dlon * _cos(_radians(dlon)))
+def meters2dlat(meters: float) -> float:
+    return meters / 111320
+
+
+def dlon2meters(dlon: float, lat: float) -> float:
+    return _radians(6378137 * dlon * _cos(_radians(lat)))
+
+
+def meters2dlon(meters: float, lat: float) -> float:
+    return _degrees(meters / 6378137 / _cos(_radians(lat)))
