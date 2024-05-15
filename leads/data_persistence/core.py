@@ -216,3 +216,9 @@ class Dataset(_Iterable[dict[str, _Any]]):
 
     def load(self) -> None:
         self._csv = _read_csv(self._file, chunksize=self._chunk_size, low_memory=False)
+
+
+DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str] = (
+    "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
+    "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
+)
