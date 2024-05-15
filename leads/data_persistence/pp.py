@@ -50,6 +50,30 @@ class SafeSpeedInference(SpeedInferenceBase):
         return None if speed is None else {"speed": speed}
 
 
+class SpeedInferenceByAcceleration(SpeedInferenceBase):
+    """
+    Infer the speed based on the acceleration.
+
+    v = ∫a(t)dt
+    """
+
+    def __init__(self):
+        super().__init__((-1, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        base, target = rows
+        t_0, t, s_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
+        if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
+                PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(s_0) or
+                PostProcessor.acceleration_invalid(a_0)):
+            return
+        a = target["forward_acceleration"]
+        if PostProcessor.acceleration_invalid(a):
+            a = a_0
+        return {"speed": s_0 + .0005 * (a_0 + a) * (t - t_0)}
+
+
 class SpeedInferenceByMileages(SpeedInferenceBase):
     """
     Infer the speed based on the mileages.
@@ -110,30 +134,6 @@ class SpeedInferenceByGPSPositions(SpeedInferenceBase):
             "speed": 3600 * _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2) / (
                     t - t_0)
         }
-
-
-class SpeedInferenceByAcceleration(SpeedInferenceBase):
-    """
-    Infer the speed based on the acceleration.
-
-    v = ∫a(t)dt
-    """
-
-    def __init__(self):
-        super().__init__((-1, 0))
-
-    @_override
-    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
-        base, target = rows
-        t_0, t, s_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
-        if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(s_0) or
-                PostProcessor.acceleration_invalid(a_0)):
-            return
-        a = target["forward_acceleration"]
-        if PostProcessor.acceleration_invalid(a):
-            a = a_0
-        return s_0 + .0005 * (a_0 + a) * (t - t_0)
 
 
 class InferredDataset(CSVDataset):
