@@ -71,7 +71,7 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
         a = target["forward_acceleration"]
         if PostProcessor.acceleration_invalid(a):
             a = a_0
-        return {"speed": s_0 + .0005 * (a_0 + a) * (t - t_0)}
+        return {"speed": abs(s_0 + .0005 * (a_0 + a) * (t - t_0))}
 
 
 class SpeedInferenceByMileages(SpeedInferenceBase):
@@ -91,7 +91,7 @@ class SpeedInferenceByMileages(SpeedInferenceBase):
         return None if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
                         PostProcessor.time_invalid(t) or PostProcessor.mileage_invalid(d_0) or
                         PostProcessor.mileage_invalid(d)) else {
-            "speed": 3600000 * abs(d - d_0) / (t - t_0)
+            "speed": abs(3600000 * (d - d_0) / (t - t_0))
         }
 
 
@@ -131,8 +131,8 @@ class SpeedInferenceByGPSPositions(SpeedInferenceBase):
                         PostProcessor.time_invalid(t) or PostProcessor.latitude_invalid(lat_0) or
                         PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon_0) or
                         PostProcessor.longitude_invalid(lon)) else {
-            "speed": 3600 * _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2) / (
-                    t - t_0)
+            "speed": abs(3600 * _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2)
+                         / (t - t_0))
         }
 
 
