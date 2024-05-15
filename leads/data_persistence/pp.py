@@ -19,20 +19,23 @@ class PostProcessor(object):
         self._end_time: float | None = None
         self._min_speed: float | None = None
         self._max_speed: float | None = None
-        self._avg_speed: float | None = None
+        self._start_mileage: float | None = None
+        self._end_mileage: float | None = None
         self._gps_valid_count: int = 0
         self._gps_invalid_rows: list[int] = []
         self._min_lat: float | None = None
         self._min_lon: float | None = None
 
-        # processor variables
-        self._laps: list[tuple[int, int]] = []
+        # process variables
+        self._laps: list[tuple[int, int, float]] = []
 
         # unit variables (not reusable)
         self._t: float | None = None
         self._lap_start: int | None = None
         self._lap_start_time: float | None = None
         self._lap_end_time: float | None = None
+        self._lap_start_mileage: float | None = None
+        self._lap_end_mileage: float | None = None
         self._x: list[float] = []
         self._y: list[float] = []
         self._d: list[float] = []
@@ -43,22 +46,28 @@ class PostProcessor(object):
 
     @staticmethod
     def speed_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o < 0 or o != o
+        return not isinstance(o, float) or o != o or o < 0
+
+    @staticmethod
+    def mileage_invalid(o: _Any) -> bool:
+        return not isinstance(o, float) or o != o or o < 0
 
     @staticmethod
     def latitude_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o < -90 or o > 90
+        return not isinstance(o, float) or o != o or not -90 < o < 90
 
     @staticmethod
     def longitude_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o < -180 or o > 180
+        return not isinstance(o, float) or o != o or not -180 < o < 180
 
     def bake(self) -> None:
         def unit(row: dict[str, _Any], i: int) -> None:
             self._read_rows += 1
             self._t = row["t"]
             speed = row["speed"]
-            if PostProcessor.time_invalid(self._t) or PostProcessor.speed_invalid(speed):
+            mileage = row["mileage"]
+            if PostProcessor.time_invalid(self._t) or PostProcessor.speed_invalid(
+                    speed) or PostProcessor.mileage_invalid(mileage):
                 self._invalid_rows.append(i)
                 return
             if self._start_time is None:
@@ -67,8 +76,9 @@ class PostProcessor(object):
                 self._min_speed = speed
             if self._max_speed is None or speed > self._max_speed:
                 self._max_speed = speed
-            self._avg_speed = speed if self._avg_speed is None else (self._avg_speed * self._valid_rows + speed) / (
-                    self._valid_rows + 1)
+            if self._lap_start_mileage is None:
+                self._start_mileage = mileage
+            self._end_mileage = mileage
             lat = row["latitude"]
             lon = row["longitude"]
             if not row["gps_valid"] or PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon):
@@ -87,6 +97,8 @@ class PostProcessor(object):
     def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str]:
         if self._read_rows == 0:
             raise LookupError("Not baked")
+        if self._valid_rows == 0:
+            raise RuntimeError(f"Baked {self._valid_rows} / {self._read_rows} rows")
         start_time, end_time = int(self._start_time * .001), int(self._end_time * .001)
         return (
             f"Baked {self._valid_rows} / {self._read_rows} ROWS",
@@ -97,7 +109,7 @@ class PostProcessor(object):
             f"Duration: {(duration := end_time - start_time) // 60} MIN {duration % 60} SEC",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
-            f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
+            f"v\u2090\u1D65\u1D67: {3600 * (self._end_mileage - self._start_mileage) / duration:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows:.2f}%",
             f"GPS Skipped Rows: {self._gps_invalid_rows}"
         )
@@ -155,6 +167,10 @@ class PostProcessor(object):
             t = row["t"]
             if self._lap_start_time is None:
                 self._lap_start_time = t
+            mileage = row["mileage"]
+            if self._lap_start_mileage is None:
+                self._lap_start_mileage = mileage
+            self._lap_end_mileage = mileage
             lat = row["latitude"]
             lon = row["longitude"]
             p = (round(dlat2meters(lat - self._min_lat) / vehicle_hit_box),
@@ -165,14 +181,20 @@ class PostProcessor(object):
                 index = -1
             if 0 < index < .5 * len(path) and self._lap_start is not None and (
                     t - self._lap_start_time) * .001 >= min_lap_time:
-                self._laps.append((self._lap_start, i))
+                self._laps.append((self._lap_start, i, self._lap_end_mileage - self._lap_start_mileage))
                 path.clear()
                 self._lap_start = None
             path.append(p)
 
         self.foreach(unit, True, True)
         if len(self._laps) == 0:
-            self._laps.append((0, self._read_rows))
+            self._laps.append((0, self._read_rows, self._lap_end_mileage))
 
     def num_laps(self) -> int:
         return len(self._laps)
+
+    def process_results(self) -> tuple[str, str]:
+        return (
+            f"Number of Laps Detected: {len(self._laps)}",
+            f"Call `draw_lap()` for further information."
+        )
