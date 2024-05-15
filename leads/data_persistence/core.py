@@ -4,9 +4,9 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
     override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
     Generator as _Generator, Any as _Any
 
-from leads.data_persistence.computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
-    DataFrame as _DataFrame, TextFileReader as _TextFileReader
 from leads.types import Compressor as _Compressor
+from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
+    DataFrame as _DataFrame, TextFileReader as _TextFileReader
 
 T = _TypeVar("T")
 
