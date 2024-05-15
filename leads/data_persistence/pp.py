@@ -4,12 +4,12 @@ from typing import Any as _Any, Callable as _Callable
 from matplotlib.pyplot import scatter as _scatter, show as _show, title as _title, colorbar as _colorbar
 
 from leads.data import dlat2meters, dlon2meters
-from leads.data_persistence.core import Dataset
+from leads.data_persistence.core import CSVDataset
 
 
 class PostProcessor(object):
-    def __init__(self, dataset: Dataset) -> None:
-        self._dataset: Dataset = dataset
+    def __init__(self, dataset: CSVDataset) -> None:
+        self._dataset: CSVDataset = dataset
 
         # baking variables
         self._read_rows: int = 0

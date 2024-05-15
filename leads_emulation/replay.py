@@ -1,13 +1,13 @@
 from typing import override as _override, Iterator as _Iterator, Any as _Any
 
 from leads import Controller as _Controller, DataContainer as _DataContainer
-from leads.data_persistence import Dataset as _Dataset
+from leads.data_persistence import CSVDataset as _CSVDataset
 
 
 class ReplayController(_Controller):
-    def __init__(self, dataset: _Dataset) -> None:
+    def __init__(self, dataset: _CSVDataset) -> None:
         super().__init__()
-        self._dataset: _Dataset = dataset
+        self._dataset: _CSVDataset = dataset
         self._iterator: _Iterator[dict[str, _Any]] = iter(dataset)
 
     @_override

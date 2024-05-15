@@ -193,7 +193,7 @@ class CSV(object):
         self._file.close()
 
 
-class Dataset(_Iterable[dict[str, _Any]]):
+class CSVDataset(_Iterable[dict[str, _Any]]):
     def __init__(self, file: str, chunk_size: int = 100) -> None:
         self._file: str = file
         self._chunk_size: int = chunk_size
