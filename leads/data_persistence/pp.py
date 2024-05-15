@@ -134,9 +134,13 @@ class PostProcessor(object):
                 continue
             do(row, i)
 
-    def draw_lap(self, lap_index: int = 0) -> None:
-        def unit(row: dict[str, _Any], i: int) -> None:
-            if i < (lap := self._laps[lap_index])[0] or i > lap[1]:
+    def draw_lap(self, lap_index: int = -1) -> None:
+        if lap_index < 0:
+            for i in range(len(self._laps)):
+                self.draw_lap(i)
+
+        def unit(row: dict[str, _Any], index: int) -> None:
+            if index < (lap := self._laps[lap_index])[0] or index > lap[1]:
                 return
             t = row["t"]
             if self._lap_start_time is None:
