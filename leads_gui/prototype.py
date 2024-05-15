@@ -202,7 +202,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         Attempt to run.
         :return: `True`: active; `False`: deprecated
         """
-        if self._loops == 0:
+        if not self._loops:
             return False
         if (t := _time()) - self._last_run >= self._period * .001:
             self.do()
