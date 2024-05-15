@@ -164,7 +164,9 @@ class CSVCollection(object):
         self._file: _TextIO = open(file, "w") if isinstance(file, str) else file
         self._d: int = len(header)
         self._header: tuple[str, ...] = header
-        if len(columns) != self._d:
+        if (d := self._d - len(columns)) >= 0:
+            columns += (None,) * d
+        else:
             raise ValueError("Unmatched columns and header")
         self._columns: tuple[DataPersistence | None, ...] = columns
         self._i: int = 0
