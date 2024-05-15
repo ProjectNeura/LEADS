@@ -2,7 +2,7 @@ from json import dumps as _dumps
 from time import time as _time
 from typing import override as _override, Any as _Any
 
-from numpy import deg2rad as _deg2rad, cos as _cos, sqrt as _sqrt, sin as _sin
+from numpy import radians as _radians, cos as _cos
 
 
 class Serializable(object):
@@ -74,8 +74,8 @@ class DataContainer(Serializable):
 
 
 def dlat2meters(dlat: float) -> float:
-    return 1111.3292 - 5.5982 * _cos(d := 2 * _deg2rad(dlat)) + .01175 * _cos(2 * d) - .000023 * _cos(3 * d)
+    return dlat * 111320
 
 
 def dlon2meters(dlon: float) -> float:
-    return .01 * _deg2rad(6378137 * _cos(d := _deg2rad(dlon)) / _sqrt(1 - .0066943799901378 * _sin(d) ** 2))
+    return _radians(6378137 * dlon * _cos(_radians(dlon)))
