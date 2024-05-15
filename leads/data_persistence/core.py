@@ -198,10 +198,15 @@ class Dataset(_Iterable[dict[str, _Any]]):
         self._file: str = file
         self._chunk_size: int = chunk_size
         self._csv: _TextFileReader | None = None
+        self._header: tuple[str, ...] | None = None
 
     def require_loaded(self) -> None:
-        if not self._csv:
+        if not self._csv or not self._header:
             self.load()
+
+    def read_header(self) -> tuple[str, ...]:
+        self.require_loaded()
+        return self._header
 
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
@@ -215,6 +220,11 @@ class Dataset(_Iterable[dict[str, _Any]]):
                 yield chunk.iloc[i].to_dict()
 
     def load(self) -> None:
+        if self._csv:
+            self._csv.close()
+        header_csv = _read_csv(self._file, chunksize=1)
+        self._header = tuple(header_csv.get_chunk().columns)
+        header_csv.close()
         self._csv = _read_csv(self._file, chunksize=self._chunk_size, low_memory=False)
 
 
