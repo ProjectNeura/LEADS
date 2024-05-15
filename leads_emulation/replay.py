@@ -20,3 +20,7 @@ class ReplayController(_Controller):
         dc = _DataContainer(**d)
         dc._time_stamp = t
         return dc
+
+    @_override
+    def close(self) -> None:
+        self._dataset.close()

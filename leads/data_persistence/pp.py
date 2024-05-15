@@ -198,3 +198,6 @@ class PostProcessor(object):
             f"Number of Laps Detected: {len(self._laps)}",
             f"Call `draw_lap()` for further information."
         )
+
+    def close(self) -> None:
+        self._dataset.close()

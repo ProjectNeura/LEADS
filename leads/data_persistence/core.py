@@ -234,6 +234,10 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
             csv.write_frame(*tuple(row.values()))
         csv.close()
 
+    def close(self) -> None:
+        if self._csv:
+            self._csv.close()
+
 
 DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str] = (
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
