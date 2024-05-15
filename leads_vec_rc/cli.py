@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
-from leads.data_persistence import DataPersistence, Vector, CSVCollection, DEFAULT_HEADER
+from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER
 
 config = require_config()
 if not exists(config.data_dir):
@@ -24,8 +24,8 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", DEFAULT_HEADER,
-                    time_stamp_record, voltage_record, speed_record)
+csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", DEFAULT_HEADER,
+          time_stamp_record, voltage_record, speed_record)
 
 
 def retry(service: Service) -> Client:

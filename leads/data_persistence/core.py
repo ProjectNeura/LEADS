@@ -159,7 +159,7 @@ class Vector(_Sequence[E], _Iterable[E], _Generic[E]):
         return self._compare(other, _ge)
 
 
-class CSVCollection(object):
+class CSV(object):
     def __init__(self, file: str | _TextIO, header: tuple[str, ...], *columns: DataPersistence | None) -> None:
         self._file: _TextIO = open(file, "w") if isinstance(file, str) else file
         self._d: int = len(header)
