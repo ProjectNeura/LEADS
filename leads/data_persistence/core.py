@@ -198,7 +198,7 @@ class Dataset(_Iterable[dict[str, _Any]]):
         self._csv: _TextFileReader | None = None
 
     def require_loaded(self) -> None:
-        if self._csv is None:
+        if not self._csv:
             self.load()
 
     @_override
