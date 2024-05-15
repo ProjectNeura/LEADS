@@ -6,6 +6,7 @@ except ImportError:
 mean: type[_np.mean] = _np.mean
 array: type[_np.array] = _np.array
 norm: type[_np.linalg.norm] = _np.linalg.norm
+sqrt: type[_np.sqrt] = _np.sqrt
 
 import pandas as _pandas
 

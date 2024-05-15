@@ -1,14 +1,202 @@
+from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from datetime import datetime as _datetime
-from typing import Any as _Any, Callable as _Callable
+from typing import Any as _Any, Callable as _Callable, override as _override, Generator as _Generator
 
 from matplotlib.pyplot import scatter as _scatter, show as _show, title as _title, colorbar as _colorbar
 
 from leads.data import dlat2meters, dlon2meters
-from leads.data_persistence.core import CSVDataset
+from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
+from ._computational import sqrt as _sqrt
+
+
+class Inference(object, metaclass=_ABCMeta):
+    def __init__(self, required_depth: tuple[int, int] = (0, 0)) -> None:
+        self._required_depth: tuple[int, int] = required_depth
+
+    def depth(self) -> tuple[int, int]:
+        return self._required_depth
+
+    @_abstractmethod
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        raise NotImplementedError
+
+
+class SpeedInferenceBase(Inference, metaclass=_ABCMeta):
+    @staticmethod
+    def skip(row: dict[str, _Any]) -> bool:
+        return not PostProcessor.speed_invalid(row["speed"])
+
+
+class SafeSpeedInference(SpeedInferenceBase):
+    """
+    Infer the speed based on the front wheel speed or the rear wheel speed.
+
+    v = min(fws, rws)
+    """
+
+    def __init__(self) -> None:
+        super().__init__((0, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        row = rows[0]
+        if SpeedInferenceBase.skip(row):
+            return
+        speed = None
+        if not PostProcessor.speed_invalid(s := row["front_wheel_speed"]):
+            speed = s
+        if not PostProcessor.speed_invalid(s := row["rear_wheel_speed"]) and (speed is None or s < speed):
+            speed = s
+        return None if speed is None else {"speed": speed}
+
+
+class SpeedInferenceByMileages(SpeedInferenceBase):
+    """
+    Infer the speed based on the mileages.
+
+    v = ds/dt
+    """
+
+    def __init__(self) -> None:
+        super().__init__((-1, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        base, target = rows
+        t_0, t, d_0, d = base["t"], target["t"], base["mileage"], target["mileage"]
+        return None if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
+                        PostProcessor.time_invalid(t) or PostProcessor.mileage_invalid(d_0) or
+                        PostProcessor.mileage_invalid(d)) else {
+            "speed": 3600000 * abs(d - d_0) / (t - t_0)
+        }
+
+
+class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
+    """
+    Infer the speed based on the GPS ground speed.
+    """
+
+    def __init__(self) -> None:
+        super().__init__((0, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        row = rows[0]
+        ground_speed = row["gps_ground_speed"]
+        return None if SpeedInferenceBase.skip(row) or PostProcessor.speed_invalid(ground_speed) else {
+            "speed": ground_speed
+        }
+
+
+class SpeedInferenceByGPSPositions(SpeedInferenceBase):
+    """
+    Infer the speed based on the GPS positions.
+
+    v = ds/dt
+    """
+
+    def __init__(self) -> None:
+        super().__init__((-1, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        base, target = rows
+        t_0, t = base["t"], target["t"]
+        lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], target["longitude"]
+        return None if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
+                        PostProcessor.time_invalid(t) or PostProcessor.latitude_invalid(lat_0) or
+                        PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon_0) or
+                        PostProcessor.longitude_invalid(lon)) else {
+            "speed": 3600 * _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2) / (
+                    t - t_0)
+        }
+
+
+class SpeedInferenceByAcceleration(SpeedInferenceBase):
+    """
+    Infer the speed based on the acceleration.
+
+    v = ∫a(t)dt
+    """
+
+    def __init__(self):
+        super().__init__((-1, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        base, target = rows
+        t_0, t, s_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
+        if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
+                PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(s_0) or
+                PostProcessor.acceleration_invalid(a_0)):
+            return
+        a = target["forward_acceleration"]
+        if PostProcessor.acceleration_invalid(a):
+            a = a_0
+        return s_0 + .0005 * (a_0 + a) * (t - t_0)
+
+
+class InferredDataset(CSVDataset):
+    _raw_data: list[dict[str, _Any]] = []
+    _inferred_data: list[dict[str, _Any]] = []
+
+    @staticmethod
+    def merge(raw: dict[str, _Any], inferred: dict[str, _Any]) -> None:
+        """
+        Merge the inferred data to the raw data. Overwrite if conflicts. It directly alters the raw data object.
+        :param raw: the raw data
+        :param inferred: the difference data
+        """
+        for key in inferred.keys():
+            raw[key] = inferred[key]
+
+    def complete(self, *inferences: Inference, enhanced: bool = False) -> None:
+        """
+        Infer the missing values in the dataset.
+        :param inferences: inferences to apply
+        :param enhanced: True: use inferred data to infer other data; False: use only raw data to infer other data
+        """
+        if DEFAULT_HEADER in self.read_header():
+            raise KeyError("Your dataset must include the default header")
+        self.require_loaded()
+        for row in super().__iter__():
+            self._raw_data.append(row)
+        length = len(self._raw_data)
+        self._inferred_data = [{} for _ in range(length)]
+        for i in range(length):
+            for inference in inferences:
+                p, f = inference.depth()
+                p, f = i + p, i + f + 1
+                d = []
+                if 0 <= p < length and 0 <= f <= length:
+                    for j in range(p, f):
+                        row = self._raw_data[j]
+                        if enhanced:
+                            InferredDataset.merge(row, self._inferred_data[j])
+                        d.append(row)
+                    if (r := inference.complete(*d)) is not None:
+                        InferredDataset.merge(self._inferred_data[i], r)
+
+    def __len__(self) -> int:
+        return len(self._raw_data)
+
+    @_override
+    def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
+        for i in range(len(self._raw_data)):
+            InferredDataset.merge(row := self._raw_data[i], self._inferred_data[i])
+            yield row
+
+    @_override
+    def close(self) -> None:
+        super().close()
+        self._raw_data.clear()
+        self._inferred_data.clear()
 
 
 class PostProcessor(object):
     def __init__(self, dataset: CSVDataset) -> None:
+        if DEFAULT_HEADER in dataset.read_header():
+            raise KeyError("Your dataset must include the default header")
         self._dataset: CSVDataset = dataset
 
         # baking variables
@@ -47,6 +235,10 @@ class PostProcessor(object):
     @staticmethod
     def speed_invalid(o: _Any) -> bool:
         return not isinstance(o, float) or o != o or o < 0
+
+    @staticmethod
+    def acceleration_invalid(o: _Any) -> bool:
+        return not isinstance(o, float) or o != o
 
     @staticmethod
     def mileage_invalid(o: _Any) -> bool:
