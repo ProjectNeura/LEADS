@@ -6,12 +6,6 @@ except ImportError:
 mean: type[_np.mean] = _np.mean
 array: type[_np.array] = _np.array
 norm: type[_np.linalg.norm] = _np.linalg.norm
-sin: type[_np.sin] = _np.sin
-arcsin: type[_np.arcsin] = _np.arcsin
-cos: type[_np.cos] = _np.cos
-arccos: type[_np.arccos] = _np.arccos
-tan: type[_np.tan] = _np.tan
-arctan: type[_np.arctan] = _np.arctan
 
 import pandas as _pandas
 
