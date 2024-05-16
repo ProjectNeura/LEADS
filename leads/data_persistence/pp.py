@@ -409,7 +409,7 @@ class PostProcessor(object):
         return (
             f"Baked {self._valid_rows_count} / {self._read_rows_count} ROWS",
             f"Baked Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
-            f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 10)}",
+            f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 5)}",
             f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"Duration: {(duration := int(self._duration * .001)) // 60} MIN {duration % 60} SEC",
@@ -418,7 +418,7 @@ class PostProcessor(object):
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows_count:.2f}%",
-            f"GPS Skipped Rows: {self._gps_invalid_rows}"
+            f"GPS Skipped Rows: {PostProcessor._hide_others(self._gps_invalid_rows, 5)}"
         )
 
     def erase_unit_cache(self) -> None:
