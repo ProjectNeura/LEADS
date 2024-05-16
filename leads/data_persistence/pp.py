@@ -1,3 +1,8 @@
+from importlib.util import find_spec as _find_spec
+
+if not _find_spec("matplotlib"):
+    raise ImportError("Please install `matplotlib` to run this module\n>>>pip install matplotlib")
+
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from datetime import datetime as _datetime
 from typing import Any as _Any, Callable as _Callable, override as _override, Generator as _Generator, \
