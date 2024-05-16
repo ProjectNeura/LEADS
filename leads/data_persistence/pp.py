@@ -285,9 +285,9 @@ class PostProcessor(object):
         self._read_rows_count: int = 0
         self._valid_rows_count: int = 0
         self._invalid_rows: list[int] = []
-        self._start_time: float | None = None
-        self._end_time: float | None = None
-        self._duration: float | None = None
+        self._start_time: int | None = None
+        self._end_time: int | None = None
+        self._duration: int | None = None
         self._min_speed: float | None = None
         self._max_speed: float | None = None
         self._avg_speed: float | None = None
@@ -300,14 +300,14 @@ class PostProcessor(object):
         self._min_lon: float | None = None
 
         # process variables
-        self._laps: list[tuple[int, int, float, float, float]] = []
-        self._max_lap_duration: float | None = None
+        self._laps: list[tuple[int, int, int, float, float]] = []
+        self._max_lap_duration: int | None = None
         self._max_lap_distance: float | None = None
         self._max_lap_avg_speed: float | None = None
 
         # unit variables (not reusable)
         self._lap_start: int | None = None
-        self._lap_start_time: float | None = None
+        self._lap_start_time: int | None = None
         self._lap_start_mileage: float | None = None
         self._x: list[float] = []
         self._y: list[float] = []
@@ -353,9 +353,10 @@ class PostProcessor(object):
         """
         Prepare the prerequisites for `process()`.
         """
+
         def unit(row: dict[str, _Any], i: int) -> None:
             self._read_rows_count += 1
-            t = row["t"]
+            t = int(row["t"])
             speed = row["speed"]
             mileage = row["mileage"]
             if PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(
@@ -444,7 +445,7 @@ class PostProcessor(object):
         def unit(row: dict[str, _Any], index: int) -> None:
             if index < (lap := self._laps[lap_index])[0] or index > lap[1]:
                 return
-            t = row["t"]
+            t = int(row["t"])
             if self._lap_start_time is None:
                 self._lap_start_time = t
             self._lap_end_time = t
@@ -493,18 +494,48 @@ class PostProcessor(object):
         _ylabel("% / max")
         _show()
 
-    def process(self, vehicle_hit_box: float = 3, min_lap_time: float = 30) -> None:
-        path = []
+    def process(self, lap_time_assertions: _Sequence[float] | None = None, vehicle_hit_box: float = 3,
+                min_lap_time: float = 30) -> None:
+        """
+        Split the laps.
+        :param lap_time_assertions: the manually timed laps in seconds
+        :param vehicle_hit_box: the vehicle hit box in meters
+        :param min_lap_time: the minimum lap time in seconds
+        :return:
+        """
+        asserted = lap_time_assertions is not None
 
-        def unit(row: dict[str, _Any], i: int) -> None:
+        def shared_pre(row: dict[str, _Any], i: int) -> tuple[int, float, float]:
             if self._lap_start is None:
                 self._lap_start = i
-            t = row["t"]
+            t = int(row["t"])
             if self._lap_start_time is None:
                 self._lap_start_time = t
             mileage = row["mileage"]
             if self._lap_start_mileage is None:
                 self._lap_start_mileage = mileage
+            return (dt := t - self._lap_start_time), (
+                ds := mileage - self._lap_start_mileage), 3600000 * ds / dt if dt else 0
+
+        def shared_post(duration: float, distance: float, avg_speed: float) -> None:
+            if self._max_lap_duration is None or duration > self._max_lap_duration:
+                self._max_lap_duration = duration
+            if self._max_lap_distance is None or distance > self._max_lap_distance:
+                self._max_lap_distance = distance
+            if self._max_lap_avg_speed is None or avg_speed > self._max_lap_avg_speed:
+                self._max_lap_avg_speed = avg_speed
+
+        def asserted_unit(row: dict[str, _Any], i: int) -> None:
+            duration, distance, avg_speed = shared_pre(row, i)
+            next_lap_index = len(self._laps)
+            if next_lap_index < len(lap_time_assertions) and duration >= lap_time_assertions[next_lap_index] * 1000:
+                shared_post(duration, distance, avg_speed)
+                self._laps.append((self._lap_start, i, duration, distance, avg_speed))
+                self.erase_unit_cache()
+
+        path = []
+
+        def unit(row: dict[str, _Any], i: int) -> None:
             lat = row["latitude"]
             lon = row["longitude"]
             p = (round(dlat2meters(lat - self._min_lat) / vehicle_hit_box),
@@ -513,29 +544,17 @@ class PostProcessor(object):
                 index = path.index(p)
             except ValueError:
                 index = -1
-            duration = t - self._lap_start_time
-            distance = mileage - self._lap_start_mileage
-            if (0 < index < .5 * len(path) and self._lap_start is not None and
-                    duration >= min_lap_time * 1000 and
-                    distance * 1000 > vehicle_hit_box):
-                avg_speed = 3600000 * distance / duration
-                if self._max_lap_duration is None or duration > self._max_lap_duration:
-                    self._max_lap_duration = duration
-                if self._max_lap_distance is None or distance > self._max_lap_distance:
-                    self._max_lap_distance = distance
-                if self._max_lap_avg_speed is None or avg_speed > self._max_lap_avg_speed:
-                    self._max_lap_avg_speed = avg_speed
+            duration, distance, avg_speed = shared_pre(row, i)
+            if (0 < index < .5 * len(path) and self._lap_start is not None and duration >= min_lap_time * 1000 and
+                    distance * 2000 > vehicle_hit_box):
+                shared_post(duration, distance, avg_speed)
                 self._laps.append((self._lap_start, i, duration, distance, avg_speed))
                 path.clear()
                 self.erase_unit_cache()
-            path.append(p)
+            else:
+                path.append(p)
 
-        self.foreach(unit, True, True)
-        if not self._laps:
-            self._max_lap_duration = self._duration
-            self._max_lap_distance = self._distance
-            self._max_lap_avg_speed = self._avg_speed
-            self._laps.append((0, self._read_rows_count, self._duration, self._distance, self._avg_speed))
+        self.foreach(asserted_unit if asserted else unit, True, not asserted)
 
     def num_laps(self) -> int:
         return len(self._laps)
