@@ -152,15 +152,13 @@ class InferredDataset(CSVDataset):
 
     def _complete(self, inferences: tuple[Inference, ...], enhanced: bool, backward: bool) -> None:
         length = len(self._raw_data)
-        for i in range(length):
-            if backward:
-                i = length - i - 1
+        for i in range(length - 1, -1, -1) if backward else range(length):
             for inference in inferences:
                 p, f = inference.depth()
-                p, f = i + p, i + f + 1
+                p, f = (i - p, i - f - 1) if backward else (i + p, i + f + 1)
                 d = []
-                if 0 <= p < length and 0 <= f <= length:
-                    for j in range(p, f):
+                if (-1 < p < length and -1 <= f < length - 1) if backward else (0 <= p < length and 0 < f <= length):
+                    for j in range(p, f, -1 if backward else 1):
                         row = self._raw_data[j]
                         if enhanced:
                             InferredDataset.merge(row, self._inferred_data[j])
