@@ -57,7 +57,7 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
     v = ∫a(t)dt
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__((-1, 0))
 
     @_override
