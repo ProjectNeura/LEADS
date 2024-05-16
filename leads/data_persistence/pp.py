@@ -298,12 +298,12 @@ class PostProcessor(object):
         self._gps_invalid_rows: list[int] = []
         self._min_lat: float | None = None
         self._min_lon: float | None = None
-        self._max_lap_duration: float | None = None
-        self._max_lap_distance: float | None = None
-        self._max_lap_avg_speed: float | None = None
 
         # process variables
         self._laps: list[tuple[int, int, float, float, float]] = []
+        self._max_lap_duration: float | None = None
+        self._max_lap_distance: float | None = None
+        self._max_lap_avg_speed: float | None = None
 
         # unit variables (not reusable)
         self._lap_start: int | None = None
