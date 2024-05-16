@@ -63,15 +63,15 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
-        t_0, t, s_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
+        t_0, t, v_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
         if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(s_0) or
+                PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(v_0) or
                 PostProcessor.acceleration_invalid(a_0)):
             return
         a = target["forward_acceleration"]
         if PostProcessor.acceleration_invalid(a):
             a = a_0
-        return {"speed": abs(s_0 + .0005 * (a_0 + a) * (t - t_0))}
+        return {"speed": abs(v_0 + .0018 * (a_0 + a) * (t - t_0))}
 
 
 class SpeedInferenceByMileage(SpeedInferenceBase):
