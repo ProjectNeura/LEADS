@@ -1,6 +1,7 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from datetime import datetime as _datetime
-from typing import Any as _Any, Callable as _Callable, override as _override, Generator as _Generator
+from typing import Any as _Any, Callable as _Callable, override as _override, Generator as _Generator, \
+    Sequence as _Sequence
 
 from matplotlib.pyplot import scatter as _scatter, show as _show, title as _title, colorbar as _colorbar
 
@@ -257,8 +258,8 @@ class PostProcessor(object):
         self._dataset: CSVDataset = dataset
 
         # baking variables
-        self._read_rows: int = 0
-        self._valid_rows: int = 0
+        self._read_rows_count: int = 0
+        self._valid_rows_count: int = 0
         self._invalid_rows: list[int] = []
         self._start_time: float | None = None
         self._end_time: float | None = None
@@ -315,7 +316,7 @@ class PostProcessor(object):
 
     def bake(self) -> None:
         def unit(row: dict[str, _Any], i: int) -> None:
-            self._read_rows += 1
+            self._read_rows_count += 1
             t = row["t"]
             speed = row["speed"]
             mileage = row["mileage"]
@@ -343,28 +344,33 @@ class PostProcessor(object):
                 if self._min_lon is None or lon < self._min_lon:
                     self._min_lon = lon
                 self._gps_valid_count += 1
-            self._valid_rows += 1
+            self._valid_rows_count += 1
 
         self.foreach(unit, False)
         self._avg_speed = 3600000 * (self._end_mileage - self._start_mileage) / (self._end_time - self._start_time)
 
+    @staticmethod
+    def _hide_others(seq: _Sequence[_Any], limit: int) -> str:
+        return f"[{", ".join(map(str, seq[:limit]))}, and {diff} others]" if (diff := len(seq) - limit) > 0 else str(
+            seq)
+
     def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str]:
-        if self._read_rows == 0:
+        if self._read_rows_count == 0:
             raise LookupError("Not baked")
-        if self._valid_rows == 0:
-            raise RuntimeError(f"Baked {self._valid_rows} / {self._read_rows} rows")
+        if self._valid_rows_count == 0:
+            raise RuntimeError(f"Baked {self._valid_rows_count} / {self._read_rows_count} rows")
         start_time, end_time = int(self._start_time * .001), int(self._end_time * .001)
         return (
-            f"Baked {self._valid_rows} / {self._read_rows} ROWS",
-            f"Baked Rate: {100 * self._valid_rows / self._read_rows:.2f}%",
-            f"Skipped Rows: {self._invalid_rows}",
+            f"Baked {self._valid_rows_count} / {self._read_rows_count} ROWS",
+            f"Baked Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
+            f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 10)}",
             f"Start Time: {_datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S")}",
             f"Duration: {(duration := end_time - start_time) // 60} MIN {duration % 60} SEC",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
-            f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows:.2f}%",
+            f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows_count:.2f}%",
             f"GPS Skipped Rows: {self._gps_invalid_rows}"
         )
 
@@ -446,7 +452,7 @@ class PostProcessor(object):
 
         self.foreach(unit, True, True)
         if len(self._laps) == 0:
-            self._laps.append((0, self._read_rows, self._lap_end_mileage))
+            self._laps.append((0, self._read_rows_count, self._lap_end_mileage))
 
     def num_laps(self) -> int:
         return len(self._laps)
