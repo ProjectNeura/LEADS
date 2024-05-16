@@ -221,7 +221,10 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
             except StopIteration:
                 break
             for i in range(len(chunk)):
-                yield chunk.iloc[i].to_dict()
+                r = chunk.iloc[i].to_dict()
+                if self._contains_index:
+                    r.pop("index")
+                yield r
         self._csv.close()
         self._csv = None
 
@@ -240,7 +243,7 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
         self.require_loaded()
         csv = CSV(file, self._header)
         for row in self:
-            csv.write_frame(*(tuple(row.values())[1:] if self._contains_index else row.values()))
+            csv.write_frame(*row.values())
         csv.close()
 
     def close(self) -> None:
