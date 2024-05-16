@@ -277,14 +277,28 @@ class InferredDataset(CSVDataset):
         self._raw_data = tuple(raw_data)
         self._inferred_data = [{} for _ in range(len(raw_data))]
 
-    def complete(self, *inferences: Inference, enhanced: bool = False) -> None:
+    def assume_initial_zeros(self) -> None:
+        row = self._raw_data[0]
+        injection = {}
+        if PostProcessor.speed_invalid(row["speed"]):
+            injection["speed"] = 0
+        if PostProcessor.acceleration_invalid(row["forward_acceleration"]):
+            injection["forward_acceleration"] = 0
+        if PostProcessor.mileage_invalid(row["mileage"]):
+            injection["mileage"] = 0
+        InferredDataset.merge(row, injection)
+
+    def complete(self, *inferences: Inference, enhanced: bool = False, assume_initial_zeros: bool = True) -> None:
         """
         Infer the missing values in the dataset.
         :param inferences: the inferences to apply
         :param enhanced: True: use inferred data to infer other data; False: use only raw data to infer other data
+        :param assume_initial_zeros: True: reasonably set any missing data in the first row to zero; False: no change
         """
         if DEFAULT_HEADER in self.read_header():
             raise KeyError("Your dataset must include the default header")
+        if assume_initial_zeros:
+            self.assume_initial_zeros()
         self._complete(inferences, enhanced, False)
         self._complete(inferences, enhanced, True)
 
