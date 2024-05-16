@@ -461,10 +461,13 @@ class PostProcessor(object):
         self._x.append(0)
         self._y.append(0)
         self._d.append(self._max_speed)
+        _figure(figsize=(6, 5))
         _scatter(self._x, self._y, c=self._d, cmap="hot_r")
         duration = int(self._laps[lap_index][2] * .001)
         _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
-        _colorbar().ax.hlines(self._laps[lap_index][4], 0, 1)
+        cb = _colorbar()
+        cb.set_label("Speed (KM / H)")
+        cb.ax.hlines(self._laps[lap_index][4], 0, 1)
         _show()
 
     def draw_comparison_of_laps(self, width: float = .3) -> None:
@@ -485,14 +488,14 @@ class PostProcessor(object):
             x2.append(i + 2 * width)
             x_ticks.append(f"L{i}")
             i += 1
-        _figure(figsize=(2.5 * _sqrt(len(self._laps)), 5))
+        _figure(figsize=(5 * _sqrt(len(self._laps)), 5))
         _bar(x0, durations, width, label="Duration")
         _bar(x1, distances, width, label="Distance")
         _bar(x2, avg_speeds, width, label="Average Speed")
         _xticks(x1, x_ticks)
         _legend()
         _xlabel("Lap")
-        _ylabel("% / max")
+        _ylabel("Proportion (% / max)")
         _show()
 
     def process(self, lap_time_assertions: _Sequence[float] | None = None, vehicle_hit_box: float = 3,
