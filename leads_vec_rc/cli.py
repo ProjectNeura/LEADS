@@ -59,7 +59,7 @@ class CommCallback(Callback):
             if config.save_data:
                 csv.write_frame(*(d[key] for key in csv.header()))
             else:
-                time_stamp_record.append(d["t"])
+                time_stamp_record.append(int(d["t"]))
                 speed_record.append(d["speed"])
                 voltage_record.append(d["voltage"])
         except JSONDecodeError:
