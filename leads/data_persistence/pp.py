@@ -131,15 +131,14 @@ class SpeedInferenceByGPSPosition(SpeedInferenceBase):
                         PostProcessor.time_invalid(t) or PostProcessor.latitude_invalid(lat_0) or
                         PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon_0) or
                         PostProcessor.longitude_invalid(lon)) else {
-            "speed": abs(3600 * _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2)
-                         / (t - t_0))
+            "speed": abs(3600 * PostProcessor.distance(lat_0, lon_0, lat, lon) / (t - t_0))
         }
 
 
 class MileageInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not PostProcessor.speed_invalid(row["mileage"])
+        return not PostProcessor.mileage_invalid(row["mileage"])
 
 
 class MileageInferenceBySpeed(MileageInferenceBase):
@@ -163,6 +162,28 @@ class MileageInferenceBySpeed(MileageInferenceBase):
         if PostProcessor.speed_invalid(v):
             v = v_0
         return {"mileage": s_0 + .00000125 * (v_0 + v) * (t - t_0) / 9}
+
+
+class MileageInferenceByGPSPosition(MileageInferenceBase):
+    """
+    Infer the mileage based on the speed.
+
+    s = s_0 + Δs
+    """
+
+    def __init__(self) -> None:
+        super().__init__((-1, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        base, target = rows
+        s_0 = base["mileage"]
+        lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], base["longitude"]
+        return None if (MileageInferenceBase.skip(target) or PostProcessor.mileage_invalid(s_0) or
+                        PostProcessor.latitude_invalid(lat_0) or PostProcessor.latitude_invalid(lat) or
+                        PostProcessor.longitude_invalid(lon_0) or PostProcessor.longitude_invalid(lon)) else {
+            "mileage": s_0 + .001 * PostProcessor.distance(lat_0, lon_0, lat, lon)
+        }
 
 
 class InferredDataset(CSVDataset):
@@ -265,6 +286,10 @@ class PostProcessor(object):
         self._d: list[float] = []
 
     @staticmethod
+    def distance(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
+        return _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2)
+
+    @staticmethod
     def time_invalid(o: _Any) -> bool:
         return not isinstance(o, float) and not isinstance(o, int)
 
@@ -278,7 +303,7 @@ class PostProcessor(object):
 
     @staticmethod
     def mileage_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o != o or o < 0
+        return not isinstance(o, float) or o != o
 
     @staticmethod
     def latitude_invalid(o: _Any) -> bool:
