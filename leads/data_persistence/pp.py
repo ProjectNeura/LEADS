@@ -76,7 +76,7 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
 
 class SpeedInferenceByMileage(SpeedInferenceBase):
     """
-    Infer the speed based on the mileages.
+    Infer the speed based on the mileage.
 
     v = ds/dt
     """
@@ -114,7 +114,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
 
 class SpeedInferenceByGPSPosition(SpeedInferenceBase):
     """
-    Infer the speed based on the GPS positions.
+    Infer the speed based on the GPS position.
 
     v = ds/dt
     """
