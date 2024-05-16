@@ -179,7 +179,7 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         s_0 = base["mileage"]
-        lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], base["longitude"]
+        lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], target["longitude"]
         return None if (MileageInferenceBase.skip(target) or PostProcessor.mileage_invalid(s_0) or
                         PostProcessor.latitude_invalid(lat_0) or PostProcessor.latitude_invalid(lat) or
                         PostProcessor.longitude_invalid(lon_0) or PostProcessor.longitude_invalid(lon)) else {
