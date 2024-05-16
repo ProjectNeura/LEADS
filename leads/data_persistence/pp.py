@@ -267,25 +267,25 @@ class PostProcessor(object):
         self._invalid_rows: list[int] = []
         self._start_time: float | None = None
         self._end_time: float | None = None
+        self._duration: float | None = None
         self._min_speed: float | None = None
         self._max_speed: float | None = None
         self._avg_speed: float | None = None
         self._start_mileage: float | None = None
         self._end_mileage: float | None = None
+        self._distance: float | None = None
         self._gps_valid_count: int = 0
         self._gps_invalid_rows: list[int] = []
         self._min_lat: float | None = None
         self._min_lon: float | None = None
 
         # process variables
-        self._laps: list[tuple[int, int, float]] = []
+        self._laps: list[tuple[int, int, float, float]] = []
 
         # unit variables (not reusable)
         self._lap_start: int | None = None
         self._lap_start_time: float | None = None
-        self._lap_end_time: float | None = None
         self._lap_start_mileage: float | None = None
-        self._lap_end_mileage: float | None = None
         self._x: list[float] = []
         self._y: list[float] = []
         self._d: list[float] = []
@@ -351,26 +351,28 @@ class PostProcessor(object):
             self._valid_rows_count += 1
 
         self.foreach(unit, False)
-        self._avg_speed = 3600000 * (self._end_mileage - self._start_mileage) / (self._end_time - self._start_time)
+        self._duration = self._end_time - self._start_time
+        self._distance = self._end_mileage - self._start_mileage
+        self._avg_speed = 3600000 * self._distance / self._duration
 
     @staticmethod
     def _hide_others(seq: _Sequence[_Any], limit: int) -> str:
         return f"[{", ".join(map(str, seq[:limit]))}, and {diff} others]" if (diff := len(seq) - limit) > 0 else str(
             seq)
 
-    def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str]:
+    def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str, str]:
         if self._read_rows_count == 0:
             raise LookupError("Not baked")
         if self._valid_rows_count == 0:
             raise RuntimeError(f"Baked {self._valid_rows_count} / {self._read_rows_count} rows")
-        start_time, end_time = int(self._start_time * .001), int(self._end_time * .001)
         return (
             f"Baked {self._valid_rows_count} / {self._read_rows_count} ROWS",
             f"Baked Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
             f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 10)}",
-            f"Start Time: {_datetime.fromtimestamp(start_time).strftime("%Y-%m-%d %H:%M:%S")}",
-            f"End Time: {_datetime.fromtimestamp(end_time).strftime("%Y-%m-%d %H:%M:%S")}",
-            f"Duration: {(duration := end_time - start_time) // 60} MIN {duration % 60} SEC",
+            f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
+            f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
+            f"Duration: {(duration := int(self._duration * .001)) // 60} MIN {duration % 60} SEC",
+            f"Distance: {self._distance:.1} KM",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
@@ -381,7 +383,7 @@ class PostProcessor(object):
     def erase_unit_cache(self) -> None:
         self._lap_start = None
         self._lap_start_time = None
-        self._lap_end_time = None
+        self._lap_start_mileage = None
         self._x.clear()
         self._y.clear()
         self._d.clear()
@@ -419,8 +421,8 @@ class PostProcessor(object):
         self._y.append(0)
         self._d.append(self._max_speed)
         _scatter(self._x, self._y, c=self._d, cmap="hot_r")
-        duration = int((self._lap_end_time - self._lap_start_time) * .001)
-        _title(f"Lap {lap_index + 1} ({self._laps[lap_index][2]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
+        duration = int(self._laps[lap_index][2] * .001)
+        _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
         _colorbar()
         _show()
 
@@ -436,7 +438,6 @@ class PostProcessor(object):
             mileage = row["mileage"]
             if self._lap_start_mileage is None:
                 self._lap_start_mileage = mileage
-            self._lap_end_mileage = mileage
             lat = row["latitude"]
             lon = row["longitude"]
             p = (round(dlat2meters(lat - self._min_lat) / vehicle_hit_box),
@@ -445,17 +446,19 @@ class PostProcessor(object):
                 index = path.index(p)
             except ValueError:
                 index = -1
+            duration = t - self._lap_start_time
+            distance = mileage - self._lap_start_mileage
             if (0 < index < .5 * len(path) and self._lap_start is not None and
-                    (t - self._lap_start_time) * .001 >= min_lap_time and
-                    mileage - self._lap_start_mileage > vehicle_hit_box):
-                self._laps.append((self._lap_start, i, self._lap_end_mileage - self._lap_start_mileage))
+                    duration >= min_lap_time * 1000 and
+                    distance * 1000 > vehicle_hit_box):
+                self._laps.append((self._lap_start, i, duration, distance))
                 path.clear()
-                self._lap_start = None
+                self.erase_unit_cache()
             path.append(p)
 
         self.foreach(unit, True, True)
         if len(self._laps) == 0:
-            self._laps.append((0, self._read_rows_count, self._lap_end_mileage))
+            self._laps.append((0, self._read_rows_count, self._duration, self._distance))
 
     def num_laps(self) -> int:
         return len(self._laps)
