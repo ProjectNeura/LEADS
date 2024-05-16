@@ -264,6 +264,7 @@ class PostProcessor(object):
         self._end_time: float | None = None
         self._min_speed: float | None = None
         self._max_speed: float | None = None
+        self._avg_speed: float | None = None
         self._start_mileage: float | None = None
         self._end_mileage: float | None = None
         self._gps_valid_count: int = 0
@@ -275,7 +276,6 @@ class PostProcessor(object):
         self._laps: list[tuple[int, int, float]] = []
 
         # unit variables (not reusable)
-        self._t: float | None = None
         self._lap_start: int | None = None
         self._lap_start_time: float | None = None
         self._lap_end_time: float | None = None
@@ -316,20 +316,21 @@ class PostProcessor(object):
     def bake(self) -> None:
         def unit(row: dict[str, _Any], i: int) -> None:
             self._read_rows += 1
-            self._t = row["t"]
+            t = row["t"]
             speed = row["speed"]
             mileage = row["mileage"]
-            if PostProcessor.time_invalid(self._t) or PostProcessor.speed_invalid(
+            if PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(
                     speed) or PostProcessor.mileage_invalid(mileage):
                 self._invalid_rows.append(i)
                 return
             if self._start_time is None:
-                self._start_time = self._t
+                self._start_time = t
+            self._end_time = t
             if self._min_speed is None or speed < self._min_speed:
                 self._min_speed = speed
             if self._max_speed is None or speed > self._max_speed:
                 self._max_speed = speed
-            if self._lap_start_mileage is None:
+            if self._start_mileage is None:
                 self._start_mileage = mileage
             self._end_mileage = mileage
             lat = row["latitude"]
@@ -345,7 +346,7 @@ class PostProcessor(object):
             self._valid_rows += 1
 
         self.foreach(unit, False)
-        self._end_time = self._t
+        self._avg_speed = 3600000 * (self._end_mileage - self._start_mileage) / (self._end_time - self._start_time)
 
     def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str]:
         if self._read_rows == 0:
@@ -362,13 +363,12 @@ class PostProcessor(object):
             f"Duration: {(duration := end_time - start_time) // 60} MIN {duration % 60} SEC",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
-            f"v\u2090\u1D65\u1D67: {3600 * (self._end_mileage - self._start_mileage) / duration:.2f} KM / H",
+            f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows:.2f}%",
             f"GPS Skipped Rows: {self._gps_invalid_rows}"
         )
 
     def erase_unit_cache(self) -> None:
-        self._t = None
         self._lap_start = None
         self._lap_start_time = None
         self._lap_end_time = None
@@ -411,7 +411,7 @@ class PostProcessor(object):
         self._d.append(self._max_speed)
         _scatter(self._x, self._y, c=self._d, cmap="hot_r")
         duration = int((self._lap_end_time - self._lap_start_time) * .001)
-        _title(f"Lap {lap_index} ({duration // 60} MIN {duration % 60} SEC)")
+        _title(f"Lap {lap_index + 1} ({self._laps[lap_index][2]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
         _colorbar()
         _show()
 
