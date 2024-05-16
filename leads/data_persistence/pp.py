@@ -441,6 +441,8 @@ class PostProcessor(object):
         if lap_index < 0:
             for i in range(len(self._laps)):
                 self.draw_lap(i)
+        if lap_index >= len(self._laps):
+            raise IndexError("Lap index out of range")
 
         def unit(row: dict[str, _Any], index: int) -> None:
             if index < (lap := self._laps[lap_index])[0] or index > lap[1]:
@@ -483,8 +485,7 @@ class PostProcessor(object):
             x2.append(i + 2 * width)
             x_ticks.append(f"L{i}")
             i += 1
-        num_laps = len(self._laps)
-        _figure(figsize=(2.5 * _sqrt(num_laps), 5))
+        _figure(figsize=(2.5 * _sqrt(len(self._laps)), 5))
         _bar(x0, durations, width, label="Duration")
         _bar(x1, distances, width, label="Distance")
         _bar(x2, avg_speeds, width, label="Average Speed")
