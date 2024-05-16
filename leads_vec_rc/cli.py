@@ -120,6 +120,4 @@ async def hazard() -> str:
     return "done"
 
 
-@register
-def cleanup() -> None:
-    csv.close()
+register(csv.close)

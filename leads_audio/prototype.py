@@ -31,10 +31,7 @@ def _try_open_audio_device() -> None:
 
 _Thread(name="sdl initializer", target=_try_open_audio_device, daemon=True).start()
 
-
-@_register
-def _release_resources() -> None:
-    _close_audio()
+_register(_close_audio)
 
 
 class _SoundEffect(object):
