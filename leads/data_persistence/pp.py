@@ -132,7 +132,7 @@ class SpeedInferenceByGPSPosition(SpeedInferenceBase):
                         PostProcessor.time_invalid(t) or PostProcessor.latitude_invalid(lat_0) or
                         PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon_0) or
                         PostProcessor.longitude_invalid(lon)) else {
-            "speed": abs(3600 * PostProcessor.distance(lat_0, lon_0, lat, lon) / (t - t_0))
+            "speed": abs(3600 * PostProcessor.distance_between(lat_0, lon_0, lat, lon) / (t - t_0))
         }
 
 
@@ -183,7 +183,7 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
         return None if (MileageInferenceBase.skip(target) or PostProcessor.mileage_invalid(s_0) or
                         PostProcessor.latitude_invalid(lat_0) or PostProcessor.latitude_invalid(lat) or
                         PostProcessor.longitude_invalid(lon_0) or PostProcessor.longitude_invalid(lon)) else {
-            "mileage": s_0 + .001 * PostProcessor.distance(lat_0, lon_0, lat, lon)
+            "mileage": s_0 + .001 * PostProcessor.distance_between(lat_0, lon_0, lat, lon)
         }
 
 
@@ -291,7 +291,7 @@ class PostProcessor(object):
         self._d: list[float] = []
 
     @staticmethod
-    def distance(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
+    def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
         return _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2)
 
     @staticmethod
