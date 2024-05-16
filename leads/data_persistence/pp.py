@@ -18,13 +18,26 @@ from ._computational import sqrt as _sqrt
 
 class Inference(object, metaclass=_ABCMeta):
     def __init__(self, required_depth: tuple[int, int] = (0, 0)) -> None:
+        """
+        Declare the scale of data this inference requires.
+        :param required_depth: (-depth backward, depth forward)
+        """
         self._required_depth: tuple[int, int] = required_depth
 
     def depth(self) -> tuple[int, int]:
+        """
+        :return: (-depth backward, depth forward)
+        """
         return self._required_depth
 
     @_abstractmethod
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        """
+        Infer, based on the data flow, to complete the missing columns.
+        :param rows: the data flow with the length of depth backward + depth forward
+        :param backward: True: globally reversed; False: regular
+        :return:
+        """
         raise NotImplementedError
 
 
@@ -238,7 +251,7 @@ class InferredDataset(CSVDataset):
     def complete(self, *inferences: Inference, enhanced: bool = False) -> None:
         """
         Infer the missing values in the dataset.
-        :param inferences: inferences to apply
+        :param inferences: the inferences to apply
         :param enhanced: True: use inferred data to infer other data; False: use only raw data to infer other data
         """
         if DEFAULT_HEADER in self.read_header():
@@ -302,6 +315,14 @@ class PostProcessor(object):
 
     @staticmethod
     def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
+        """
+        Calculate the distance between two locations on the Earth.
+        :param lat_0: the latitude of the first location
+        :param lon_0: the longitude of the first location
+        :param lat: the latitude of the second location
+        :param lon: the longitude of the second location
+        :return:
+        """
         return _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2)
 
     @staticmethod
@@ -329,6 +350,9 @@ class PostProcessor(object):
         return not isinstance(o, float) or o != o or not -180 < o < 180
 
     def bake(self) -> None:
+        """
+        Prepare the prerequisites for `process()`.
+        """
         def unit(row: dict[str, _Any], i: int) -> None:
             self._read_rows_count += 1
             t = row["t"]
@@ -371,6 +395,10 @@ class PostProcessor(object):
             seq)
 
     def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str, str]:
+        """
+        Get the results of the baking process.
+        :return: the results in sentences
+        """
         if self._read_rows_count == 0:
             raise LookupError("Not baked")
         if self._valid_rows_count == 0:
@@ -512,7 +540,11 @@ class PostProcessor(object):
     def num_laps(self) -> int:
         return len(self._laps)
 
-    def process_results(self) -> tuple[str, str]:
+    def results(self) -> tuple[str, str]:
+        """
+        Get the results of the processor.
+        :return: the results in sentences
+        """
         return (
             f"Number of Laps Detected: {len(self._laps)}",
             f"Call `draw_lap()` for further information."

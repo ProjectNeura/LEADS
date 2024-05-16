@@ -81,7 +81,7 @@ class CanvasBased(_CTkCanvas):
 
     def meta(self) -> tuple[float, float, float, float, float]:
         """
-        :return: [w, h, hc, vc, limit]
+        :return: (w, h, hc, vc, limit)
         """
         return (w := self.winfo_width()), (h := self.winfo_height()), w * .5, h * .5, min(w, h)
 

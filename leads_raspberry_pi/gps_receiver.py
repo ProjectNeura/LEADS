@@ -59,7 +59,7 @@ class NMEAGPSReceiver(_Device, _Entity):
     @_override
     def read(self) -> tuple[bool, float, float, float, int, int]:
         """
-        :return: [validity, ground speed, latitude, longitude, quality, num of satellites]
+        :return: (validity, ground speed, latitude, longitude, quality, num of satellites)
         """
         return self._valid, self._ground_speed, self._latitude, self._longitude, self._quality, self._num_satellites
 
