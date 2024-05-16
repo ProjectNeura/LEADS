@@ -87,11 +87,11 @@ class SpeedInferenceByMileage(SpeedInferenceBase):
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
-        t_0, t, d_0, d = base["t"], target["t"], base["mileage"], target["mileage"]
+        t_0, t, s_0, s = base["t"], target["t"], base["mileage"], target["mileage"]
         return None if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                        PostProcessor.time_invalid(t) or PostProcessor.mileage_invalid(d_0) or
-                        PostProcessor.mileage_invalid(d)) else {
-            "speed": abs(3600000 * (d - d_0) / (t - t_0))
+                        PostProcessor.time_invalid(t) or PostProcessor.mileage_invalid(s_0) or
+                        PostProcessor.mileage_invalid(s)) else {
+            "speed": abs(3600000 * (s - s_0) / (t - t_0))
         }
 
 
