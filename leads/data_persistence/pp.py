@@ -436,7 +436,7 @@ class PostProcessor(object):
         _colorbar().ax.hlines(self._laps[lap_index][4], 0, 1)
         _show()
 
-    def draw_comparison_between_laps(self, width: float = .3) -> None:
+    def draw_comparison_of_laps(self, width: float = .3) -> None:
         durations = []
         x0 = []
         distances = []
