@@ -1,3 +1,4 @@
+from atexit import register as _register
 from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence
 
 from leads.dt.controller import Controller
@@ -84,7 +85,8 @@ def get_device(tag: str) -> Device:
     return _devices[tag]
 
 
-def reset() -> None:
+@_register
+def release() -> None:
     for d in _devices.values():
         d.close()
     _devices.clear()
