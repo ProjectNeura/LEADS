@@ -207,13 +207,14 @@ class InferredDataset(CSVDataset):
             raw[key] = inferred[key]
 
     def _complete(self, inferences: tuple[Inference, ...], enhanced: bool, backward: bool) -> None:
-        length = len(self._raw_data)
-        for i in range(length - 1, -1, -1) if backward else range(length):
+        num_rows = len(self._raw_data)
+        for i in range(num_rows - 1, -1, -1) if backward else range(num_rows):
             for inference in inferences:
                 p, f = inference.depth()
                 p, f = (i - p, i - f - 1) if backward else (i + p, i + f + 1)
                 d = []
-                if (-1 < p < length and -1 <= f < length - 1) if backward else (0 <= p < length and 0 < f <= length):
+                if (-1 < p < num_rows and -1 <= f < num_rows - 1) if backward else (
+                        0 <= p < num_rows and 0 < f <= num_rows):
                     for j in range(p, f, -1 if backward else 1):
                         row = self._raw_data[j]
                         if enhanced:
