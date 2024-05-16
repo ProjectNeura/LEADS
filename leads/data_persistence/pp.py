@@ -8,7 +8,8 @@ from datetime import datetime as _datetime
 from typing import Any as _Any, Callable as _Callable, override as _override, Generator as _Generator, \
     Sequence as _Sequence
 
-from matplotlib.pyplot import scatter as _scatter, show as _show, title as _title, colorbar as _colorbar
+from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _show, title as _title, \
+    colorbar as _colorbar, bar as _bar, xticks as _xticks, legend as _legend, xlabel as _xlabel, ylabel as _ylabel
 
 from leads.data import dlat2meters, dlon2meters
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
@@ -284,9 +285,12 @@ class PostProcessor(object):
         self._gps_invalid_rows: list[int] = []
         self._min_lat: float | None = None
         self._min_lon: float | None = None
+        self._max_lap_duration: float | None = None
+        self._max_lap_distance: float | None = None
+        self._max_lap_avg_speed: float | None = None
 
         # process variables
-        self._laps: list[tuple[int, int, float, float]] = []
+        self._laps: list[tuple[int, int, float, float, float]] = []
 
         # unit variables (not reusable)
         self._lap_start: int | None = None
@@ -429,7 +433,36 @@ class PostProcessor(object):
         _scatter(self._x, self._y, c=self._d, cmap="hot_r")
         duration = int(self._laps[lap_index][2] * .001)
         _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
-        _colorbar()
+        _colorbar().ax.hlines(self._laps[lap_index][4], 0, 1)
+        _show()
+
+    def draw_comparison_between_laps(self, width: float = .3) -> None:
+        durations = []
+        x0 = []
+        distances = []
+        x1 = []
+        avg_speeds = []
+        x2 = []
+        x_ticks = []
+        i = 1
+        for lap in self._laps:
+            durations.append(lap[2] / self._max_lap_duration)
+            x0.append(i)
+            distances.append(lap[3] / self._max_lap_distance)
+            x1.append(i + width)
+            avg_speeds.append(lap[4] / self._max_lap_avg_speed)
+            x2.append(i + 2 * width)
+            x_ticks.append(f"L{i}")
+            i += 1
+        num_laps = len(self._laps)
+        _figure(figsize=(2.5 * _sqrt(num_laps), 5))
+        _bar(x0, durations, width, label="Duration")
+        _bar(x1, distances, width, label="Distance")
+        _bar(x2, avg_speeds, width, label="Average Speed")
+        _xticks(x1, x_ticks)
+        _legend()
+        _xlabel("Lap")
+        _ylabel("% / max")
         _show()
 
     def process(self, vehicle_hit_box: float = 3, min_lap_time: float = 30) -> None:
@@ -457,14 +490,24 @@ class PostProcessor(object):
             if (0 < index < .5 * len(path) and self._lap_start is not None and
                     duration >= min_lap_time * 1000 and
                     distance * 1000 > vehicle_hit_box):
-                self._laps.append((self._lap_start, i, duration, distance))
+                avg_speed = 3600000 * distance / duration
+                if self._max_lap_duration is None or duration > self._max_lap_duration:
+                    self._max_lap_duration = duration
+                if self._max_lap_distance is None or distance > self._max_lap_distance:
+                    self._max_lap_distance = distance
+                if self._max_lap_avg_speed is None or avg_speed > self._max_lap_avg_speed:
+                    self._max_lap_avg_speed = avg_speed
+                self._laps.append((self._lap_start, i, duration, distance, avg_speed))
                 path.clear()
                 self.erase_unit_cache()
             path.append(p)
 
         self.foreach(unit, True, True)
         if len(self._laps) == 0:
-            self._laps.append((0, self._read_rows_count, self._duration, self._distance))
+            self._max_lap_duration = self._duration
+            self._max_lap_distance = self._distance
+            self._max_lap_avg_speed = self._avg_speed
+            self._laps.append((0, self._read_rows_count, self._duration, self._distance, self._avg_speed))
 
     def num_laps(self) -> int:
         return len(self._laps)
