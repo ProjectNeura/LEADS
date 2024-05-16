@@ -531,7 +531,7 @@ class PostProcessor(object):
             path.append(p)
 
         self.foreach(unit, True, True)
-        if len(self._laps) == 0:
+        if not self._laps:
             self._max_lap_duration = self._duration
             self._max_lap_distance = self._distance
             self._max_lap_avg_speed = self._avg_speed
