@@ -222,10 +222,12 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
                 break
             for i in range(len(chunk)):
                 yield chunk.iloc[i].to_dict()
+        self._csv.close()
+        self._csv = None
 
     def load(self) -> None:
         if self._csv:
-            self._csv.close()
+            return
         header_csv = _read_csv(self._file, chunksize=1)
         self._header = tuple(header_csv.get_chunk().columns)
         if self._header[0] == "index":

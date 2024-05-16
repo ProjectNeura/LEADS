@@ -188,7 +188,7 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
 
 
 class InferredDataset(CSVDataset):
-    _raw_data: list[dict[str, _Any]] = []
+    _raw_data: tuple[dict[str, _Any], ...] = ()
     _inferred_data: list[dict[str, _Any]] = []
 
     @staticmethod
@@ -219,10 +219,14 @@ class InferredDataset(CSVDataset):
 
     @_override
     def load(self) -> None:
+        if self._raw_data:
+            return
         super().load()
+        raw_data = []
         for row in super().__iter__():
-            self._raw_data.append(row)
-        self._inferred_data = [{} for _ in range(len(self._raw_data))]
+            raw_data.append(row)
+        self._raw_data = tuple(raw_data)
+        self._inferred_data = [{} for _ in range(len(raw_data))]
 
     def complete(self, *inferences: Inference, enhanced: bool = False) -> None:
         """
@@ -247,7 +251,7 @@ class InferredDataset(CSVDataset):
     @_override
     def close(self) -> None:
         super().close()
-        self._raw_data.clear()
+        self._raw_data = ()
         self._inferred_data.clear()
 
 
@@ -384,7 +388,6 @@ class PostProcessor(object):
 
     def foreach(self, do: _Callable[[dict[str, _Any], int], None], skip_invalid_rows: bool = True,
                 skip_gps_invalid_rows: bool = False) -> None:
-        self._dataset.load()
         self.erase_unit_cache()
         i = -1
         for row in self._dataset:
