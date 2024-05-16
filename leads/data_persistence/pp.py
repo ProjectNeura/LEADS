@@ -309,9 +309,11 @@ class PostProcessor(object):
         self._lap_start: int | None = None
         self._lap_start_time: int | None = None
         self._lap_start_mileage: float | None = None
-        self._x: list[float] = []
-        self._y: list[float] = []
-        self._d: list[float] = []
+        self._lap_x: list[float] = []
+        self._lap_y: list[float] = []
+        self._lap_d: list[float] = []
+        self._max_lap_x: float | None = None
+        self._max_lap_y: float | None = None
 
     @staticmethod
     def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
@@ -423,9 +425,9 @@ class PostProcessor(object):
         self._lap_start = None
         self._lap_start_time = None
         self._lap_start_mileage = None
-        self._x.clear()
-        self._y.clear()
-        self._d.clear()
+        self._lap_x.clear()
+        self._lap_y.clear()
+        self._lap_d.clear()
 
     def foreach(self, do: _Callable[[dict[str, _Any], int], None], skip_invalid_rows: bool = True,
                 skip_gps_invalid_rows: bool = False) -> None:
@@ -453,16 +455,21 @@ class PostProcessor(object):
             self._lap_end_time = t
             lat = row["latitude"]
             lon = row["longitude"]
-            self._d.append(row["speed"])
-            self._x.append(dlon2meters(lon - self._min_lon, lat))
-            self._y.append(dlat2meters(lat - self._min_lat))
+            self._lap_d.append(row["speed"])
+            self._lap_x.append(x := dlon2meters(lon - self._min_lon, lat))
+            self._lap_y.append(y := dlat2meters(lat - self._min_lat))
+            if self._max_lap_x is None or x > self._max_lap_x:
+                self._max_lap_x = x
+            if self._max_lap_y is None or y > self._max_lap_y:
+                self._max_lap_y = y
 
         self.foreach(unit, True, True)
-        self._x.append(0)
-        self._y.append(0)
-        self._d.append(self._max_speed)
+        far = max(self._max_lap_x, self._max_lap_y)
+        self._lap_x.append(far)
+        self._lap_y.append(far)
+        self._lap_d.append(self._max_speed)
         _figure(figsize=(6, 5))
-        _scatter(self._x, self._y, c=self._d, cmap="hot_r")
+        _scatter(self._lap_x, self._lap_y, c=self._lap_d, cmap="hot_r")
         duration = int(self._laps[lap_index][2] * .001)
         _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
         cb = _colorbar()
