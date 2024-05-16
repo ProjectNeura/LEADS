@@ -288,7 +288,7 @@ class InferredDataset(CSVDataset):
             injection["mileage"] = 0
         InferredDataset.merge(row, injection)
 
-    def complete(self, *inferences: Inference, enhanced: bool = False, assume_initial_zeros: bool = True) -> None:
+    def complete(self, *inferences: Inference, enhanced: bool = False, assume_initial_zeros: bool = False) -> None:
         """
         Infer the missing values in the dataset.
         :param inferences: the inferences to apply
@@ -372,27 +372,27 @@ class PostProcessor(object):
 
     @staticmethod
     def time_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) and not isinstance(o, int)
+        return not isinstance(o, int)
 
     @staticmethod
     def speed_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o != o or o < 0
+        return not isinstance(o, int | float) or o != o or o < 0
 
     @staticmethod
     def acceleration_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o != o
+        return not isinstance(o, int | float) or o != o
 
     @staticmethod
     def mileage_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o != o
+        return not isinstance(o, int | float) or o != o
 
     @staticmethod
     def latitude_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o != o or not -90 < o < 90
+        return not isinstance(o, int | float) or o != o or not -90 < o < 90
 
     @staticmethod
     def longitude_invalid(o: _Any) -> bool:
-        return not isinstance(o, float) or o != o or not -180 < o < 180
+        return not isinstance(o, int | float) or o != o or not -180 < o < 180
 
     def bake(self) -> None:
         """
