@@ -382,7 +382,7 @@ class PostProcessor(object):
             f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"Duration: {(duration := int(self._duration * .001)) // 60} MIN {duration % 60} SEC",
-            f"Distance: {self._distance:.1} KM",
+            f"Distance: {self._distance:.2f} KM",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
