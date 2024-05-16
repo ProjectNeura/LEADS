@@ -74,7 +74,7 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
         return {"speed": abs(s_0 + .0005 * (a_0 + a) * (t - t_0))}
 
 
-class SpeedInferenceByMileages(SpeedInferenceBase):
+class SpeedInferenceByMileage(SpeedInferenceBase):
     """
     Infer the speed based on the mileages.
 
@@ -112,7 +112,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
         }
 
 
-class SpeedInferenceByGPSPositions(SpeedInferenceBase):
+class SpeedInferenceByGPSPosition(SpeedInferenceBase):
     """
     Infer the speed based on the GPS positions.
 
