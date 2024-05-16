@@ -195,6 +195,13 @@ class InferredDataset(CSVDataset):
                     if (r := inference.complete(*d, backward=backward)) is not None:
                         InferredDataset.merge(self._inferred_data[i], r)
 
+    @_override
+    def load(self) -> None:
+        super().load()
+        for row in super().__iter__():
+            self._raw_data.append(row)
+        self._inferred_data = [{} for _ in range(len(self._raw_data))]
+
     def complete(self, *inferences: Inference, enhanced: bool = False) -> None:
         """
         Infer the missing values in the dataset.
@@ -203,10 +210,6 @@ class InferredDataset(CSVDataset):
         """
         if DEFAULT_HEADER in self.read_header():
             raise KeyError("Your dataset must include the default header")
-        self.require_loaded()
-        for row in super().__iter__():
-            self._raw_data.append(row)
-        self._inferred_data = [{} for _ in range(len(self._raw_data))]
         self._complete(inferences, enhanced, False)
         self._complete(inferences, enhanced, True)
 
