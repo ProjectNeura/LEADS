@@ -136,6 +136,35 @@ class SpeedInferenceByGPSPosition(SpeedInferenceBase):
         }
 
 
+class MileageInferenceBase(Inference, metaclass=_ABCMeta):
+    @staticmethod
+    def skip(row: dict[str, _Any]) -> bool:
+        return not PostProcessor.speed_invalid(row["mileage"])
+
+
+class MileageInferenceBySpeed(MileageInferenceBase):
+    """
+    Infer the mileage based on the speed.
+
+    s = ∫v(t)dt
+    """
+
+    def __init__(self) -> None:
+        super().__init__((-1, 0))
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        base, target = rows
+        t_0, t, v_0, s_0 = base["t"], target["t"], base["speed"], base["mileage"]
+        if (MileageInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or PostProcessor.time_invalid(t) or
+                PostProcessor.speed_invalid(v_0) or PostProcessor.mileage_invalid(s_0)):
+            return
+        v = target["speed"]
+        if PostProcessor.speed_invalid(v):
+            v = v_0
+        return {"mileage": s_0 + .00000125 * (v_0 + v) * (t - t_0) / 9}
+
+
 class InferredDataset(CSVDataset):
     _raw_data: list[dict[str, _Any]] = []
     _inferred_data: list[dict[str, _Any]] = []
