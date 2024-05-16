@@ -436,8 +436,9 @@ class PostProcessor(object):
                 index = path.index(p)
             except ValueError:
                 index = -1
-            if 0 < index < .5 * len(path) and self._lap_start is not None and (
-                    t - self._lap_start_time) * .001 >= min_lap_time:
+            if (0 < index < .5 * len(path) and self._lap_start is not None and
+                    (t - self._lap_start_time) * .001 >= min_lap_time and
+                    mileage - self._lap_start_mileage > vehicle_hit_box):
                 self._laps.append((self._lap_start, i, self._lap_end_mileage - self._lap_start_mileage))
                 path.clear()
                 self._lap_start = None
