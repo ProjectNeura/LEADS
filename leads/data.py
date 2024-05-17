@@ -87,3 +87,12 @@ def dlon2meters(dlon: float, lat: float) -> float:
 
 def meters2dlon(meters: float, lat: float) -> float:
     return _degrees(meters / 6378137 / _cos(_radians(lat)))
+
+
+def format_duration(duration: float) -> str:
+    """
+    Wrap the duration into a formatted string.
+    :param duration: the duration in seconds
+    :return: the formatted string
+    """
+    return f"{(duration := int(duration)) // 60} MIN {duration % 60} SEC"

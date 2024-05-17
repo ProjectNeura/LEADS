@@ -11,7 +11,7 @@ from typing import Any as _Any, Callable as _Callable, override as _override, Ge
 from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _show, title as _title, \
     colorbar as _colorbar, bar as _bar, xticks as _xticks, legend as _legend, xlabel as _xlabel, ylabel as _ylabel
 
-from leads.data import dlat2meters, dlon2meters
+from leads.data import dlat2meters, dlon2meters, format_duration
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
 from ._computational import sqrt as _sqrt
 
@@ -458,7 +458,7 @@ class PostProcessor(object):
             f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 5)}",
             f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
-            f"Duration: {(duration := int(self._duration * .001)) // 60} MIN {duration % 60} SEC",
+            f"Duration: {format_duration(self._duration * .001)}",
             f"Distance: {self._distance:.2f} KM",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
@@ -514,9 +514,9 @@ class PostProcessor(object):
         self._lap_x.append(far)
         self._lap_y.append(far)
         self._lap_d.append(self._max_speed)
-        duration = int(self._laps[lap_index][2] * .001)
         _figure(figsize=(6, 5))
-        _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {duration // 60} MIN {duration % 60} SEC)")
+        _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {format_duration(
+            self._laps[lap_index][2] * .001)})")
         _scatter(self._lap_x, self._lap_y, c=self._lap_d, cmap="hot_r")
         _xlabel("X (M)")
         _ylabel("Y (M)")

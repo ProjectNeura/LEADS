@@ -9,7 +9,7 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main
+    initialize_main, format_duration
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
@@ -30,10 +30,6 @@ def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeD
         runtime_data.control_system_switch_changed = True
 
     return switch
-
-
-def format_lap_time(t: int) -> str:
-    return f"{(t := int(t * .001)) // 60} MIN {t % 60} SEC"
 
 
 def main() -> int:
@@ -157,8 +153,8 @@ def main() -> int:
             d = e.context.data()
             if w.runtime_data().m1_mode == 0:
                 lap_time_list = ctx.lap_time_list()
-                m1.set(f"LAP TIMES\n\n{"No Lap Timed" if len(lap_time_list) < 1 else "\n".join(map(format_lap_time,
-                                                                                                   lap_time_list))}")
+                m1.set(f"LAP TIMES\n\n{"No Lap Timed" if len(lap_time_list) < 1 else "\n".join(
+                    map(lambda t: format_duration(t * .001), lap_time_list))}")
             elif w.runtime_data().m1_mode == 1:
                 if has_device(GPS_RECEIVER):
                     gps = get_device(GPS_RECEIVER).read()
@@ -172,7 +168,7 @@ def main() -> int:
             elif w.runtime_data().m1_mode == 2:
                 m1.set(f"VeC {__version__.upper()}\n\n"
                        f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                       f"{(duration := int(_time()) - w.runtime_data().start_time) // 60} MIN {duration % 60} SEC\n"
+                       f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
                        f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
                        f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
                        f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{w.runtime_data().comm.port()}")
