@@ -615,6 +615,14 @@ class PostProcessor(object):
 
         self.foreach(asserted_unit if asserted else unit, True, not asserted)
 
+    def suggest_on_lap(self, lap_index: int) -> tuple[str, str]:
+        a, b, duration, distance, avg_speed = self._laps[lap_index]
+        d = self._avg_speed - avg_speed
+        return (
+            f"Lap {lap_index + 1} lasts for {format_duration(duration * .001)}",
+            f"{abs(d):.2f} KM / H {"slower" if d < 0 else "faster"} than average"
+        )
+
     def num_laps(self) -> int:
         return len(self._laps)
 
