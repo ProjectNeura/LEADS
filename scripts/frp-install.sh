@@ -32,7 +32,7 @@ latest_release=$(curl -s "https://api.github.com/repos/fatedier/frp/releases/lat
 if test -z "$latest_release"
 then abort "Error: Failed to retrieve the latest release"
 fi
-filename="frp_${latest_release}_$(uname -s | tr "[:upper:]" "[:lower:]")_$(uname -m)"
+filename="frp_${latest_release}_$(uname -s | tr "[:upper:]" "[:lower:]" | sed "s/aarch/arm/g")_$(uname -m)"
 echo "Downloading ${filename}.tar.gz..."
 execute_root "wget" "-O" "frp.tar.gz" "https://github.com/fatedier/frp/releases/download/v${latest_release}/${filename}.tar.gz"
 echo "Extracting..."
