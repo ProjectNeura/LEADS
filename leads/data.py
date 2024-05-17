@@ -7,7 +7,7 @@ from numpy import radians as _radians, degrees as _degrees, cos as _cos
 
 class Serializable(object):
     def to_dict(self) -> dict[str, _Any]:
-        return {n: v for n in dir(self) if not n.startswith("_") and not callable(v := getattr(self, n))}
+        return {n: v for n in dir(self) if not callable(v := getattr(self, n)) and not n.startswith("_")}
 
 
 class DataContainer(Serializable):
