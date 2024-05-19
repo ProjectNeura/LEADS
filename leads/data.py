@@ -7,7 +7,8 @@ from numpy import radians as _radians, degrees as _degrees, cos as _cos
 
 class Serializable(object):
     def to_dict(self) -> dict[str, _Any]:
-        return {n: v for n in dir(self) if not callable(v := getattr(self, n)) and not n.startswith("_")}
+        return {n: v for n in dir(self) if (v := getattr(self, n)) is not None and not callable(v) and not n.startswith(
+            "_")}
 
 
 class DataContainer(Serializable):
@@ -57,7 +58,7 @@ class DataContainer(Serializable):
         return self._time_stamp
 
     @_override
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, _Any]:
         """
         Convert the data into a dictionary.
         :return: a dictionary that contains all custom attributes of the container
