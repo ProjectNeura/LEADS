@@ -5,10 +5,6 @@ abort() {
   exit 1
 }
 
-if test "${EUID:-$(id -u)}" -eq 0
-then abort "Error: Do not execute this script as root"
-fi
-
 execute() {
   if ! "$@"
   then abort "$(printf "Failed: %s" "$@")"

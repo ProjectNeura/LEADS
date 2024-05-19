@@ -6,7 +6,7 @@ from typing import Literal as _Literal
 from customtkinter import set_default_color_theme as _set_default_color_theme
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
-    L as _L, load_config as _load_config, register_config as _register_config, reset as _reset
+    L as _L, load_config as _load_config, register_config as _register_config, release as _release
 from leads_gui import Config as _Config
 
 
@@ -68,7 +68,7 @@ def run(config: str,
                 return main()
             else:
                 _L.warn(f"Specified devices module ({devices}) is not available, using emulation module instead...")
-        _reset()
+        _release()
         try:
             from leads_emulation import SinController as _Controller
 

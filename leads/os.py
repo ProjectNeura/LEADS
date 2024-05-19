@@ -1,3 +1,4 @@
+from atexit import register as _register
 from threading import Lock as _Lock
 from types import FrameType as _FrameType
 
@@ -28,3 +29,8 @@ class _ThreadFlags(object):
 
 
 _thread_flags: _ThreadFlags = _ThreadFlags()
+
+
+@_register
+def _request_threads_stop() -> None:
+    _thread_flags.active = False

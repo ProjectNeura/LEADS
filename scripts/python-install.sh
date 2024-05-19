@@ -5,10 +5,6 @@ abort() {
   exit 1
 }
 
-if test "${EUID:-$(id -u)}" -eq 0
-then abort "Error: Do not execute this script as root"
-fi
-
 execute() {
   if ! "$@"
   then abort "$(printf "Failed: %s" "$@")"
@@ -29,7 +25,7 @@ execute_root "apt" "install" "-y" "python3.12-tk"
 echo "Creating Virtual Environment..."
 execute_root "python3.12" "-m" "venv" "/usr/local/leads/venv"
 echo "Creating Soft Links..."
-echo "#!/bin/bash" > "/bin/python-leads"
-echo '/usr/local/leads/venv/bin/python "$@"' >> "/bin/python-leads"
+execute_root "echo" "#!/bin/bash" > "/bin/python-leads"
+execute_root "echo" '/usr/local/leads/venv/bin/python "$@"' >> "/bin/python-leads"
 execute_root "chmod" "+x" "/bin/python-leads"
 execute_root "ln" "-s" "/usr/local/leads/venv/bin/pip" "/bin/pip-leads"

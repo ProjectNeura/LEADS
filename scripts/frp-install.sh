@@ -5,10 +5,6 @@ abort() {
   exit 1
 }
 
-if test "${EUID:-$(id -u)}" -eq 0
-then abort "Error: Do not execute this script as root"
-fi
-
 if test -d "/usr/local/frp"
 then abort "Error: /usr/local/frp already exists"
 fi
@@ -32,7 +28,7 @@ latest_release=$(curl -s "https://api.github.com/repos/fatedier/frp/releases/lat
 if test -z "$latest_release"
 then abort "Error: Failed to retrieve the latest release"
 fi
-filename="frp_${latest_release}_$(uname -s | tr "[:upper:]" "[:lower:]")_$(uname -m)"
+filename="frp_${latest_release}_$(uname -s | tr "[:upper:]" "[:lower:]")_$(uname -m | sed "s/x86_64/amd64/g" | sed "s/aarch/arm/g")"
 echo "Downloading ${filename}.tar.gz..."
 execute_root "wget" "-O" "frp.tar.gz" "https://github.com/fatedier/frp/releases/download/v${latest_release}/${filename}.tar.gz"
 echo "Extracting..."
