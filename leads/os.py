@@ -1,17 +1,13 @@
-import sys as _sys
 from atexit import register as _register
 from threading import Lock as _Lock
 from types import FrameType as _FrameType
 
-if hasattr(_sys, "_getframe"):
-    def _currentframe() -> _FrameType:
-        return getattr(_sys, "_getframe")(1)
-else:
-    def _currentframe() -> _FrameType:
-        try:
-            raise Exception
-        except Exception as exc:
-            return exc.__traceback__.tb_frame.f_back
+
+def _currentframe() -> _FrameType:
+    try:
+        raise Exception
+    except Exception as exc:
+        return exc.__traceback__.tb_frame.f_back
 
 
 class _ThreadFlags(object):

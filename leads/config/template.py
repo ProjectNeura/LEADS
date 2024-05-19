@@ -59,7 +59,7 @@ class ConfigTemplate(Serializable):
 
     def set(self, name: str, value: _Any) -> None:
         """
-        Set the value with a given name in the dictionary.
+        Set the value with the given name in the dictionary.
         :param name: the dictionary key
         :param value: the value to set
         """

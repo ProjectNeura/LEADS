@@ -9,9 +9,9 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from leads import *
-from leads.comm import *
-from leads.data_persistence import *
+from leads import require_config, L, DataContainer
+from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
+from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER
 
 config = require_config()
 if not exists(config.data_dir):
@@ -24,10 +24,8 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-csv = CSVCollection(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", (
-    "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
-    "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
-), time_stamp_record, voltage_record, speed_record, None, None, None, None, None, None, None, None, None)
+csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", DEFAULT_HEADER,
+          time_stamp_record, voltage_record, speed_record)
 
 
 def retry(service: Service) -> Client:
@@ -61,7 +59,7 @@ class CommCallback(Callback):
             if config.save_data:
                 csv.write_frame(*(d[key] for key in csv.header()))
             else:
-                time_stamp_record.append(d["t"])
+                time_stamp_record.append(int(d["t"]))
                 speed_record.append(d["speed"])
                 voltage_record.append(d["voltage"])
         except JSONDecodeError:

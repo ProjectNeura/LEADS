@@ -1,4 +1,3 @@
-from time import time as _time
 from typing import override as _override
 
 from numpy import pi as _pi
@@ -27,7 +26,6 @@ class WheelSpeedSensor(_Device):
         super().__init__()
         self._wheel_circumference: float = wheel_diameter * 2.54 * _pi
         self._wheel_speed: float = 0
-        self._last_valid: float = 0
         self._odometer_tag: str | None = odometer_tag
         self._odometer: _Odometer | None = None
 
@@ -41,7 +39,6 @@ class WheelSpeedSensor(_Device):
     def update(self, data: str) -> None:
         if data.startswith(self._tag):
             self._wheel_speed = rpm2kmh(float(data[data.find(":") + 1:]), self._wheel_circumference)
-            self._last_valid = _time()
             if self._odometer:
                 self._odometer.write(self._wheel_circumference * .00001)
 
@@ -50,6 +47,4 @@ class WheelSpeedSensor(_Device):
         """
         :return: speed in kilometers per hour
         """
-        # add .0000000001 to avoid zero division
-        r = rpm2kmh(60 / (.0000000001 + _time() - self._last_valid), self._wheel_circumference)
-        return 0 if r < 1 else r if r < 5 else self._wheel_speed
+        return self._wheel_speed

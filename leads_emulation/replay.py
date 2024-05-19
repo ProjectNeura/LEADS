@@ -1,27 +1,30 @@
-from typing import override as _override, Iterator as _Iterator, Any as _Any
+from typing import override as _override, Iterator as _Iterator, Any as _Any, TypeVar as _TypeVar, \
+    Generic as _Generic
 
 from leads import Controller as _Controller, DataContainer as _DataContainer
-from leads.data_persistence import Dataset as _Dataset
+from leads.data_persistence import CSVDataset as _CSVDataset
+
+T = _TypeVar("T", bound=_DataContainer)
 
 
-class ReplayController(_Controller):
-    def __init__(self, dataset: _Dataset) -> None:
+class ReplayController(_Controller, _Generic[T]):
+    def __init__(self, dataset: _CSVDataset, data_container_constructor: type[T]) -> None:
         super().__init__()
-        self._dataset: _Dataset = dataset
+        self._dataset: _CSVDataset = dataset
+        self._constructor: type[T] = data_container_constructor
         self._iterator: _Iterator[dict[str, _Any]] = iter(dataset)
 
     @_override
-    def initialize(self, *parent_tags: str) -> None:
-        super().initialize(*parent_tags)
-        self._dataset.load()
-
-    @_override
-    def read(self) -> _DataContainer:
+    def read(self) -> T:
         try:
             d = next(self._iterator)
         except StopIteration:
-            return _DataContainer()
+            return self._constructor()
         t = d.pop("t")
-        dc = _DataContainer(**d)
+        dc = self._constructor(**d)
         dc._time_stamp = t
         return dc
+
+    @_override
+    def close(self) -> None:
+        self._dataset.close()

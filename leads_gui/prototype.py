@@ -79,9 +79,9 @@ class CanvasBased(_CTkCanvas):
         self._ratio = ratio
         return self
 
-    def meta(self) -> [float, float, float, float, float]:
+    def meta(self) -> tuple[float, float, float, float, float]:
         """
-        :return: [w, h, hc, vc, limit]
+        :return: (w, h, hc, vc, limit)
         """
         return (w := self.winfo_width()), (h := self.winfo_height()), w * .5, h * .5, min(w, h)
 
@@ -202,7 +202,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         Attempt to run.
         :return: `True`: active; `False`: deprecated
         """
-        if self._loops == 0:
+        if not self._loops:
             return False
         if (t := _time()) - self._last_run >= self._period * .001:
             self.do()

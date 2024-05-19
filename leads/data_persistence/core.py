@@ -4,12 +4,9 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
     override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
     Generator as _Generator, Any as _Any
 
-from numpy import mean as _mean, array as _array
-from numpy.linalg import norm as _norm
-from pandas import read_csv as _read_csv, DataFrame as _DataFrame
-from pandas.io.parsers import TextFileReader as _TextFileReader
-
 from leads.types import Compressor as _Compressor
+from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
+    DataFrame as _DataFrame, TextFileReader as _TextFileReader
 
 T = _TypeVar("T")
 
@@ -162,12 +159,14 @@ class Vector(_Sequence[E], _Iterable[E], _Generic[E]):
         return self._compare(other, _ge)
 
 
-class CSVCollection(object):
+class CSV(object):
     def __init__(self, file: str | _TextIO, header: tuple[str, ...], *columns: DataPersistence | None) -> None:
         self._file: _TextIO = open(file, "w") if isinstance(file, str) else file
         self._d: int = len(header)
         self._header: tuple[str, ...] = header
-        if len(columns) != self._d:
+        if (d := self._d - len(columns)) >= 0:
+            columns += (None,) * d
+        else:
             raise ValueError("Unmatched columns and header")
         self._columns: tuple[DataPersistence | None, ...] = columns
         self._i: int = 0
@@ -177,7 +176,10 @@ class CSVCollection(object):
         return self._header
 
     def write_header(self) -> None:
-        self._file.write(f"index,{",".join(self._header)}\n")
+        header = f"{",".join(self._header)}\n"
+        if not header.startswith("index"):
+            header = f"index,{header}"
+        self._file.write(header)
 
     def write_frame(self, *data: _Any) -> None:
         if len(data) != self._d:
@@ -194,23 +196,62 @@ class CSVCollection(object):
         self._file.close()
 
 
-class Dataset(_Iterable[dict[str, _Any]]):
+class CSVDataset(_Iterable[dict[str, _Any]]):
     def __init__(self, file: str, chunk_size: int = 100) -> None:
         self._file: str = file
         self._chunk_size: int = chunk_size
         self._csv: _TextFileReader | None = None
+        self._header: tuple[str, ...] | None = None
+        self._contains_index: bool = False
+
+    def require_loaded(self) -> None:
+        if not self._csv or not self._header:
+            self.load()
+
+    def read_header(self) -> tuple[str, ...]:
+        self.require_loaded()
+        return self._header
 
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
-        if self._csv is None:
-            raise EOFError("Dataset not loaded")
+        self.require_loaded()
         while True:
             try:
                 chunk = next(self._csv)
             except StopIteration:
                 break
             for i in range(len(chunk)):
-                yield chunk.iloc[i].to_dict()
+                r = chunk.iloc[i].to_dict()
+                if self._contains_index:
+                    r.pop("index")
+                yield r
+        self._csv.close()
+        self._csv = None
 
     def load(self) -> None:
+        if self._csv:
+            return
+        header_csv = _read_csv(self._file, chunksize=1)
+        self._header = tuple(header_csv.get_chunk().columns)
+        if self._header[0] == "index":
+            self._header = self._header[1:]
+            self._contains_index = True
+        header_csv.close()
         self._csv = _read_csv(self._file, chunksize=self._chunk_size, low_memory=False)
+
+    def save(self, file: str | _TextIO) -> None:
+        self.require_loaded()
+        csv = CSV(file, self._header)
+        for row in self:
+            csv.write_frame(*row.values())
+        csv.close()
+
+    def close(self) -> None:
+        if self._csv:
+            self._csv.close()
+
+
+DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str] = (
+    "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
+    "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
+)

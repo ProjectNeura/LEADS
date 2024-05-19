@@ -3,6 +3,7 @@ from typing import override as _override
 
 from PIL import ImageTk as _ImageTk
 from customtkinter import Variable as _Variable, DoubleVar as _DoubleVar
+from numpy import sqrt as _sqrt
 
 from leads_gui.icons import Color, Car
 from leads_gui.prototype import CanvasBased, TextBased, VariableControlled, parse_color
@@ -18,11 +19,11 @@ class GForceVar(_Variable):
         super().set(value)
 
     @_override
-    def get(self) -> [float, float]:
+    def get(self) -> tuple[float, float]:
         return super().get()
 
     def magnitude(self) -> float:
-        return ((v := self.get())[0] ** 2 + v[1] ** 2) ** .5
+        return _sqrt((v := self.get())[0] ** 2 + v[1] ** 2)
 
 
 class GForceMeter(TextBased, VariableControlled):
