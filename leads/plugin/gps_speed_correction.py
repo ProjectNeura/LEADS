@@ -6,7 +6,7 @@ from leads.plugin.plugin import Plugin
 
 class GPSSpeedCorrection(Plugin):
     def __init__(self) -> None:
-        super().__init__(("speed", "gps_valid", "gps_ground_speed"))
+        super().__init__()
         self._loss: float = 0
         self._abs_loss: float = 0
         self._n: int = 0

@@ -6,7 +6,7 @@ from leads.registry import require_context
 
 
 class Plugin(object):
-    def __init__(self, required_data: tuple[str, ...]) -> None:
+    def __init__(self, required_data: tuple[str, ...] = ()) -> None:
         """
         :param required_data: required data entries
         """
