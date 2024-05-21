@@ -454,7 +454,7 @@ class PostProcessor(object):
                 f"Failed to baked {self._read_rows_count - self._valid_rows_count} / {self._read_rows_count} rows")
         return (
             f"Baked {self._valid_rows_count} / {self._read_rows_count} ROWS",
-            f"Baked Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
+            f"Baking Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
             f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 5)}",
             f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
