@@ -462,7 +462,7 @@ class PostProcessor(object):
             f"Distance: {self._distance:.2f} KM",
             f"v\u2098\u1D62\u2099: {self._min_speed:.2f} KM / H",
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
-            f"v\u2090\u1D65\u1D67: {self._avg_speed:.2f} KM / H",
+            f"v\u2090\u1D65\u1D4D: {self._avg_speed:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows_count:.2f}%",
             f"GPS Skipped Rows: {PostProcessor._hide_others(self._gps_invalid_rows, 5)}"
         )
