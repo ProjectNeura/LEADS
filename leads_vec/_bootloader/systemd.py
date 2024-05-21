@@ -1,5 +1,6 @@
 from os import chmod as _chmod, getlogin as _get_login, makedirs as _mkdirs
 from os.path import abspath as _abspath, exists as _exists
+from subprocess import run as _run
 
 from leads import L as _L
 from leads_gui import Config as _Config
@@ -37,3 +38,4 @@ def register_leads_vec() -> None:
         _L.debug(f"User Systemd broken. Creating \"{user_systemd_wants}\"...")
         _mkdirs(user_systemd_wants)
     _chmod(user_systemd_wants, 0o777)
+    _run(("usermod", "-aG", "dialout" "username"))
