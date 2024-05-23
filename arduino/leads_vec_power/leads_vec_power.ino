@@ -2,7 +2,7 @@
 
 const int PIN_VOT[] = {A0};
 
-VoltageSensor VOT(PIN_VOT);
+VoltageSensor VOT(30000.0, 7500.0, PIN_VOT);
 
 void setup() {
     Serial.begin(9600);
@@ -10,6 +10,6 @@ void setup() {
 }
 
 void loop() {
-    returnFloat(VOLTAGE_SENSOR, VOT.read() * 5.08594953775);
+    returnFloat(VOLTAGE_SENSOR, VOT.read());
     delay(100);
 }
