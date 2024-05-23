@@ -307,35 +307,6 @@ There are 4 arguments for this script, of which the first 2 are required.
 bash "frp-config.sh$(...)" {frp_server_ip} {frp_token} {frp_port} {comm_port} && rm frp-config.sh || rm frp-config.sh
 ```
 
-### OBS Studio
-
-We also use OBS Studio for streaming, but it is not required. If you want to install,
-run "[obs-install.sh](scripts/obs-install.sh)".
-
-```shell
-bash "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/obs-install.sh)" && rm obs-install.sh || rm obs-install.sh
-```
-
-Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
-
-Download it through this simple command below.
-
-```shell
-wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/obs-run.sh
-```
-
-Run the script as shown.
-
-```shell
-bash obs-run.sh
-```
-
-If you want the identical layout configuration, see the following.
-
-```shell
-wget -O obs-config.json https://raw.githubusercontent.com/ProjectNeura/LEADS/main/design/obs-config.json
-```
-
 ### Uninstall
 
 To uninstall LEADS, we provide an easy solution as well. However, it uninstalls a component only if it is installed
