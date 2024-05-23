@@ -83,7 +83,7 @@ python -m leads_vec info
 
 ### Arduino
 
-You can install [LEADS-Arduino](https://github.com/ProjectNeura/LEADS-Arduino) from Arduino Library Manager. Note that
+You can install [LEADS Arduino](https://github.com/ProjectNeura/LEADS-Arduino) from Arduino Library Manager. Note that
 it is named "LEADS", not "LEADS-Arduino", in the index.
 
 ## LEADS Framework
