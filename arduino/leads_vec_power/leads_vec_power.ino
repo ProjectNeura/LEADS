@@ -2,7 +2,7 @@
 
 const int PIN_VOT[] = {A0};
 
-VoltageSensor VOT(30000, 7500, PIN_VOT);
+VoltageSensor VOT(30000.0, 7500.0, PIN_VOT);
 
 void setup() {
     Serial.begin(9600);
