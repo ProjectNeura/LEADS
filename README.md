@@ -325,10 +325,10 @@ bash "gstreamer-install.sh$(wget -O gstreamer-install.sh https://raw.githubuserc
 bash "gstreamer-run.sh$(wget -O gstreamer-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-run.sh)" && rm gstreamer-run.sh || rm gstreamer-run.sh
 ```
 
-#### Register a Systemd Service
+There are 4 arguments for this script, of which the first one is required.
 
 ```shell
-bash "gstreamer-systemd.sh$(wget -O gstreamer-systemd.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-systemd.sh)" && rm gstreamer-systemd.sh || rm gstreamer-systemd.sh
+bash "gstreamer-run.sh$(...)" {youtube_stream_key} {left_camera} {middle_camera} {right_camera} && rm gstreamer-run.sh || rm gstreamer-run.sh
 ```
 
 ### Uninstall
