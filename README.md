@@ -307,10 +307,30 @@ There are 4 arguments for this script, of which the first 2 are required.
 bash "frp-config.sh$(...)" {frp_server_ip} {frp_token} {frp_port} {comm_port} && rm frp-config.sh || rm frp-config.sh
 ```
 
+### GStreamer
+
+#### Install
+
+```shell
+bash "gstreamer-install.sh$(wget -O gstreamer-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-install.sh)" && rm gstreamer-install.sh || rm gstreamer-install.sh
+```
+
+#### Run
+
+```shell
+bash "gstreamer-run.sh$(wget -O gstreamer-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-run.sh)" && rm gstreamer-run.sh || rm gstreamer-run.sh
+```
+
+#### Register a Systemd Service
+
+```shell
+bash "gstreamer-systemd.sh$(wget -O gstreamer-systemd.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-systemd.sh)" && rm gstreamer-systemd.sh || rm gstreamer-systemd.sh
+```
+
 ### Uninstall
 
 To uninstall LEADS, we provide an easy solution as well. However, it uninstalls a component only if it is installed
-through the way listed in [Environment Setup](#environment-setup). OBS Studio will not be uninstalled anyway.
+through the way listed in [Environment Setup](#environment-setup). GStreamer will not be uninstalled anyway.
 
 ```shell
 bash "uninstall.sh$(wget -O uninstall.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/uninstall.sh)" && rm uninstall.sh || rm uninstall.sh
