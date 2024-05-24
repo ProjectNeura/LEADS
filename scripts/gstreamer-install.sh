@@ -15,4 +15,5 @@ execute_root() {
   execute "sudo" "$@"
 }
 
+echo "Installing GStreamer..."
 execute_root "apt" "install" "-y" "gstreamer1.0-tools" "gstreamer1.0-libav" "gstreamer1.0-plugins-base" "gstreamer1.0-plugins-good" "gstreamer1.0-plugins-bad" "gstreamer1.0-plugins-ugly"
