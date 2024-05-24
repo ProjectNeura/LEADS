@@ -69,6 +69,12 @@ pip install Pillow PySDL2 customtkinter gpiozero lgpio pynmea2 pynput pysdl2-dll
 `Pillow`, `PySDL2`, `customtkinter`, `gpiozero`, `lgpio`, `pynmea2`, `pynput`, `pysdl2-dll`, and `pyserial` are
 optional.
 
+If your platform does not support GPIO, just exclude `lgpio`.
+
+```shell
+pip install Pillow PySDL2 customtkinter gpiozero pynmea2 pynput pysdl2-dll pyserial leads
+```
+
 If you only want the framework, run the following.
 
 ```shell
