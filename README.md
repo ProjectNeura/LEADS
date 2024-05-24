@@ -288,12 +288,16 @@ bash "python-install.sh$(wget -O python-install.sh https://raw.githubusercontent
 
 ### FRP
 
+#### Install
+
 We use FRP for reverse proxy. This is optional if you do not need public connections. If you want, install it through
 "[frp-install.sh](scripts/frp-install.sh)".
 
 ```shell
 bash "frp-install.sh$(wget -O frp-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/frp-install.sh)" && rm frp-install.sh || rm frp-install.sh
 ```
+
+#### Configure
 
 To configure FRP, use "[frp-config.sh](scripts/frp-config.sh)".
 
