@@ -307,39 +307,30 @@ There are 4 arguments for this script, of which the first 2 are required.
 bash "frp-config.sh$(...)" {frp_server_ip} {frp_token} {frp_port} {comm_port} && rm frp-config.sh || rm frp-config.sh
 ```
 
-### OBS Studio
+### GStreamer
 
-We also use OBS Studio for streaming, but it is not required. If you want to install,
-run "[obs-install.sh](scripts/obs-install.sh)".
+#### Install
 
 ```shell
-bash "obs-install.sh$(wget -O obs-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/obs-install.sh)" && rm obs-install.sh || rm obs-install.sh
+bash "gstreamer-install.sh$(wget -O gstreamer-install.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-install.sh)" && rm gstreamer-install.sh || rm gstreamer-install.sh
 ```
 
-Do not run the OBS Studio directly, instead, use "[obs-run.sh](scripts/obs-run.sh)".
-
-Download it through this simple command below.
+#### Run
 
 ```shell
-wget -O obs-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/obs-run.sh
+bash "gstreamer-run.sh$(wget -O gstreamer-run.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-run.sh)" && rm gstreamer-run.sh || rm gstreamer-run.sh
 ```
 
-Run the script as shown.
+#### Register a Systemd Service
 
 ```shell
-bash obs-run.sh
-```
-
-If you want the identical layout configuration, see the following.
-
-```shell
-wget -O obs-config.json https://raw.githubusercontent.com/ProjectNeura/LEADS/main/design/obs-config.json
+bash "gstreamer-systemd.sh$(wget -O gstreamer-systemd.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/gstreamer-systemd.sh)" && rm gstreamer-systemd.sh || rm gstreamer-systemd.sh
 ```
 
 ### Uninstall
 
 To uninstall LEADS, we provide an easy solution as well. However, it uninstalls a component only if it is installed
-through the way listed in [Environment Setup](#environment-setup). OBS Studio will not be uninstalled anyway.
+through the way listed in [Environment Setup](#environment-setup). GStreamer will not be uninstalled anyway.
 
 ```shell
 bash "uninstall.sh$(wget -O uninstall.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/uninstall.sh)" && rm uninstall.sh || rm uninstall.sh
