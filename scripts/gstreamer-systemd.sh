@@ -32,4 +32,4 @@ execute_root "echo" "[Unit]" > "/home/$(logname)/.config/systemd/user/gstreamer.
   execute_root "echo" "[Install]"
   execute_root "echo" "WantedBy=default.target"
 } >> "/home/$(logname)/.config/systemd/user/gstreamer.service"
-execute_root "chmod" "755" "/home/$(logname)/.config/systemd/user/default.target.wants"
+execute_root "chmod" "777" "/home/$(logname)/.config/systemd/user/default.target.wants"
