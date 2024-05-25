@@ -5,6 +5,7 @@ from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
 config = require_config()
+GPS_ONLY: int = config.get("gps_only", False)
 BAUD_RATE: int = config.get("baud_rate", 9600)
 POWER_CONTROLLER_PORT: str = config.get("power_controller_port", "COM4")
 WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "COM3")
@@ -22,13 +23,13 @@ class VeCController(Controller):
     def read(self) -> DataContainer:
         universal = {
             "mileage": self.device(ODOMETER).read(),
-            "gps_valid": (coords := self.device(GPS_RECEIVER).read())[0],
-            "gps_ground_speed": coords[1],
-            "latitude": coords[2],
-            "longitude": coords[3],
+            "gps_valid": (gps := self.device(GPS_RECEIVER).read())[0],
+            "gps_ground_speed": gps[1],
+            "latitude": gps[2],
+            "longitude": gps[3],
             **self.device("pc").read()
         }
-        return DataContainer(**self.device("wsc").read(), **universal)
+        return DataContainer(**({"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()), **universal)
 
 
 @controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
