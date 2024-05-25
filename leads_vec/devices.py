@@ -11,6 +11,7 @@ WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "CO
 GPS_RECEIVER_PORT: str = config.get("gps_receiver_port", "COM5")
 FRONT_WHEEL_DIAMETER: float = config.get("front_wheel_diameter", 20)  # 20 inches
 REAR_WHEEL_DIAMETER: float = config.get("rear_wheel_diameter", 20)  # 20 inches
+NUM_DIVISIONS: int = config.get("num_divisions", 1)
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
 BRAKE_PEDAL_PIN: int = config.get("brake_pedal_pin", 3)
 VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
@@ -71,7 +72,8 @@ class AverageOdometer(ConcurrentOdometer):
 
 
 @device(*(((LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, CENTER_REAR_WHEEL_SPEED_SENSOR), "wsc",
-           [(FRONT_WHEEL_DIAMETER, ODOMETER), (FRONT_WHEEL_DIAMETER, ODOMETER), (REAR_WHEEL_DIAMETER, ODOMETER)])))
+           [(FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER), (FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER),
+            (REAR_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER)])))
 class WheelSpeedSensors(WheelSpeedSensor):
     def initialize(self, *parent_tags: str) -> None:
         mark_system(self, "WSC", "ESC")
