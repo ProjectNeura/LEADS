@@ -133,10 +133,11 @@ def main() -> int:
 
         def on_receive(self, service: Service, msg: bytes) -> None:
             self.super(service=service, msg=msg)
-            if msg == b"time_lap":
-                ctx.time_lap()
-            elif msg == b"hazard":
-                ctx.hazard(not ctx.hazard())
+            match msg:
+                case b"time_lap":
+                    ctx.time_lap()
+                case b"hazard":
+                    ctx.hazard(not ctx.hazard())
 
     w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
@@ -250,34 +251,36 @@ def main() -> int:
     uim["wsc_fault"] = _Label(root, text="")
 
     def on_fail(_, e: SuspensionEvent) -> None:
-        if e.system == "BATT":
-            uim["battery_fault"].configure(image=Battery(color=Color.RED))
-        elif e.system == "BRAKE":
-            uim["brake_fault"].configure(image=Brake(color=Color.RED))
-        elif e.system == "ESC":
-            uim["esc_fault"].configure(image=ESC(color=Color.RED))
-        elif e.system == "GPS":
-            uim["gps_fault"].configure(image=Satellite(color=Color.RED))
-        elif e.system == "MOTOR":
-            uim["motor_fault"].configure(image=Motor(color=Color.RED))
-        elif e.system == "WSC":
-            uim["wsc_fault"].configure(image=Speed(color=Color.RED))
+        match e.system:
+            case "BATT":
+                uim["battery_fault"].configure(image=Battery(color=Color.RED))
+            case "BRAKE":
+                uim["brake_fault"].configure(image=Brake(color=Color.RED))
+            case "ESC":
+                uim["esc_fault"].configure(image=ESC(color=Color.RED))
+            case "GPS":
+                uim["gps_fault"].configure(image=Satellite(color=Color.RED))
+            case "MOTOR":
+                uim["motor_fault"].configure(image=Motor(color=Color.RED))
+            case "WSC":
+                uim["wsc_fault"].configure(image=Speed(color=Color.RED))
 
     SFT.on_fail = on_fail
 
     def on_recover(_, e: SuspensionEvent) -> None:
-        if e.system == "BATT":
-            uim["battery_fault"].configure(image=None)
-        elif e.system == "BRAKE":
-            uim["brake_fault"].configure(image=None)
-        elif e.system == "ESC":
-            uim["esc_fault"].configure(image=None)
-        elif e.system == "GPS":
-            uim["gps_fault"].configure(image=None)
-        elif e.system == "MOTOR":
-            uim["motor_fault"].configure(image=None)
-        elif e.system == "WSC":
-            uim["wsc_fault"].configure(image=None)
+        match e.system:
+            case "BATT":
+                uim["battery_fault"].configure(image=None)
+            case "BRAKE":
+                uim["brake_fault"].configure(image=None)
+            case "ESC":
+                uim["esc_fault"].configure(image=None)
+            case "GPS":
+                uim["gps_fault"].configure(image=None)
+            case "MOTOR":
+                uim["motor_fault"].configure(image=None)
+            case "WSC":
+                uim["wsc_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
     if cfg.manual_mode:
@@ -303,18 +306,19 @@ def main() -> int:
     initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
-        if key == _KeyCode.from_char("1"):
-            make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
-        elif key == _KeyCode.from_char("2"):
-            make_system_switch(ctx, SystemLiteral.ABS, w.runtime_data())()
-        elif key == _KeyCode.from_char("3"):
-            make_system_switch(ctx, SystemLiteral.EBI, w.runtime_data())()
-        elif key == _KeyCode.from_char("4"):
-            make_system_switch(ctx, SystemLiteral.ATBS, w.runtime_data())()
-        elif key == _KeyCode.from_char("t"):
-            ctx.time_lap()
-        elif key == _Key.esc:
-            uim.kill()
+        match key:
+            case _KeyCode.from_char("1"):
+                make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
+            case _KeyCode.from_char("2"):
+                make_system_switch(ctx, SystemLiteral.ABS, w.runtime_data())()
+            case _KeyCode.from_char("3"):
+                make_system_switch(ctx, SystemLiteral.EBI, w.runtime_data())()
+            case _KeyCode.from_char("4"):
+                make_system_switch(ctx, SystemLiteral.ATBS, w.runtime_data())()
+            case _KeyCode.from_char("t"):
+                ctx.time_lap()
+            case _Key.esc:
+                uim.kill()
 
     _Listener(on_press=on_press).start()
     uim.show()

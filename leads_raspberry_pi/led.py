@@ -31,11 +31,12 @@ class LED(_Device):
 
     @_override
     def write(self, payload: LEDCommand) -> None:
-        if payload == LEDCommand.OFF:
-            self._led.off()
-        elif payload == LEDCommand.ON:
-            self._led.on()
-        elif payload == LEDCommand.BLINK:
-            self._led.blink(self._blink_time_on, self._blink_time_off)
-        elif payload == LEDCommand.BLINK_ONCE:
-            self._led.blink(self._blink_time_on, self._blink_time_off, 1)
+        match payload:
+            case LEDCommand.OFF:
+                self._led.off()
+            case LEDCommand.ON:
+                self._led.on()
+            case LEDCommand.BLINK:
+                self._led.blink(self._blink_time_on, self._blink_time_off)
+            case LEDCommand.BLINK_ONCE:
+                self._led.blink(self._blink_time_on, self._blink_time_off, 1)

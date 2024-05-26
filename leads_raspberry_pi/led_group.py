@@ -28,14 +28,15 @@ class Transition(LEDGroupAnimation):
         self._interval: float = interval * .001
 
     def async_do(self, command: LEDCommand, *leds: LED) -> None:
-        if self._direction == "left2right":
-            for led in leds:
-                led.write(command)
-                _sleep(self._interval)
-        elif self._direction == "right2left":
-            for led in leds[::-1]:
-                led.write(command)
-                _sleep(self._interval)
+        match self._direction:
+            case "left2right":
+                for led in leds:
+                    led.write(command)
+                    _sleep(self._interval)
+            case "right2left":
+                for led in leds[::-1]:
+                    led.write(command)
+                    _sleep(self._interval)
 
     @_override
     def do(self, command: LEDCommand, *leds: LED) -> None:
