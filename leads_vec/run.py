@@ -19,26 +19,27 @@ def run(config: str,
         emu: bool,
         auto_mfs: bool,
         ignore_import_error: bool) -> int:
-    if register == "systemd":
-        from ._bootloader import register_leads_vec as _create_service
+    match register:
+        case "systemd":
+            from ._bootloader import register_leads_vec as _create_service
 
-        _create_service()
-        _L.debug("Service registered")
-        _L.debug(f"Service script is located at \"{_abspath(__file__)[:-6]}_bootloader/leads-vec.service.sh\"")
-    elif register == "config":
-        if _exists("config.json"):
-            r = input("\"config.json\" already exists. Overwrite? (Y/n) >>>").lower()
-            if r.lower() != "y":
-                _L.error("Aborted")
-                return 1
-        with open("config.json", "w") as f:
-            f.write(str(_Config({})))
-        _L.debug("Configuration file saved to \"config.json\"")
-    elif register == "reverse_proxy":
-        from ._bootloader import start_frpc as _start_frpc
+            _create_service()
+            _L.debug("Service registered")
+            _L.debug(f"Service script is located at \"{_abspath(__file__)[:-6]}_bootloader/leads-vec.service.sh\"")
+        case "config":
+            if _exists("config.json"):
+                r = input("\"config.json\" already exists. Overwrite? (Y/n) >>>").lower()
+                if r.lower() != "y":
+                    _L.error("Aborted")
+                    return 1
+            with open("config.json", "w") as f:
+                f.write(str(_Config({})))
+            _L.debug("Configuration file saved to \"config.json\"")
+        case "reverse_proxy":
+            from ._bootloader import start_frpc as _start_frpc
 
-        _start_frpc()
-        _L.debug("`frpc` started")
+            _start_frpc()
+            _L.debug("`frpc` started")
     config = _load_config(config, _Config) if config else _Config({})
     _L.debug("Configuration loaded:", str(config))
     if t := theme:
