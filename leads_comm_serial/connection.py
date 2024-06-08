@@ -2,10 +2,10 @@ from typing import override as _override
 
 from serial import Serial as _Serial
 
-from leads.comm import ConnectionBase as _Connection, Service as _Service
+from leads.comm import ConnectionBase as _ConnectionBase, Service as _Service
 
 
-class SerialConnection(_Connection):
+class SerialConnection(_ConnectionBase):
     def __init__(self,
                  service: _Service,
                  serial: _Serial,
