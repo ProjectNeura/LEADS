@@ -206,8 +206,9 @@ class Connection(ConnectionBase):
     @_override
     def receive(self, chunk_size: int = 512) -> bytes | None:
         """
+        Receive a full sentence from the socket.
         :param chunk_size: chunk buffer size
-        :return: message or None
+        :return: bytes: the message; None: failed to read (will lead to disconnection)
         """
         if self._remainder != b"":
             return self.use_remainder()
