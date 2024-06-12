@@ -21,7 +21,7 @@ class SystemFailureTracer(object):
         super().__init__()
         self.on_fail: _Callable[[SuspensionEvent], None] = lambda _: None
         self.on_recover: _Callable[[SuspensionEvent], None] = lambda _: None
-        self.on_device_fail: _Callable[[Device], None] = lambda _: None
+        self.on_device_fail: _Callable[[Device, str | Exception], None] = lambda _, __: None
         self.on_device_recover: _Callable[[Device], None] = lambda _: None
         self._system_failure: dict[str, int] = {}
 
@@ -30,7 +30,7 @@ class SystemFailureTracer(object):
             error = repr(error)
         if not (systems := read_marked_system(device)):
             raise RuntimeWarning(f"No system marked for device {device}")
-        self.on_device_fail(device)
+        self.on_device_fail(device, error)
         L.error(f"{device} error: {error}")
         for system in systems:
             if system not in self._system_failure:
