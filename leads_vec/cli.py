@@ -250,7 +250,7 @@ def main() -> int:
     uim["motor_fault"] = _Label(root, text="")
     uim["wsc_fault"] = _Label(root, text="")
 
-    def on_fail(_, e: SuspensionEvent) -> None:
+    def on_fail(e: SuspensionEvent) -> None:
         match e.system:
             case "BATT":
                 uim["battery_fault"].configure(image=Battery(color=Color.RED))
@@ -267,7 +267,7 @@ def main() -> int:
 
     SFT.on_fail = on_fail
 
-    def on_recover(_, e: SuspensionEvent) -> None:
+    def on_recover(e: SuspensionEvent) -> None:
         match e.system:
             case "BATT":
                 uim["battery_fault"].configure(image=None)
