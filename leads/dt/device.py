@@ -15,6 +15,10 @@ class Device(object):
         self._parent_tags: tuple[str, ...] = ()
         self._pins: tuple[int | str, ...] = pins
 
+    @_override
+    def __str__(self) -> str:
+        return f"{len(self._parent_tags)}.{self._tag}"
+
     def level(self) -> int:
         """
         Get the level of the device in the device tree.
