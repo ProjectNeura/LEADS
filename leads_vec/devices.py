@@ -1,7 +1,7 @@
 from typing import override as _override
 
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
-    Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_system, ODOMETER, GPS_RECEIVER, \
+    Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
@@ -39,7 +39,7 @@ class VeCController(Controller):
 class PowerController(ArduinoMicro):
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER", "BATT", "MOTOR")
+        mark_device(self, "POWER", "BATT", "MOTOR")
         super().initialize(*parent_tags)
 
     @_override
@@ -55,7 +55,7 @@ class PowerController(ArduinoMicro):
 class BatteryVoltageSensor(VoltageSensor):
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "POWER", "BATT")
+        mark_device(self, "POWER", "BATT")
         super().initialize(*parent_tags)
 
 
@@ -63,7 +63,7 @@ class BatteryVoltageSensor(VoltageSensor):
 class WheelSpeedController(ArduinoMicro):
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC", "ESC")
+        mark_device(self, "WSC", "ESC")
         super().initialize(*parent_tags)
 
     @_override
@@ -88,7 +88,7 @@ class AverageOdometer(ConcurrentOdometer):
 class WheelSpeedSensors(WheelSpeedSensor):
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "WSC", "ESC")
+        mark_device(self, "WSC", "ESC")
         super().initialize(*parent_tags)
 
 
@@ -96,7 +96,7 @@ class WheelSpeedSensors(WheelSpeedSensor):
 class GPS(NMEAGPSReceiver):
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "GPS")
+        mark_device(self, "GPS")
         super().initialize(*parent_tags)
 
 
@@ -106,6 +106,6 @@ class GPS(NMEAGPSReceiver):
 class DirectionIndicators(LEDGroup):
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        mark_system(self, "DI")
+        mark_device(self, "DI")
         super().initialize(*parent_tags)
         self.write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))

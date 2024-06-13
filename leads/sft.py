@@ -6,13 +6,13 @@ from leads.logger import L
 from leads.registry import require_context
 
 
-def mark_system(device: Device, system: str, *related: str) -> None:
+def mark_device(device: Device, system: str, *related: str) -> None:
     if hasattr(device, "__device_system__"):
         setattr(device, "__device_system__", getattr(device, "__device_system__") + related)
     setattr(device, "__device_system__", [system, *related])
 
 
-def read_marked_system(device: Device) -> list[str] | None:
+def read_device_marker(device: Device) -> list[str] | None:
     return getattr(device, "__device_system__") if hasattr(device, "__device_system__") else None
 
 
@@ -28,7 +28,7 @@ class SystemFailureTracer(object):
     def fail(self, device: Device, error: str | Exception) -> None:
         if isinstance(error, Exception):
             error = repr(error)
-        if not (systems := read_marked_system(device)):
+        if not (systems := read_device_marker(device)):
             raise RuntimeWarning(f"No system marked for device {device}")
         self.on_device_fail(device, error)
         L.error(f"{device} error: {error}")
@@ -40,7 +40,7 @@ class SystemFailureTracer(object):
             context.suspend(e)
 
     def recover(self, device: Device) -> None:
-        if not (systems := read_marked_system(device)):
+        if not (systems := read_device_marker(device)):
             raise RuntimeWarning(f"System not marked for device {device}")
         self.on_device_recover(device)
         L.debug(f"{device} recovered")
