@@ -57,6 +57,11 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._speed_seq.append(data.speed)
 
     def esc_mode(self, esc_mode: ESCMode | None = None) -> ESCMode | None:
+        """
+        Set or get the ESC mode.
+        :param esc_mode: the ESC mode or None if getter mode
+        :return: the ESC mode or None if setter mode
+        """
         if esc_mode is None:
             return self._esc_mode
         self._esc_mode = esc_mode
@@ -97,6 +102,11 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._right_indicator = right_indicator
 
     def hazard(self, hazard: bool | None = None) -> bool | None:
+        """
+        Set or get the hazard light status.
+        :param hazard: True: hazard light on; False: hazard light off; None: getter mode
+        :return: the hazard light status or None if setter mode
+        """
         if hazard is None:
             return self._hazard
         self.left_indicator(hazard, True)

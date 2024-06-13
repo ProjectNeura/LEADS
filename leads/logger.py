@@ -35,6 +35,11 @@ class Logger(object):
         self._lock: _Lock = _Lock()
 
     def debug_level(self, debug_level: Level | None = None) -> Level | None:
+        """
+        Set or get the debug level.
+        :param debug_level: the debug level or None if getter mode
+        :return: the debug level or None if setter mode
+        """
         if debug_level is None:
             return self._debug_level
         self._debug_level = debug_level
