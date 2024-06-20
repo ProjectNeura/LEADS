@@ -12,8 +12,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
 from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER
+from leads_gui import Config
 
-config = require_config()
+config: Config = require_config()
 if not exists(config.data_dir):
     L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
     makedirs(config.data_dir)
