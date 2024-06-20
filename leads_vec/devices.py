@@ -4,9 +4,10 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
+from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
 
-config = require_config()
+config: Config = require_config()
 GPS_ONLY: int = config.get("gps_only", False)
 BAUD_RATE: int = config.get("baud_rate", 9600)
 POWER_CONTROLLER_PORT: str = config.get("power_controller_port", "COM4")
