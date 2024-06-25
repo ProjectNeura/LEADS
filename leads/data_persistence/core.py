@@ -29,10 +29,7 @@ def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
 
 
 class DataPersistence(_Sequence[T], _Generic[T]):
-    def __init__(self,
-                 max_size: int = -1,
-                 chunk_scale: int = 1,
-                 compressor: _Compressor[T] = mean_compressor) -> None:
+    def __init__(self, max_size: int = -1, chunk_scale: int = 1, compressor: _Compressor[T] = mean_compressor) -> None:
         """
         :param max_size: maximum cached size
         :param chunk_scale: chunk scaling factor (compression)
