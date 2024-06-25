@@ -1,7 +1,8 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from typing import Any as _Any, override as _override, Generator as _Generator
 
-from leads.data_persistence.analyzer.processor import Processor
+from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, acceleration_invalid, \
+    mileage_invalid, latitude_invalid, longitude_invalid, distance_between
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
 
 
@@ -33,7 +34,7 @@ class Inference(object, metaclass=_ABCMeta):
 class SpeedInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not Processor.speed_invalid(row["speed"])
+        return not speed_invalid(row["speed"])
 
 
 class SafeSpeedInference(SpeedInferenceBase):
@@ -52,9 +53,9 @@ class SafeSpeedInference(SpeedInferenceBase):
         if SpeedInferenceBase.skip(row):
             return
         speed = None
-        if not Processor.speed_invalid(s := row["front_wheel_speed"]):
+        if not speed_invalid(s := row["front_wheel_speed"]):
             speed = s
-        if not Processor.speed_invalid(s := row["rear_wheel_speed"]) and (speed is None or s < speed):
+        if not speed_invalid(s := row["rear_wheel_speed"]) and (speed is None or s < speed):
             speed = s
         return None if speed is None else {"speed": speed}
 
@@ -73,12 +74,12 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         t_0, t, v_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
-        if (SpeedInferenceBase.skip(target) or Processor.time_invalid(t_0) or
-                Processor.time_invalid(t) or Processor.speed_invalid(v_0) or
-                Processor.acceleration_invalid(a_0)):
+        if (SpeedInferenceBase.skip(target) or time_invalid(t_0) or
+                time_invalid(t) or speed_invalid(v_0) or
+                acceleration_invalid(a_0)):
             return
         a = target["forward_acceleration"]
-        if Processor.acceleration_invalid(a):
+        if acceleration_invalid(a):
             a = a_0
         return {"speed": abs(v_0 + .0018 * (a_0 + a) * (t - t_0))}
 
@@ -97,9 +98,9 @@ class SpeedInferenceByMileage(SpeedInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         t_0, t, s_0, s = base["t"], target["t"], base["mileage"], target["mileage"]
-        return None if (SpeedInferenceBase.skip(target) or Processor.time_invalid(t_0) or
-                        Processor.time_invalid(t) or Processor.mileage_invalid(s_0) or
-                        Processor.mileage_invalid(s)) else {
+        return None if (SpeedInferenceBase.skip(target) or time_invalid(t_0) or
+                        time_invalid(t) or mileage_invalid(s_0) or
+                        mileage_invalid(s)) else {
             "speed": abs(3600000 * (s - s_0) / (t - t_0))
         }
 
@@ -117,7 +118,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
         row = rows[0]
         ground_speed = row["gps_ground_speed"]
         return None if (SpeedInferenceBase.skip(row) or not row["gps_valid"] or
-                        Processor.speed_invalid(ground_speed)) else {
+                        speed_invalid(ground_speed)) else {
             "speed": ground_speed
         }
 
@@ -137,18 +138,18 @@ class SpeedInferenceByGPSPosition(SpeedInferenceBase):
         base, target = rows
         t_0, t = base["t"], target["t"]
         lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], target["longitude"]
-        return None if (SpeedInferenceBase.skip(target) or Processor.time_invalid(t_0) or
-                        Processor.time_invalid(t) or not base["gps_valid"] or not target["gps_valid"] or
-                        Processor.latitude_invalid(lat_0) or Processor.latitude_invalid(lat) or
-                        Processor.longitude_invalid(lon_0) or Processor.longitude_invalid(lon)) else {
-            "speed": abs(3600 * Processor.distance_between(lat_0, lon_0, lat, lon) / (t - t_0))
+        return None if (SpeedInferenceBase.skip(target) or time_invalid(t_0) or
+                        time_invalid(t) or not base["gps_valid"] or not target["gps_valid"] or
+                        latitude_invalid(lat_0) or latitude_invalid(lat) or
+                        longitude_invalid(lon_0) or longitude_invalid(lon)) else {
+            "speed": abs(3600 * distance_between(lat_0, lon_0, lat, lon) / (t - t_0))
         }
 
 
 class ForwardAccelerationInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not Processor.mileage_invalid(row["forward_acceleration"])
+        return not mileage_invalid(row["forward_acceleration"])
 
 
 class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
@@ -165,9 +166,9 @@ class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         target, base = rows
         t_0, t, v_0, v = target["t"], base["t"], target["speed"], base["speed"]
-        return None if (ForwardAccelerationInferenceBase.skip(target) or Processor.time_invalid(t_0) or
-                        Processor.time_invalid(t) or Processor.speed_invalid(v_0) or
-                        Processor.speed_invalid(v)) else {
+        return None if (ForwardAccelerationInferenceBase.skip(target) or time_invalid(t_0) or
+                        time_invalid(t) or speed_invalid(v_0) or
+                        speed_invalid(v)) else {
             "forward_acceleration": (v - v_0) / (t - t_0)
         }
 
@@ -175,7 +176,7 @@ class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
 class MileageInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not Processor.mileage_invalid(row["mileage"])
+        return not mileage_invalid(row["mileage"])
 
 
 class MileageInferenceBySpeed(MileageInferenceBase):
@@ -192,11 +193,11 @@ class MileageInferenceBySpeed(MileageInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         t_0, t, v_0, s_0 = base["t"], target["t"], base["speed"], base["mileage"]
-        if (MileageInferenceBase.skip(target) or Processor.time_invalid(t_0) or Processor.time_invalid(t) or
-                Processor.speed_invalid(v_0) or Processor.mileage_invalid(s_0)):
+        if (MileageInferenceBase.skip(target) or time_invalid(t_0) or time_invalid(t) or
+                speed_invalid(v_0) or mileage_invalid(s_0)):
             return
         v = target["speed"]
-        if Processor.speed_invalid(v):
+        if speed_invalid(v):
             v = v_0
         return {"mileage": s_0 + .00000125 * (v_0 + v) * (t - t_0) / 9}
 
@@ -216,11 +217,11 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
         base, target = rows
         s_0 = base["mileage"]
         lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], target["longitude"]
-        return None if (MileageInferenceBase.skip(target) or Processor.mileage_invalid(s_0) or
-                        not base["gps_valid"] or not target["gps_valid"] or Processor.latitude_invalid(lat_0) or
-                        Processor.latitude_invalid(lat) or Processor.longitude_invalid(lon_0) or
-                        Processor.longitude_invalid(lon)) else {
-            "mileage": s_0 + .001 * Processor.distance_between(lat_0, lon_0, lat, lon)
+        return None if (MileageInferenceBase.skip(target) or mileage_invalid(s_0) or
+                        not base["gps_valid"] or not target["gps_valid"] or latitude_invalid(lat_0) or
+                        latitude_invalid(lat) or longitude_invalid(lon_0) or
+                        longitude_invalid(lon)) else {
+            "mileage": s_0 + .001 * distance_between(lat_0, lon_0, lat, lon)
         }
 
 
@@ -275,11 +276,11 @@ class InferredDataset(CSVDataset):
     def assume_initial_zeros(self) -> None:
         row = self._raw_data[0]
         injection = {}
-        if Processor.speed_invalid(row["speed"]):
+        if speed_invalid(row["speed"]):
             injection["speed"] = 0
-        if Processor.acceleration_invalid(row["forward_acceleration"]):
+        if acceleration_invalid(row["forward_acceleration"]):
             injection["forward_acceleration"] = 0
-        if Processor.mileage_invalid(row["mileage"]):
+        if mileage_invalid(row["mileage"]):
             injection["mileage"] = 0
         InferredDataset.merge(row, injection)
 
