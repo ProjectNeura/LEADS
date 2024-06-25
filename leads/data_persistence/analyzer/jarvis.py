@@ -1,8 +1,17 @@
+from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
+
 from leads import L
 
 
+class JarvisBackend(object, metaclass=_ABCMeta):
+    @_abstractmethod
+    def predict(self) -> tuple[float, float]:
+        raise NotImplementedError
+
+
 class Jarvis(object):
-    def __init__(self) -> None:
+    def __init__(self, backend: JarvisBackend) -> None:
+        self.backend: JarvisBackend = backend
         L.info("Jarvis is enabled\n"
                "Before proceeding, you must read the following Terms and Conditions carefully:\n"
                "Jarvis is a deep learning model that aims to provide the optimal operation based on limited inputs.\n"
