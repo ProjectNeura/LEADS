@@ -46,6 +46,9 @@ class Processor(object):
         self._max_lap_x: float | None = None
         self._max_lap_y: float | None = None
 
+    def dataset(self) -> CSVDataset:
+        return self._dataset
+
     @staticmethod
     def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
         """
