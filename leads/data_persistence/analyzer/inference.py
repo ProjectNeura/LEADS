@@ -230,6 +230,10 @@ class InferredDataset(CSVDataset):
         self._raw_data: tuple[dict[str, _Any], ...] = ()
         self._inferred_data: list[dict[str, _Any]] = []
 
+    @_override
+    def __len__(self) -> int:
+        return len(self._raw_data)
+
     @staticmethod
     def merge(raw: dict[str, _Any], inferred: dict[str, _Any]) -> None:
         """
@@ -292,9 +296,6 @@ class InferredDataset(CSVDataset):
             self.assume_initial_zeros()
         self._complete(inferences, enhanced, False)
         self._complete(inferences, enhanced, True)
-
-    def __len__(self) -> int:
-        return len(self._raw_data)
 
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
