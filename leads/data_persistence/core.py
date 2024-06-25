@@ -225,6 +225,10 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
         self._csv.close()
         self._csv = None
 
+    def __len__(self) -> int:
+        self.require_loaded()
+        return self._csv.shape[0]
+
     def load(self) -> None:
         if self._csv:
             return
