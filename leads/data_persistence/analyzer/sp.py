@@ -1,8 +1,11 @@
+from typing import Any as _Any
+
 from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _show, title as _title, \
     colorbar as _colorbar, bar as _bar, xticks as _xticks, legend as _legend, xlabel as _xlabel, ylabel as _ylabel
 
 from leads.data import dlat2meters, dlon2meters, format_duration
 from leads.data_persistence.analyzer.processor import Processor
+from .._computational import sqrt as _sqrt
 
 
 class StaticProcessor(Processor):

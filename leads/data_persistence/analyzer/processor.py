@@ -10,7 +10,7 @@ from typing import Any as _Any, Callable as _Callable, override as _override, Ge
 
 from leads.data import dlat2meters, dlon2meters, format_duration
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
-from leads.data_persistence._computational import sqrt as _sqrt
+from .._computational import sqrt as _sqrt
 
 
 class Inference(object, metaclass=_ABCMeta):
