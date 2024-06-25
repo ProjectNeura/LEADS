@@ -225,8 +225,10 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
 
 
 class InferredDataset(CSVDataset):
-    _raw_data: tuple[dict[str, _Any], ...] = ()
-    _inferred_data: list[dict[str, _Any]] = []
+    def __init__(self, file: str, chunk_size: int = 100) -> None:
+        super().__init__(file, chunk_size)
+        self._raw_data: tuple[dict[str, _Any], ...] = ()
+        self._inferred_data: list[dict[str, _Any]] = []
 
     @staticmethod
     def merge(raw: dict[str, _Any], inferred: dict[str, _Any]) -> None:
