@@ -8,12 +8,9 @@ from datetime import datetime as _datetime
 from typing import Any as _Any, Callable as _Callable, override as _override, Generator as _Generator, \
     Sequence as _Sequence
 
-from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _show, title as _title, \
-    colorbar as _colorbar, bar as _bar, xticks as _xticks, legend as _legend, xlabel as _xlabel, ylabel as _ylabel
-
 from leads.data import dlat2meters, dlon2meters, format_duration
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
-from ._computational import sqrt as _sqrt
+from leads.data_persistence._computational import sqrt as _sqrt
 
 
 class Inference(object, metaclass=_ABCMeta):
@@ -44,7 +41,7 @@ class Inference(object, metaclass=_ABCMeta):
 class SpeedInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not PostProcessor.speed_invalid(row["speed"])
+        return not Processor.speed_invalid(row["speed"])
 
 
 class SafeSpeedInference(SpeedInferenceBase):
@@ -63,9 +60,9 @@ class SafeSpeedInference(SpeedInferenceBase):
         if SpeedInferenceBase.skip(row):
             return
         speed = None
-        if not PostProcessor.speed_invalid(s := row["front_wheel_speed"]):
+        if not Processor.speed_invalid(s := row["front_wheel_speed"]):
             speed = s
-        if not PostProcessor.speed_invalid(s := row["rear_wheel_speed"]) and (speed is None or s < speed):
+        if not Processor.speed_invalid(s := row["rear_wheel_speed"]) and (speed is None or s < speed):
             speed = s
         return None if speed is None else {"speed": speed}
 
@@ -84,12 +81,12 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         t_0, t, v_0, a_0 = base["t"], target["t"], base["speed"], base["forward_acceleration"]
-        if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(v_0) or
-                PostProcessor.acceleration_invalid(a_0)):
+        if (SpeedInferenceBase.skip(target) or Processor.time_invalid(t_0) or
+                Processor.time_invalid(t) or Processor.speed_invalid(v_0) or
+                Processor.acceleration_invalid(a_0)):
             return
         a = target["forward_acceleration"]
-        if PostProcessor.acceleration_invalid(a):
+        if Processor.acceleration_invalid(a):
             a = a_0
         return {"speed": abs(v_0 + .0018 * (a_0 + a) * (t - t_0))}
 
@@ -108,9 +105,9 @@ class SpeedInferenceByMileage(SpeedInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         t_0, t, s_0, s = base["t"], target["t"], base["mileage"], target["mileage"]
-        return None if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                        PostProcessor.time_invalid(t) or PostProcessor.mileage_invalid(s_0) or
-                        PostProcessor.mileage_invalid(s)) else {
+        return None if (SpeedInferenceBase.skip(target) or Processor.time_invalid(t_0) or
+                        Processor.time_invalid(t) or Processor.mileage_invalid(s_0) or
+                        Processor.mileage_invalid(s)) else {
             "speed": abs(3600000 * (s - s_0) / (t - t_0))
         }
 
@@ -128,7 +125,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
         row = rows[0]
         ground_speed = row["gps_ground_speed"]
         return None if (SpeedInferenceBase.skip(row) or not row["gps_valid"] or
-                        PostProcessor.speed_invalid(ground_speed)) else {
+                        Processor.speed_invalid(ground_speed)) else {
             "speed": ground_speed
         }
 
@@ -148,18 +145,18 @@ class SpeedInferenceByGPSPosition(SpeedInferenceBase):
         base, target = rows
         t_0, t = base["t"], target["t"]
         lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], target["longitude"]
-        return None if (SpeedInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                        PostProcessor.time_invalid(t) or not base["gps_valid"] or not target["gps_valid"] or
-                        PostProcessor.latitude_invalid(lat_0) or PostProcessor.latitude_invalid(lat) or
-                        PostProcessor.longitude_invalid(lon_0) or PostProcessor.longitude_invalid(lon)) else {
-            "speed": abs(3600 * PostProcessor.distance_between(lat_0, lon_0, lat, lon) / (t - t_0))
+        return None if (SpeedInferenceBase.skip(target) or Processor.time_invalid(t_0) or
+                        Processor.time_invalid(t) or not base["gps_valid"] or not target["gps_valid"] or
+                        Processor.latitude_invalid(lat_0) or Processor.latitude_invalid(lat) or
+                        Processor.longitude_invalid(lon_0) or Processor.longitude_invalid(lon)) else {
+            "speed": abs(3600 * Processor.distance_between(lat_0, lon_0, lat, lon) / (t - t_0))
         }
 
 
 class ForwardAccelerationInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not PostProcessor.mileage_invalid(row["forward_acceleration"])
+        return not Processor.mileage_invalid(row["forward_acceleration"])
 
 
 class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
@@ -176,9 +173,9 @@ class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         target, base = rows
         t_0, t, v_0, v = target["t"], base["t"], target["speed"], base["speed"]
-        return None if (ForwardAccelerationInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or
-                        PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(v_0) or
-                        PostProcessor.speed_invalid(v)) else {
+        return None if (ForwardAccelerationInferenceBase.skip(target) or Processor.time_invalid(t_0) or
+                        Processor.time_invalid(t) or Processor.speed_invalid(v_0) or
+                        Processor.speed_invalid(v)) else {
             "forward_acceleration": (v - v_0) / (t - t_0)
         }
 
@@ -186,7 +183,7 @@ class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
 class MileageInferenceBase(Inference, metaclass=_ABCMeta):
     @staticmethod
     def skip(row: dict[str, _Any]) -> bool:
-        return not PostProcessor.mileage_invalid(row["mileage"])
+        return not Processor.mileage_invalid(row["mileage"])
 
 
 class MileageInferenceBySpeed(MileageInferenceBase):
@@ -203,11 +200,11 @@ class MileageInferenceBySpeed(MileageInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         base, target = rows
         t_0, t, v_0, s_0 = base["t"], target["t"], base["speed"], base["mileage"]
-        if (MileageInferenceBase.skip(target) or PostProcessor.time_invalid(t_0) or PostProcessor.time_invalid(t) or
-                PostProcessor.speed_invalid(v_0) or PostProcessor.mileage_invalid(s_0)):
+        if (MileageInferenceBase.skip(target) or Processor.time_invalid(t_0) or Processor.time_invalid(t) or
+                Processor.speed_invalid(v_0) or Processor.mileage_invalid(s_0)):
             return
         v = target["speed"]
-        if PostProcessor.speed_invalid(v):
+        if Processor.speed_invalid(v):
             v = v_0
         return {"mileage": s_0 + .00000125 * (v_0 + v) * (t - t_0) / 9}
 
@@ -227,11 +224,11 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
         base, target = rows
         s_0 = base["mileage"]
         lat_0, lat, lon_0, lon = base["latitude"], target["latitude"], base["longitude"], target["longitude"]
-        return None if (MileageInferenceBase.skip(target) or PostProcessor.mileage_invalid(s_0) or
-                        not base["gps_valid"] or not target["gps_valid"] or PostProcessor.latitude_invalid(lat_0) or
-                        PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon_0) or
-                        PostProcessor.longitude_invalid(lon)) else {
-            "mileage": s_0 + .001 * PostProcessor.distance_between(lat_0, lon_0, lat, lon)
+        return None if (MileageInferenceBase.skip(target) or Processor.mileage_invalid(s_0) or
+                        not base["gps_valid"] or not target["gps_valid"] or Processor.latitude_invalid(lat_0) or
+                        Processor.latitude_invalid(lat) or Processor.longitude_invalid(lon_0) or
+                        Processor.longitude_invalid(lon)) else {
+            "mileage": s_0 + .001 * Processor.distance_between(lat_0, lon_0, lat, lon)
         }
 
 
@@ -280,11 +277,11 @@ class InferredDataset(CSVDataset):
     def assume_initial_zeros(self) -> None:
         row = self._raw_data[0]
         injection = {}
-        if PostProcessor.speed_invalid(row["speed"]):
+        if Processor.speed_invalid(row["speed"]):
             injection["speed"] = 0
-        if PostProcessor.acceleration_invalid(row["forward_acceleration"]):
+        if Processor.acceleration_invalid(row["forward_acceleration"]):
             injection["forward_acceleration"] = 0
-        if PostProcessor.mileage_invalid(row["mileage"]):
+        if Processor.mileage_invalid(row["mileage"]):
             injection["mileage"] = 0
         InferredDataset.merge(row, injection)
 
@@ -318,7 +315,7 @@ class InferredDataset(CSVDataset):
         self._inferred_data.clear()
 
 
-class PostProcessor(object):
+class Processor(object):
     def __init__(self, dataset: CSVDataset) -> None:
         if DEFAULT_HEADER in dataset.read_header():
             raise KeyError("Your dataset must include the default header")
@@ -404,8 +401,8 @@ class PostProcessor(object):
             t = int(row["t"])
             speed = row["speed"]
             mileage = row["mileage"]
-            if PostProcessor.time_invalid(t) or PostProcessor.speed_invalid(
-                    speed) or PostProcessor.mileage_invalid(mileage):
+            if Processor.time_invalid(t) or Processor.speed_invalid(
+                    speed) or Processor.mileage_invalid(mileage):
                 self._invalid_rows.append(i)
                 return
             if self._start_time is None:
@@ -420,7 +417,7 @@ class PostProcessor(object):
             self._end_mileage = mileage
             lat = row["latitude"]
             lon = row["longitude"]
-            if not row["gps_valid"] or PostProcessor.latitude_invalid(lat) or PostProcessor.longitude_invalid(lon):
+            if not row["gps_valid"] or Processor.latitude_invalid(lat) or Processor.longitude_invalid(lon):
                 self._gps_invalid_rows.append(i)
             else:
                 if self._min_lat is None or lat < self._min_lat:
@@ -455,7 +452,7 @@ class PostProcessor(object):
         return (
             f"Baked {self._valid_rows_count} / {self._read_rows_count} ROWS",
             f"Baking Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
-            f"Skipped Rows: {PostProcessor._hide_others(self._invalid_rows, 5)}",
+            f"Skipped Rows: {Processor._hide_others(self._invalid_rows, 5)}",
             f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"Duration: {format_duration(self._duration * .001)}",
@@ -464,7 +461,7 @@ class PostProcessor(object):
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D4D: {self._avg_speed:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows_count:.2f}%",
-            f"GPS Skipped Rows: {PostProcessor._hide_others(self._gps_invalid_rows, 5)}"
+            f"GPS Skipped Rows: {Processor._hide_others(self._gps_invalid_rows, 5)}"
         )
 
     def erase_unit_cache(self) -> None:
@@ -484,74 +481,6 @@ class PostProcessor(object):
             if skip_invalid_rows and i in self._invalid_rows or skip_gps_invalid_rows and i in self._gps_invalid_rows:
                 continue
             do(row, i)
-
-    def draw_lap(self, lap_index: int = -1) -> None:
-        if lap_index < 0:
-            for i in range(len(self._laps)):
-                self.draw_lap(i)
-        if lap_index >= len(self._laps):
-            raise IndexError("Lap index out of range")
-
-        def unit(row: dict[str, _Any], index: int) -> None:
-            if index < (lap := self._laps[lap_index])[0] or index > lap[1]:
-                return
-            t = int(row["t"])
-            if self._lap_start_time is None:
-                self._lap_start_time = t
-            self._lap_end_time = t
-            lat = row["latitude"]
-            lon = row["longitude"]
-            self._lap_d.append(row["speed"])
-            self._lap_x.append(x := dlon2meters(lon - self._min_lon, lat))
-            self._lap_y.append(y := dlat2meters(lat - self._min_lat))
-            if self._max_lap_x is None or x > self._max_lap_x:
-                self._max_lap_x = x
-            if self._max_lap_y is None or y > self._max_lap_y:
-                self._max_lap_y = y
-
-        self.foreach(unit, True, True)
-        far = max(self._max_lap_x, self._max_lap_y)
-        self._lap_x.append(far)
-        self._lap_y.append(far)
-        self._lap_d.append(self._max_speed)
-        _figure(figsize=(6, 5))
-        _title(f"Lap {lap_index + 1} ({self._laps[lap_index][3]:.2f} KM @ {format_duration(
-            self._laps[lap_index][2] * .001)})")
-        _scatter(self._lap_x, self._lap_y, c=self._lap_d, cmap="hot_r")
-        _xlabel("X (M)")
-        _ylabel("Y (M)")
-        cb = _colorbar()
-        cb.set_label("Speed (KM / H)")
-        cb.ax.hlines(self._laps[lap_index][4], 0, 1)
-        _show()
-
-    def draw_comparison_of_laps(self, width: float = .3) -> None:
-        durations = []
-        x0 = []
-        distances = []
-        x1 = []
-        avg_speeds = []
-        x2 = []
-        x_ticks = []
-        i = 1
-        for lap in self._laps:
-            durations.append(lap[2] / self._max_lap_duration)
-            x0.append(i)
-            distances.append(lap[3] / self._max_lap_distance)
-            x1.append(i + width)
-            avg_speeds.append(lap[4] / self._max_lap_avg_speed)
-            x2.append(i + 2 * width)
-            x_ticks.append(f"L{i}")
-            i += 1
-        _figure(figsize=(5 * _sqrt(len(self._laps)), 5))
-        _bar(x0, durations, width, label="Duration")
-        _bar(x1, distances, width, label="Distance")
-        _bar(x2, avg_speeds, width, label="Average Speed")
-        _xticks(x1, x_ticks)
-        _legend()
-        _xlabel("Lap")
-        _ylabel("Proportion (% / max)")
-        _show()
 
     def process(self, lap_time_assertions: _Sequence[float] | None = None, vehicle_hit_box: float = 3,
                 min_lap_time: float = 30) -> None:
