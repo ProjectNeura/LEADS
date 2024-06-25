@@ -1,6 +1,6 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 
-from leads import L
+from leads.logger import L
 
 
 class JarvisBackend(object, metaclass=_ABCMeta):
