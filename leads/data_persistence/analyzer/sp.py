@@ -1,5 +1,9 @@
-from typing import Any as _Any
+from importlib.util import find_spec as _find_spec
 
+if not _find_spec("matplotlib"):
+    raise ImportError("Please install `matplotlib` to run this module\n>>>pip install matplotlib")
+
+from typing import Any as _Any
 from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _show, title as _title, \
     colorbar as _colorbar, bar as _bar, xticks as _xticks, legend as _legend, xlabel as _xlabel, ylabel as _ylabel
 
