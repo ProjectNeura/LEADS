@@ -7,8 +7,6 @@ from .._computational import array as _array
 class DynamicProcessor(object):
     def __init__(self, data_seq: _Sequence[dict[str, _Any]]) -> None:
         self._data_seq: _Sequence[dict[str, _Any]] = data_seq
-        self._origin_x: float = 0
-        self._origin_y: float = 0
 
     def to_tensor(self, channels: tuple[str, ...] = ("time", "speed", "latitude", "longitude")) -> _array:
         r = []
