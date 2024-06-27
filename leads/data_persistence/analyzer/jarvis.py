@@ -6,7 +6,11 @@ from .._computational import array as _array
 
 class JarvisBackend(object, metaclass=_ABCMeta):
     @_abstractmethod
-    def predict(self, x: _array) -> tuple[float, float]:
+    def predict(self, x: _array) -> tuple[float, float, float]:
+        """
+        :param x: input data
+        :return: [throttle, brake, steer]
+        """
         raise NotImplementedError
 
 
