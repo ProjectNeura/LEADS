@@ -256,3 +256,6 @@ DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
     "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
 )
+DEFAULT_HEADER_FULL: tuple[str, str, str, str, str, str, str, str, str, str, str, str, str, str] = DEFAULT_HEADER + (
+    "throttle", "brake"
+)
