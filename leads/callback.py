@@ -15,8 +15,9 @@ class CallbackChain(object):
         Call the superior method if there is one.
         This must be called directly in the corresponding successor method.
         """
+        if not self._chain:
+            return
         cf = _currentframe().f_back
         while (cn := cf.f_code.co_name) == "super":
             cf = cf.f_back
-        if self._chain:
-            getattr(self._chain, cn)(*args, **kwargs)
+        getattr(self._chain, cn)(*args, **kwargs)
