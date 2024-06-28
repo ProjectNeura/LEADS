@@ -1,12 +1,12 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 
 from leads.logger import L
-from .._computational import array as _array
+from .._computational import ndarray as _ndarray
 
 
 class JarvisBackend(object, metaclass=_ABCMeta):
     @_abstractmethod
-    def predict(self, x: _array) -> tuple[float, float]:
+    def predict(self, x: _ndarray) -> tuple[float, float]:
         raise NotImplementedError
 
 
