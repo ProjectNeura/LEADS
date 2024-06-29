@@ -23,7 +23,9 @@ class DataContainer(Serializable):
                  gps_valid: bool = False,
                  gps_ground_speed: float = 0,
                  latitude: float = 0,
-                 longitude: float = 0) -> None:
+                 longitude: float = 0,
+                 throttle: float = 0,
+                 brake: float = 0) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.voltage: float = voltage
         self.speed: float = speed
@@ -37,8 +39,8 @@ class DataContainer(Serializable):
         self.latitude: float = latitude
         self.longitude: float = longitude
 
-        self.throttle: float = 0
-        self.brake: float = 0
+        self.throttle: float = throttle
+        self.brake: float = brake
 
     @_override
     def __str__(self) -> str:
@@ -72,6 +74,34 @@ class DataContainer(Serializable):
         :return: JSON in bytes
         """
         return str(self).encode()
+
+
+class VisualDataContainer(DataContainer):
+    def __init__(self,
+                 voltage: float = 0,
+                 speed: float = 0,
+                 front_wheel_speed: float = 0,
+                 rear_wheel_speed: float = 0,
+                 forward_acceleration: float = 0,
+                 lateral_acceleration: float = 0,
+                 mileage: float = 0,
+                 gps_valid: bool = False,
+                 gps_ground_speed: float = 0,
+                 latitude: float = 0,
+                 longitude: float = 0,
+                 throttle: float = 0,
+                 brake: float = 0,
+                 front_view_base64: str = "",
+                 left_view_base64: str = "",
+                 right_view_base64: str = "",
+                 rear_view_base64: str = "") -> None:
+        super().__init__(voltage, speed, front_wheel_speed, rear_wheel_speed, forward_acceleration,
+                         lateral_acceleration, mileage, gps_valid, gps_ground_speed, latitude, longitude, throttle,
+                         brake)
+        self.front_view_base64: str = front_view_base64
+        self.left_view_base64: str = left_view_base64
+        self.right_view_base64: str = right_view_base64
+        self.rear_view_base64: str = rear_view_base64
 
 
 def dlat2meters(dlat: float) -> float:
