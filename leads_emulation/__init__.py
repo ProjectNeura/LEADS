@@ -8,16 +8,15 @@ from leads import Controller as _Controller, DataContainer as _DataContainer
 
 
 class _EmulatedController(_Controller):
-    def __init__(self,
-                 minimum: int = 30,
-                 maximum: int = 40,
-                 skid_possibility: float = .1) -> None:
+    def __init__(self, minimum: int = 30, maximum: int = 40, skid_possibility: float = .1) -> None:
         super().__init__()
         self.minimum: int = minimum
         self.maximum: int = maximum
         self.skid_possibility: float = skid_possibility
         self._last_speed: float = 0
         self._last_time: float = _time()
+        self._max_throttle: float = 0
+        self._max_brake: float = 0
 
     def generate_rear_wheel_speed(self, front_wheel_speed: float) -> float:
         return front_wheel_speed if self.skid_possibility <= 0 else front_wheel_speed + int(_randint(
@@ -31,6 +30,20 @@ class _EmulatedController(_Controller):
             self._last_speed = speed
             self._last_time = t
 
+    def generate_throttle(self, forward_acceleration: float) -> float:
+        if forward_acceleration <= 0:
+            return 0
+        if forward_acceleration > self._max_throttle:
+            self._max_throttle = forward_acceleration
+        return forward_acceleration / self._max_throttle
+
+    def generate_brake(self, forward_acceleration: float) -> float:
+        if forward_acceleration >= 0:
+            return 0
+        if (forward_acceleration := -forward_acceleration) > self._max_brake:
+            self._max_brake = forward_acceleration
+        return forward_acceleration / self._max_brake
+
 
 class RandomController(_EmulatedController):
     @_override
@@ -39,18 +52,17 @@ class RandomController(_EmulatedController):
                               speed=(fws := _randint(self.minimum, self.maximum)),
                               front_wheel_speed=fws,
                               rear_wheel_speed=self.generate_rear_wheel_speed(fws),
-                              forward_acceleration=self.generate_forward_acceleration(fws),
+                              forward_acceleration=(fa := self.generate_forward_acceleration(fws)),
                               gps_valid=True,
                               gps_ground_speed=fws,
                               latitude=_randint(4315, 4415) / 100,
-                              longitude=-_randint(7888, 7988) / 100)
+                              longitude=-_randint(7888, 7988) / 100,
+                              throttle=self.generate_throttle(fa),
+                              brake=self.generate_brake(fa))
 
 
 class SinController(_EmulatedController):
-    def __init__(self,
-                 minimum: int = 30,
-                 maximum: int = 40,
-                 skid_possibility: float = .1,
+    def __init__(self, minimum: int = 30, maximum: int = 40, skid_possibility: float = .1,
                  acceleration: float = .01) -> None:
         super().__init__(minimum, maximum, skid_possibility)
         self.acceleration: float = acceleration
@@ -64,10 +76,12 @@ class SinController(_EmulatedController):
                                   speed=(fws := (_sin(self.counter) * self.magnitude + self.magnitude)),
                                   front_wheel_speed=fws,
                                   rear_wheel_speed=self.generate_rear_wheel_speed(fws),
-                                  forward_acceleration=self.generate_forward_acceleration(fws),
+                                  forward_acceleration=(fa := self.generate_forward_acceleration(fws)),
                                   gps_valid=True,
                                   gps_ground_speed=fws,
                                   latitude=_randint(4315, 4415) / 100,
-                                  longitude=-_randint(7888, 7988) / 100)
+                                  longitude=-_randint(7888, 7988) / 100,
+                                  throttle=self.generate_throttle(fa),
+                                  brake=self.generate_brake(fa))
         finally:
             self.counter = (self.counter + self.acceleration) % (2 * _pi)
