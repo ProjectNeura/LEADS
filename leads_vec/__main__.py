@@ -9,6 +9,11 @@ from leads import L as _L
 from leads_gui.system import get_system_kernel as _get_system_kernel
 from leads_vec.run import run
 
+
+def parse_path(path: str) -> str:
+    return path.replace("$INTERNAL", MODULE_PATH)
+
+
 if __name__ == "__main__":
     _filterwarnings("ignore")
     MODULE_PATH = _abspath(__file__)[:-12]
@@ -56,6 +61,6 @@ if __name__ == "__main__":
             args.devices = f"{MODULE_PATH}/replay.py"
             args.emu = False
             _L.debug("Replay mode enabled")
-        _exit(run(args.config, args.devices, args.main, args.register, args.theme, args.magnify_font_sizes, args.emu,
-                  args.auto_mfs, args.ignore_import_error))
+        _exit(run(parse_path(args.config), parse_path(args.devices), parse_path(args.main), args.register,
+                  parse_path(args.theme), args.magnify_font_sizes, args.emu, args.auto_mfs, args.ignore_import_error))
     _exit()
