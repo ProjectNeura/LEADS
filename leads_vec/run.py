@@ -10,15 +10,8 @@ from leads import register_controller as _register_controller, MAIN_CONTROLLER a
 from leads_gui import Config as _Config
 
 
-def run(config: str,
-        devices: str,
-        main: str,
-        register: _Literal["systemd", "config", "reverse_proxy"],
-        theme: str,
-        magnify_font_sizes: float,
-        emu: bool,
-        auto_mfs: bool,
-        ignore_import_error: bool) -> int:
+def run(config: str, devices: str, main: str, register: _Literal["systemd", "config", "reverse_proxy"], theme: str,
+        magnify_font_sizes: float, emu: bool, auto_mfs: bool, ignore_import_error: bool) -> int:
     match register:
         case "systemd":
             from ._bootloader import register_leads_vec as _create_service

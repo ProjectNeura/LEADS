@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
-from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER
+from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL
 from leads_gui import Config
 
 config: Config = require_config()
@@ -25,7 +25,7 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", DEFAULT_HEADER,
+csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", DEFAULT_HEADER_FULL,
           time_stamp_record, voltage_record, speed_record)
 
 

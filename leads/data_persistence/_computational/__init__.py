@@ -6,6 +6,7 @@ import pandas as _pandas
 
 mean: type[_np.mean] = _np.mean
 array: type[_np.array] = _np.array
+ndarray: type[_np.array] = _np.ndarray
 norm: type[_np.linalg.norm] = _np.linalg.norm
 sqrt: type[_np.sqrt] = _np.sqrt
 minimum: type[_np.min] = _np.min
