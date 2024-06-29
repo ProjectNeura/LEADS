@@ -26,12 +26,12 @@ class Camera(_Device):
         self._resolution = payload
 
     def transform(self, x: _ndarray) -> _ndarray:
-        height, width = x.shape[-2:]
+        height, width = x.shape[:-1]
         target_ratio = self._resolution[1] / self._resolution[0]
-        target_height = target_ratio * width
+        target_height = int(target_ratio * width)
         pad_left, pad_right, pad_top, pad_bottom = 0, 0, 0, 0
         if height > target_height:
-            target_width = height / target_ratio
+            target_width = int(height / target_ratio)
             pad_left = (target_width - width) // 2
             pad_right = target_width - width - pad_left
         else:
