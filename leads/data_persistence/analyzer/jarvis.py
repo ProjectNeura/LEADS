@@ -6,7 +6,12 @@ from .._computational import ndarray as _ndarray
 
 class JarvisBackend(object, metaclass=_ABCMeta):
     @_abstractmethod
-    def predict(self, x: _ndarray) -> tuple[float, float]:
+    def predict(self, x: _ndarray, visual: _ndarray) -> tuple[float, float, float]:
+        """
+        :param x: the input data
+        :param visual: the visual data
+        :return: [throttle, brake, steer]
+        """
         raise NotImplementedError
 
 
