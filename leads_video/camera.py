@@ -1,6 +1,6 @@
 from typing import override as _override
 
-from cv2 import VideoCapture as _VideoCapture
+from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB
 from numpy import ndarray as _ndarray
 
 from leads import Device as _Device
@@ -23,8 +23,8 @@ class Camera(_Device):
 
     @_override
     def read(self) -> _ndarray:
-        rval, frame = self._video_capture.read()
-        return frame
+        _, frame = self._video_capture.read()
+        return _cvtColor(frame, _COLOR_BGR2RGB)
 
     @_override
     def close(self) -> None:
