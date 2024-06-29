@@ -11,7 +11,7 @@ from leads_vec.run import run
 
 if __name__ == "__main__":
     _filterwarnings("ignore")
-    MODULE_PATH = _abspath(__file__)[:-12]
+    PACKAGE_PATH = _abspath(__file__)[:-12]
 
     parser = _ArgumentParser(prog="LEADS VeC",
                              description="Lightweight Embedded Assisted Driving System VeC",
@@ -19,9 +19,9 @@ if __name__ == "__main__":
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
-    parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py",
+    parser.add_argument("-d", "--devices", default=f"{PACKAGE_PATH}/devices.py",
                         help="specify a devices module")
-    parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py",
+    parser.add_argument("-m", "--main", default=f"{PACKAGE_PATH}/cli.py",
                         help="specify a main module")
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
@@ -47,13 +47,13 @@ if __name__ == "__main__":
                 f"Python Version: {_version}",
                 f"User: {_get_login()}",
                 f"`frpc` Available: {_frpc_exists()}",
-                f"Module Path: {MODULE_PATH}",
+                f"Module Path: {PACKAGE_PATH}",
                 f"LEADS Version: {leads_version}",
                 f"LEADS VeC Version: {__version__}",
                 sep="\n")
     else:
         if args.action == "replay":
-            args.devices = f"{MODULE_PATH}/replay.py"
+            args.devices = f"{PACKAGE_PATH}/replay.py"
             args.emu = False
             _L.debug("Replay mode enabled")
         _exit(run(args.config, args.devices, args.main, args.register, args.theme, args.magnify_font_sizes, args.emu,
