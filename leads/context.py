@@ -85,15 +85,21 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
 
     def left_indicator(self, left_indicator: bool | None = None, override: bool = False) -> bool | None:
-        if self._hazard and not override:
-            return True
+        if not override:
+            if self._hazard:
+                return True
+            if left_indicator:
+                self.right_indicator(False, True)
         if left_indicator is None:
             return self._left_indicator
         self._left_indicator = left_indicator
 
     def right_indicator(self, right_indicator: bool | None = None, override: bool = False) -> bool | None:
-        if self._hazard and not override:
-            return True
+        if not override:
+            if self._hazard:
+                return True
+            if right_indicator:
+                self.left_indicator(False, True)
         if right_indicator is None:
             return self._right_indicator
         self._right_indicator = right_indicator
