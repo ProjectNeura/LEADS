@@ -1,7 +1,8 @@
 from typing import override
 
-from leads import device, MAIN_CONTROLLER, L
-from leads_video import Camera
+from leads import device, MAIN_CONTROLLER, mark_device, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, \
+    REAR_VIEW_CAMERA
+from leads_video import Camera, base64_encode
 
 import_error: ImportError | None = None
 try:
@@ -10,13 +11,18 @@ except ImportError as e:
     import_error = e
 
 
-# @device(("front_vc", "left_vc", "right_vc", 'rear_vc'), MAIN_CONTROLLER, [(0,), (1,), (2,), (3,)])
-@device("front_vc", MAIN_CONTROLLER, (0,))
+@device((FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA), MAIN_CONTROLLER, [
+    (0, (480, 360)), (1, (480, 360)), (2, (480, 360)), (3, (480, 360))
+])
 class Cameras(Camera):
     @override
     def initialize(self, *parent_tags: str) -> None:
+        mark_device(self, "Jarvis")
         super().initialize(*parent_tags)
-        L.info("Camera initializing")
+
+    @override
+    def read(self) -> str:
+        return base64_encode(super().read())
 
 
 if import_error:

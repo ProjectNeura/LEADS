@@ -2,7 +2,8 @@ from typing import override
 
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
-    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
+    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, get_device, has_device, \
+    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
@@ -25,7 +26,7 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 class VeCController(Controller):
     @override
     def read(self) -> DataContainer:
-        universal = {
+        general = {
             "mileage": self.device(ODOMETER).read(),
             "gps_valid": (gps := self.device(GPS_RECEIVER).read())[0],
             "gps_ground_speed": gps[1],
@@ -33,7 +34,17 @@ class VeCController(Controller):
             "longitude": gps[3],
             **self.device("pc").read()
         }
-        return DataContainer(**({"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()), **universal)
+        wsc = {"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()
+        visual = {}
+        if has_device(FRONT_VIEW_CAMERA):
+            visual["front_view_base64"] = get_device(FRONT_VIEW_CAMERA).read()
+        if has_device(LEFT_VIEW_CAMERA):
+            visual["left_view_base64"] = get_device(LEFT_VIEW_CAMERA).read()
+        if has_device(RIGHT_VIEW_CAMERA):
+            visual["right_view_base64"] = get_device(RIGHT_VIEW_CAMERA).read()
+        if has_device(REAR_VIEW_CAMERA):
+            visual["rear_view_base64"] = get_device(REAR_VIEW_CAMERA).read()
+        return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 
 @controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
