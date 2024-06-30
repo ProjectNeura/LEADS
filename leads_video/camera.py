@@ -8,10 +8,10 @@ from leads import Device as _Device
 
 
 class Camera(_Device):
-    def __init__(self, port: int) -> None:
+    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         super().__init__(port)
+        self._resolution: tuple[int, int] | None = resolution
         self._video_capture: _VideoCapture | None = None
-        self._resolution: tuple[int, int] | None = None
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
