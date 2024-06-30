@@ -10,24 +10,21 @@ from leads_gui.system import get_system_kernel as _get_system_kernel
 from leads_vec.run import run
 
 
-def parse_path(path: str) -> str:
-    return path.replace("$INTERNAL", MODULE_PATH)
+def parse_path(path: str | None) -> str | None:
+    return path.replace("$INTERNAL", MODULE_PATH) if path else None
 
 
 if __name__ == "__main__":
     _filterwarnings("ignore")
     MODULE_PATH = _abspath(__file__)[:-12]
 
-    parser = _ArgumentParser(prog="LEADS VeC",
-                             description="Lightweight Embedded Assisted Driving System VeC",
+    parser = _ArgumentParser(prog="LEADS VeC", description="Lightweight Embedded Assisted Driving System VeC",
                              epilog="ProjectNeura: https://projectneura.org\n"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
     parser.add_argument("action", choices=("info", "replay", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
-    parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py",
-                        help="specify a devices module")
-    parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py",
-                        help="specify a main module")
+    parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py", help="specify a devices module")
+    parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py", help="specify a main module")
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
     parser.add_argument("-t", "--theme", default=None, help="specify a theme")
