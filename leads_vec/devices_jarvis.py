@@ -1,9 +1,11 @@
 from typing import override
 
+from numpy import ndarray as _ndarray
+
 from leads import device, MAIN_CONTROLLER, mark_device, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, \
     REAR_VIEW_CAMERA, require_config
 from leads_gui import Config
-from leads_video import Camera, base64_encode
+from leads_video import Camera
 
 import_error: ImportError | None = None
 try:
@@ -37,8 +39,8 @@ class Cameras(Camera):
         super().initialize(*parent_tags)
 
     @override
-    def read(self) -> str:
-        return base64_encode(super().read(), "RGB")
+    def read(self) -> _ndarray:
+        return super().read()
 
 
 if import_error:

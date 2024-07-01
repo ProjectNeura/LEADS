@@ -1,7 +1,7 @@
 from tkinter import Misc as _Misc
 from typing import override as _override
 
-from PIL import ImageTk as _ImageTk
+from PIL.ImageTk import PhotoImage as _PhotoImage
 from customtkinter import Variable as _Variable, DoubleVar as _DoubleVar
 from numpy import sqrt as _sqrt
 
@@ -90,7 +90,7 @@ class SpeedTrendMeter(TextBased, VariableControlled):
                            corner_radius)
         VariableControlled.__init__(self, variable if variable else _DoubleVar(master))
         self.attach(self.partially_render)
-        self._image: _ImageTk.PhotoImage | None = None
+        self._image: _PhotoImage | None = None
 
     @_override
     def dynamic_renderer(self, canvas: CanvasBased) -> None:
@@ -106,7 +106,6 @@ class SpeedTrendMeter(TextBased, VariableControlled):
         w, h, hc, vc, limit = canvas.meta()
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         if self._image is None:
-            self._image = _ImageTk.PhotoImage(Car.load_source(Color[parse_color(("BLACK", "WHITE"))]).resize((limit,
-                                                                                                              limit)))
+            self._image = _PhotoImage(Car.load_source(Color[parse_color(("BLACK", "WHITE"))]).resize((limit, limit)))
         canvas.collect("f0", canvas.create_image(hc, vc, image=self._image))
         self.dynamic_renderer(canvas)

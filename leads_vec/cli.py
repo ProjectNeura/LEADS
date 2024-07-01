@@ -9,12 +9,12 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main, format_duration, BRAKE_INDICATOR
+    initialize_main, format_duration, BRAKE_INDICATOR, VisualDataContainer
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
-    ESC, Satellite, Motor, Speed
+    ESC, Satellite, Motor, Speed, Base64Photo
 from leads_raspberry_pi import LEDGroupCommand, LEDCommand, Transition, Entire
 from leads_vec.__version__ import __version__
 
@@ -55,6 +55,7 @@ def main() -> int:
     voltage = _StringVar(root, "")
     speed_trend = _DoubleVar(root, 0)
     g_force = GForceVar(root, 0, 0)
+    front_view_image = _StringVar(root, "")
     esc = _StringVar(root, "STANDARD")
 
     class LeftIndicator(FrequencyGenerator):
@@ -88,7 +89,9 @@ def main() -> int:
                                     SpeedTrendMeter(root, theme_key="CTkButton", variable=speed_trend,
                                                     font=("Arial", cfg.font_size_medium - 4)),
                                     GForceMeter(root, theme_key="CTkButton", variable=g_force,
-                                                font=("Arial", cfg.font_size_medium - 4))).lock_ratio(cfg.m_ratio)
+                                                font=("Arial", cfg.font_size_medium - 4)),
+                                    Base64Photo(root, theme_key="CTkButton", variable=front_view_image)
+                                    ).lock_ratio(cfg.m_ratio)
 
         manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
                                         font=("Arial", cfg.font_size_small))
@@ -185,6 +188,8 @@ def main() -> int:
             st = ctx.speed_trend()
             speed_trend.set(st)
             g_force.set((d.lateral_acceleration, d.forward_acceleration))
+            if isinstance(d, VisualDataContainer) and d.front_view_base64:
+                front_view_image.set(d.front_view_base64)
             if w.runtime_data().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:

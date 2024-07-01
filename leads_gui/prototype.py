@@ -1,11 +1,10 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from json import dumps as _dumps
 from time import time as _time
-from tkinter import Misc as _Misc, Event as _Event
+from tkinter import Misc as _Misc, Event as _Event, PhotoImage as _PhotoImage
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any, \
     Literal as _Literal
 
-from PIL import ImageTk as _ImageTk
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
     ThemeManager as _ThemeManager, Variable as _Variable, ScalingTracker as _ScalingTracker, \
     set_appearance_mode as _set_appearance_mode
@@ -238,7 +237,7 @@ class Window(_Generic[T]):
         self._root: _CTk = _CTk()
         self._root.title(title)
         self._root.wm_iconbitmap()
-        self._root.iconphoto(True, _ImageTk.PhotoImage(file=f"{_ASSETS_PATH}/logo.png"))
+        self._root.iconphoto(True, _PhotoImage(master=self._root, file=f"{_ASSETS_PATH}/logo.png"))
         self._root.overrideredirect(no_title_bar)
         _set_appearance_mode(theme_mode)
         sw, sh = self._root.winfo_screenwidth(), self._root.winfo_screenheight()

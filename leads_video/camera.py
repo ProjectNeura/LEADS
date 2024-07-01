@@ -2,7 +2,7 @@ from typing import override as _override
 
 from PIL.Image import fromarray as _fromarray
 from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB
-from numpy import ndarray as _ndarray, transpose as _transpose, pad as _pad, array as _array
+from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device
 
@@ -43,7 +43,7 @@ class Camera(_Device):
     @_override
     def read(self) -> _ndarray:
         _, frame = self._video_capture.read()
-        return _transpose(_cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB), (2, 0, 1))
+        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB).transpose(2, 0, 1)
 
     @_override
     def close(self) -> None:

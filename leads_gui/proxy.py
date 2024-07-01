@@ -34,7 +34,7 @@ class ProxyCanvas(CanvasBased):
         self.mode((self._mode + 1) % len(self._canvases))
 
     def mode(self, mode: int | None = None) -> int | None:
-        if self._mode is None:
+        if mode is None:
             return self._mode
         if isinstance(canvas := self._canvases[self._mode], VariableControlled):
             canvas.detach()
