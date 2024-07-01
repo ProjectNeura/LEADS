@@ -7,7 +7,7 @@ from numpy import ndarray as _ndarray, array as _array
 
 
 def base64_encode(x: _ndarray, mode: _Literal["L", "RGB"] | None = None) -> str:
-    img = _fromarray(x, mode)
+    img = _fromarray(x.transpose(1, 2, 0), mode)
     buffer = _BytesIO()
     img.save(buffer, "PNG")
     return _b64encode(buffer.getvalue()).decode()
@@ -18,4 +18,4 @@ def base64_decode_image(x_base64: str) -> _Image:
 
 
 def base64_decode(x_base64: str) -> _ndarray:
-    return _array(base64_decode_image(x_base64))
+    return _array(base64_decode_image(x_base64)).transpose(2, 0, 1)

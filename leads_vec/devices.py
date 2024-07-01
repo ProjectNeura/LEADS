@@ -38,13 +38,13 @@ class VeCController(Controller):
         wsc = {"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()
         visual = {}
         if has_device(FRONT_VIEW_CAMERA):
-            visual["front_view_base64"] = base64_encode(get_device(FRONT_VIEW_CAMERA).read(), "RGB")
+            visual["front_view_base64"] = base64_encode(get_device(FRONT_VIEW_CAMERA).read())
         if has_device(LEFT_VIEW_CAMERA):
-            visual["left_view_base64"] = base64_encode(get_device(LEFT_VIEW_CAMERA).read(), "RGB")
+            visual["left_view_base64"] = base64_encode(get_device(LEFT_VIEW_CAMERA).read())
         if has_device(RIGHT_VIEW_CAMERA):
-            visual["right_view_base64"] = base64_encode(get_device(RIGHT_VIEW_CAMERA).read(), "RGB")
+            visual["right_view_base64"] = base64_encode(get_device(RIGHT_VIEW_CAMERA).read())
         if has_device(REAR_VIEW_CAMERA):
-            visual["rear_view_base64"] = base64_encode(get_device(REAR_VIEW_CAMERA).read(), "RGB")
+            visual["rear_view_base64"] = base64_encode(get_device(REAR_VIEW_CAMERA).read())
         return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 
