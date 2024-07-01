@@ -12,7 +12,7 @@ except ImportError as e:
     import_error = e
 
 config: Config = require_config()
-CAMERA_RESOLUTION: tuple[int, int] | None = tuple(cr)[:2] if (cr := config.get("camera_resolution")) else None
+CAMERA_RESOLUTION: tuple[int, int] | None = config.get("camera_resolution")
 CAMERA_TAGS: list[str] = []
 CAMERA_ARGS: list[tuple[int, tuple[int, int] | None]] = []
 if (port := config.get("front_view_camera_port")) is not None:
