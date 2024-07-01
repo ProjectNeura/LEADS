@@ -237,7 +237,7 @@ class Window(_Generic[T]):
         self._root: _CTk = _CTk()
         self._root.title(title)
         self._root.wm_iconbitmap()
-        self._root.iconphoto(True, _PhotoImage(file=f"{_ASSETS_PATH}/logo.png"))
+        self._root.iconphoto(True, _PhotoImage(master=self._root, file=f"{_ASSETS_PATH}/logo.png"))
         self._root.overrideredirect(no_title_bar)
         _set_appearance_mode(theme_mode)
         sw, sh = self._root.winfo_screenwidth(), self._root.winfo_screenheight()
