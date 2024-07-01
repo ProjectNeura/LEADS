@@ -9,7 +9,7 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main, format_duration
+    initialize_main, format_duration, BRAKE_INDICATOR
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
@@ -222,6 +222,13 @@ def main() -> int:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
+
+        @_override
+        def brake_indicator(self, event: Event, state: bool) -> None:
+            if has_device(BRAKE_INDICATOR):
+                get_device(BRAKE_INDICATOR).write(LEDGroupCommand(
+                    LEDCommand.ON, Entire()
+                ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
 
         @_override
         def left_indicator(self, e: Event, state: bool) -> None:

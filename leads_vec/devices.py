@@ -3,7 +3,7 @@ from typing import override
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, get_device, has_device, \
-    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer
+    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
@@ -112,8 +112,10 @@ class GPS(NMEAGPSReceiver):
         super().initialize(*parent_tags)
 
 
-@device((LEFT_INDICATOR, RIGHT_INDICATOR), MAIN_CONTROLLER, [
-    (LED(5, .5, .5), LED(6, .5, .5), LED(26, .5, .5)), (LED(17, .5, .5), LED(27, .5, .5), LED(22, .5, .5))
+@device((BRAKE_INDICATOR, LEFT_INDICATOR, RIGHT_INDICATOR), MAIN_CONTROLLER, [
+    (LED(23), LED(24)),
+    (LED(5, .5, .5), LED(6, .5, .5), LED(26, .5, .5)),
+    (LED(17, .5, .5), LED(27, .5, .5), LED(22, .5, .5))
 ])
 class DirectionIndicators(LEDGroup):
     @override
