@@ -1,8 +1,9 @@
-from typing import override as _override
+from typing import override
 
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
-    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer
+    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, get_device, has_device, \
+    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
@@ -23,9 +24,9 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 
 @controller(MAIN_CONTROLLER)
 class VeCController(Controller):
-    @_override
+    @override
     def read(self) -> DataContainer:
-        universal = {
+        general = {
             "mileage": self.device(ODOMETER).read(),
             "gps_valid": (gps := self.device(GPS_RECEIVER).read())[0],
             "gps_ground_speed": gps[1],
@@ -33,28 +34,38 @@ class VeCController(Controller):
             "longitude": gps[3],
             **self.device("pc").read()
         }
-        return DataContainer(**({"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()), **universal)
+        wsc = {"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()
+        visual = {}
+        if has_device(FRONT_VIEW_CAMERA):
+            visual["front_view_base64"] = get_device(FRONT_VIEW_CAMERA).read()
+        if has_device(LEFT_VIEW_CAMERA):
+            visual["left_view_base64"] = get_device(LEFT_VIEW_CAMERA).read()
+        if has_device(RIGHT_VIEW_CAMERA):
+            visual["right_view_base64"] = get_device(RIGHT_VIEW_CAMERA).read()
+        if has_device(REAR_VIEW_CAMERA):
+            visual["rear_view_base64"] = get_device(REAR_VIEW_CAMERA).read()
+        return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 
 @controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
 class PowerController(ArduinoMicro):
-    @_override
+    @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "POWER", "BATT", "MOTOR")
         super().initialize(*parent_tags)
 
-    @_override
+    @override
     def read(self) -> dict[str, float]:
         return {"voltage": self.device(VOLTAGE_SENSOR).read()}
 
-    @_override
+    @override
     def write(self, payload: float) -> None:
         super().write(str(payload).encode())
 
 
 @device(VOLTAGE_SENSOR, "pc")
 class BatteryVoltageSensor(VoltageSensor):
-    @_override
+    @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "POWER", "BATT")
         super().initialize(*parent_tags)
@@ -62,12 +73,12 @@ class BatteryVoltageSensor(VoltageSensor):
 
 @controller("wsc", MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
 class WheelSpeedController(ArduinoMicro):
-    @_override
+    @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "WSC", "ESC")
         super().initialize(*parent_tags)
 
-    @_override
+    @override
     def read(self) -> dict[str, float]:
         lfws = self.device(LEFT_FRONT_WHEEL_SPEED_SENSOR).read()
         rfws = self.device(RIGHT_FRONT_WHEEL_SPEED_SENSOR).read()
@@ -78,7 +89,7 @@ class WheelSpeedController(ArduinoMicro):
 
 @device(ODOMETER, MAIN_CONTROLLER)
 class AverageOdometer(ConcurrentOdometer):
-    @_override
+    @override
     def read(self) -> float:
         return super().read() / 3
 
@@ -87,7 +98,7 @@ class AverageOdometer(ConcurrentOdometer):
            [(FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER), (FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER),
             (REAR_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER)])))
 class WheelSpeedSensors(WheelSpeedSensor):
-    @_override
+    @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "WSC", "ESC")
         super().initialize(*parent_tags)
@@ -95,7 +106,7 @@ class WheelSpeedSensors(WheelSpeedSensor):
 
 @device(GPS_RECEIVER, MAIN_CONTROLLER, (GPS_RECEIVER_PORT,))
 class GPS(NMEAGPSReceiver):
-    @_override
+    @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "GPS")
         super().initialize(*parent_tags)
@@ -105,7 +116,7 @@ class GPS(NMEAGPSReceiver):
     (LED(5, .5, .5), LED(6, .5, .5), LED(26, .5, .5)), (LED(17, .5, .5), LED(27, .5, .5), LED(22, .5, .5))
 ])
 class DirectionIndicators(LEDGroup):
-    @_override
+    @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "DI")
         super().initialize(*parent_tags)

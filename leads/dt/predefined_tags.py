@@ -15,3 +15,8 @@ BRAKE_CONTROLLER: str = "bc"
 GPS_RECEIVER: str = "gps"
 LEFT_INDICATOR: str = "lindi"
 RIGHT_INDICATOR: str = "rindi"
+
+FRONT_VIEW_CAMERA: str = "frvc"
+LEFT_VIEW_CAMERA: str = "lfvc"
+RIGHT_VIEW_CAMERA: str = "rtvc"
+REAR_VIEW_CAMERA: str = "revc"

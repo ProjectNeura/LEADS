@@ -1,6 +1,6 @@
 from datetime import datetime as _datetime
 from time import time as _time
-from typing import Callable as _Callable
+from typing import Callable as _Callable, override as _override
 
 from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as _DoubleVar, StringVar as _StringVar, \
     CTkSegmentedButton as _CTkSegmentedButton
@@ -58,14 +58,17 @@ def main() -> int:
     esc = _StringVar(root, "STANDARD")
 
     class LeftIndicator(FrequencyGenerator):
+        @_override
         def do(self) -> None:
             uim["left"].configure(image=Left(cfg.font_size_large, Color.RED if self._loops % 2 == 1 else None))
 
     class RightIndicator(FrequencyGenerator):
+        @_override
         def do(self) -> None:
             uim["right"].configure(image=Right(cfg.font_size_large, Color.RED if self._loops % 2 == 1 else None))
 
     class DirectionIndicatorSound(FrequencyGenerator):
+        @_override
         def do(self) -> None:
             if self._loops % 2 == 1:
                 DIRECTION_INDICATOR_ON.play()
@@ -127,10 +130,12 @@ def main() -> int:
     uim = initialize(w, render, ctx, get_controller(MAIN_CONTROLLER))
 
     class CommCallback(Callback):
+        @_override
         def on_fail(self, service: Service, error: Exception) -> None:
             self.super(service=service, error=error)
             L.error(f"Comm server error: {repr(error)}")
 
+        @_override
         def on_receive(self, service: Service, msg: bytes) -> None:
             self.super(service=service, msg=msg)
             match msg:
@@ -142,6 +147,7 @@ def main() -> int:
     w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
     class CustomListener(EventListener):
+        @_override
         def pre_push(self, e: DataPushedEvent) -> None:
             self.super(e)
             d = e.data.to_dict()
@@ -149,6 +155,7 @@ def main() -> int:
             d["lap_times"] = ctx.lap_time_list()
             w.runtime_data().comm_notify(d)
 
+        @_override
         def on_update(self, e: UpdateEvent) -> None:
             self.super(e)
             d = e.context.data()
@@ -192,26 +199,31 @@ def main() -> int:
                         uim[f"{system_lowercase}_status"].configure(text=f"{system} OFF", text_color=("black", "white"))
                 w.runtime_data().control_system_switch_changed = False
 
+        @_override
         def pre_intervene(self, e: InterventionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} INTEV", text_color="red")
 
+        @_override
         def post_intervene(self, e: InterventionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
 
+        @_override
         def pre_suspend(self, e: SuspensionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} SUSPD", text_color="gray")
 
+        @_override
         def post_suspend(self, e: SuspensionEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
 
+        @_override
         def left_indicator(self, e: Event, state: bool) -> None:
             if has_device(LEFT_INDICATOR):
                 get_device(LEFT_INDICATOR).write(LEDGroupCommand(
@@ -225,6 +237,7 @@ def main() -> int:
                 w.remove_frequency_generator("direction_indicator_sound")
                 uim["left"].configure(image=Left(cfg.font_size_large, None))
 
+        @_override
         def right_indicator(self, e: Event, state: bool) -> None:
             if has_device(RIGHT_INDICATOR):
                 get_device(RIGHT_INDICATOR).write(LEDGroupCommand(
@@ -238,6 +251,7 @@ def main() -> int:
                 w.remove_frequency_generator("direction_indicator_sound")
                 uim["right"].configure(image=Right(cfg.font_size_large, None))
 
+        @_override
         def hazard(self, e: Event, state: bool) -> None:
             super().hazard(e, state)
             uim["hazard"].configure(image=Hazard(color=Color.RED if state else None))
