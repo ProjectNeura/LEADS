@@ -1,8 +1,9 @@
 from json import load as _load
-from typing import TypeVar as _TypeVar, TextIO as _TextIO
+from typing import TypeVar as _TypeVar, TextIO as _TextIO, Callable as _Callable
 
 from leads.config.template import ConfigTemplate
-from leads.types import OnRegister as _OnRegister, OnRegisterChain as _OnRegisterChain
+from leads.types import OnRegister as _OnRegister, OnRegisterChain as _OnRegisterChain, \
+    SupportedConfig as _SupportedConfig
 
 T = _TypeVar("T", bound=ConfigTemplate)
 
@@ -16,7 +17,7 @@ def set_on_register_config(callback: _OnRegisterChain[T]) -> None:
     _on_register_config = callback(_on_register_config)
 
 
-def load_config(file: str | _TextIO, constructor: type[T]) -> T:
+def load_config(file: str | _TextIO, constructor: _Callable[[dict[str, _SupportedConfig]], T]) -> T:
     if isinstance(file, str):
         with open(file) as f:
             return constructor(_load(f))
