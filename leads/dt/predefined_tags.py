@@ -13,6 +13,7 @@ BRAKE_PEDAL: str = "bpd"
 MOTOR_CONTROLLER: str = "mc"
 BRAKE_CONTROLLER: str = "bc"
 GPS_RECEIVER: str = "gps"
+BRAKE_INDICATOR: str = "bindi"
 LEFT_INDICATOR: str = "lindi"
 RIGHT_INDICATOR: str = "rindi"
 
