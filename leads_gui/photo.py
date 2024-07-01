@@ -37,5 +37,5 @@ class Base64Photo(CanvasBased, VariableControlled):
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear()
-        # canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
+        canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
         self.dynamic_renderer(canvas)
