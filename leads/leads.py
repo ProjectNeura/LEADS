@@ -67,15 +67,21 @@ class LEADS(Context[T]):
 
     @_override
     def left_indicator(self, left_indicator: bool | None = None, override: bool = False) -> bool | None:
-        if (r := super().left_indicator(left_indicator, override)) is None:
-            self._event_listener.left_indicator(Event("LEFT_INDICATOR", self), left_indicator)
-        return r
+        initial_state = self._left_indicator
+        try:
+            return super().left_indicator(left_indicator, override)
+        finally:
+            if self._left_indicator != initial_state:
+                self._event_listener.left_indicator(Event("LEFT_INDICATOR", self), left_indicator)
 
     @_override
     def right_indicator(self, right_indicator: bool | None = None, override: bool = False) -> bool | None:
-        if (r := super().right_indicator(right_indicator, override)) is None:
-            self._event_listener.right_indicator(Event("RIGHT_INDICATOR", self), right_indicator)
-        return r
+        initial_state = self._right_indicator
+        try:
+            return super().right_indicator(right_indicator, override)
+        finally:
+            if self._right_indicator != initial_state:
+                self._event_listener.right_indicator(Event("RIGHT_INDICATOR", self), right_indicator)
 
     @_override
     def hazard(self, hazard: bool | None = None) -> bool | None:
