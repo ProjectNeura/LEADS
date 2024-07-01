@@ -34,6 +34,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         self._speed_seq: _deque[float] = _deque(maxlen=data_seq_size)
         self._lap_time_seq: _deque[int] = _deque((int(_time() * 1000),), maxlen=num_laps_timed + 1)
         self._esc_mode: ESCMode = ESCMode.STANDARD
+        self._brake_indicator: bool = False
         self._left_indicator: bool = False
         self._right_indicator: bool = False
         self._hazard: bool = False
@@ -83,6 +84,11 @@ class Context(_Generic[T], metaclass=_ABCMeta):
 
     def speed_trend(self) -> float:
         return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
+
+    def brake_indicator(self, brake_indicator: bool | None = None) -> bool | None:
+        if brake_indicator is None:
+            return self._brake_indicator
+        self._brake_indicator = brake_indicator
 
     def left_indicator(self, left_indicator: bool | None = None, override: bool = False) -> bool | None:
         if not override:
