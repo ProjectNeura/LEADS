@@ -66,6 +66,15 @@ class LEADS(Context[T]):
         self._do_plugin_callback("post_update")
 
     @_override
+    def brake_indicator(self, brake_indicator: bool | None = None) -> bool | None:
+        initial_state = self._brake_indicator
+        try:
+            return super().brake_indicator(brake_indicator)
+        finally:
+            if self._brake_indicator != initial_state:
+                self._event_listener.brake_indicator(Event("BRAKE_INDICATOR", self), brake_indicator)
+
+    @_override
     def left_indicator(self, left_indicator: bool | None = None, override: bool = False) -> bool | None:
         initial_state = self._left_indicator
         try:
