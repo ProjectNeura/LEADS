@@ -22,7 +22,7 @@ class Cameras(Camera):
 
     @override
     def read(self) -> str:
-        return base64_encode(super().read())
+        return base64_encode(super().read(), "RGB")
 
 
 if import_error:
