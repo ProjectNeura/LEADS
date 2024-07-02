@@ -50,13 +50,15 @@ def main() -> int:
                theme_mode=cfg.theme_mode)
     root = w.root()
     root.configure(cursor="dot")
-    m1 = _StringVar(root, "")
-    speed = _DoubleVar(root, 0)
-    voltage = _StringVar(root, "")
-    speed_trend = _DoubleVar(root, 0)
-    g_force = GForceVar(root, 0, 0)
-    rear_view_base64 = _StringVar(root, "")
-    esc = _StringVar(root, "STANDARD")
+    var_lap_times = _StringVar(root, "")
+    var_gps = _StringVar(root, "")
+    var_rear_view_base64 = _StringVar(root, "")
+    var_info = _StringVar(root, "")
+    var_speed = _DoubleVar(root, 0)
+    var_voltage = _StringVar(root, "")
+    var_speed_trend = _DoubleVar(root, 0)
+    var_g_force = GForceVar(root, 0, 0)
+    var_esc = _StringVar(root, "STANDARD")
 
     class LeftIndicator(FrequencyGenerator):
         @_override
@@ -77,20 +79,23 @@ def main() -> int:
                 DIRECTION_INDICATOR_OFF.play()
 
     def render(manager: ContextManager) -> None:
-        def switch_m1_mode(_) -> None:
-            w.runtime_data().m1_mode = (w.runtime_data().m1_mode + 1) % 3
-
-        manager["m1"] = Typography(root, theme_key="CTkButton", variable=m1, clickable=True, command=switch_m1_mode,
-                                   font=("Arial", cfg.font_size_small - 4)).lock_ratio(cfg.m_ratio)
-        manager["m2"] = Speedometer(root, variable=speed).lock_ratio(cfg.m_ratio)
+        manager["m1"] = ProxyCanvas(root, "CTkButton",
+                                    Typography(root, theme_key="CTkButton", variable=var_lap_times,
+                                               font=("Arial", cfg.font_size_small)),
+                                    Typography(root, theme_key="CTkButton", variable=var_gps,
+                                               font=("Arial", cfg.font_size_small)),
+                                    Base64Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),
+                                    Typography(root, theme_key="CTkButton", variable=var_info,
+                                               font=("Arial", cfg.font_size_small - 4)),
+                                    ).lock_ratio(cfg.m_ratio)
+        manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
-                                    Typography(root, theme_key="CTkButton", variable=voltage,
+                                    Typography(root, theme_key="CTkButton", variable=var_voltage,
                                                font=("Arial", cfg.font_size_medium - 4)),
-                                    SpeedTrendMeter(root, theme_key="CTkButton", variable=speed_trend,
+                                    SpeedTrendMeter(root, theme_key="CTkButton", variable=var_speed_trend,
                                                     font=("Arial", cfg.font_size_medium - 4)),
-                                    GForceMeter(root, theme_key="CTkButton", variable=g_force,
-                                                font=("Arial", cfg.font_size_medium - 4)),
-                                    Base64Photo(root, theme_key="CTkButton", variable=rear_view_base64)
+                                    GForceMeter(root, theme_key="CTkButton", variable=var_g_force,
+                                                font=("Arial", cfg.font_size_medium - 4))
                                     ).lock_ratio(cfg.m_ratio)
 
         manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
@@ -127,7 +132,7 @@ def main() -> int:
             ctx.esc_mode(esc_mode)
             w.runtime_data().control_system_switch_changed = True
 
-        manager["esc"] = _CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=esc,
+        manager["esc"] = _CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=var_esc,
                                              command=switch_esc_mode, font=("Arial", cfg.font_size_small))
 
     uim = initialize(w, render, ctx, get_controller(MAIN_CONTROLLER))
@@ -155,41 +160,38 @@ def main() -> int:
             self.super(e)
             d = e.data.to_dict()
             d["speed_trend"] = ctx.speed_trend()
-            d["lap_times"] = ctx.lap_time_list()
+            d["lap_times"] = ctx.lap_times()
             w.runtime_data().comm_notify(d)
 
         @_override
         def on_update(self, e: UpdateEvent) -> None:
             self.super(e)
             d = e.context.data()
-            if w.runtime_data().m1_mode == 0:
-                lap_time_list = ctx.lap_time_list()
-                m1.set(f"LAP TIMES\n\n{"No Lap Timed" if len(lap_time_list) < 1 else "\n".join(
-                    map(lambda t: format_duration(t * .001), lap_time_list))}")
-            elif w.runtime_data().m1_mode == 1:
-                if has_device(GPS_RECEIVER):
-                    gps = get_device(GPS_RECEIVER).read()
-                    m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n\n"
-                           f"{d.gps_ground_speed:.1f} KM / H\n"
-                           f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
-                else:
-                    m1.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - !NF!\n\n"
-                           f"{d.gps_ground_speed:.1f} KM / H\n"
-                           f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
-            elif w.runtime_data().m1_mode == 2:
-                m1.set(f"VeC {__version__.upper()}\n\n"
-                       f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                       f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
-                       f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
-                       f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
-                       f"{ip[-1] if len(ip := my_ip_addresses()) > 0 else "NOT FOUND"}:{w.runtime_data().comm.port()}")
-            speed.set(d.speed)
-            voltage.set(f"{d.voltage:.1f} V")
-            st = ctx.speed_trend()
-            speed_trend.set(st)
-            g_force.set((d.lateral_acceleration, d.forward_acceleration))
+            lap_times = ctx.lap_times()
+            var_lap_times.set(f"LAP TIMES\n\n{"No Lap Timed" if len(lap_times) < 1 else "\n".join(map(
+                lambda t: format_duration(t * .001), lap_times))}")
+            if has_device(GPS_RECEIVER):
+                gps = get_device(GPS_RECEIVER).read()
+                var_gps.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - {gps[4]} {gps[5]}\n\n"
+                            f"{d.gps_ground_speed:.1f} KM / H\n"
+                            f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
+            else:
+                var_gps.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - !NF!\n\n"
+                            f"{d.gps_ground_speed:.1f} KM / H\n"
+                            f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
             if isinstance(d, VisualDataContainer) and d.rear_view_base64:
-                rear_view_base64.set(d.rear_view_base64)
+                var_rear_view_base64.set(d.rear_view_base64)
+            var_info.set(f"VeC {__version__.upper()}\n\n"
+                         f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
+                         f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
+                         f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
+                         f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
+                         f"{(["NOT FOUND"] + my_ip_addresses())[-1]}:{w.runtime_data().comm.port()}")
+            var_speed.set(d.speed)
+            var_voltage.set(f"{d.voltage:.1f} V")
+            st = ctx.speed_trend()
+            var_speed_trend.set(st)
+            var_g_force.set((d.lateral_acceleration, d.forward_acceleration))
             if w.runtime_data().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:
