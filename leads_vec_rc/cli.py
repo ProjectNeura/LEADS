@@ -4,7 +4,7 @@ from json import loads, JSONDecodeError
 from os import makedirs
 from os.path import abspath, exists
 from time import sleep
-from typing import Any
+from typing import Any, override
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -39,10 +39,12 @@ class CommCallback(Callback):
         super().__init__()
         self.client: Client = start_client(config.comm_addr, create_client(config.comm_port, self), True)
 
+    @override
     def on_connect(self, service: Service, connection: Connection) -> None:
         self.super(service=service, connection=connection)
         L.info("Connected")
 
+    @override
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
         L.error(f"Comm client error: {repr(error)}")
@@ -50,6 +52,7 @@ class CommCallback(Callback):
         assert isinstance(service, Client)
         self.client = retry(service)
 
+    @override
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
         try:
@@ -66,6 +69,7 @@ class CommCallback(Callback):
         except JSONDecodeError:
             pass
 
+    @override
     def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
         self.super(service=service, connection=connection)
         L.info("Disconnected")
