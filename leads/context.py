@@ -79,7 +79,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
     def time_lap(self) -> None:
         self._lap_time_seq.append(int(_time() * 1000))
 
-    def lap_time_list(self) -> list[int]:
+    def lap_times(self) -> list[int]:
         return [self._lap_time_seq[i] - self._lap_time_seq[i - 1] for i in range(1, len(self._lap_time_seq))]
 
     def speed_trend(self) -> float:
