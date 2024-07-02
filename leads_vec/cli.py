@@ -55,7 +55,7 @@ def main() -> int:
     voltage = _StringVar(root, "")
     speed_trend = _DoubleVar(root, 0)
     g_force = GForceVar(root, 0, 0)
-    front_view_image = _StringVar(root, "")
+    rear_view_base64 = _StringVar(root, "")
     esc = _StringVar(root, "STANDARD")
 
     class LeftIndicator(FrequencyGenerator):
@@ -90,7 +90,7 @@ def main() -> int:
                                                     font=("Arial", cfg.font_size_medium - 4)),
                                     GForceMeter(root, theme_key="CTkButton", variable=g_force,
                                                 font=("Arial", cfg.font_size_medium - 4)),
-                                    Base64Photo(root, theme_key="CTkButton", variable=front_view_image)
+                                    Base64Photo(root, theme_key="CTkButton", variable=rear_view_base64)
                                     ).lock_ratio(cfg.m_ratio)
 
         manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
@@ -188,8 +188,8 @@ def main() -> int:
             st = ctx.speed_trend()
             speed_trend.set(st)
             g_force.set((d.lateral_acceleration, d.forward_acceleration))
-            if isinstance(d, VisualDataContainer) and d.front_view_base64:
-                front_view_image.set(d.front_view_base64)
+            if isinstance(d, VisualDataContainer) and d.rear_view_base64:
+                rear_view_base64.set(d.rear_view_base64)
             if w.runtime_data().comm.num_connections() < 1:
                 uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
             else:
