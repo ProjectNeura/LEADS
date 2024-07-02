@@ -14,7 +14,7 @@ def encode_image(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None) -
 def base64_encode(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None) -> str:
     if not (img := encode_image(x, mode)):
         return ""
-    img.save(buffer := _BytesIO(), "PNG")
+    img.save(buffer := _BytesIO(), "JPEG")
     return _b64encode(buffer.getvalue()).decode()
 
 
