@@ -26,13 +26,15 @@ class Base64Photo(CanvasBased, VariableControlled):
                              clickable, command)
         VariableControlled.__init__(self, variable)
         self.attach(self.partially_render)
+        self._image: _PhotoImage | None = None
 
     @_override
     def dynamic_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear("d")
         w, h, hc, vc, limit = canvas.meta()
         if base64 := self._variable.get():
-            canvas.collect("d0", canvas.create_image(hc, vc, image=_PhotoImage(_base64_decode_image(base64))))
+            self._image = _PhotoImage(_base64_decode_image(base64).resize((w, h)))
+            canvas.collect("d0", canvas.create_image(hc, vc, image=self._image))
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
