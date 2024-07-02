@@ -74,7 +74,6 @@ class CommCallback(Callback):
         self.super(service=service, connection=connection)
         L.info("Disconnected")
         sleep(10)
-        assert isinstance(service, Client)
         self.client = retry(service)
 
 
