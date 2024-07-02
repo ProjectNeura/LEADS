@@ -41,9 +41,10 @@ class Camera(_Device):
         return _array(_fromarray(x).resize(self._resolution))
 
     @_override
-    def read(self) -> _ndarray:
-        _, frame = self._video_capture.read()
-        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB).transpose(2, 0, 1)
+    def read(self) -> _ndarray | None:
+        ret, frame = self._video_capture.read()
+        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB
+                         ).transpose(2, 0, 1) if ret else None
 
     @_override
     def close(self) -> None:

@@ -39,7 +39,7 @@ class Cameras(Camera):
         super().initialize(*parent_tags)
 
     @override
-    def read(self) -> _ndarray:
+    def read(self) -> _ndarray | None:
         return super().read()
 
 
