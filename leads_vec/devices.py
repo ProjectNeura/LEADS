@@ -7,7 +7,6 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
-from leads_video import base64_encode
 
 config: Config = require_config()
 GPS_ONLY: int = config.get("gps_only", False)
@@ -38,13 +37,13 @@ class VeCController(Controller):
         wsc = {"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()
         visual = {}
         if has_device(FRONT_VIEW_CAMERA):
-            visual["front_view_base64"] = base64_encode(get_device(FRONT_VIEW_CAMERA).read())
+            visual["front_view_base64"] = get_device(FRONT_VIEW_CAMERA).read()
         if has_device(LEFT_VIEW_CAMERA):
-            visual["left_view_base64"] = base64_encode(get_device(LEFT_VIEW_CAMERA).read())
+            visual["left_view_base64"] = get_device(LEFT_VIEW_CAMERA).read()
         if has_device(RIGHT_VIEW_CAMERA):
-            visual["right_view_base64"] = base64_encode(get_device(RIGHT_VIEW_CAMERA).read())
+            visual["right_view_base64"] = get_device(RIGHT_VIEW_CAMERA).read()
         if has_device(REAR_VIEW_CAMERA):
-            visual["rear_view_base64"] = base64_encode(get_device(REAR_VIEW_CAMERA).read())
+            visual["rear_view_base64"] = get_device(REAR_VIEW_CAMERA).read()
         return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 

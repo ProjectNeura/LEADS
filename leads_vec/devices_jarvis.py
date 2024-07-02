@@ -1,11 +1,9 @@
 from typing import override
 
-from numpy import ndarray as _ndarray
-
 from leads import device, MAIN_CONTROLLER, mark_device, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, \
     REAR_VIEW_CAMERA, require_config
 from leads_gui import Config
-from leads_video import Camera
+from leads_video import Base64Camera
 
 import_error: ImportError | None = None
 try:
@@ -32,15 +30,11 @@ if (port := config.get("rear_view_camera_port")) is not None:
 
 
 @device(CAMERA_TAGS, MAIN_CONTROLLER, CAMERA_ARGS)
-class Cameras(Camera):
+class Cameras(Base64Camera):
     @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "Jarvis")
         super().initialize(*parent_tags)
-
-    @override
-    def read(self) -> _ndarray | None:
-        return super().read()
 
 
 if import_error:

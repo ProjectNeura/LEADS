@@ -4,7 +4,8 @@ from PIL.Image import fromarray as _fromarray
 from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
-from leads import Device as _Device
+from leads import Device as _Device, ShadowDevice as _ShadowDevice
+from leads_video.utils import base64_encode
 
 
 class Camera(_Device):
@@ -43,9 +44,25 @@ class Camera(_Device):
     @_override
     def read(self) -> _ndarray | None:
         ret, frame = self._video_capture.read()
-        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB
-                         ).transpose(2, 0, 1) if ret else None
+        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB).transpose(
+            2, 0, 1) if ret else None
 
     @_override
     def close(self) -> None:
         self._video_capture.release()
+
+
+class Base64Camera(Camera, _ShadowDevice):
+    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
+        Camera.__init__(self, port, resolution)
+        _ShadowDevice.__init__(self, port)
+        self._base64: str = ""
+
+    @_override
+    def loop(self) -> None:
+        if self._video_capture:
+            self._base64 = base64_encode(super().read())
+
+    @_override
+    def read(self) -> str:
+        return self._base64
