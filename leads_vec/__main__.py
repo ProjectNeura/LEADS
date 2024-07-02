@@ -11,7 +11,7 @@ from leads_vec.run import run
 
 
 def parse_path(path: str | None) -> str | None:
-    return path.replace(":INTERNAL:", MODULE_PATH) if path else None
+    return path.replace(":INTERNAL", MODULE_PATH) if path else None
 
 
 if __name__ == "__main__":
