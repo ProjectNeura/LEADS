@@ -7,11 +7,14 @@ from PIL.Image import Image as _Image, fromarray as _fromarray, open as _open, \
 from numpy import ndarray as _ndarray, array as _array
 
 
+def encode_image(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None) -> _Image | None:
+    return None if x is None else _fromarray(x.transpose(1, 2, 0), mode)
+
+
 def base64_encode(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None) -> str:
-    if x is None:
+    if not (img := encode_image(x, mode)):
         return ""
-    buffer = _BytesIO()
-    _fromarray(x.transpose(1, 2, 0), mode).save(buffer, "PNG")
+    img.save(buffer := _BytesIO(), "PNG")
     return _b64encode(buffer.getvalue()).decode()
 
 
