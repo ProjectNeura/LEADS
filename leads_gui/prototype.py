@@ -307,7 +307,7 @@ class Window(_Generic[T]):
                 self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
                 self._last_interval = ni
 
-        self._root.after(0, wrapper)
+        self._root.after(1, wrapper)
         self._root.mainloop()
 
     def kill(self) -> None:
