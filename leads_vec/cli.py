@@ -9,7 +9,7 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main, format_duration, BRAKE_INDICATOR, VisualDataContainer
+    initialize_main, format_duration, BRAKE_INDICATOR, VisualDataContainer, REAR_VIEW_CAMERA
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
@@ -79,15 +79,23 @@ def main() -> int:
                 DIRECTION_INDICATOR_OFF.play()
 
     def render(manager: ContextManager) -> None:
-        manager["m1"] = ProxyCanvas(root, "CTkButton",
-                                    Typography(root, theme_key="CTkButton", variable=var_lap_times,
-                                               font=("Arial", cfg.font_size_small)),
-                                    Typography(root, theme_key="CTkButton", variable=var_gps,
-                                               font=("Arial", cfg.font_size_small)),
-                                    Base64Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),
-                                    Typography(root, theme_key="CTkButton", variable=var_info,
-                                               font=("Arial", cfg.font_size_small - 4)),
-                                    ).lock_ratio(cfg.m_ratio)
+        m1_widgets = (
+            Typography(root, theme_key="CTkButton", variable=var_lap_times,
+                       font=("Arial", cfg.font_size_small)),
+            Typography(root, theme_key="CTkButton", variable=var_gps,
+                       font=("Arial", cfg.font_size_small)),
+            Base64Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),
+            Typography(root, theme_key="CTkButton", variable=var_info,
+                       font=("Arial", cfg.font_size_small - 4))
+        ) if has_device(REAR_VIEW_CAMERA) else (
+            Typography(root, theme_key="CTkButton", variable=var_lap_times,
+                       font=("Arial", cfg.font_size_small)),
+            Typography(root, theme_key="CTkButton", variable=var_gps,
+                       font=("Arial", cfg.font_size_small)),
+            Typography(root, theme_key="CTkButton", variable=var_info,
+                       font=("Arial", cfg.font_size_small - 4))
+        )
+        manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
                                     Typography(root, theme_key="CTkButton", variable=var_voltage,
