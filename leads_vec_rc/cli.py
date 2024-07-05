@@ -121,4 +121,16 @@ async def hazard() -> str:
     return "done"
 
 
+@app.get("/m1")
+async def m1() -> str:
+    callback.client.send(b"m1")
+    return "done"
+
+
+@app.get("/m3")
+async def m3() -> str:
+    callback.client.send(b"m3")
+    return "done"
+
+
 register(csv.close)
