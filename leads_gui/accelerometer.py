@@ -48,7 +48,8 @@ class GForceMeter(TextBased, VariableControlled):
     @_override
     def dynamic_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear("d")
-        assert isinstance(self._variable, GForceVar)
+        if not isinstance(self._variable, GForceVar):
+            raise TypeError("A `GForceVar` is expected")
         x, y = self._variable.get()
         if (magnitude := self._variable.magnitude()) > self._max_magnitude:
             self._max_magnitude = magnitude
