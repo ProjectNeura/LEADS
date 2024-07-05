@@ -32,6 +32,12 @@ def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeD
     return switch
 
 
+def get_proxy_canvas(context_manager: ContextManager, key: str) -> ProxyCanvas:
+    r = context_manager[key]
+    assert isinstance(r, ProxyCanvas)
+    return r
+
+
 def main() -> int:
     cfg = require_config()
     ctx = LEADS(data_seq_size=cfg.data_seq_size, num_laps_timed=cfg.num_laps_timed)
@@ -84,17 +90,11 @@ def main() -> int:
                        font=("Arial", cfg.font_size_small)),
             Typography(root, theme_key="CTkButton", variable=var_gps,
                        font=("Arial", cfg.font_size_small)),
-            Base64Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),
-            Typography(root, theme_key="CTkButton", variable=var_info,
-                       font=("Arial", cfg.font_size_small - 4))
-        ) if has_device(REAR_VIEW_CAMERA) else (
-            Typography(root, theme_key="CTkButton", variable=var_lap_times,
-                       font=("Arial", cfg.font_size_small)),
-            Typography(root, theme_key="CTkButton", variable=var_gps,
-                       font=("Arial", cfg.font_size_small)),
             Typography(root, theme_key="CTkButton", variable=var_info,
                        font=("Arial", cfg.font_size_small - 4))
         )
+        if has_device(REAR_VIEW_CAMERA):
+            m1_widgets += (Base64Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),)
         manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
@@ -159,6 +159,10 @@ def main() -> int:
                     ctx.time_lap()
                 case b"hazard":
                     ctx.hazard(not ctx.hazard())
+                case b"m1":
+                    get_proxy_canvas(uim, "m1").next_mode()
+                case b"m3":
+                    get_proxy_canvas(uim, "m3").next_mode()
 
     w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
 
@@ -167,8 +171,11 @@ def main() -> int:
         def pre_push(self, e: DataPushedEvent) -> None:
             self.super(e)
             d = e.data.to_dict()
+            m1, m3 = get_proxy_canvas(uim, "m1"), get_proxy_canvas(uim, "m3")
             d["speed_trend"] = ctx.speed_trend()
             d["lap_times"] = ctx.lap_times()
+            d["m1_mode"] = m1.mode()
+            d["m3_mode"] = m3.mode()
             w.runtime_data().comm_notify(d)
 
         @_override
