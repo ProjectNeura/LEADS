@@ -1,6 +1,6 @@
 from argparse import ArgumentParser as _ArgumentParser
 
-from uvicorn import run
+from uvicorn import run as _run
 
 from leads import register_config as _register_config, load_config as _load_config
 from leads_gui import Config as _Config
@@ -15,4 +15,4 @@ if __name__ == "__main__":
     _register_config(_load_config(args.config, _Config) if args.config else _Config({}))
     from leads_vec_rc.cli import app
 
-    run(app, host="0.0.0.0", port=args.port, log_level="warning")
+    _run(app, host="0.0.0.0", port=args.port, log_level="warning")
