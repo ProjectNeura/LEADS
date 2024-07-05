@@ -14,8 +14,7 @@ from leads.comm import Callback, Service, start_server, create_server, my_ip_add
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
-    ESC, Satellite, Motor, Speed, Base64Photo
-from leads_raspberry_pi import LEDGroupCommand, LEDCommand, Transition, Entire
+    ESC, Satellite, Motor, Speed, Base64Photo, Light
 from leads_vec.__version__ import __version__
 
 
@@ -248,16 +247,12 @@ def main() -> int:
         @_override
         def brake_indicator(self, event: Event, state: bool) -> None:
             if has_device(BRAKE_INDICATOR):
-                get_device(BRAKE_INDICATOR).write(LEDGroupCommand(
-                    LEDCommand.ON, Entire()
-                ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+                get_device(BRAKE_INDICATOR).write(state)
 
         @_override
         def left_indicator(self, e: Event, state: bool) -> None:
             if has_device(LEFT_INDICATOR):
-                get_device(LEFT_INDICATOR).write(LEDGroupCommand(
-                    LEDCommand.BLINK, Transition("left2right", 100)
-                ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+                get_device(LEFT_INDICATOR).write(state)
             if state:
                 w.add_frequency_generator("left_indicator", LeftIndicator(500))
                 w.add_frequency_generator("direction_indicator_sound", DirectionIndicatorSound(500))
@@ -269,9 +264,7 @@ def main() -> int:
         @_override
         def right_indicator(self, e: Event, state: bool) -> None:
             if has_device(RIGHT_INDICATOR):
-                get_device(RIGHT_INDICATOR).write(LEDGroupCommand(
-                    LEDCommand.BLINK, Transition("right2left", 100)
-                ) if state else LEDGroupCommand(LEDCommand.OFF, Entire()))
+                get_device(RIGHT_INDICATOR).write(state)
             if state:
                 w.add_frequency_generator("right_indicator", RightIndicator(500))
                 w.add_frequency_generator("direction_indicator_sound", DirectionIndicatorSound(500))
@@ -290,6 +283,7 @@ def main() -> int:
     uim["brake_fault"] = _Label(root, text="")
     uim["esc_fault"] = _Label(root, text="")
     uim["gps_fault"] = _Label(root, text="")
+    uim["light_fault"] = _Label(root, text="")
     uim["motor_fault"] = _Label(root, text="")
     uim["wsc_fault"] = _Label(root, text="")
 
@@ -303,6 +297,8 @@ def main() -> int:
                 uim["esc_fault"].configure(image=ESC(color=Color.RED))
             case "GPS":
                 uim["gps_fault"].configure(image=Satellite(color=Color.RED))
+            case "LIGHT":
+                uim["light_fault"].configure(image=Light(color=Color.RED))
             case "MOTOR":
                 uim["motor_fault"].configure(image=Motor(color=Color.RED))
             case "WSC":
@@ -320,6 +316,8 @@ def main() -> int:
                 uim["esc_fault"].configure(image=None)
             case "GPS":
                 uim["gps_fault"].configure(image=None)
+            case "LIGHT":
+                uim["light_fault"].configure(image=None)
             case "MOTOR":
                 uim["motor_fault"].configure(image=None)
             case "WSC":

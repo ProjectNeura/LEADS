@@ -6,7 +6,7 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
-from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire
+from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 
 config: Config = require_config()
 GPS_ONLY: int = config.get("gps_only", False)
@@ -112,14 +112,40 @@ class GPS(NMEAGPSReceiver):
         super().initialize(*parent_tags)
 
 
-@device((BRAKE_INDICATOR, LEFT_INDICATOR, RIGHT_INDICATOR), MAIN_CONTROLLER, [
-    (LED(23), LED(24)),
-    (LED(5, .5, .5), LED(6, .5, .5), LED(26, .5, .5)),
-    (LED(17, .5, .5), LED(27, .5, .5), LED(22, .5, .5))
-])
-class DirectionIndicators(LEDGroup):
+class Indicator(LEDGroup):
     @override
     def initialize(self, *parent_tags: str) -> None:
-        mark_device(self, "DI")
+        mark_device(self, "LIGHT")
         super().initialize(*parent_tags)
-        self.write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))
+
+
+@device(BRAKE_INDICATOR, MAIN_CONTROLLER, (LED(23), LED(24)))
+class BrakeIndicator(Indicator):
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
+        super().write(LEDGroupCommand(LEDCommand.BLINK_ONCE, Entire()))
+
+    @override
+    def write(self, payload: bool) -> None:
+        super().write(LEDGroupCommand(
+            LEDCommand.OFF, Entire()
+        ) if payload else LEDGroupCommand(LEDCommand.OFF, Entire()))
+
+
+@device(LEFT_INDICATOR, MAIN_CONTROLLER, (LED(5, .5, .5), LED(6, .5, .5), LED(26, .5, .5)))
+class LeftIndicator(Indicator):
+    @override
+    def write(self, payload: bool) -> None:
+        super().write(LEDGroupCommand(
+            LEDCommand.BLINK, Transition("left2right", 100)
+        ) if payload else LEDGroupCommand(LEDCommand.OFF, Entire()))
+
+
+@device(RIGHT_INDICATOR, MAIN_CONTROLLER, (LED(17, .5, .5), LED(27, .5, .5), LED(22, .5, .5)))
+class RightIndicator(Indicator):
+    @override
+    def write(self, payload: bool) -> None:
+        super().write(LEDGroupCommand(
+            LEDCommand.BLINK, Transition("right2left", 100)
+        ) if payload else LEDGroupCommand(LEDCommand.OFF, Entire()))
