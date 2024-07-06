@@ -6,10 +6,9 @@ from leads.logger import L
 from leads.registry import require_context
 
 
-def mark_device(device: Device, system: str, *related: str) -> None:
-    if hasattr(device, "__device_system__"):
-        setattr(device, "__device_system__", getattr(device, "__device_system__") + related)
-    setattr(device, "__device_system__", [system, *related])
+def mark_device(device: Device, system: str, *related: str, append: bool = True) -> None:
+    setattr(device, "__device_system__", getattr(device, "__device_system__") + related if append and hasattr(
+        device, "__device_system__") else [system, *related])
 
 
 def read_device_marker(device: Device) -> list[str] | None:
