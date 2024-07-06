@@ -347,20 +347,19 @@ def main() -> int:
     initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
-        if isinstance(key, _KeyCode):
-            match key.char:
-                case "1":
-                    make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
-                case "2":
-                    make_system_switch(ctx, SystemLiteral.ABS, w.runtime_data())()
-                case "3":
-                    make_system_switch(ctx, SystemLiteral.EBI, w.runtime_data())()
-                case "4":
-                    make_system_switch(ctx, SystemLiteral.ATBS, w.runtime_data())()
-                case "t":
-                    ctx.time_lap()
-        elif key == _Key.esc:
-            uim.kill()
+        if isinstance(key, _Key):
+            return
+        match key.char:
+            case "1":
+                make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
+            case "2":
+                make_system_switch(ctx, SystemLiteral.ABS, w.runtime_data())()
+            case "3":
+                make_system_switch(ctx, SystemLiteral.EBI, w.runtime_data())()
+            case "4":
+                make_system_switch(ctx, SystemLiteral.ATBS, w.runtime_data())()
+            case "t":
+                ctx.time_lap()
 
     _Listener(on_press=on_press).start()
     uim.show()
