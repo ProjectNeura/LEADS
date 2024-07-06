@@ -7,12 +7,12 @@ from leads.registry import require_context
 
 
 def mark_device(device: Device, system: str, *related: str, append: bool = True) -> None:
-    setattr(device, "__device_system__", getattr(device, "__device_system__") + related if append and hasattr(
-        device, "__device_system__") else [system, *related])
+    setattr(device, "__sft_marker__", getattr(device, "__sft_marker__") + [system, *related] if append and hasattr(
+        device, "__sft_marker__") else [system, *related])
 
 
 def read_device_marker(device: Device) -> list[str] | None:
-    return getattr(device, "__device_system__") if hasattr(device, "__device_system__") else None
+    return getattr(device, "__sft_marker__") if hasattr(device, "__sft_marker__") else None
 
 
 class SystemFailureTracer(object):
