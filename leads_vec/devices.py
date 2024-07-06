@@ -3,7 +3,8 @@ from typing import override
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, get_device, has_device, \
-    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR
+    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
+    SFT, read_device_marker, has_controller
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
@@ -24,6 +25,26 @@ VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
 
 @controller(MAIN_CONTROLLER)
 class VeCController(Controller):
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
+        if not has_controller("pc"):
+            mark_device(self, "POWER", "BATT", "MOTOR", "BRAKE")
+        if not has_controller("wsc"):
+            mark_device(self, "WSC", "ESC")
+        if not has_device(ODOMETER):
+            mark_device(self, "WSC")
+        if not has_device(GPS_RECEIVER):
+            mark_device(self, "GPS")
+        if not has_device(BRAKE_INDICATOR):
+            mark_device(self, "LIGHT")
+        if not has_device(LEFT_INDICATOR):
+            mark_device(self, "LIGHT")
+        if not has_device(RIGHT_INDICATOR):
+            mark_device(self, "LIGHT")
+        if read_device_marker(self):
+            SFT.fail(self, RuntimeError("Unexpected system integrity"))
+
     @override
     def read(self) -> DataContainer:
         general = {
@@ -51,7 +72,7 @@ class VeCController(Controller):
 class PowerController(ArduinoMicro):
     @override
     def initialize(self, *parent_tags: str) -> None:
-        mark_device(self, "POWER", "BATT", "MOTOR")
+        mark_device(self, "POWER", "BATT", "MOTOR", "BRAKE")
         super().initialize(*parent_tags)
 
     @override
@@ -89,6 +110,11 @@ class WheelSpeedController(ArduinoMicro):
 
 @device(ODOMETER, MAIN_CONTROLLER)
 class AverageOdometer(ConcurrentOdometer):
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        mark_device(self, "WSC")
+        super().initialize(*parent_tags)
+
     @override
     def read(self) -> float:
         return super().read() / 3

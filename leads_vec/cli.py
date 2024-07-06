@@ -337,7 +337,7 @@ def main() -> int:
         layout = [
             ["m1", "m2", "m3"],
             ["left", "time_lap", "hazard", "right"],
-            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"],
+            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "light_fault", "motor_fault", "wsc_fault"],
             [*map(lambda s: f"{s.lower()}_status", SystemLiteral), "comm_status"],
             list(map(lambda s: s.lower(), SystemLiteral)),
             ["esc"]
