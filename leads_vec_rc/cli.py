@@ -14,6 +14,12 @@ from leads.comm import Service, Client, start_client, create_client, Callback, C
 from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL
 from leads_gui import Config
 
+try:
+    from leads_vec_rc.jarvis import process
+except ImportError:
+    def process(d: dict[str, Any]) -> dict[str, Any]:
+        return d
+
 config: Config = require_config()
 if not exists(config.data_dir):
     L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
@@ -96,7 +102,7 @@ async def index() -> str:
 
 @app.get("/current")
 async def current() -> dict[str, Any]:
-    return data_record[-1] if len(data_record) > 0 else DataContainer().to_dict()
+    return process(data_record[-1] if len(data_record) > 0 else DataContainer().to_dict())
 
 
 @app.get("/time_stamp")
