@@ -39,8 +39,8 @@ class Camera(_Device):
         else:
             pad_top = (target_height - height) // 2
             pad_bottom = target_height - height - pad_top
-        x = _pad(x, ((pad_left, pad_right), (pad_top, pad_bottom), (0, 0)))
-        return _array(_fromarray(x).resize(self._resolution))
+        return _array(_fromarray(_pad(x, ((pad_left, pad_right), (pad_top, pad_bottom), (0, 0)))).resize(
+            self._resolution))
 
     @_override
     def read(self) -> _ndarray | None:
