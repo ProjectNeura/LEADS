@@ -22,7 +22,7 @@ def base64_decode_image(x_base64: str) -> _Image | None:
     try:
         return _open(_BytesIO(_b64decode(x_base64))) if x_base64 else None
     except (ValueError, TypeError, _UnidentifiedImageError):
-        return None
+        return
 
 
 def base64_decode(x_base64: str) -> _ndarray | None:
