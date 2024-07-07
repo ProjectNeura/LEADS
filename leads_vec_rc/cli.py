@@ -21,7 +21,7 @@ try:
 
     def processor() -> None:
         while True:
-            callback.previous_processed_data = process(data_record[-1])
+            callback.processed_data = process(callback.current_data)
 
 
     processor_thread: Thread = Thread(name="Jarvis Processor", target=processor, daemon=True)
@@ -34,8 +34,6 @@ if not exists(config.data_dir):
     L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
     makedirs(config.data_dir)
 
-data_record: DataPersistence[dict[str, Any]] = DataPersistence(2, compressor=lambda o, s: o[-s:])
-data_record.append(DataContainer().to_dict())
 time_stamp_record: DataPersistence[int] = DataPersistence(2000)
 speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
@@ -54,7 +52,8 @@ class CommCallback(Callback):
     def __init__(self) -> None:
         super().__init__()
         self.client: Client = start_client(config.comm_addr, create_client(config.comm_port, self), True)
-        self.previous_processed_data: dict[str, Any] | None = None
+        self.current_data: dict[str, Any] = DataContainer().to_dict()
+        self.processed_data: dict[str, Any] | None = None
 
     @override
     def on_connect(self, service: Service, connection: Connection) -> None:
@@ -72,8 +71,7 @@ class CommCallback(Callback):
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
         try:
-            d = loads(msg.decode())
-            data_record.append(d)
+            self.current_data = d = loads(msg.decode())
             acceleration_record.append(Vector(d["forward_acceleration"], d["lateral_acceleration"]))
             gps_record.append(Vector(d["latitude"], d["longitude"]))
             if config.save_data:
@@ -116,7 +114,7 @@ async def index() -> str:
 
 @app.get("/current")
 async def current() -> dict[str, Any]:
-    return callback.previous_processed_data if callback.previous_processed_data else data_record[-1]
+    return callback.processed_data if callback.processed_data else callback.current_data
 
 
 @app.get("/time_stamp")
