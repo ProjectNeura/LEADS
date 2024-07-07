@@ -28,7 +28,8 @@ class Camera(_Device):
 
     def transform(self, x: _ndarray) -> _ndarray:
         height, width = x.shape[:-1]
-        target_ratio = self._resolution[1] / self._resolution[0]
+        resolution_width, resolution_height = self._resolution
+        target_ratio = resolution_height / resolution_width
         target_height = int(target_ratio * width)
         pad_left, pad_right, pad_top, pad_bottom = 0, 0, 0, 0
         if height > target_height:
@@ -38,8 +39,8 @@ class Camera(_Device):
         else:
             pad_top = (target_height - height) // 2
             pad_bottom = target_height - height - pad_top
-        x = _pad(x, ((0, 0), (pad_top, pad_bottom), (pad_left, pad_right)))
-        return _array(_fromarray(x).resize(self._resolution))
+        return _array(_fromarray(_pad(x, ((pad_left, pad_right), (pad_top, pad_bottom), (0, 0)))).resize(
+            self._resolution))
 
     @_override
     def read(self) -> _ndarray | None:
