@@ -16,7 +16,7 @@ execute_root() {
 }
 
 echo "Adding APT repository..."
-execute_root "add-apt-repository" "ppa:deadsnakes/ppa"
+execute_root "add-apt-repository" "ppa:deadsnakes/ppa" "-y"
 execute_root "apt" "update"
 echo "Installing Python 3.12..."
 execute_root "apt" "install" "-y" "gcc" "python3.12" "python3.12-dev" "python3.12-venv"
