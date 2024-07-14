@@ -24,7 +24,7 @@ class Base64Photo(CanvasBased, VariableControlled):
                  command: _Callable[[_Event], None] = lambda _: None) -> None:
         CanvasBased.__init__(self, master, theme_key, width, height, fg_color, hover_color, bg_color, corner_radius,
                              clickable, command)
-        VariableControlled.__init__(self, variable)
+        VariableControlled.__init__(self, variable if variable else _StringVar(master))
         self.attach(self.partially_render)
         self._image: _PhotoImage | None = None
 
