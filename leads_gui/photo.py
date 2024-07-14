@@ -25,7 +25,7 @@ class ImageVariable(_Variable):
         return self._image
 
 
-class Base64Photo(CanvasBased, VariableControlled):
+class Photo(CanvasBased, VariableControlled):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkLabel",

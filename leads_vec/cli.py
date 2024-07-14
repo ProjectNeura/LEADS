@@ -14,7 +14,7 @@ from leads.comm import Callback, Service, start_server, create_server, my_ip_add
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
-    ESC, Satellite, Motor, Speed, Base64Photo, Light
+    ESC, Satellite, Motor, Speed, Photo, Light
 from leads_vec.__version__ import __version__
 
 
@@ -88,7 +88,7 @@ def main() -> int:
                        font=("Arial", cfg.font_size_small - 4))
         )
         if has_device(REAR_VIEW_CAMERA):
-            m1_widgets += (Base64Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),)
+            m1_widgets += (Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),)
         manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
