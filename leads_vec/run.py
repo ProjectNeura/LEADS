@@ -46,9 +46,9 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
     spec.loader.exec_module(main := _module_from_spec(spec))
     try:
         main = getattr(main, "main")
-    except AttributeError:
-        raise ImportError(f"No main function in \"{main}\"")
-
+    except AttributeError as e:
+        _L.error(f"No main function in \"{main}\": {repr(e)}")
+        return 1
     try:
         if emu:
             raise SystemError("User specifies to use emulator")
