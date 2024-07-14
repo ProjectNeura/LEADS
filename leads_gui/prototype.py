@@ -212,7 +212,6 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
 
 class RuntimeData(object):
     start_time: int = int(_time())
-    lap_time: list[int] = []
     comm: _Server | None = None
 
     def comm_notify(self, d: _DataContainer | dict[str, _Any]) -> None:
