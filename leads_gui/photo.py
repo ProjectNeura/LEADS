@@ -1,21 +1,37 @@
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, override as _override
 
+from PIL.Image import Image as _Image
 from PIL.ImageTk import PhotoImage as _PhotoImage
-from customtkinter import StringVar as _StringVar
+from customtkinter import Variable as _Variable, StringVar as _StringVar
 
 from leads_gui.prototype import CanvasBased, VariableControlled
 from leads_gui.types import Color as _Color
 from leads_video import base64_decode_image as _base64_decode_image
 
 
-class Base64Photo(CanvasBased, VariableControlled):
+class ImageVariable(_Variable):
+    def __init__(self, master: _Misc, image: _Image, name: str | None = None) -> None:
+        super().__init__(master, False, name)
+        self._image: _Image = image
+
+    @_override
+    def set(self, value: _Image) -> None:
+        super().set(not super().get())
+        self._image = value
+
+    @_override
+    def get(self) -> _Image:
+        return self._image
+
+
+class Photo(CanvasBased, VariableControlled):
     def __init__(self,
                  master: _Misc,
                  theme_key: str = "CTkLabel",
                  width: float = 0,
                  height: float = 0,
-                 variable: _StringVar | None = None,
+                 variable: _StringVar | ImageVariable | None = None,
                  fg_color: _Color | None = None,
                  hover_color: _Color | None = None,
                  bg_color: _Color | None = None,
@@ -32,8 +48,10 @@ class Base64Photo(CanvasBased, VariableControlled):
     def dynamic_renderer(self, canvas: CanvasBased) -> None:
         canvas.clear("d")
         w, h, hc, vc, limit = canvas.meta()
-        if base64 := self._variable.get():
-            self._image = _PhotoImage(_base64_decode_image(base64).resize((w, h)))
+        if image := self._variable.get():
+            if isinstance(image, str):
+                image = _base64_decode_image(image)
+            self._image = _PhotoImage(image.resize((w, h)))
             canvas.collect("d0", canvas.create_image(hc, vc, image=self._image))
 
     @_override
