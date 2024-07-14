@@ -46,13 +46,8 @@ def main() -> int:
     ctx.plugin(SystemLiteral.EBI, EBI())
     ctx.plugin(SystemLiteral.ATBS, ATBS())
     ctx.plugin("GPS_SPEED_CORRECTION", GPSSpeedCorrection())
-    w = Window(cfg.width,
-               cfg.height,
-               cfg.refresh_rate,
-               CustomRuntimeData(),
-               fullscreen=cfg.fullscreen,
-               no_title_bar=cfg.no_title_bar,
-               theme_mode=cfg.theme_mode)
+    w = Window(cfg.width, cfg.height, cfg.refresh_rate, CustomRuntimeData(), fullscreen=cfg.fullscreen,
+               no_title_bar=cfg.no_title_bar, theme_mode=cfg.theme_mode)
     root = w.root()
     root.configure(cursor="dot")
     var_lap_times = _StringVar(root, "")
