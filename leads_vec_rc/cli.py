@@ -3,7 +3,6 @@ from datetime import datetime
 from json import loads, JSONDecodeError
 from os import makedirs
 from os.path import abspath, exists
-from threading import Thread
 from time import sleep
 from typing import Any, override
 
@@ -14,20 +13,6 @@ from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
 from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL
 from leads_gui import Config
-
-try:
-    from leads_vec_rc.jarvis import process
-
-
-    def processor() -> None:
-        while True:
-            callback.processed_data = process(callback.current_data)
-
-
-    processor_thread: Thread = Thread(name="Jarvis Processor", target=processor, daemon=True)
-except ImportError:
-    process: None = None
-    processor_thread: None = None
 
 config: Config = require_config()
 if not exists(config.data_dir):
@@ -53,7 +38,6 @@ class CommCallback(Callback):
         super().__init__()
         self.client: Client = start_client(config.comm_addr, create_client(config.comm_port, self), True)
         self.current_data: dict[str, Any] = DataContainer().to_dict()
-        self.processed_data: dict[str, Any] | None = None
 
     @override
     def on_connect(self, service: Service, connection: Connection) -> None:
@@ -92,12 +76,7 @@ class CommCallback(Callback):
 
 
 callback: CommCallback = CommCallback()
-
-if processor_thread:
-    processor_thread.start()
-
 app: FastAPI = FastAPI(title="LEADS VeC Remote Analyst")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -114,7 +93,7 @@ async def index() -> str:
 
 @app.get("/current")
 async def current() -> dict[str, Any]:
-    return callback.processed_data if callback.processed_data else callback.current_data
+    return callback.current_data
 
 
 @app.get("/time_stamp")
