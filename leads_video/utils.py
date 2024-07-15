@@ -11,10 +11,10 @@ def encode_image(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None) -
     return None if x is None else _fromarray(x.transpose(1, 2, 0), mode)
 
 
-def base64_encode(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None) -> str:
+def base64_encode(x: _ndarray | None, mode: _Literal["L", "RGB"] | None = None, quality: int = 25) -> str:
     if not (img := encode_image(x, mode)):
         return ""
-    img.save(buffer := _BytesIO(), "JPEG")
+    img.save(buffer := _BytesIO(), "JPEG", quality=quality)
     return _b64encode(buffer.getvalue()).decode()
 
 

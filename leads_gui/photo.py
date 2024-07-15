@@ -11,17 +11,17 @@ from leads_video import base64_decode_image as _base64_decode_image
 
 
 class ImageVariable(_Variable):
-    def __init__(self, master: _Misc, image: _Image, name: str | None = None) -> None:
+    def __init__(self, master: _Misc, image: _Image | None, name: str | None = None) -> None:
         super().__init__(master, False, name)
-        self._image: _Image = image
+        self._image: _Image | None = image
 
     @_override
-    def set(self, value: _Image) -> None:
+    def set(self, value: _Image | None) -> None:
         super().set(not super().get())
         self._image = value
 
     @_override
-    def get(self) -> _Image:
+    def get(self) -> _Image | None:
         return self._image
 
 

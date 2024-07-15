@@ -1,5 +1,6 @@
 from datetime import datetime as _datetime
-from time import time as _time
+from threading import Thread as _Thread
+from time import time as _time, sleep as _sleep
 from typing import Callable as _Callable, override as _override
 
 from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as _DoubleVar, StringVar as _StringVar, \
@@ -9,13 +10,15 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main, format_duration, BRAKE_INDICATOR, VisualDataContainer, REAR_VIEW_CAMERA
+    initialize_main, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, \
+    RIGHT_VIEW_CAMERA
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
-    ESC, Satellite, Motor, Speed, Photo, Light
+    ESC, Satellite, Motor, Speed, Photo, Light, ImageVariable
 from leads_vec.__version__ import __version__
+from leads_video import Camera
 
 
 class CustomRuntimeData(RuntimeData):
@@ -24,17 +27,54 @@ class CustomRuntimeData(RuntimeData):
 
 
 def make_system_switch(ctx: LEADS, system: SystemLiteral, runtime_data: RuntimeData) -> _Callable[[], None]:
-    def switch() -> None:
+    def _() -> None:
         ctx.plugin(system).enabled(not ctx.plugin(system).enabled())
         runtime_data.control_system_switch_changed = True
 
-    return switch
+    return _
 
 
 def get_proxy_canvas(context_manager: ContextManager, key: str) -> ProxyCanvas:
     r = context_manager[key]
-    assert isinstance(r, ProxyCanvas)
+    if not isinstance(r, ProxyCanvas):
+        raise TypeError(f"Widget \"{key}\" is supposed to be a proxy canvas")
     return r
+
+
+def get_camera(tag: str) -> Camera | None:
+    if has_device(tag):
+        cam = get_device(tag)
+        if not isinstance(cam, Camera):
+            raise TypeError(f"Device \"{tag}\" is supposed to be a camera")
+        return cam
+    return None
+
+
+class StreamCallback(Callback):
+    @_override
+    def on_initialize(self, service: Service) -> None:
+        self.super(service=service)
+        L.debug(f"Comm stream server started listening on {service.port()}")
+
+    @_override
+    def on_fail(self, service: Service, error: Exception) -> None:
+        self.super(service=service, error=error)
+        L.error(f"Comm stream server error: {repr(error)}")
+
+
+def enable_comm_stream(context_manager: ContextManager, port: int) -> None:
+    rd = context_manager.window().runtime_data()
+    rd.comm_stream = start_server(create_server(port, StreamCallback(), b"end;"), True)
+
+    def _() -> None:
+        while True:
+            if rd.comm_stream.num_connections() < 1:
+                _sleep(.01)
+            for tag in FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA:
+                if (cam := get_camera(tag)) and (frame := cam.read_pil()):
+                    rd.comm_stream_notify(tag, frame)
+
+    _Thread(name="comm streamer", target=_, daemon=True).start()
 
 
 def main() -> int:
@@ -52,7 +92,7 @@ def main() -> int:
     root.configure(cursor="dot")
     var_lap_times = _StringVar(root, "")
     var_gps = _StringVar(root, "")
-    var_rear_view_base64 = _StringVar(root, "")
+    var_rear_view = ImageVariable(root, None)
     var_info = _StringVar(root, "")
     var_speed = _DoubleVar(root, 0)
     var_voltage = _StringVar(root, "")
@@ -88,7 +128,7 @@ def main() -> int:
                        font=("Arial", cfg.font_size_small - 4))
         )
         if has_device(REAR_VIEW_CAMERA):
-            m1_widgets += (Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),)
+            m1_widgets += (Photo(root, theme_key="CTkButton", variable=var_rear_view),)
         manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
@@ -159,6 +199,8 @@ def main() -> int:
                     get_proxy_canvas(uim, "m3").next_mode()
 
     w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
+    if cfg.comm_stream:
+        enable_comm_stream(uim, cfg.comm_stream_port)
 
     class CustomListener(EventListener):
         @_override
@@ -188,8 +230,8 @@ def main() -> int:
                 var_gps.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - !NF!\n\n"
                             f"{d.gps_ground_speed:.1f} KM / H\n"
                             f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
-            if isinstance(d, VisualDataContainer) and d.rear_view_base64:
-                var_rear_view_base64.set(d.rear_view_base64)
+            if cam := get_camera(REAR_VIEW_CAMERA):
+                var_rear_view.set(cam.read_pil())
             var_info.set(f"VeC {__version__.upper()}\n\n"
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                          f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"

@@ -1,10 +1,12 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
+from io import BytesIO as _BytesIO
 from json import dumps as _dumps
 from time import time as _time
 from tkinter import Misc as _Misc, Event as _Event, PhotoImage as _PhotoImage
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any, \
     Literal as _Literal
 
+from PIL.Image import Image as _Image
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
     ThemeManager as _ThemeManager, Variable as _Variable, ScalingTracker as _ScalingTracker, \
     set_appearance_mode as _set_appearance_mode
@@ -214,10 +216,17 @@ class RuntimeData(object):
     def __init__(self) -> None:
         self.start_time: int = int(_time())
         self.comm: _Server | None = None
+        self.comm_stream: _Server | None = None
 
     def comm_notify(self, d: _DataContainer | dict[str, _Any]) -> None:
         if self.comm:
             self.comm.broadcast(d.encode() if isinstance(d, _DataContainer) else _dumps(d).encode())
+
+    def comm_stream_notify(self, tag: _Literal["frvc", "lfvc", "rtvc", "revc"], frame: _Image,
+                           quality: int = 90) -> None:
+        if self.comm_stream:
+            frame.save(buffer := _BytesIO(), "JPEG", quality=quality)
+            self.comm_stream.broadcast(tag.encode() + b":" + buffer.getvalue())
 
 
 T = _TypeVar("T", bound=RuntimeData)
