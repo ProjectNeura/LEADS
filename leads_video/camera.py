@@ -1,6 +1,6 @@
 from typing import override as _override
 
-from PIL.Image import fromarray as _fromarray
+from PIL.Image import fromarray as _fromarray, Image as _Image
 from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
@@ -50,6 +50,9 @@ class Camera(_Device):
 
     def read_numpy(self) -> _ndarray | None:
         return self.read()
+
+    def read_pil(self) -> _Image | None:
+        return None if (frame := self.read_numpy()) is None else _fromarray(frame)
 
     @_override
     def close(self) -> None:
