@@ -1,13 +1,17 @@
 from typing import override as _override
 
-from leads.comm.prototype import Entity, Connection
+from leads.comm.prototype import Entity, Connection, Callback
 
 
 class Client(Entity):
     """
     You should use `create_client()` and `start_client()` instead of directly calling any method.
     """
-    _connection: Connection | None = None
+
+    def __init__(self, port: int, callback: Callback, separator: bytes) -> None:
+        super().__init__(port, callback)
+        self._connection: Connection | None = None
+        self._separator: bytes = separator
 
     @_override
     def run(self, server_address: str) -> None:
@@ -17,7 +21,8 @@ class Client(Entity):
         """
         self._callback.on_initialize(self)
         self._socket.connect((server_address, self._port))
-        self._callback.on_connect(self, connection := Connection(self, self._socket, (server_address, self._port)))
+        self._callback.on_connect(self, connection := Connection(self, self._socket, (server_address, self._port),
+                                                                 separator=self._separator))
         self._connection = connection
         self._stage(connection)
 
