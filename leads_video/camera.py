@@ -48,6 +48,9 @@ class Camera(_Device):
         return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB).transpose(
             2, 0, 1) if ret else None
 
+    def read_numpy(self) -> _ndarray | None:
+        return self.read()
+
     @_override
     def close(self) -> None:
         self._video_capture.release()
@@ -57,13 +60,19 @@ class Base64Camera(Camera, _ShadowDevice):
     def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         Camera.__init__(self, port, resolution)
         _ShadowDevice.__init__(self, port)
+        self._original: _ndarray | None = None
         self._base64: str = ""
 
     @_override
     def loop(self) -> None:
         if self._video_capture:
-            self._base64 = base64_encode(super().read())
+            self._original = super().read()
+            self._base64 = base64_encode(self._original)
 
     @_override
     def read(self) -> str:
         return self._base64
+
+    @_override
+    def read_numpy(self) -> _ndarray | None:
+        return self._original
