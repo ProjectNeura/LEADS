@@ -1,7 +1,7 @@
 from threading import Thread as _Thread
 from typing import override as _override
 
-from leads.comm.prototype import Entity, Connection
+from leads.comm.prototype import Entity, Connection, Callback
 from leads.os import _thread_flags
 
 
@@ -9,7 +9,11 @@ class Server(Entity):
     """
     You should use `create_server()` and `start_server()` instead of directly calling any method.
     """
-    _connections: list[Connection] = []
+
+    def __init__(self, port: int, callback: Callback, separator: bytes) -> None:
+        super().__init__(port, callback)
+        self._connections: list[Connection] = []
+        self._separator: bytes = separator
 
     def num_connections(self) -> int:
         """
@@ -39,7 +43,7 @@ class Server(Entity):
         self._callback.on_initialize(self)
         while _thread_flags.active:
             socket, address = self._socket.accept()
-            self._callback.on_connect(self, connection := Connection(self, socket, address,
+            self._callback.on_connect(self, connection := Connection(self, socket, address, separator=self._separator,
                                                                      on_close=lambda c: self.remove_connection(c)))
             self._connections.append(connection)
             _Thread(target=self._stage, args=(connection,), daemon=True).start()
