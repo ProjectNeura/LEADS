@@ -2,6 +2,7 @@ from datetime import datetime as _datetime
 from time import time as _time
 from typing import Callable as _Callable, override as _override
 
+from PIL.Image import fromarray as _fromarray
 from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as _DoubleVar, StringVar as _StringVar, \
     CTkSegmentedButton as _CTkSegmentedButton
 from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyCode
@@ -9,13 +10,14 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main, format_duration, BRAKE_INDICATOR, VisualDataContainer, REAR_VIEW_CAMERA
+    initialize_main, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
-    ESC, Satellite, Motor, Speed, Photo, Light
+    ESC, Satellite, Motor, Speed, Photo, Light, ImageVariable
 from leads_vec.__version__ import __version__
+from leads_video import Camera
 
 
 class CustomRuntimeData(RuntimeData):
@@ -52,7 +54,7 @@ def main() -> int:
     root.configure(cursor="dot")
     var_lap_times = _StringVar(root, "")
     var_gps = _StringVar(root, "")
-    var_rear_view_base64 = _StringVar(root, "")
+    var_rear_view = ImageVariable(root, None)
     var_info = _StringVar(root, "")
     var_speed = _DoubleVar(root, 0)
     var_voltage = _StringVar(root, "")
@@ -88,7 +90,7 @@ def main() -> int:
                        font=("Arial", cfg.font_size_small - 4))
         )
         if has_device(REAR_VIEW_CAMERA):
-            m1_widgets += (Photo(root, theme_key="CTkButton", variable=var_rear_view_base64),)
+            m1_widgets += (Photo(root, theme_key="CTkButton", variable=var_rear_view),)
         manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
@@ -188,8 +190,11 @@ def main() -> int:
                 var_gps.set(f"GPS {"VALID" if d.gps_valid else "NO FIX"} - !NF!\n\n"
                             f"{d.gps_ground_speed:.1f} KM / H\n"
                             f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
-            if isinstance(d, VisualDataContainer) and d.rear_view_base64:
-                var_rear_view_base64.set(d.rear_view_base64)
+            if has_device(REAR_VIEW_CAMERA):
+                cam = get_device(REAR_VIEW_CAMERA)
+                if not isinstance(cam, Camera):
+                    raise TypeError(f"Device \"{REAR_VIEW_CAMERA}\" is not a camera")
+                var_rear_view.set(None if (image := cam.read_numpy()) is None else _fromarray(image.transpose(1, 2, 0)))
             var_info.set(f"VeC {__version__.upper()}\n\n"
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                          f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
