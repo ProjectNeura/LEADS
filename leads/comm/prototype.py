@@ -1,4 +1,5 @@
 from abc import abstractmethod as _abstractmethod, ABCMeta as _ABCMeta
+from atexit import register as _register
 from socket import socket as _socket, AF_INET as _AF_INET, SOCK_STREAM as _SOCK_STREAM, \
     gethostbyname_ex as _gethostbyname_ex, gethostname as _gethostname, gaierror as _gaierror, herror as _herror
 from threading import Lock as _Lock, Thread as _Thread
@@ -24,6 +25,7 @@ class Service(metaclass=_ABCMeta):
         self._port: int = port
         self._socket: _socket = _socket(_AF_INET, _SOCK_STREAM, proto=0)
         self._main_thread: _Thread | None = None
+        _register(self.close)
 
     def port(self) -> int:
         """
