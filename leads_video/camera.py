@@ -52,7 +52,7 @@ class Camera(_Device):
         return self.read()
 
     def read_pil(self) -> _Image | None:
-        return None if (frame := self.read_numpy()) is None else _fromarray(frame)
+        return None if (frame := self.read_numpy()) is None else _fromarray(frame.transpose(1, 2, 0))
 
     @_override
     def close(self) -> None:
