@@ -2,7 +2,6 @@ from datetime import datetime as _datetime
 from time import time as _time
 from typing import Callable as _Callable, override as _override
 
-from PIL.Image import fromarray as _fromarray
 from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as _DoubleVar, StringVar as _StringVar, \
     CTkSegmentedButton as _CTkSegmentedButton
 from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyCode
@@ -194,7 +193,7 @@ def main() -> int:
                 cam = get_device(REAR_VIEW_CAMERA)
                 if not isinstance(cam, Camera):
                     raise TypeError(f"Device \"{REAR_VIEW_CAMERA}\" is not a camera")
-                var_rear_view.set(None if (image := cam.read_numpy()) is None else _fromarray(image.transpose(1, 2, 0)))
+                var_rear_view.set(cam.read_pil())
             var_info.set(f"VeC {__version__.upper()}\n\n"
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                          f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
