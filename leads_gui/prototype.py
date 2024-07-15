@@ -226,7 +226,7 @@ class RuntimeData(object):
                            quality: int = 90) -> None:
         if self.comm_stream:
             frame.save(buffer := _BytesIO(), "JPEG", quality=quality)
-            self.comm_stream.broadcast(tag.encode() + b":" + buffer.getvalue() + b"seperator")
+            self.comm_stream.broadcast(tag.encode() + b":" + buffer.getvalue())
 
 
 T = _TypeVar("T", bound=RuntimeData)

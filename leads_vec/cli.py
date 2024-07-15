@@ -64,7 +64,7 @@ class StreamCallback(Callback):
 
 def enable_comm_stream(context_manager: ContextManager, port: int) -> None:
     rd = context_manager.window().runtime_data()
-    rd.comm_stream = start_server(create_server(port, StreamCallback()), True)
+    rd.comm_stream = start_server(create_server(port, StreamCallback(), b"end;"), True)
 
     def _() -> None:
         while True:
