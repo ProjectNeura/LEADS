@@ -12,7 +12,7 @@ from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, 
     GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
     initialize_main, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, \
     RIGHT_VIEW_CAMERA
-from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses
+from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses, ConnectionBase
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
@@ -51,20 +51,30 @@ def get_camera(tag: str) -> Camera | None:
 
 
 class StreamCallback(Callback):
-    @_override
-    def on_initialize(self, service: Service) -> None:
-        self.super(service=service)
-        L.debug(f"Comm stream server started listening on {service.port()}")
+    def __init__(self, context_manager: ContextManager) -> None:
+        super().__init__()
+        self.uim: ContextManager = context_manager
 
     @_override
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
         L.error(f"Comm stream server error: {repr(error)}")
 
+    @_override
+    def on_connect(self, service: Service, connection: ConnectionBase) -> None:
+        self.super(service=service, connection=connection)
+        self.uim["comm_stream_status"].configure(text="STM ONLINE", text_color=["black", "white"])
+
+    @_override
+    def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
+        self.super(service=service, connection=connection)
+        if self.uim.window().runtime_data().comm_stream.num_connections() < 2:
+            self.uim["comm_stream_status"].configure(text="STM OFFLINE", text_color="gray")
+
 
 def enable_comm_stream(context_manager: ContextManager, port: int) -> None:
     rd = context_manager.window().runtime_data()
-    rd.comm_stream = start_server(create_server(port, StreamCallback(), b"end;"), True)
+    rd.comm_stream = start_server(create_server(port, StreamCallback(context_manager), b"end;"), True)
 
     def _() -> None:
         while True:
@@ -75,6 +85,42 @@ def enable_comm_stream(context_manager: ContextManager, port: int) -> None:
                     rd.comm_stream_notify(tag, frame)
 
     _Thread(name="comm streamer", target=_, daemon=True).start()
+
+
+class CommCallback(Callback):
+    def __init__(self, context: LEADS, context_manager: ContextManager) -> None:
+        super().__init__()
+        self.ctx: LEADS = context
+        self.uim: ContextManager = context_manager
+
+    @_override
+    def on_connect(self, service: Service, connection: ConnectionBase) -> None:
+        self.super(service=service, connection=connection)
+        self.uim["comm_status"].configure(text="COMM ONLINE", text_color=["black", "white"])
+
+    @_override
+    def on_disconnect(self, service: Service, connection: ConnectionBase) -> None:
+        self.super(service=service, connection=connection)
+        if self.uim.window().runtime_data().comm.num_connections() < 2:
+            self.uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
+
+    @_override
+    def on_fail(self, service: Service, error: Exception) -> None:
+        self.super(service=service, error=error)
+        L.error(f"Comm server error: {repr(error)}")
+
+    @_override
+    def on_receive(self, service: Service, msg: bytes) -> None:
+        self.super(service=service, msg=msg)
+        match msg:
+            case b"time_lap":
+                self.ctx.time_lap()
+            case b"hazard":
+                self.ctx.hazard(not self.ctx.hazard())
+            case b"m1":
+                get_proxy_canvas(self.uim, "m1").next_mode()
+            case b"m3":
+                get_proxy_canvas(self.uim, "m3").next_mode()
 
 
 def main() -> int:
@@ -142,7 +188,9 @@ def main() -> int:
 
         manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
                                         font=("Arial", cfg.font_size_small))
-
+        if cfg.comm_stream:
+            manager["comm_stream_status"] = _Label(root, text="STM OFFLINE", text_color="gray",
+                                                   font=("Arial", cfg.font_size_small))
         i = 0
         for system in SystemLiteral:
             i += 1
@@ -179,26 +227,7 @@ def main() -> int:
 
     uim = initialize(w, render, ctx, get_controller(MAIN_CONTROLLER))
 
-    class CommCallback(Callback):
-        @_override
-        def on_fail(self, service: Service, error: Exception) -> None:
-            self.super(service=service, error=error)
-            L.error(f"Comm server error: {repr(error)}")
-
-        @_override
-        def on_receive(self, service: Service, msg: bytes) -> None:
-            self.super(service=service, msg=msg)
-            match msg:
-                case b"time_lap":
-                    ctx.time_lap()
-                case b"hazard":
-                    ctx.hazard(not ctx.hazard())
-                case b"m1":
-                    get_proxy_canvas(uim, "m1").next_mode()
-                case b"m3":
-                    get_proxy_canvas(uim, "m3").next_mode()
-
-    w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback()), True)
+    w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback(ctx, uim)), True)
     if cfg.comm_stream:
         enable_comm_stream(uim, cfg.comm_stream_port)
 
@@ -243,10 +272,6 @@ def main() -> int:
             st = ctx.speed_trend()
             var_speed_trend.set(st)
             var_g_force.set((d.lateral_acceleration, d.forward_acceleration))
-            if w.runtime_data().comm.num_connections() < 1:
-                uim["comm_status"].configure(text="COMM OFFLINE", text_color="gray")
-            else:
-                uim["comm_status"].configure(text="COMM ONLINE", text_color=["black", "white"])
             if w.runtime_data().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
@@ -361,21 +386,23 @@ def main() -> int:
                 uim["wsc_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
+    meters = ["m1", "m2", "m3"]
+    buttons = ["left", "time_lap", "hazard", "right"]
+    fault_lights = ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "light_fault", "motor_fault", "wsc_fault"]
+    conditional_statuses = ("comm_stream_status",) if cfg.comm_stream else ()
     if cfg.manual_mode:
         layout = [
-            ["m1", "m2", "m3"],
-            ["left", "time_lap", "hazard", "right"],
-            [_Label(root, text="MANUAL MODE"), _Label(root, text="ASSISTANCE DISABLED"), "comm_status"],
-            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"]
+            meters, buttons,
+            [_Label(root, text="MANUAL MODE"), _Label(root, text="ASSISTANCE DISABLED"), "comm_status",
+             *conditional_statuses],
+            fault_lights
         ]
         ctx.esc_mode(ESCMode.OFF)
         w.runtime_data().control_system_switch_changed = True
     else:
         layout = [
-            ["m1", "m2", "m3"],
-            ["left", "time_lap", "hazard", "right"],
-            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "light_fault", "motor_fault", "wsc_fault"],
-            [*map(lambda s: f"{s.lower()}_status", SystemLiteral), "comm_status"],
+            meters, buttons, fault_lights,
+            [*map(lambda s: f"{s.lower()}_status", SystemLiteral), "comm_status", *conditional_statuses],
             list(map(lambda s: s.lower(), SystemLiteral)),
             ["esc"]
         ]
