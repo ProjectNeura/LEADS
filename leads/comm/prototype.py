@@ -162,7 +162,10 @@ class ConnectionBase(metaclass=_ABCMeta):
         """
         Request disconnection.
         """
-        self.send(b"disconnect")
+        try:
+            self.send(b"disconnect")
+        except IOError:
+            return
 
     @_abstractmethod
     def close(self) -> None:
@@ -229,14 +232,13 @@ class Connection(ConnectionBase):
         :param msg: the message to send
         """
         self._require_open_socket().send(msg + self._separator)
-        if msg == b"disconnect":
-            self.close()
 
     @_override
     def close(self) -> None:
         """
         Close the connection.
         """
+        self.disconnect()
         self._on_close(self)
         self._require_open_socket(False).close()
 
