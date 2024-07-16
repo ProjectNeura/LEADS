@@ -56,11 +56,6 @@ class StreamCallback(Callback):
         self.uim: ContextManager = context_manager
 
     @_override
-    def on_initialize(self, service: Service) -> None:
-        self.super(service=service)
-        L.debug(f"Comm stream server started listening on {service.port()}")
-
-    @_override
     def on_fail(self, service: Service, error: Exception) -> None:
         self.super(service=service, error=error)
         L.error(f"Comm stream server error: {repr(error)}")
