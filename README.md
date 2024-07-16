@@ -357,6 +357,8 @@ Note that a purely empty file could cause an error.
 | `font_size_x_large` | `int`   | Extra large font size                                     | Main         | `56`          |
 | `comm_addr`         | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
 | `comm_port`         | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
+| `comm_stream`       | `bool`  | `True`: enable streaming; `False`: disable streaming      | Main         | `False`       |
+| `comm_stream_port`  | `bool`  | The port on which the streaming system runs on            | Main, Remote | `16901`       |
 | `save_data`         | `bool`  | `True`: save data; `False`: discard data                  | Remote       | `False`       |
 
 ## Devices Module
