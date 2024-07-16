@@ -40,9 +40,8 @@ class SerialConnection(_ConnectionBase):
     @_override
     def send(self, msg: bytes) -> None:
         self._require_open_serial().write(msg + self._separator)
-        if msg == b"disconnect":
-            self.close()
 
     @_override
     def close(self) -> None:
+        self.disconnect()
         self._require_open_serial(False).close()
