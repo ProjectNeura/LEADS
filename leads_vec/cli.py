@@ -142,7 +142,9 @@ def main() -> int:
 
         manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
                                         font=("Arial", cfg.font_size_small))
-
+        if cfg.comm_stream:
+            manager["comm_stream_status"] = _Label(root, text="STREAM OFFLINE", text_color="gray",
+                                                   font=("Arial", cfg.font_size_small))
         i = 0
         for system in SystemLiteral:
             i += 1
@@ -361,21 +363,23 @@ def main() -> int:
                 uim["wsc_fault"].configure(image=None)
 
     SFT.on_recover = on_recover
+    meters = ["m1", "m2", "m3"]
+    buttons = ["left", "time_lap", "hazard", "right"]
+    fault_lights = ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "light_fault", "motor_fault", "wsc_fault"]
     if cfg.manual_mode:
         layout = [
-            ["m1", "m2", "m3"],
-            ["left", "time_lap", "hazard", "right"],
-            [_Label(root, text="MANUAL MODE"), _Label(root, text="ASSISTANCE DISABLED"), "comm_status"],
-            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "motor_fault", "wsc_fault"]
+            meters, buttons,
+            [_Label(root, text="MANUAL MODE"), _Label(root, text="ASSISTANCE DISABLED"), "comm_status",
+             "comm_stream_status" if cfg.comm_stream else None],
+            fault_lights
         ]
         ctx.esc_mode(ESCMode.OFF)
         w.runtime_data().control_system_switch_changed = True
     else:
         layout = [
-            ["m1", "m2", "m3"],
-            ["left", "time_lap", "hazard", "right"],
-            ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "light_fault", "motor_fault", "wsc_fault"],
-            [*map(lambda s: f"{s.lower()}_status", SystemLiteral), "comm_status"],
+            meters, buttons, fault_lights,
+            [*map(lambda s: f"{s.lower()}_status", SystemLiteral), "comm_status",
+             "comm_stream_status" if cfg.comm_stream else None],
             list(map(lambda s: s.lower(), SystemLiteral)),
             ["esc"]
         ]
