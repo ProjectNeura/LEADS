@@ -106,7 +106,7 @@ class SpeedTrendMeter(TextBased, VariableControlled):
         canvas.clear()
         w, h, hc, vc, limit = canvas.meta()
         canvas.draw_fg(self._fg_color, self._hover_color, self._corner_radius)
-        if self._image is None:
+        if not self._image:
             self._image = _PhotoImage(Car.load_source(Color[parse_color(("BLACK", "WHITE"))]).resize((limit, limit)))
         canvas.collect("f0", canvas.create_image(hc, vc, image=self._image))
         self.dynamic_renderer(canvas)
