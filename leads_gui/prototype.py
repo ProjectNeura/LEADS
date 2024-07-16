@@ -341,7 +341,7 @@ class ContextManager(object):
     def get(self, key: str) -> _Widget:
         return self._widgets[key]
 
-    def parse_layout(self, layout: list[list[str | _Widget]]) -> list[list[_Widget]]:
+    def parse_layout(self, layout: list[list[str | _Widget | None]]) -> list[list[_Widget | None]]:
         for i in range(len(layout)):
             for j in range(len(layout[i])):
                 e = layout[i][j]
@@ -349,7 +349,7 @@ class ContextManager(object):
                     layout[i][j] = self[e]
         return layout
 
-    def layout(self, layout: list[list[str | _Widget]]) -> None:
+    def layout(self, layout: list[list[str | _Widget | None]]) -> None:
         layout = self.parse_layout(layout)
         root = self._window.root()
         root.grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
@@ -359,7 +359,8 @@ class ContextManager(object):
             row = layout[i]
             length = len(row)
             for j in range(length):
-                widget = row[j]
+                if (widget := row[j]) is None:
+                    continue
                 s = int(t / length)
                 widget.configure(width=screen_width)
                 widget.grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=p, ipady=p, padx=p, pady=p)
