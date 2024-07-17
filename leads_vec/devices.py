@@ -61,19 +61,19 @@ class VeCController(Controller):
         if has_device(FRONT_VIEW_CAMERA):
             cam = get_camera(FRONT_VIEW_CAMERA, Base64Camera)
             visual["front_view_base64"] = cam.read()
-            visual["front_view_latency"] = cam.latency()
+            visual["front_view_latency"] = int(cam.latency() * 1000)
         if has_device(LEFT_VIEW_CAMERA):
             cam = get_camera(LEFT_VIEW_CAMERA, Base64Camera)
             visual["left_view_base64"] = cam.read()
-            visual["left_view_latency"] = cam.latency()
+            visual["left_view_latency"] = int(cam.latency() * 1000)
         if has_device(RIGHT_VIEW_CAMERA):
             cam = get_camera(RIGHT_VIEW_CAMERA, Base64Camera)
             visual["right_view_base64"] = cam.read()
-            visual["right_view_latency"] = cam.latency()
+            visual["right_view_latency"] = int(cam.latency() * 1000)
         if has_device(REAR_VIEW_CAMERA):
             cam = get_camera(REAR_VIEW_CAMERA, Base64Camera)
             visual["rear_view_base64"] = cam.read()
-            visual["rear_view_latency"] = cam.latency()
+            visual["rear_view_latency"] = int(cam.latency() * 1000)
         return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 
