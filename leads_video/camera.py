@@ -1,3 +1,4 @@
+from threading import Thread as _Thread
 from typing import override as _override
 
 from PIL.Image import fromarray as _fromarray, Image as _Image
@@ -59,18 +60,32 @@ class Camera(_Device):
         self._video_capture.release()
 
 
-class Base64Camera(Camera, _ShadowDevice):
+class LowLatencyCamera(Camera, _ShadowDevice):
     def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         Camera.__init__(self, port, resolution)
         _ShadowDevice.__init__(self, port)
-        self._original: _ndarray | None = None
-        self._base64: str = ""
+        self._frame: _ndarray | None = None
 
     @_override
     def loop(self) -> None:
         if self._video_capture:
-            self._original = super().read()
-            self._base64 = base64_encode(self._original)
+            self._frame = super().read()
+
+    @_override
+    def read(self) -> _ndarray | None:
+        return self._frame
+
+
+class Base64Camera(LowLatencyCamera):
+    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
+        super().__init__(port, resolution)
+        self._base64: str = ""
+
+    @_override
+    def loop(self) -> None:
+        super().loop()
+        if self._frame is not None:
+            self._base64 = base64_encode(self._frame)
 
     @_override
     def read(self) -> str:
@@ -78,4 +93,28 @@ class Base64Camera(Camera, _ShadowDevice):
 
     @_override
     def read_numpy(self) -> _ndarray | None:
-        return self._original
+        return self._frame
+
+
+class LowLatencyBase64Camera(Base64Camera):
+    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
+        super().__init__(port, resolution)
+        self._shadow_thread2: _Thread | None = None
+
+    @_override
+    def loop(self) -> None:
+        LowLatencyCamera.loop(self)
+
+    def loop2(self) -> None:
+        if (local_frame := self._frame) is not None:
+            self._base64 = base64_encode(local_frame)
+
+    def run2(self) -> None:
+        while True:
+            self.loop2()
+
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
+        self._shadow_thread2 = _Thread(name=f"{id(self)} shadow2", target=self.run2, daemon=True)
+        self._shadow_thread2.start()
