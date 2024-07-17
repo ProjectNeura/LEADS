@@ -99,9 +99,13 @@ class VisualDataContainer(DataContainer):
                          lateral_acceleration, mileage, gps_valid, gps_ground_speed, latitude, longitude, throttle,
                          brake)
         self.front_view_base64: str = front_view_base64
+        self.front_view_latency: int = 0
         self.left_view_base64: str = left_view_base64
+        self.left_view_latency: int = 0
         self.right_view_base64: str = right_view_base64
+        self.right_view_latency: int = 0
         self.rear_view_base64: str = rear_view_base64
+        self.rear_view_latency: int = 0
 
 
 def dlat2meters(dlat: float) -> float:
