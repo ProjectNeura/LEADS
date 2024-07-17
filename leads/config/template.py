@@ -17,7 +17,6 @@ class ConfigTemplate(Serializable):
         self.w_debug_level: _Literal["DEBUG", "INFO", "WARN", "ERROR"] = "DEBUG"
         self.data_seq_size: int = 100
         self.num_laps_timed: int = 3
-        self.data_dir: str = "data"
         self.refresh()
 
     def fix_dict(self, d: dict[str, _Any]) -> dict[str, _SupportedConfig]:
