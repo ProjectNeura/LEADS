@@ -92,20 +92,24 @@ class VisualDataContainer(DataContainer):
                  throttle: float = 0,
                  brake: float = 0,
                  front_view_base64: str = "",
+                 front_view_latency: int = 0,
                  left_view_base64: str = "",
+                 left_view_latency: int = 0,
                  right_view_base64: str = "",
-                 rear_view_base64: str = "") -> None:
+                 right_view_latency: int = 0,
+                 rear_view_base64: str = "",
+                 rear_view_latency: int = 0) -> None:
         super().__init__(voltage, speed, front_wheel_speed, rear_wheel_speed, forward_acceleration,
                          lateral_acceleration, mileage, gps_valid, gps_ground_speed, latitude, longitude, throttle,
                          brake)
         self.front_view_base64: str = front_view_base64
-        self.front_view_latency: int = 0
+        self.front_view_latency: int = front_view_latency
         self.left_view_base64: str = left_view_base64
-        self.left_view_latency: int = 0
+        self.left_view_latency: int = left_view_latency
         self.right_view_base64: str = right_view_base64
-        self.right_view_latency: int = 0
+        self.right_view_latency: int = right_view_latency
         self.rear_view_base64: str = rear_view_base64
-        self.rear_view_latency: int = 0
+        self.rear_view_latency: int = rear_view_latency
 
 
 def dlat2meters(dlat: float) -> float:
