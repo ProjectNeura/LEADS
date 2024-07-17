@@ -2,12 +2,13 @@ from typing import override
 
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
-    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, get_device, has_device, \
+    ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
     SFT, read_device_marker, has_controller
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gui import Config
 from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
+from leads_video import Base64Camera, get_camera
 
 config: Config = require_config()
 GPS_ONLY: int = config.get("gps_only", False)
@@ -58,13 +59,21 @@ class VeCController(Controller):
         wsc = {"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()
         visual = {}
         if has_device(FRONT_VIEW_CAMERA):
-            visual["front_view_base64"] = get_device(FRONT_VIEW_CAMERA).read()
+            cam = get_camera(FRONT_VIEW_CAMERA, Base64Camera)
+            visual["front_view_base64"] = cam.read()
+            visual["front_view_latency"] = cam.latency()
         if has_device(LEFT_VIEW_CAMERA):
-            visual["left_view_base64"] = get_device(LEFT_VIEW_CAMERA).read()
+            cam = get_camera(LEFT_VIEW_CAMERA, Base64Camera)
+            visual["left_view_base64"] = cam.read()
+            visual["left_view_latency"] = cam.latency()
         if has_device(RIGHT_VIEW_CAMERA):
-            visual["right_view_base64"] = get_device(RIGHT_VIEW_CAMERA).read()
+            cam = get_camera(RIGHT_VIEW_CAMERA, Base64Camera)
+            visual["right_view_base64"] = cam.read()
+            visual["right_view_latency"] = cam.latency()
         if has_device(REAR_VIEW_CAMERA):
-            visual["rear_view_base64"] = get_device(REAR_VIEW_CAMERA).read()
+            cam = get_camera(REAR_VIEW_CAMERA, Base64Camera)
+            visual["rear_view_base64"] = cam.read()
+            visual["rear_view_latency"] = cam.latency()
         return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 
