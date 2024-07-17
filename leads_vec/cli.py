@@ -18,7 +18,7 @@ from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, 
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
     ESC, Satellite, Motor, Speed, Photo, Light, ImageVariable
 from leads_vec.__version__ import __version__
-from leads_video import Camera
+from leads_video import get_camera
 
 
 class CustomRuntimeData(RuntimeData):
@@ -39,15 +39,6 @@ def get_proxy_canvas(context_manager: ContextManager, key: str) -> ProxyCanvas:
     if not isinstance(r, ProxyCanvas):
         raise TypeError(f"Widget \"{key}\" is supposed to be a proxy canvas")
     return r
-
-
-def get_camera(tag: str) -> Camera | None:
-    if has_device(tag):
-        cam = get_device(tag)
-        if not isinstance(cam, Camera):
-            raise TypeError(f"Device \"{tag}\" is supposed to be a camera")
-        return cam
-    return None
 
 
 class StreamCallback(Callback):
