@@ -5,5 +5,6 @@ if not _find_spec("cv2"):
 if not _find_spec("PIL"):
     raise ImportError("Please install `Pillow` to run this module\n>>>pip install Pillow")
 
+from leads_video.base64 import *
 from leads_video.camera import *
 from leads_video.utils import *

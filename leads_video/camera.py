@@ -7,7 +7,7 @@ from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device, ShadowDevice as _ShadowDevice
-from leads_video.utils import base64_encode
+from leads_video.base64 import base64_encode
 
 
 class Camera(_Device):
