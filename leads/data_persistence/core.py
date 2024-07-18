@@ -4,7 +4,7 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
     override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
     Generator as _Generator, Any as _Any
 
-from leads.types import Compressor as _Compressor
+from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, VisualHeaderFull as _VisualHeaderFull
 from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
     DataFrame as _DataFrame, TextFileReader as _TextFileReader
 
@@ -259,3 +259,9 @@ DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str
 DEFAULT_HEADER_FULL: tuple[str, str, str, str, str, str, str, str, str, str, str, str, str, str] = DEFAULT_HEADER + (
     "throttle", "brake"
 )
+VISUAL_HEADER_ONLY: tuple[str, str, str, str, str, str, str, str] = (
+    "front_view_base64", "front_view_latency", "left_view_base64", "left_view_latency", "right_view_base64",
+    "front_view_latency", "rear_view_base64", "rear_view_latency"
+)
+VISUAL_HEADER: _VisualHeader = DEFAULT_HEADER + VISUAL_HEADER_ONLY
+VISUAL_HEADER_FULL: _VisualHeaderFull = DEFAULT_HEADER_FULL + VISUAL_HEADER_ONLY

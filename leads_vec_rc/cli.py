@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
-from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL
+from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL, VISUAL_HEADER_FULL
 from leads_gui import Config
 
 config: Config = require_config()
@@ -24,8 +24,17 @@ speed_record: DataPersistence[float] = DataPersistence(2000)
 acceleration_record: DataPersistence[float] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv", DEFAULT_HEADER_FULL,
-          time_stamp_record, voltage_record, speed_record)
+csv: CSV | None = None
+
+
+def try_create_csv(data: dict[str, Any]) -> None:
+    global csv
+    if csv:
+        return
+    csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv",
+              VISUAL_HEADER_FULL if set(VISUAL_HEADER_FULL).issubset(data.keys()) else DEFAULT_HEADER_FULL,
+              time_stamp_record, voltage_record, speed_record)
+    register(csv.close)
 
 
 def retry(service: Service) -> Client:
@@ -59,6 +68,7 @@ class CommCallback(Callback):
             acceleration_record.append(Vector(d["forward_acceleration"], d["lateral_acceleration"]))
             gps_record.append(Vector(d["latitude"], d["longitude"]))
             if config.save_data:
+                try_create_csv(d)
                 csv.write_frame(*(d[key] for key in csv.header()))
             else:
                 time_stamp_record.append(int(d["t"]))
@@ -128,6 +138,3 @@ async def m1() -> str:
 async def m3() -> str:
     callback.client.send(b"m3")
     return "done"
-
-
-register(csv.close)
