@@ -4,7 +4,7 @@ from leads.data_persistence.analyzer import utils as _utils
 from .._computational import array as _array, ndarray as _ndarray
 
 
-class DynamicProcessor(object):
+class Preprocessor(object):
     def __init__(self, data_seq: _Sequence[dict[str, _Any]]) -> None:
         self._data_seq: _Sequence[dict[str, _Any]] = data_seq
 
