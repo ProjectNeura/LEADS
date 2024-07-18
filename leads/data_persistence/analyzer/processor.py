@@ -138,6 +138,8 @@ class Processor(object):
         self._lap_x.clear()
         self._lap_y.clear()
         self._lap_d.clear()
+        self._max_lap_x = None
+        self._max_lap_y = None
 
     def foreach(self, do: _Callable[[dict[str, _Any], int], None], skip_invalid_rows: bool = True,
                 skip_gps_invalid_rows: bool = False) -> None:
