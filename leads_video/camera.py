@@ -1,4 +1,5 @@
 from threading import Thread as _Thread
+from time import time as _time
 from typing import override as _override
 
 from PIL.Image import fromarray as _fromarray, Image as _Image
@@ -6,7 +7,7 @@ from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device, ShadowDevice as _ShadowDevice
-from leads_video.utils import base64_encode
+from leads_video.base64 import base64_encode
 
 
 class Camera(_Device):
@@ -14,6 +15,7 @@ class Camera(_Device):
         super().__init__(port)
         self._resolution: tuple[int, int] | None = resolution
         self._video_capture: _VideoCapture | None = None
+        self._birth: float = 0
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
@@ -46,6 +48,7 @@ class Camera(_Device):
     @_override
     def read(self) -> _ndarray | None:
         ret, frame = self._video_capture.read()
+        self._birth = _time()
         return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB).transpose(
             2, 0, 1) if ret else None
 
@@ -54,6 +57,9 @@ class Camera(_Device):
 
     def read_pil(self) -> _Image | None:
         return None if (frame := self.read_numpy()) is None else _fromarray(frame.transpose(1, 2, 0))
+
+    def latency(self) -> float:
+        return _time() - self._birth
 
     @_override
     def close(self) -> None:
