@@ -15,7 +15,7 @@ from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
 from .._computational import sqrt as _sqrt
 
 
-class StaticProcessor(object):
+class Processor(object):
     def __init__(self, dataset: CSVDataset) -> None:
         if DEFAULT_HEADER in dataset.read_header():
             raise KeyError("Your dataset must include the default header")
@@ -119,7 +119,7 @@ class StaticProcessor(object):
         return (
             f"Baked {self._valid_rows_count} / {self._read_rows_count} ROWS",
             f"Baking Rate: {100 * self._valid_rows_count / self._read_rows_count:.2f}%",
-            f"Skipped Rows: {StaticProcessor._hide_others(self._invalid_rows, 5)}",
+            f"Skipped Rows: {Processor._hide_others(self._invalid_rows, 5)}",
             f"Start Time: {_datetime.fromtimestamp(self._start_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"End Time: {_datetime.fromtimestamp(self._end_time * .001).strftime("%Y-%m-%d %H:%M:%S")}",
             f"Duration: {format_duration(self._duration * .001)}",
@@ -128,7 +128,7 @@ class StaticProcessor(object):
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D4D: {self._avg_speed:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows_count:.2f}%",
-            f"GPS Skipped Rows: {StaticProcessor._hide_others(self._gps_invalid_rows, 5)}"
+            f"GPS Skipped Rows: {Processor._hide_others(self._gps_invalid_rows, 5)}"
         )
 
     def erase_unit_cache(self) -> None:
