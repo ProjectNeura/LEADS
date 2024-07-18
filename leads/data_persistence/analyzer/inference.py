@@ -299,6 +299,11 @@ class InferredDataset(CSVDataset):
         self._complete(inferences, enhanced, True)
 
     @_override
+    def reverse(self) -> None:
+        self._raw_data = self._raw_data[::-1]
+        self._inferred_data.reverse()
+
+    @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
         for i in range(len(self._raw_data)):
             InferredDataset.merge(row := self._raw_data[i], self._inferred_data[i])
