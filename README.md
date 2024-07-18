@@ -130,6 +130,9 @@ To learn about the configuration file, read [Configurations](#Configurations).
 python -m leads_vec -d path/to/the/devices.py run
 ```
 
+You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
+".../site-packages/leads_vec/devices_jarvis.py", simply use ":INTERNAL/devices_jarvis.py".
+
 To learn about the devices module, read [Devices Module](#devices-module).
 
 ##### Specify a Main Module
