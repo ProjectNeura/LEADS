@@ -186,7 +186,7 @@ class CSV(object):
             frame[self._header[i]] = d = data[i]
             if column := self._columns[i]:
                 column.append(d)
-        _DataFrame(data=frame, index=[self._i]).to_csv(self._file, mode="a", header=False)
+        _DataFrame(frame, [self._i]).to_csv(self._file, mode="a", header=False)
         self._i += 1
 
     def close(self) -> None:
