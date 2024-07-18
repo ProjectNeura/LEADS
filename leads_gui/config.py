@@ -21,6 +21,7 @@ class Config(_ConfigTemplate):
         self.comm_port: int = 16900
         self.comm_stream: bool = False
         self.comm_stream_port: int = 16901
+        self.data_dir: str = "data"
         self.save_data: bool = False
         super().__init__(base)
 
