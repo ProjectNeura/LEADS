@@ -3,6 +3,7 @@ from importlib.util import find_spec as _find_spec
 if not _find_spec("matplotlib"):
     raise ImportError("Please install `matplotlib` to run this module\n>>>pip install matplotlib")
 
+from typing import TextIO as _TextIO
 from datetime import datetime as _datetime
 from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence
 from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _show, title as _title, \
@@ -11,7 +12,7 @@ from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _s
 from leads.data import dlat2meters, dlon2meters, format_duration
 from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, mileage_invalid, latitude_invalid, \
     longitude_invalid
-from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
+from leads.data_persistence.core import CSV, CSVDataset, DEFAULT_HEADER, VISUAL_HEADER_ONLY
 from .._computational import sqrt as _sqrt
 
 
@@ -54,6 +55,7 @@ class Processor(object):
         self._lap_d: list[float] = []
         self._max_lap_x: float | None = None
         self._max_lap_y: float | None = None
+        self._required_time: int = 0
 
     def dataset(self) -> CSVDataset:
         return self._dataset
@@ -304,3 +306,18 @@ class Processor(object):
         _xlabel("Lap")
         _ylabel("Proportion (% / max)")
         _show()
+
+    def realign_visual_data(self, output_file: str | _TextIO) -> None:
+        if not set(VISUAL_HEADER_ONLY).issubset(header := self._dataset.read_header()):
+            raise KeyError("Dataset does not contain the visual header")
+        csv = CSV(output_file, header)
+
+        def unit(row: dict[str, _Any], _) -> None:
+            if row["t"] >= self._required_time:
+                csv.write_frame(*row.values())
+                return
+            self._required_time = row["t"]
+
+        self._dataset.reverse()
+        self.foreach(unit, False)
+        self._dataset.reverse()
