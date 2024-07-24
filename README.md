@@ -7,16 +7,16 @@
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/ProjectNeura/LEADS)
 
 LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the
-instrumentation and control system for electric vehicles. It is written in well-organized Python and C/C++ with
+instrumentation, control, and analysis system for racing cars. It is written in well-organized Python and C/C++ with
 impressive performance. It is not only out-of-the-box ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec))
 but also fully customizable. It provides multiple abstract layers that allow users to pull out the components and
 rearrange them into a new project. You can either configure the existing executable module `leads_vec` and
 `leads_vec_rc` simply through a JSON file or write your own codes based on the framework as easily as building a LEGO.
 
-The hardware components chosen for this project are geared towards amateur developers. It uses neither a CAN bus nor any
-dedicated circuit board, but generic development kits such as Raspberry Pi and Arduino instead. However, as it is a
-high-level system running on a host computer, the software framework has the ability to adapt to any type of hardware
-component if you are willing to write some codes.
+The hardware components chosen for this project are geared towards amateur developers. It uses neither a CAN bus
+(although it is supported) nor any dedicated circuit board, but generic development kits such as Raspberry Pi and
+Arduino instead. However, as it is a high-level system running on a host computer, the software framework has the
+ability to adapt to any type of hardware component if you are willing to write some codes.
 
 This document will guide you through LEADS VeC. You will find a detailed version
 [here](https://leads-docs.projectneura.org/en/latest/vec).
