@@ -51,7 +51,7 @@ class SafeSpeedInference(SpeedInferenceBase):
     """
 
     def __init__(self) -> None:
-        super().__init__((0, 0))
+        super().__init__()
 
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
@@ -117,7 +117,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
     """
 
     def __init__(self) -> None:
-        super().__init__((0, 0))
+        super().__init__()
 
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
