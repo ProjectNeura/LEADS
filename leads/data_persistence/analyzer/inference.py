@@ -1,9 +1,9 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
-from typing import Any as _Any, override as _override, Generator as _Generator
+from typing import Any as _Any, override as _override, Generator as _Generator, Literal as _Literal
 
 from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, acceleration_invalid, \
     mileage_invalid, latitude_invalid, longitude_invalid, distance_between
-from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
+from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER, VISUAL_HEADER_ONLY
 
 
 class Inference(object, metaclass=_ABCMeta):
@@ -229,6 +229,27 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
                         longitude_invalid(lon)) else {
             "mileage": s_0 + .001 * distance_between(lat_0, lon_0, lat, lon)
         }
+
+
+class VisualDataRealignmentByLatency(Inference):
+    def __init__(self, *channels: _Literal["front", "left", "right", "rear"]) -> None:
+        super().__init__((0, 1), VISUAL_HEADER_ONLY)
+        self._channels: tuple[_Literal["front", "left", "right", "rear"], ...] = channels if channels else (
+            "front", "left", "right", "rear")
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        if backward:
+            return None
+        target, base = rows
+        original_target = target.copy()
+        t_0, t = target["t"], base["t"]
+        for channel in self._channels:
+            if (new_latency := t_0 - t + base[f"{channel}_view_latency"]) > 0:
+                continue
+            target[f"{channel}_view_base64"] = base[f"{channel}_view_base64"]
+            target[f"{channel}_view_latency"] = new_latency
+        return None if target == original_target else target
 
 
 class InferredDataset(CSVDataset):
