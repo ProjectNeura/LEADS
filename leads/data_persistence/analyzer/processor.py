@@ -318,6 +318,4 @@ class Processor(object):
                 return
             self._required_time = row["t"]
 
-        self._dataset.reverse()
         self.foreach(unit, False)
-        self._dataset.reverse()
