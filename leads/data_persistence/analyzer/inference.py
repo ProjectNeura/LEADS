@@ -7,18 +7,24 @@ from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
 
 
 class Inference(object, metaclass=_ABCMeta):
-    def __init__(self, required_depth: tuple[int, int] = (0, 0)) -> None:
+    def __init__(self, required_depth: tuple[int, int] = (0, 0),
+                 required_header: tuple[str, ...] = DEFAULT_HEADER) -> None:
         """
         Declare the scale of data this inference requires.
         :param required_depth: (-depth backward, depth forward)
+        :param required_header: the necessary header that the dataset must contain for this inference to work
         """
         self._required_depth: tuple[int, int] = required_depth
+        self._required_header: tuple[str, ...] = required_header
 
     def depth(self) -> tuple[int, int]:
         """
         :return: (-depth backward, depth forward)
         """
         return self._required_depth
+
+    def header(self) -> tuple[str, ...]:
+        return self._required_header
 
     @_abstractmethod
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
@@ -291,8 +297,9 @@ class InferredDataset(CSVDataset):
         :param enhanced: True: use inferred data to infer other data; False: use only raw data to infer other data
         :param assume_initial_zeros: True: reasonably set any missing data in the first row to zero; False: no change
         """
-        if DEFAULT_HEADER in self.read_header():
-            raise KeyError("Your dataset must include the default header")
+        for inference in inferences:
+            if not set(rh := inference.header()).issubset(ah := self.read_header()):
+                raise KeyError(f"Inference {inference} requires header {rh} but the dataset only contains {ah}")
         if assume_initial_zeros:
             self.assume_initial_zeros()
         self._complete(inferences, enhanced, False)
