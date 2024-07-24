@@ -209,10 +209,6 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
         self.require_loaded()
         return self._header
 
-    def reverse(self) -> None:
-        self.require_loaded()
-        self._csv = self._csv.iloc[::-1]
-
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
         self.require_loaded()
