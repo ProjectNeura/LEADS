@@ -1,5 +1,5 @@
 #include "LEADS.h"
-#include "Paddle.h"
+#include "Pedal.h"
 
 const int PIN_VOT[] = {A0};
 
