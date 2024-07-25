@@ -186,7 +186,7 @@ class CSV(object):
             frame[self._header[i]] = d = data[i]
             if column := self._columns[i]:
                 column.append(d)
-        _DataFrame(data=frame, index=[self._i]).to_csv(self._file, mode="a", header=False)
+        _DataFrame(frame, [self._i]).to_csv(self._file, mode="a", header=False)
         self._i += 1
 
     def close(self) -> None:
@@ -261,7 +261,7 @@ DEFAULT_HEADER_FULL: tuple[str, str, str, str, str, str, str, str, str, str, str
 )
 VISUAL_HEADER_ONLY: tuple[str, str, str, str, str, str, str, str] = (
     "front_view_base64", "front_view_latency", "left_view_base64", "left_view_latency", "right_view_base64",
-    "front_view_latency", "rear_view_base64", "rear_view_latency"
+    "right_view_latency", "rear_view_base64", "rear_view_latency"
 )
 VISUAL_HEADER: _VisualHeader = DEFAULT_HEADER + VISUAL_HEADER_ONLY
 VISUAL_HEADER_FULL: _VisualHeaderFull = DEFAULT_HEADER_FULL + VISUAL_HEADER_ONLY

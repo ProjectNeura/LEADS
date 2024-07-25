@@ -1,24 +1,30 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
-from typing import Any as _Any, override as _override, Generator as _Generator
+from typing import Any as _Any, override as _override, Generator as _Generator, Literal as _Literal
 
 from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, acceleration_invalid, \
     mileage_invalid, latitude_invalid, longitude_invalid, distance_between
-from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
+from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER, VISUAL_HEADER_ONLY
 
 
 class Inference(object, metaclass=_ABCMeta):
-    def __init__(self, required_depth: tuple[int, int] = (0, 0)) -> None:
+    def __init__(self, required_depth: tuple[int, int] = (0, 0),
+                 required_header: tuple[str, ...] = DEFAULT_HEADER) -> None:
         """
         Declare the scale of data this inference requires.
         :param required_depth: (-depth backward, depth forward)
+        :param required_header: the necessary header that the dataset must contain for this inference to work
         """
         self._required_depth: tuple[int, int] = required_depth
+        self._required_header: tuple[str, ...] = required_header
 
     def depth(self) -> tuple[int, int]:
         """
         :return: (-depth backward, depth forward)
         """
         return self._required_depth
+
+    def header(self) -> tuple[str, ...]:
+        return self._required_header
 
     @_abstractmethod
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
@@ -45,7 +51,7 @@ class SafeSpeedInference(SpeedInferenceBase):
     """
 
     def __init__(self) -> None:
-        super().__init__((0, 0))
+        super().__init__()
 
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
@@ -111,7 +117,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
     """
 
     def __init__(self) -> None:
-        super().__init__((0, 0))
+        super().__init__()
 
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
@@ -225,6 +231,27 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
         }
 
 
+class VisualDataRealignmentByLatency(Inference):
+    def __init__(self, *channels: _Literal["front", "left", "right", "rear"]) -> None:
+        super().__init__((0, 1), VISUAL_HEADER_ONLY)
+        self._channels: tuple[_Literal["front", "left", "right", "rear"], ...] = channels if channels else (
+            "front", "left", "right", "rear")
+
+    @_override
+    def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
+        if backward:
+            return None
+        target, base = rows
+        original_target = target.copy()
+        t_0, t = target["t"], base["t"]
+        for channel in self._channels:
+            if (new_latency := t_0 - t + base[f"{channel}_view_latency"]) > 0:
+                continue
+            target[f"{channel}_view_base64"] = base[f"{channel}_view_base64"]
+            target[f"{channel}_view_latency"] = new_latency
+        return None if target == original_target else target
+
+
 class InferredDataset(CSVDataset):
     def __init__(self, file: str, chunk_size: int = 100) -> None:
         super().__init__(file, chunk_size)
@@ -291,8 +318,9 @@ class InferredDataset(CSVDataset):
         :param enhanced: True: use inferred data to infer other data; False: use only raw data to infer other data
         :param assume_initial_zeros: True: reasonably set any missing data in the first row to zero; False: no change
         """
-        if DEFAULT_HEADER in self.read_header():
-            raise KeyError("Your dataset must include the default header")
+        for inference in inferences:
+            if not set(rh := inference.header()).issubset(ah := self.read_header()):
+                raise KeyError(f"Inference {inference} requires header {rh} but the dataset only contains {ah}")
         if assume_initial_zeros:
             self.assume_initial_zeros()
         self._complete(inferences, enhanced, False)
