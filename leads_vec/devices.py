@@ -6,8 +6,8 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
     SFT, read_device_marker, has_controller
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
+from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 from leads_gui import Config
-from leads_raspberry_pi import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 from leads_video import Base64Camera, get_camera
 
 config: Config = require_config()

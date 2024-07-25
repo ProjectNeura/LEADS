@@ -5,8 +5,8 @@ from time import sleep as _sleep
 from typing import override as _override
 
 from leads import Device as _Device
-from leads_raspberry_pi.led import LED, LEDCommand
-from leads_raspberry_pi.types import TransitionDirection as _TransitionDirection
+from leads_gpio.led import LED, LEDCommand
+from leads_gpio.types import TransitionDirection as _TransitionDirection
 
 
 class LEDGroupAnimation(object, metaclass=_ABCMeta):
