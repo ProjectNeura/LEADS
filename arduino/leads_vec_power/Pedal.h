@@ -1,4 +1,7 @@
 const int hallSensorPin = A0; // Analog pin connected to Hall sensor
+float restValue = 0.16; // Variable for rest value
+float maxValue = 0.695; // Variable for max value
+
 // Function to map ADC value to a range between 0 and 1
 float mapToRange(int adcValue, int adcMaxValue) {
     return (float)adcValue / adcMaxValue;
@@ -9,13 +12,14 @@ void setup() {
 void loop() {
     // Read the ADC value from the Hall sensor
     int adcValue = analogRead(hallSensorPin);
-    
     // Map the ADC value to a range between 0 and 1
-    float pedalValue = mapToRange(adcValue, 1023);
+    float pedalValue = mapToRange(adcValue, 1023) - restValue;
+    // Adjusted value
+    float adjustedPedalValue = pedalValue / maxValue;
     
     // Print the pedal value to the Serial Monitor
     Serial.print("Pedal Value: ");
-    Serial.println(pedalValue, 2); // Print with 2 decimal places
+    Serial.println(adjustedPedalValue, 2); // Print with 2 decimal places
     
     delay(500); // Delay for half a second
 }
