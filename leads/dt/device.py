@@ -43,10 +43,6 @@ class Device(object):
         """
         return self._parent_tags[:]
 
-    def pins_check(self, required_num: int) -> None:
-        if len(self._pins) != required_num:
-            raise ValueError(f"`{self.__class__.__name__}` only takes in {required_num} pins")
-
     def initialize(self, *parent_tags: str) -> None:
         self._parent_tags = parent_tags
 
