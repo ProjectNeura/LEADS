@@ -6,6 +6,7 @@ from typing import Callable as _Callable, override as _override
 from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as _DoubleVar, StringVar as _StringVar, \
     CTkSegmentedButton as _CTkSegmentedButton
 from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyCode
+from screeninfo import get_monitors as _get_monitors
 
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
@@ -112,6 +113,20 @@ class CommCallback(Callback):
                 get_proxy_canvas(self.uim, "m1").next_mode()
             case b"m3":
                 get_proxy_canvas(self.uim, "m3").next_mode()
+
+
+def add_secondary_window(context_manager: ContextManager, display: int, var_lap_times: _StringVar,
+                         var_speed: _DoubleVar) -> None:
+    root_window = context_manager.window()
+    w = Window(0, 0, root_window.refresh_rate(), root_window.runtime_data(), display=display)
+    window_index = context_manager.add_window(w)
+    num_widgets = int(w.width() / w.height())
+    widgets = [Speedometer(w.root(), "CTkLabel", height=w.height(), variable=var_speed, style=1,
+                           font=(("Arial", int(w.width() * .1)),) * 3, next_style_on_click=False)]
+    if num_widgets >= 2:
+        widgets.append(Typography(w.root(), height=w.height(), variable=var_lap_times,
+                                  font=("Arial", int(w.width() * .04))))
+    context_manager.layout([widgets], 0, window_index)
 
 
 def main() -> int:
@@ -398,6 +413,8 @@ def main() -> int:
             ["esc"]
         ]
     uim.layout(layout)
+    for i in range(min(cfg.num_external_screens, len(_get_monitors()) - 1)):
+        add_secondary_window(uim, i + 1, var_lap_times, var_speed)
     root.grid_rowconfigure(2, weight=1)
     initialize_main()
 

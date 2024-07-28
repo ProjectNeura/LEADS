@@ -5,6 +5,12 @@
       "gray10"
     ]
   },
+  "CTkToplevel": {
+    "fg_color": [
+      "gray95",
+      "gray10"
+    ]
+  },
   "CTkFrame": {
     "corner_radius": 4,
     "border_width": 0,

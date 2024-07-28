@@ -4,6 +4,7 @@ from typing import Any as _Any, Callable as _Callable, Sequence as _Sequence
 from leads.dt.controller import Controller
 from leads.dt.device import Device
 from leads.dt.predefined_tags import MAIN_CONTROLLER
+from leads.logger import L
 
 _controllers: dict[str, Controller] = {}
 _devices: dict[str, Device] = {}
@@ -88,10 +89,16 @@ def get_device(tag: str) -> Device:
 @_register
 def release() -> None:
     for d in _devices.values():
-        d.close()
+        try:
+            d.close()
+        except Exception as e:
+            L.debug(f"Error when closing device {d}: {repr(e)}")
     _devices.clear()
     for c in _controllers.values():
-        c.close()
+        try:
+            c.close()
+        except Exception as e:
+            L.debug(f"Error when closing controller {c}: {repr(e)}")
     _controllers.clear()
 
 

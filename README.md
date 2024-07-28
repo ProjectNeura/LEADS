@@ -60,19 +60,18 @@ Note that LEADS requires **Python >= 3.12**. To set up the environment on a Rasp
 command, see [Environment Setup](#environment-setup).
 
 ```shell
-pip install Pillow PySDL2 customtkinter gpiozero lgpio opencv-python-headless pynmea2 pynput pysdl2-dll pyserial leads
+pip install Pillow PySDL2 customtkinter gpiozero lgpio opencv-python-headless pynmea2 pynput pysdl2-dll pyserial screeninfo leads
 ```
 
 `numpy` and `pandas` will be automatically installed with `leads`.
 
 `Pillow`, `PySDL2`, `customtkinter`, `gpiozero`, `lgpio`, `opencv-python-headless`, `pynmea2`, `pynput`, `pysdl2-dll`,
-and
-`pyserial` are optional.
+`pyserial`, and `screeninfo` are optional.
 
 If your platform does not support GPIO, just exclude `lgpio`.
 
 ```shell
-pip install Pillow PySDL2 customtkinter gpiozero opencv-python-headless pynmea2 pynput pysdl2-dll pyserial leads
+pip install Pillow PySDL2 customtkinter gpiozero opencv-python-headless pynmea2 pynput pysdl2-dll pyserial screeninfo leads
 ```
 
 If you only want the framework, run the following.
@@ -146,10 +145,10 @@ It needs to have the identical signature as the following.
 
 ```python
 def main() -> int:
-  """
-  :return: 0: success; 1: error
-  """
-  ...
+    """
+    :return: 0: success; 1: error
+    """
+    ...
 ```
 
 ##### Generate a Configuration File
@@ -340,28 +339,29 @@ following as all the settings are optional.
 
 Note that a purely empty file could cause an error.
 
-| Index               | Type    | Usage                                                     | Used By      | Default       |
-|---------------------|---------|-----------------------------------------------------------|--------------|---------------|
-| `w_debug_level`     | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
-| `data_seq_size`     | `int`   | Buffer size of history data                               | Main         | `100`         |
-| `width`             | `int`   | Window width                                              | Main         | `720`         |
-| `height`            | `int`   | Window height                                             | Main         | `480`         |
-| `fullscreen`        | `bool`  | `True`: auto maximize; `False`: window mode               | Main         | `False`       |
-| `no_title_bar`      | `bool`  | `True`: no title bar; `False`: default title bar          | Main         | `False`       |
-| `theme_mode`        | `bool`  | `"system"`, `"light"`, `"dark`"                           | Main         | `False`       |
-| `manual_mode`       | `bool`  | `True`: hide control system; `False`: show control system | Main         | `False`       |
-| `refresh_rate`      | `int`   | GUI frame per second                                      | Main         | `30`          |
-| `m_ratio`           | `float` | Meter widget size ratio                                   | Main         | `0.7`         |
-| `font_size_small`   | `int`   | Small font size                                           | Main         | `14`          |
-| `font_size_medium`  | `int`   | Medium font size                                          | Main         | `28`          |
-| `font_size_large`   | `int`   | Large font size                                           | Main         | `42`          |
-| `font_size_x_large` | `int`   | Extra large font size                                     | Main         | `56`          |
-| `comm_addr`         | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
-| `comm_port`         | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
-| `comm_stream`       | `bool`  | `True`: enable streaming; `False`: disable streaming      | Main         | `False`       |
-| `comm_stream_port`  | `bool`  | The port on which the streaming system runs on            | Main, Remote | `16901`       |
-| `data_dir`          | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
-| `save_data`         | `bool`  | `True`: save data; `False`: discard data                  | Remote       | `False`       |
+| Index                  | Type    | Usage                                                     | Used By      | Default       |
+|------------------------|---------|-----------------------------------------------------------|--------------|---------------|
+| `w_debug_level`        | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
+| `data_seq_size`        | `int`   | Buffer size of history data                               | Main         | `100`         |
+| `width`                | `int`   | Window width                                              | Main         | `720`         |
+| `height`               | `int`   | Window height                                             | Main         | `480`         |
+| `fullscreen`           | `bool`  | `True`: auto maximize; `False`: window mode               | Main         | `False`       |
+| `no_title_bar`         | `bool`  | `True`: no title bar; `False`: default title bar          | Main         | `False`       |
+| `theme_mode`           | `bool`  | `"system"`, `"light"`, `"dark`"                           | Main         | `False`       |
+| `manual_mode`          | `bool`  | `True`: hide control system; `False`: show control system | Main         | `False`       |
+| `refresh_rate`         | `int`   | GUI frame per second                                      | Main         | `30`          |
+| `m_ratio`              | `float` | Meter widget size ratio                                   | Main         | `0.7`         |
+| `num_external_screens` | `int`   | The number of external screens used if possible           | Main         | `0`           |
+| `font_size_small`      | `int`   | Small font size                                           | Main         | `14`          |
+| `font_size_medium`     | `int`   | Medium font size                                          | Main         | `28`          |
+| `font_size_large`      | `int`   | Large font size                                           | Main         | `42`          |
+| `font_size_x_large`    | `int`   | Extra large font size                                     | Main         | `56`          |
+| `comm_addr`            | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
+| `comm_port`            | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
+| `comm_stream`          | `bool`  | `True`: enable streaming; `False`: disable streaming      | Main         | `False`       |
+| `comm_stream_port`     | `bool`  | The port on which the streaming system runs on            | Main, Remote | `16901`       |
+| `data_dir`             | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
+| `save_data`            | `bool`  | `True`: save data; `False`: discard data                  | Remote       | `False`       |
 
 ## Devices Module
 
