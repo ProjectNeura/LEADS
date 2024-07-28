@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "leads"
-version = "0.9.1-alpha.2"
+version = "0.9.2-alpha.2"
 description = "Lightweight Embedded Assisted Driving System"
 license = "Apache-2.0"
 readme = "README.md"
