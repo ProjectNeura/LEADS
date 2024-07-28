@@ -1,5 +1,4 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
-from copy import deepcopy as _deepcopy
 from io import BytesIO as _BytesIO
 from json import dumps as _dumps
 from time import time as _time
@@ -141,9 +140,6 @@ class CanvasBased(_CTkCanvas):
             self.configure(height=w * self._ratio)
             self._last_width = w
         self.raw_renderer(self)
-
-    def clone(self) -> _Self:
-        return _deepcopy(self)
 
 
 class TextBased(CanvasBased):
