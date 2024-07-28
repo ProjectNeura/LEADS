@@ -275,8 +275,8 @@ class Window(_Generic[T]):
         self._width: int = self._screen_width if fullscreen else width
         self._height: int = self._screen_height if fullscreen else height
 
-        x_offset = int((self._screen_width - self._width) / 2) + screen.x
-        y_offset = int((self._screen_height - self._height) / 2)
+        x_offset = int((self._screen_width - self._width) * .5) + screen.x
+        y_offset = int((self._screen_height - self._height) * .5)
         self._root.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
 
         self._refresh_rate: int = refresh_rate
