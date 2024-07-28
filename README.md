@@ -60,19 +60,18 @@ Note that LEADS requires **Python >= 3.12**. To set up the environment on a Rasp
 command, see [Environment Setup](#environment-setup).
 
 ```shell
-pip install Pillow PySDL2 customtkinter gpiozero lgpio opencv-python-headless pynmea2 pynput pysdl2-dll pyserial leads
+pip install Pillow PySDL2 customtkinter gpiozero lgpio opencv-python-headless pynmea2 pynput pysdl2-dll pyserial screeninfo leads
 ```
 
 `numpy` and `pandas` will be automatically installed with `leads`.
 
 `Pillow`, `PySDL2`, `customtkinter`, `gpiozero`, `lgpio`, `opencv-python-headless`, `pynmea2`, `pynput`, `pysdl2-dll`,
-and
-`pyserial` are optional.
+`pyserial`, and `screeninfo` are optional.
 
 If your platform does not support GPIO, just exclude `lgpio`.
 
 ```shell
-pip install Pillow PySDL2 customtkinter gpiozero opencv-python-headless pynmea2 pynput pysdl2-dll pyserial leads
+pip install Pillow PySDL2 customtkinter gpiozero opencv-python-headless pynmea2 pynput pysdl2-dll pyserial screeninfo leads
 ```
 
 If you only want the framework, run the following.
@@ -146,10 +145,10 @@ It needs to have the identical signature as the following.
 
 ```python
 def main() -> int:
-  """
-  :return: 0: success; 1: error
-  """
-  ...
+    """
+    :return: 0: success; 1: error
+    """
+    ...
 ```
 
 ##### Generate a Configuration File
