@@ -118,6 +118,9 @@ python -m leads_vec -h
 python -m leads_vec -c path/to/the/config/file.json run
 ```
 
+> You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
+".../site-packages/leads_vec/devices_jarvis.py", simply use ":INTERNAL/devices_jarvis.py".
+
 If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#Configurations).
@@ -128,7 +131,7 @@ To learn about the configuration file, read [Configurations](#Configurations).
 python -m leads_vec -d path/to/the/devices.py run
 ```
 
-You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
+> You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
 ".../site-packages/leads_vec/devices_jarvis.py", simply use ":INTERNAL/devices_jarvis.py".
 
 To learn about the devices module, read [Devices Module](#devices-module).
@@ -138,6 +141,9 @@ To learn about the devices module, read [Devices Module](#devices-module).
 ```shell
 python -m leads_vec -m path/to/the/main.py run
 ```
+
+> You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
+".../site-packages/leads_vec/devices_jarvis.py", simply use ":INTERNAL/devices_jarvis.py".
 
 Function `main()` must exist in the main module, otherwise an `ImportError` will be raised.
 
@@ -199,6 +205,9 @@ This will start the corresponding reverse proxy program as a subprocess in the b
 ```shell
 python -m leads_vec -t path/to/the/theme.json run
 ```
+
+> You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
+".../site-packages/leads_vec/devices_jarvis.py", simply use ":INTERNAL/devices_jarvis.py".
 
 To learn about themes, read [Color and Themes](https://customtkinter.tomschimansky.com/documentation/color).
 
