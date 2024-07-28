@@ -13,6 +13,7 @@ class Config(_ConfigTemplate):
         self.manual_mode: bool = False
         self.refresh_rate: int = 30
         self.m_ratio: float = .7
+        self.num_external_screens: int = 0
         self.font_size_small: int = 14
         self.font_size_medium: int = 28
         self.font_size_large: int = 42
