@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "leads"
+version = "0.9.1-alpha.2"
+description = "Lightweight Embedded Assisted Driving System"
+license = "Apache-2.0"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Project Neura", email = "central@projectneura.org" }
+]
+dependencies = ["numpy", "pandas"]
+
+[project.optional-dependencies]
+standard = [
+    "Pillow", "PySDL2", "customtkinter", "gpiozero", "lgpio", "opencv-python-headless", "pynmea2", "pynput",
+    "pysdl2-dll", "pyserial", "screeninfo"
+]
+no-gpio = [
+    "Pillow", "PySDL2", "customtkinter", "gpiozero", "opencv-python-headless", "pynmea2", "pynput", "pysdl2-dll",
+    "pyserial", "screeninfo"
+]
+all = [
+    "Pillow", "PySDL2", "customtkinter", "fastapi[standard]", "gpiozero", "lgpio", "opencv-python-headless", "pynmea2",
+    "pynput", "pysdl2-dll", "pyserial", "screeninfo"
+]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation",
+    "leads_gpio", "leads_gui", "leads_video", "leads_vec", "leads_vec_rc", "design", "docs"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation", "leads_gpio",
+    "leads_gui", "leads_video", "leads_vec", "leads_vec_rc"]
+
+[project.urls]
+Homepage = "https://leads.projectneura.org"
+Documentation = "https://leads-docs.projectneura.org"
+Repository = "https://github.com/ProjectNeura/LEADS"
+
+[project.scripts]
+leads-vec-rc = "leads_vec_rc:__entry__"
+
+[project.gui-scripts]
+leads-vec = "leads_vec:__entry__"
