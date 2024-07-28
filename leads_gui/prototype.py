@@ -11,6 +11,7 @@ from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_m
     ThemeManager as _ThemeManager, Variable as _Variable, ScalingTracker as _ScalingTracker, \
     set_appearance_mode as _set_appearance_mode, CTkToplevel as _CTkToplevel
 from numpy import lcm as _lcm
+from screeninfo import get_monitors as _get_monitors
 
 from leads import require_config as _require_config, DataContainer as _DataContainer
 from leads.comm import Server as _Server
@@ -214,6 +215,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
 
 class _RuntimeData(object):
     def __init__(self) -> None:
+        self.root_window: Window | None = None
         self.start_time: int = int(_time())
         self.comm: _Server | None = None
         self.comm_stream: _Server | None = None
@@ -237,7 +239,7 @@ class RuntimeData(_RuntimeData):
     def __new__(cls, *args, **kwargs) -> _RuntimeData:
         global _runtime_data_singleton_flag
         if _runtime_data_singleton_flag:
-            raise RuntimeError("Multiple runtime data instances are not allowed")
+            raise ReferenceError("Multiple runtime data instances are not allowed")
         _runtime_data_singleton_flag = True
         return super().__new__(cls, *args, **kwargs)
 
@@ -255,19 +257,28 @@ class Window(_Generic[T]):
                  title: str = "LEADS",
                  fullscreen: bool = True,
                  no_title_bar: bool = True,
-                 theme_mode: _Literal["system", "light", "dark"] = "system") -> None:
-        self._root: _CTk = _CTk()
+                 theme_mode: _Literal["system", "light", "dark"] = "system",
+                 display: int = 0) -> None:
+        if runtime_data.root_window:
+            self._root: _CTkToplevel = _CTkToplevel(runtime_data.root_window.root())
+        else:
+            self._root: _CTk = _CTk()
+            runtime_data.root_window = self
+        screen = _get_monitors()[display]
         self._root.title(title)
         self._root.wm_iconbitmap()
         self._root.iconphoto(True, _PhotoImage(master=self._root, file=f"{_ASSETS_PATH}/logo.png"))
         self._root.overrideredirect(no_title_bar)
         _set_appearance_mode(theme_mode)
-        sw, sh = self._root.winfo_screenwidth(), self._root.winfo_screenheight()
-        self._width: int = sw if fullscreen else width
-        self._height: int = sh if fullscreen else height
-        self._root.geometry(
-            f"{self._width}x{self._height}+{int((sw - self._width) / 2)}+{int((sh - self._height) / 2)}"
-        )
+        self._screen_width: int = screen.width
+        self._screen_height: int = screen.height
+        self._width: int = self._screen_width if fullscreen else width
+        self._height: int = self._screen_height if fullscreen else height
+
+        x_offset = int((self._screen_width - self._width) / 2) + screen.x
+        y_offset = int((self._screen_height - self._height) / 2)
+        self._root.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
+
         self._refresh_rate: int = refresh_rate
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
@@ -279,6 +290,15 @@ class Window(_Generic[T]):
 
     def root(self) -> _CTk:
         return self._root
+
+    def is_true_root(self) -> bool:
+        return isinstance(self._root, _CTk)
+
+    def screen_width(self) -> int:
+        return self._screen_width
+
+    def screen_height(self) -> int:
+        return self._screen_height
 
     def width(self) -> int:
         return self._width
@@ -338,8 +358,17 @@ class Window(_Generic[T]):
 
 
 class ContextManager(object):
-    def __init__(self, window: Window) -> None:
-        self._window: Window = window
+    def __init__(self, *windows: Window) -> None:
+        root_window = None
+        self._windows: list[Window] = []
+        for window in windows:
+            if window.is_true_root():
+                root_window = window
+            else:
+                self._windows.append(window)
+        if not root_window:
+            raise LookupError("No root window")
+        self._root_window: Window = root_window
         self._widgets: dict[str, _Widget] = {}
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
@@ -362,12 +391,13 @@ class ContextManager(object):
                     layout[i][j] = self[e]
         return layout
 
-    def layout(self, layout: list[list[str | _Widget | None]]) -> None:
+    def layout(self, layout: list[list[str | _Widget | None]], window_index: int = -1) -> None:
+        window = self.window(window_index)
         layout = self.parse_layout(layout)
-        root = self._window.root()
+        root = window.root()
         root.grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
-        screen_width = root.winfo_screenwidth()
-        p = int(self._window.width() * .005)
+        screen_width = window.screen_width()
+        p = int(window.width() * .005)
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
@@ -378,11 +408,11 @@ class ContextManager(object):
                 widget.configure(width=screen_width)
                 widget.grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=p, ipady=p, padx=p, pady=p)
 
-    def window(self) -> Window:
-        return self._window
+    def window(self, index: int = -1) -> Window:
+        return self._root_window if index < 0 else self._windows[index]
 
     def show(self) -> None:
-        self._window.show()
+        self._root_window.show()
 
     def kill(self) -> None:
-        self._window.kill()
+        self._root_window.kill()
