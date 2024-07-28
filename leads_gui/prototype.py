@@ -400,13 +400,13 @@ class ContextManager(object):
                     layout[i][j] = self[e]
         return layout
 
-    def layout(self, layout: list[list[str | _Widget | None]], window_index: int = -1) -> None:
+    def layout(self, layout: list[list[str | _Widget | None]], padding: float = .005, window_index: int = -1) -> None:
         window = self.window(window_index)
         layout = self.parse_layout(layout)
         root = window.root()
         root.grid_columnconfigure(tuple(range(t := _lcm.reduce(tuple(map(len, layout))))), weight=1)
         screen_width = window.screen_width()
-        p = int(window.width() * .005)
+        p = int(window.width() * padding)
         for i in range(len(layout)):
             row = layout[i]
             length = len(row)
