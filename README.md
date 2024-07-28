@@ -78,7 +78,7 @@ pip install leads
 #### Verify
 
 ```shell
-python -m leads_vec info
+leads-vec info
 ```
 
 ### Arduino
@@ -96,7 +96,7 @@ the framework in your project.
 ### Main
 
 ```shell
-python -m leads_vec run
+leads-vec run
 ```
 
 #### Optional Arguments
@@ -104,13 +104,13 @@ python -m leads_vec run
 Run the following to get a list of all the supported arguments.
 
 ```shell
-python -m leads_vec -h
+leads-vec -h
 ```
 
 ##### Specify a Configuration File
 
 ```shell
-python -m leads_vec -c path/to/the/config/file.json run
+leads-vec -c path/to/the/config/file.json run
 ```
 
 > You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
@@ -123,7 +123,7 @@ To learn about the configuration file, read [Configurations](#Configurations).
 ##### Specify a Devices Module
 
 ```shell
-python -m leads_vec -d path/to/the/devices.py run
+leads-vec -d path/to/the/devices.py run
 ```
 
 > You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
@@ -134,7 +134,7 @@ To learn about the devices module, read [Devices Module](#devices-module).
 ##### Specify a Main Module
 
 ```shell
-python -m leads_vec -m path/to/the/main.py run
+leads-vec -m path/to/the/main.py run
 ```
 
 > You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
@@ -155,7 +155,7 @@ def main() -> int:
 ##### Generate a Configuration File
 
 ```shell
-python -m leads_vec -r config run
+leads-vec -r config run
 ```
 
 This will generate a default "config.json" file under the current directory.
@@ -163,7 +163,7 @@ This will generate a default "config.json" file under the current directory.
 ##### Register a Systemd Service
 
 ```shell
-python -m leads_vec -r systemd run
+leads-vec -r systemd run
 ```
 
 This will register a user Systemd service to start the program.
@@ -190,7 +190,7 @@ systemctl --user disable leads-vec
 ##### Use Reverse Proxy
 
 ```shell
-python -m leads_vec -r reverse_proxy run
+leads-vec -r reverse_proxy run
 ```
 
 This will start the corresponding reverse proxy program as a subprocess in the background.
@@ -198,7 +198,7 @@ This will start the corresponding reverse proxy program as a subprocess in the b
 ##### Specify a Theme
 
 ```shell
-python -m leads_vec -t path/to/the/theme.json run
+leads-vec -t path/to/the/theme.json run
 ```
 
 > You can use ":INTERNAL" to replace the path to `leads_vec`. For example, instead of typing
@@ -209,7 +209,7 @@ To learn about themes, read [Color and Themes](https://customtkinter.tomschimans
 ##### Magnify Font Sizes
 
 ```shell
-python -m leads_vec -mfs 1.5 run
+leads-vec -mfs 1.5 run
 ```
 
 This will magnify all font sizes by 1.5.
@@ -217,7 +217,7 @@ This will magnify all font sizes by 1.5.
 ##### Use Emulation
 
 ```shell
-python -m leads_vec --emu run
+leads-vec --emu run
 ```
 
 This will force the program to use emulation even if the environment is available.
@@ -225,7 +225,7 @@ This will force the program to use emulation even if the environment is availabl
 ##### Automatically Magnify Font Sizes
 
 ```shell
-python -m leads_vec --auto-mfs run
+leads-vec --auto-mfs run
 ```
 
 Similar to [Magnify Font Sizes](#magnify-font-sizes), but instead of manually deciding the factor, the program will
@@ -240,7 +240,7 @@ pip install "leads[all]"
 ```
 
 ```shell
-python -m leads_vec_rc
+leads-vec-rc
 ```
 
 Go to the online dashboard at https://leads-vec-rc.projectneura.org.
@@ -250,13 +250,13 @@ Go to the online dashboard at https://leads-vec-rc.projectneura.org.
 Run the following to get a list of all the supported arguments.
 
 ```shell
-python -m leads_vec_rc -h
+leads-vec-rc -h
 ```
 
 ##### Server Port
 
 ```shell
-python -m leads_vec_rc -p 80
+leads-vec-rc -p 80
 ```
 
 If not specified, the port is `8000` by default.
@@ -264,7 +264,7 @@ If not specified, the port is `8000` by default.
 ##### Specify a Configuration File
 
 ```shell
-python -m leads_vec_rc -c path/to/the/config/file.json
+leads-vec-rc -c path/to/the/config/file.json
 ```
 
 If not specified, all configurations will be default values.
