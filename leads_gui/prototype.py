@@ -374,8 +374,11 @@ class ContextManager(object):
     def num_windows(self) -> int:
         return len(self._windows) + 1
 
-    def add_window(self, window: Window) -> None:
-        self._windows.append(window)
+    def add_window(self, window: Window) -> int:
+        try:
+            return len(self._windows)
+        finally:
+            self._windows.append(window)
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
         self.set(key, widget)
