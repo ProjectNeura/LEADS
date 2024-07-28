@@ -9,7 +9,7 @@ from leads import L as _L
 from leads_gui.system import get_system_kernel as _get_system_kernel
 from leads_vec.run import run
 
-MODULE_PATH = _abspath(__file__)[:-12]
+MODULE_PATH = _abspath(__file__)[:-13]
 
 
 def parse_path(path: str | None) -> str | None:
