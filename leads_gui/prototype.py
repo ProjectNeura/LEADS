@@ -4,12 +4,12 @@ from json import dumps as _dumps
 from time import time as _time
 from tkinter import Misc as _Misc, Event as _Event, PhotoImage as _PhotoImage
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any, \
-    Literal as _Literal
+    Literal as _Literal, override as _override
 
 from PIL.Image import Image as _Image
 from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_mode as _get_appearance_mode, \
     ThemeManager as _ThemeManager, Variable as _Variable, ScalingTracker as _ScalingTracker, \
-    set_appearance_mode as _set_appearance_mode
+    set_appearance_mode as _set_appearance_mode, CTkToplevel as _CTkToplevel
 from numpy import lcm as _lcm
 
 from leads import require_config as _require_config, DataContainer as _DataContainer
@@ -212,7 +212,7 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
         return True
 
 
-class RuntimeData(object):
+class _RuntimeData(object):
     def __init__(self) -> None:
         self.start_time: int = int(_time())
         self.comm: _Server | None = None
@@ -227,6 +227,19 @@ class RuntimeData(object):
         if self.comm_stream:
             frame.save(buffer := _BytesIO(), "JPEG", quality=quality)
             self.comm_stream.broadcast(tag.encode() + b":" + buffer.getvalue())
+
+
+_runtime_data_singleton_flag: bool = False
+
+
+class RuntimeData(_RuntimeData):
+    @_override
+    def __new__(cls, *args, **kwargs) -> _RuntimeData:
+        global _runtime_data_singleton_flag
+        if _runtime_data_singleton_flag:
+            raise RuntimeError("Multiple runtime data instances are not allowed")
+        _runtime_data_singleton_flag = True
+        return super().__new__(cls, *args, **kwargs)
 
 
 T = _TypeVar("T", bound=RuntimeData)
