@@ -264,6 +264,9 @@ class Window(_Generic[T]):
             self._root: _CTkToplevel = _CTkToplevel(root := runtime_data.root_window.root())
             if yield_focus:
                 self._root.bind("<Leave>", lambda _: root.focus_force())
+            else:
+                self._root.transient(root)
+                self._root.focus_set()
         else:
             self._root: _CTk = _CTk()
             runtime_data.root_window = self
@@ -352,12 +355,16 @@ class Window(_Generic[T]):
     def hide(self) -> None:
         self._root.withdraw()
         self._active = False
+        if isinstance(self._root, _CTkToplevel):
+            self._root.transient(None)
+            self._runtime_data.root_window.root().focus_force()
 
     def show(self) -> None:
         self._root.deiconify()
         self._active = True
         if isinstance(self._root, _CTkToplevel):
-            return
+            self._root.transient(self._runtime_data.root_window.root())
+            return self._root.focus_set()
 
         def wrapper() -> None:
             self._on_refresh(self)
