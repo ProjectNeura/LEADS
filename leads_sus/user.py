@@ -1,4 +1,5 @@
-from json import dump as _dump
+from json import dump as _dump, load as _load
+from os import listdir as _listdir
 from os.path import abspath as _abspath
 from typing import TypeVar as _TypeVar
 
@@ -6,7 +7,7 @@ from leads.types import SupportedConfig as _SupportedConfig
 
 T = _TypeVar("T", bound=_SupportedConfig)
 
-_USERS_PATH: str = f"{_abspath(__file__)[:-11]}users"
+_USERS_PATH: str = f"{_abspath(__file__)[:-7]}users"
 
 
 class User(object):
@@ -34,3 +35,22 @@ class User(object):
     def save(self) -> None:
         with open(f"{_USERS_PATH}/{self._name.lower()}.json", "w") as f:
             _dump(self._data, f)
+
+
+_users: dict[str, User] = {}
+for _source in _listdir(_USERS_PATH):
+    with open(f"{_USERS_PATH}/{_source}") as _f:
+        _u = User(**_load(_f))
+        _users[_u.name()] = _u
+
+
+def list_user_names() -> tuple[str, ...]:
+    return tuple(_users.keys())
+
+
+def list_users() -> list[User]:
+    return list(_users.values())
+
+
+def get_user(name: str) -> User:
+    return _users[name]
