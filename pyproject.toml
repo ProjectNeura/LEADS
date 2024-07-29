@@ -30,11 +30,11 @@ all = [
 
 [tool.hatch.build.targets.sdist]
 only-include = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation",
-    "leads_gpio", "leads_gui", "leads_video", "leads_vec", "leads_vec_rc", "design", "docs"]
+    "leads_gpio", "leads_gui", "leads_sus", "leads_video", "leads_vec", "leads_vec_rc", "design", "docs"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation", "leads_gpio",
-    "leads_gui", "leads_video", "leads_vec", "leads_vec_rc"]
+    "leads_gui", "leads_sus", "leads_video", "leads_vec", "leads_vec_rc"]
 
 [project.urls]
 Homepage = "https://leads.projectneura.org"
