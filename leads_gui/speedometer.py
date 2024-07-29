@@ -26,8 +26,7 @@ class Speedometer(TextBased, VariableControlled):
                  bg_color: _Color | None = None,
                  corner_radius: float | None = None) -> None:
         TextBased.__init__(self, master, theme_key, width, height, None, text_color, fg_color, hover_color, bg_color,
-                           corner_radius, next_style_on_click,
-                           lambda _: self.next_style() if next_style_on_click else lambda _: None)
+                           corner_radius, next_style_on_click, lambda _: self.next_style())
         VariableControlled.__init__(self, variable if variable else _DoubleVar(master))
         self.attach(self.partially_render)
         self._style: _Literal[0, 1, 2] = style
