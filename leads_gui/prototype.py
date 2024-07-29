@@ -354,8 +354,10 @@ class Window(_Generic[T]):
     def show(self) -> None:
         try:
             if isinstance(self._master, _CTkToplevel):
-                self._master.transient(self._runtime_data.root_window.root())
-                return self._master.focus_force()
+                if not self._yield_focus:
+                    self._master.transient(self._runtime_data.root_window.root())
+                self._master.focus_force()
+                return
         finally:
             self._active = True
 
