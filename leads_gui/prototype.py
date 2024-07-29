@@ -260,13 +260,18 @@ class Window(_Generic[T]):
                  theme_mode: _Literal["system", "light", "dark"] = "system",
                  display: int = 0,
                  yield_focus: bool = False) -> None:
+        self._refresh_rate: int = refresh_rate
+        self._runtime_data: T = runtime_data
+        self._on_refresh: _Callable[[Window], None] = on_refresh
+        self._frequency_generators: dict[str, FrequencyGenerator] = {}
+        self._display: int = display
+        self._yield_focus: bool = yield_focus
+
         if runtime_data.root_window:
-            self._root: _CTkToplevel = _CTkToplevel(root := runtime_data.root_window.root())
+            self._root: _CTkToplevel = _CTkToplevel(runtime_data.root_window.root())
             if yield_focus:
-                self._root.bind("<Leave>", lambda _: root.focus_force())
-            else:
-                self._root.transient(root)
-                self._root.focus_set()
+                self._root.bind("<Leave>", lambda _: runtime_data.root_window.root().focus_force())
+            self.show()
         else:
             self._root: _CTk = _CTk()
             runtime_data.root_window = self
@@ -284,12 +289,6 @@ class Window(_Generic[T]):
         x_offset = int((self._screen_width - self._width) * .5) + screen.x
         y_offset = int((self._screen_height - self._height) * .5)
         self._root.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
-
-        self._refresh_rate: int = refresh_rate
-        self._runtime_data: T = runtime_data
-        self._on_refresh: _Callable[[Window], None] = on_refresh
-        self._frequency_generators: dict[str, FrequencyGenerator] = {}
-        self._display: int = display
 
         self._active: bool = isinstance(self._root, _CTkToplevel)
         self._performance_checker: PerformanceChecker = PerformanceChecker()
@@ -352,19 +351,13 @@ class Window(_Generic[T]):
     def active(self) -> bool:
         return self._active if isinstance(self._root, _CTk) else self._runtime_data.root_window.active()
 
-    def hide(self) -> None:
-        self._root.withdraw()
-        self._active = False
-        if isinstance(self._root, _CTkToplevel):
-            self._root.transient(None)
-            self._runtime_data.root_window.root().focus_force()
-
     def show(self) -> None:
-        self._root.deiconify()
-        self._active = True
-        if isinstance(self._root, _CTkToplevel):
-            self._root.transient(self._runtime_data.root_window.root())
-            return self._root.focus_set()
+        try:
+            if isinstance(self._root, _CTkToplevel):
+                self._root.transient(self._runtime_data.root_window.root())
+                return self._root.focus_force()
+        finally:
+            self._active = True
 
         def wrapper() -> None:
             self._on_refresh(self)
