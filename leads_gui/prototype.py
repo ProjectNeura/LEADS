@@ -255,7 +255,7 @@ class Window(_Generic[T]):
                  runtime_data: T,
                  on_refresh: _Callable[[_Self], None] = lambda _: None,
                  title: str = "LEADS",
-                 fullscreen: bool = True,
+                 fullscreen: bool = False,
                  no_title_bar: bool = True,
                  theme_mode: _Literal["system", "light", "dark"] = "system",
                  display: int = 0,

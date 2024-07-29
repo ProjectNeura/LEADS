@@ -119,7 +119,8 @@ class CommCallback(Callback):
 def add_secondary_window(context_manager: ContextManager, display: int, var_lap_times: _StringVar,
                          var_speed: _DoubleVar) -> None:
     root_window = context_manager.window()
-    w = Window(0, 0, root_window.refresh_rate(), root_window.runtime_data(), display=display, yield_focus=True)
+    w = Window(0, 0, root_window.refresh_rate(), root_window.runtime_data(), fullscreen=True, display=display,
+               yield_focus=True)
     window_index = context_manager.add_window(w)
     num_widgets = int(w.width() / w.height())
     widgets = [Speedometer(w.root(), "CTkLabel", height=w.height(), variable=var_speed, style=1,
