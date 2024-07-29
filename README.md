@@ -41,6 +41,7 @@ LEADS VeC Demo (Manual Mode)
 - [x] TCP communication system
 - [x] Remote analyst
 - [x] Replaying recorded data
+- [x] Live video feed
 - [ ] Data recording system with the following components
     - [x] A speed recording system
     - [ ] A G force recording system
