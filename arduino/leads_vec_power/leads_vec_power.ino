@@ -1,15 +1,16 @@
-#include "LEADS.h"
+#include "LEADS.h"  // LEADS>=1.1.0
 
 const int PIN_VOT[] = {A0};
 
-VoltageSensor VOT(30000.0, 7500.0, PIN_VOT);
+Peer P{};
+VoltageSensor VOT{30000.0, 7500.0, ArrayList<int>(PIN_VOT)};
 
 void setup() {
-    Serial.begin(9600);
-    VOT.initialize();
+    P.initializeAsRoot();
+    VOT.initializeAsRoot();
 }
 
 void loop() {
-    returnFloat(VOLTAGE_SENSOR, VOT.read());
+    returnFloat(P, VOLTAGE_SENSOR, VOT.read());
     delay(100);
 }
