@@ -258,9 +258,12 @@ class Window(_Generic[T]):
                  fullscreen: bool = True,
                  no_title_bar: bool = True,
                  theme_mode: _Literal["system", "light", "dark"] = "system",
-                 display: int = 0) -> None:
+                 display: int = 0,
+                 yield_focus: bool = False) -> None:
         if runtime_data.root_window:
-            self._root: _CTkToplevel = _CTkToplevel(runtime_data.root_window.root())
+            self._root: _CTkToplevel = _CTkToplevel(root := runtime_data.root_window.root())
+            if yield_focus:
+                self._root.bind("<Leave>", lambda _: root.focus_force())
         else:
             self._root: _CTk = _CTk()
             runtime_data.root_window = self
@@ -284,7 +287,7 @@ class Window(_Generic[T]):
         self._on_refresh: _Callable[[Window], None] = on_refresh
         self._frequency_generators: dict[str, FrequencyGenerator] = {}
 
-        self._active: bool = False
+        self._active: bool = isinstance(self._root, _CTkToplevel)
         self._performance_checker: PerformanceChecker = PerformanceChecker()
         self._last_interval: float = 0
 
@@ -313,15 +316,19 @@ class Window(_Generic[T]):
         return self._performance_checker.net_delay()
 
     def refresh_rate(self) -> int:
-        return self._refresh_rate
+        return self._refresh_rate if isinstance(self._root, _CTk) else self._runtime_data.root_window.refresh_rate()
 
     def runtime_data(self) -> T:
         return self._runtime_data
 
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
+        if isinstance(self._root, _CTkToplevel):
+            raise NotImplementedError
         self._on_refresh = on_refresh
 
     def add_frequency_generator(self, tag: str, frequency_generator: FrequencyGenerator) -> None:
+        if isinstance(self._root, _CTkToplevel):
+            return self._runtime_data.root_window.add_frequency_generator(tag, frequency_generator)
         self._frequency_generators[tag] = frequency_generator
 
     def remove_frequency_generator(self, tag: str) -> None:
@@ -331,13 +338,22 @@ class Window(_Generic[T]):
             pass
 
     def clear_frequency_generators(self) -> None:
+        if isinstance(self._root, _CTkToplevel):
+            return self._runtime_data.root_window.clear_frequency_generators()
         self._frequency_generators.clear()
 
     def active(self) -> bool:
-        return self._active
+        return self._active if isinstance(self._root, _CTk) else self._runtime_data.root_window.active()
+
+    def hide(self) -> None:
+        self._root.withdraw()
+        self._active = False
 
     def show(self) -> None:
+        self._root.deiconify()
         self._active = True
+        if isinstance(self._root, _CTkToplevel):
+            return
 
         def wrapper() -> None:
             self._on_refresh(self)
