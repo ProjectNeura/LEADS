@@ -268,18 +268,18 @@ class Window(_Generic[T]):
         self._yield_focus: bool = yield_focus
 
         if runtime_data.root_window:
-            self._root: _CTkToplevel = _CTkToplevel(runtime_data.root_window.root())
+            self._master: _CTkToplevel = _CTkToplevel(runtime_data.root_window.root())
             if yield_focus:
-                self._root.bind("<Leave>", lambda _: runtime_data.root_window.root().focus_force())
+                self._master.bind("<Leave>", lambda _: runtime_data.root_window.root().focus_force())
             self.show()
         else:
-            self._root: _CTk = _CTk()
+            self._master: _CTk = _CTk()
             runtime_data.root_window = self
         screen = _get_monitors()[display]
-        self._root.title(title)
-        self._root.wm_iconbitmap()
-        self._root.iconphoto(True, _PhotoImage(master=self._root, file=f"{_ASSETS_PATH}/logo.png"))
-        self._root.overrideredirect(no_title_bar)
+        self._master.title(title)
+        self._master.wm_iconbitmap()
+        self._master.iconphoto(True, _PhotoImage(master=self._master, file=f"{_ASSETS_PATH}/logo.png"))
+        self._master.overrideredirect(no_title_bar)
         _set_appearance_mode(theme_mode)
         self._screen_width: int = screen.width
         self._screen_height: int = screen.height
@@ -288,17 +288,17 @@ class Window(_Generic[T]):
 
         x_offset = int((self._screen_width - self._width) * .5) + screen.x
         y_offset = int((self._screen_height - self._height) * .5)
-        self._root.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
+        self._master.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
 
-        self._active: bool = isinstance(self._root, _CTkToplevel)
+        self._active: bool = isinstance(self._master, _CTkToplevel)
         self._performance_checker: PerformanceChecker = PerformanceChecker()
         self._last_interval: float = 0
 
     def root(self) -> _CTk:
-        return self._root
+        return self._master
 
     def is_true_root(self) -> bool:
-        return isinstance(self._root, _CTk)
+        return isinstance(self._master, _CTk)
 
     def screen_index(self) -> int:
         return self._display
@@ -322,18 +322,18 @@ class Window(_Generic[T]):
         return self._performance_checker.net_delay()
 
     def refresh_rate(self) -> int:
-        return self._refresh_rate if isinstance(self._root, _CTk) else self._runtime_data.root_window.refresh_rate()
+        return self._refresh_rate if isinstance(self._master, _CTk) else self._runtime_data.root_window.refresh_rate()
 
     def runtime_data(self) -> T:
         return self._runtime_data
 
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
-        if isinstance(self._root, _CTkToplevel):
+        if isinstance(self._master, _CTkToplevel):
             raise NotImplementedError
         self._on_refresh = on_refresh
 
     def add_frequency_generator(self, tag: str, frequency_generator: FrequencyGenerator) -> None:
-        if isinstance(self._root, _CTkToplevel):
+        if isinstance(self._master, _CTkToplevel):
             return self._runtime_data.root_window.add_frequency_generator(tag, frequency_generator)
         self._frequency_generators[tag] = frequency_generator
 
@@ -344,18 +344,18 @@ class Window(_Generic[T]):
             pass
 
     def clear_frequency_generators(self) -> None:
-        if isinstance(self._root, _CTkToplevel):
+        if isinstance(self._master, _CTkToplevel):
             return self._runtime_data.root_window.clear_frequency_generators()
         self._frequency_generators.clear()
 
     def active(self) -> bool:
-        return self._active if isinstance(self._root, _CTk) else self._runtime_data.root_window.active()
+        return self._active if isinstance(self._master, _CTk) else self._runtime_data.root_window.active()
 
     def show(self) -> None:
         try:
-            if isinstance(self._root, _CTkToplevel):
-                self._root.transient(self._runtime_data.root_window.root())
-                return self._root.focus_force()
+            if isinstance(self._master, _CTkToplevel):
+                self._master.transient(self._runtime_data.root_window.root())
+                return self._master.focus_force()
         finally:
             self._active = True
 
@@ -366,15 +366,15 @@ class Window(_Generic[T]):
                     self.remove_frequency_generator(tag)
             self._performance_checker.record_frame(self._last_interval)
             if self._active:
-                self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
+                self._master.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
                 self._last_interval = ni
 
-        self._root.after(1, wrapper)
-        self._root.mainloop()
+        self._master.after(1, wrapper)
+        self._master.mainloop()
 
     def kill(self) -> None:
         self._active = False
-        self._root.destroy()
+        self._master.destroy()
 
 
 class ContextManager(object):
