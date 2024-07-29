@@ -283,6 +283,7 @@ class Window(_Generic[T]):
         self._runtime_data: T = runtime_data
         self._on_refresh: _Callable[[Window], None] = on_refresh
         self._frequency_generators: dict[str, FrequencyGenerator] = {}
+        self._display: int = display
 
         self._active: bool = False
         self._performance_checker: PerformanceChecker = PerformanceChecker()
@@ -293,6 +294,9 @@ class Window(_Generic[T]):
 
     def is_true_root(self) -> bool:
         return isinstance(self._root, _CTk)
+
+    def screen_index(self) -> int:
+        return self._display
 
     def screen_width(self) -> int:
         return self._screen_width

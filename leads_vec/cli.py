@@ -18,6 +18,7 @@ from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
     ESC, Satellite, Motor, Speed, Photo, Light, ImageVariable
+from leads_sus import show_or_hide_user_window
 from leads_vec.__version__ import __version__
 from leads_video import get_camera
 
@@ -151,6 +152,8 @@ def main() -> int:
     var_speed_trend = _DoubleVar(root, 0)
     var_g_force = GForceVar(root, 0, 0)
     var_esc = _StringVar(root, "STANDARD")
+
+    var_user = _StringVar(root, "Default")
 
     class LeftIndicator(FrequencyGenerator):
         @_override
@@ -432,6 +435,8 @@ def main() -> int:
                 make_system_switch(ctx, SystemLiteral.ATBS, w.runtime_data())()
             case "t":
                 ctx.time_lap()
+            case "u":
+                show_or_hide_user_window(uim, var_user)
 
     _Listener(on_press=on_press).start()
     uim.show()

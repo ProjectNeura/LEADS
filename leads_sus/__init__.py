@@ -2,6 +2,7 @@ from json import load as _load
 from os import listdir as _listdir
 from os.path import abspath as _abspath
 
+from leads_sus.gui import *
 from leads_sus.user import *
 
 _USERS_PATH: str = f"{_abspath(__file__)[:-11]}users"
