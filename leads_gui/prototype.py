@@ -258,9 +258,12 @@ class Window(_Generic[T]):
                  fullscreen: bool = True,
                  no_title_bar: bool = True,
                  theme_mode: _Literal["system", "light", "dark"] = "system",
-                 display: int = 0) -> None:
+                 display: int = 0,
+                 yield_focus: bool = False) -> None:
         if runtime_data.root_window:
-            self._root: _CTkToplevel = _CTkToplevel(runtime_data.root_window.root())
+            self._root: _CTkToplevel = _CTkToplevel(root := runtime_data.root_window.root())
+            if yield_focus:
+                self._root.bind("<Leave>", lambda _: root.focus_force())
         else:
             self._root: _CTk = _CTk()
             runtime_data.root_window = self
@@ -337,6 +340,8 @@ class Window(_Generic[T]):
         return self._active
 
     def show(self) -> None:
+        if isinstance(self._root, _CTkToplevel):
+            raise NotImplementedError
         self._active = True
 
         def wrapper() -> None:
