@@ -287,7 +287,7 @@ class Window(_Generic[T]):
         self._on_refresh: _Callable[[Window], None] = on_refresh
         self._frequency_generators: dict[str, FrequencyGenerator] = {}
 
-        self._active: bool = False
+        self._active: bool = isinstance(self._root, _CTkToplevel)
         self._performance_checker: PerformanceChecker = PerformanceChecker()
         self._last_interval: float = 0
 
@@ -345,10 +345,15 @@ class Window(_Generic[T]):
     def active(self) -> bool:
         return self._active if isinstance(self._root, _CTk) else self._runtime_data.root_window.active()
 
+    def hide(self) -> None:
+        self._root.withdraw()
+        self._active = False
+
     def show(self) -> None:
-        if isinstance(self._root, _CTkToplevel):
-            raise NotImplementedError
+        self._root.deiconify()
         self._active = True
+        if isinstance(self._root, _CTkToplevel):
+            return
 
         def wrapper() -> None:
             self._on_refresh(self)
