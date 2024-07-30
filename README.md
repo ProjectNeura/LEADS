@@ -19,39 +19,117 @@ Arduino instead. However, as it is a high-level system running on a host compute
 ability to adapt to any type of hardware component if you are willing to write some codes.
 
 This document will guide you through LEADS VeC. You will find a detailed version
-[here](https://leads-docs.projectneura.org/en/latest/vec).
+[here](https://leads-docs.projectneura.org/en/latest/vec). If you are confused with the difference between LEADS and
+LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.projectneura.org#ecology).
 
-LEADS VeC Demo
-
-![demo](docs/assets/demo.png)
-
-LEADS VeC Demo (Manual Mode)
-
-![demo](docs/assets/demo-manual.png)
+:link: [Home](https://leads.projectneura.org)
 
 :link: [Docs](https://leads-docs.projectneura.org)
 
-:link: [Remote Analyst Online Dashboard](https://leads-vec-rc.projectneura.org)
+:link: [LEADS VeC Remote Analyst Online Dashboard](https://leads-vec-rc.projectneura.org)
 
-## Key Features
+## Why LEADS?
 
-- [x] Modern UI design
-- [x] Auto dark mode support
-- [x] Fancy widgets
-- [x] TCP communication system
-- [x] Remote analyst
-- [x] Replaying recorded data
-- [x] Live video feed
-- [ ] Data recording system with the following components
-    - [x] A speed recording system
-    - [ ] A G force recording system
-    - [x] A GPS recording system
-    - [x] A battery voltage recording system
-- [ ] ESC with the following components
-    - [x] DTCS (Dynamic Traction Control System)
-    - [x] ABS (Anti-lock Braking System)
-    - [ ] EBI (Emergency Braking Intervention)
-    - [ ] ATBS (Automatic Trail Braking System)
+<details>
+<summary>Robust Framework</summary>
+
+LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually provide
+promising safety, but still, always keep our
+[Safety Instructions](https://leads-docs.projectneura.org/en/latest/vec/safety-instructions.html) in mind.
+
+</details>
+
+<details>
+<summary>Modern GUI design</summary>
+<details>
+<summary>Performance</summary>
+
+Even with extraordinary details and animation, we still manages to provide you with incredible performance.
+
+| Test Platform              | Maximum Refresh Rate (FPS) |
+|----------------------------|----------------------------|
+| Macbook Pro (M3)           | 260                        |
+| Raspberry Pi 4 Model B 8GB | 120                        |
+
+</details>
+<details>
+<summary>Dark mode support</summary>
+
+LEADS inherently supports dark mode. You can simply change your system preference and LEADS will follow.
+
+</details>
+
+![demo](docs/assets/demo-1.gif)
+![demo](docs/assets/demo-2.gif)
+
+</details>
+
+<details>
+<summary>Powerful ESC system</summary>
+<details>
+<summary>DTCS (Dynamic Traction Control System)</summary>
+</details>
+<details>
+<summary>ABS (Anti-lock Braking System)</summary>
+</details>
+<details>
+<summary>EBI (Emergency Braking Intervention)</summary>
+</details>
+<details>
+<summary>ATBS (Automatic Trail Braking System)</summary>
+</details>
+</details>
+
+<details>
+<summary>Real-time data sharing and persistence platform</summary>
+
+Thanks to our built-in TCP communication system, we are able to establish a powerful data link where the vehicle is the
+server and can connect to multiple clients. All data collected through LEADS can be distributed to the pit crew or
+anywhere far from the vehicle within an unnoticeable time, and that is not the end of the data's travel.
+
+We are a big fan of data collection. With our data persistence technologies, all data are saved
+in popular formats such as CSV.
+
+During the development of LEADS, we have accumulated massive amounts of real-world data that can be made into public
+road datasets.
+
+</details>
+
+<details>
+<summary>Live video streaming</summary>
+
+As an organization that is deeply rooted in AI, visual data has special meaning to us. In LEADS, we value visual inputs
+more than any other framework. Our official support of low-latency video encoding and streaming has made LEADS natively
+suitable for AI applications.
+
+LEADS is one of the few solutions on embedded single-board computers that support multiple cameras with an excellent
+performance.
+
+</details>
+
+<details>
+<summary>Transparency between the driver and the pit crew</summary>
+<details>
+<summary>LEADS VeC Remote Analyst</summary>
+
+LEADS VeC Remote Analyst is designed so that the pit crew can track the vehicle. It consists of a local web server and a
+frontend website.
+
+</details>
+
+With the LEADS, what the driver sees and feels is all shared with the pit crew in real time through our data link. The
+pit crew now masters every single bit of detail of the vehicle. This advantage will help the team avoid 99% of
+communication barriers.
+
+</details>
+
+<details>
+<summary>Scene reproduction with recorded data</summary>
+</details>
+
+<details>
+<summary>AI-enhanced data analysis and driver training</summary>
+</details>
 
 ## Installation
 
