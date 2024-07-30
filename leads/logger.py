@@ -1,3 +1,4 @@
+from collections import deque as _deque
 from datetime import datetime as _datetime
 from enum import IntEnum as _IntEnum
 from threading import Lock as _Lock
@@ -31,8 +32,12 @@ class Logger(object):
     WHITE: int = 37
 
     def __init__(self) -> None:
+        self._history_messages: _deque[str] = _deque(maxlen=10)
         self._debug_level: Level = Level.DEBUG
         self._lock: _Lock = _Lock()
+
+    def history_messages(self) -> tuple[str, ...]:
+        return tuple(self._history_messages)
 
     def debug_level(self, debug_level: Level | None = None) -> Level | None:
         """
@@ -48,8 +53,8 @@ class Logger(object):
     def mark(msg: str, level: Level) -> str:
         return f"[{repr(level)[1:-1]}] [{_currentframe().f_back.f_back.f_code.co_name}] [{_datetime.now()}] {msg}"
 
-    @staticmethod
-    def format(msg: str, font: int, color: int | None, background: int | None) -> str:
+    def format(self, msg: str, font: int, color: int | None, background: int | None) -> str:
+        self._history_messages.append(msg)
         return f"\033[{font}{f";{color}" if color else ""}{f";{background + 10}" if background else ""}m{msg}\033[0m"
 
     def print(self, msg: str, level: int) -> None:
@@ -62,19 +67,19 @@ class Logger(object):
 
     def info(self, *msg: str, sep: str = " ", end: str = "\n",
              f: tuple[int, int | None, int | None] = (REGULAR, None, None)) -> None:
-        self.print(Logger.format(Logger.mark(sep.join(msg) + end, level=Level.INFO), *f), Level.INFO)
+        self.print(self.format(Logger.mark(sep.join(msg) + end, level=Level.INFO), *f), Level.INFO)
 
     def debug(self, *msg: str, sep: str = " ", end: str = "\n",
               f: tuple[int, int | None, int | None] = (REGULAR, YELLOW, None)) -> None:
-        self.print(Logger.format(Logger.mark(sep.join(msg) + end, level=Level.DEBUG), *f), Level.DEBUG)
+        self.print(self.format(Logger.mark(sep.join(msg) + end, level=Level.DEBUG), *f), Level.DEBUG)
 
     def warn(self, *msg: str, sep: str = " ", end: str = "\n",
              f: tuple[int, int | None, int | None] = (REGULAR, RED, None)) -> None:
-        self.print(Logger.format(Logger.mark(sep.join(msg) + end, level=Level.WARN), *f), Level.WARN)
+        self.print(self.format(Logger.mark(sep.join(msg) + end, level=Level.WARN), *f), Level.WARN)
 
     def error(self, *msg: str, sep: str = " ", end: str = "\n",
               f: tuple[int, int | None, int | None] = (REGULAR, RED, None)) -> None:
-        self.print(Logger.format(Logger.mark(sep.join(msg) + end, Level.ERROR), *f), Level.ERROR)
+        self.print(self.format(Logger.mark(sep.join(msg) + end, Level.ERROR), *f), Level.ERROR)
 
 
 L: Logger = Logger()
