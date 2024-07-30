@@ -42,6 +42,12 @@ promising safety, but still, always keep our
 <details>
 <summary>Modern GUI design</summary>
 <details>
+<summary>Dark mode support</summary>
+
+LEADS inherently supports dark mode. You can simply change your system preference and LEADS will follow.
+
+</details>
+<details>
 <summary>Performance</summary>
 
 Even with extraordinary details and animation, we still manages to provide you with incredible performance.
@@ -50,12 +56,6 @@ Even with extraordinary details and animation, we still manages to provide you w
 |----------------------------|----------------------------|
 | Macbook Pro (M3)           | 260                        |
 | Raspberry Pi 4 Model B 8GB | 120                        |
-
-</details>
-<details>
-<summary>Dark mode support</summary>
-
-LEADS inherently supports dark mode. You can simply change your system preference and LEADS will follow.
 
 </details>
 <details>
