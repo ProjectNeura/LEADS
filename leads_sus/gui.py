@@ -57,17 +57,15 @@ class UserChooser(_TextBased, _VariableControlled):
         self.dynamic_renderer(canvas)
 
 
-_user_window_index: int = 0
+_user_window_index: int = -1
 
 
 def show_or_hide_user_window(context_manager: _ContextManager, var_user: _StringVar) -> None:
     global _user_window_index
-    if _user_window_index > 0:
-        context_manager.window(_user_window_index - 1).hide()
-        _user_window_index = -_user_window_index
-    elif _user_window_index < 0:
-        context_manager.window(-_user_window_index - 1).show()
-        _user_window_index = -_user_window_index
+    if _user_window_index >= 0:
+        context_manager.window(_user_window_index).kill()
+        context_manager.remove_window(_user_window_index)
+        _user_window_index = -1
     else:
         root_window = context_manager.window()
         rd = root_window.runtime_data()
@@ -76,6 +74,6 @@ def show_or_hide_user_window(context_manager: _ContextManager, var_user: _String
         w = _Window(width, height, root_window.refresh_rate(), rd,
                     display=root_window.screen_index())
         window_index = context_manager.add_window(w)
-        _user_window_index = window_index + 1
+        _user_window_index = window_index
         context_manager["user_chooser"] = UserChooser(w.root(), width=width, height=height, variable=var_user)
         context_manager.layout([["user_chooser"]], 0, window_index)
