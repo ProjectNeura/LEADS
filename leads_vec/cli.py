@@ -23,7 +23,7 @@ from leads_video import get_camera
 
 
 class CustomRuntimeData(RuntimeData):
-    m1_mode: int = 0
+    debug_window_index: int = -1
     control_system_switch_changed: bool = False
 
 
@@ -129,6 +129,19 @@ def add_secondary_window(context_manager: ContextManager, display: int, var_lap_
     context_manager.layout([widgets], 0, window_index)
 
 
+def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) -> None:
+    pot = context_manager.window()
+    rd = pot.runtime_data()
+    if rd.debug_window_index > 0:
+        context_manager.remove_window(rd.debug_window_index)
+        rd.debug_window_index = -1
+        return
+    w = Window(pot.width(), pot.height(), pot.refresh_rate(), rd)
+    rd.debug_window_index = context_manager.add_window(w)
+    context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug)]], 0,
+                           rd.debug_window_index)
+
+
 def main() -> int:
     cfg = require_config()
     ctx = LEADS(data_seq_size=cfg.data_seq_size, num_laps_timed=cfg.num_laps_timed)
@@ -152,7 +165,7 @@ def main() -> int:
     var_g_force = GForceVar(root, 0, 0)
     var_esc = _StringVar(root, "STANDARD")
 
-    var_user = _StringVar(root, "Default")
+    var_debug = _StringVar(root, "")
 
     class LeftIndicator(FrequencyGenerator):
         @_override
@@ -280,6 +293,8 @@ def main() -> int:
             st = ctx.speed_trend()
             var_speed_trend.set(st)
             var_g_force.set((d.lateral_acceleration, d.forward_acceleration))
+            debug_messages = L.history_messages()
+            var_debug.set(f"DEBUG CONSOLE [TAB]\n\n{"\n".join(debug_messages[-min(len(debug_messages), 6):])}")
             if w.runtime_data().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
@@ -421,9 +436,9 @@ def main() -> int:
     initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
-        if isinstance(key, _Key):
-            return
-        match key.char:
+        match key if isinstance(key, _Key) else key.char:
+            case _Key.tab:
+                toggle_debug_window(uim, var_debug)
             case "1":
                 make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
             case "2":
