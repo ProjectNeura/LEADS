@@ -61,6 +61,9 @@ Even with extraordinary details and animation, we still manages to provide you w
 <details>
 <summary>Secondary screens</summary>
 
+LEADS supports an unlimited number of displays. You can enable a specific number of displays simply through a
+configuration.
+
 ![demo](docs/assets/demo-2.gif)
 
 </details>
