@@ -59,7 +59,7 @@ Even with extraordinary details and animation, we still manages to provide you w
 
 </details>
 <details>
-<summary>Secondary screens</summary>
+<summary>External screens</summary>
 
 LEADS supports an unlimited number of displays. You can enable a specific number of displays simply through a
 configuration.
