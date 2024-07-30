@@ -116,17 +116,19 @@ class CommCallback(Callback):
 
 
 def add_secondary_window(context_manager: ContextManager, display: int, var_lap_times: _StringVar,
-                         var_speed: _DoubleVar) -> None:
+                         var_speed: _DoubleVar, var_speed_trend: _DoubleVar) -> None:
     pot = context_manager.window()
     w = Window(0, 0, pot.refresh_rate(), pot.runtime_data(), fullscreen=True, display=display)
     window_index = context_manager.add_window(w)
     num_widgets = int(w.width() / w.height())
-    widgets = [Speedometer(w.root(), "CTkLabel", height=w.height(), variable=var_speed, style=1,
-                           font=(("Arial", int(w.width() * .1)),) * 3, next_style_on_click=False)]
-    if num_widgets >= 2:
-        widgets.append(Typography(w.root(), height=w.height(), variable=var_lap_times,
-                                  font=("Arial", int(w.width() * .04))))
-    context_manager.layout([widgets], 0, window_index)
+    fonts = (("Arial", int(w.width() * .2)), ("Arial", int(w.width() * .1)), ("Arial", int(w.width() * .025)))
+    widgets = [Speedometer(w.root(), "CTkLabel", height=w.height(), variable=var_speed, style=1, font=fonts)]
+    if num_widgets > 1:
+        widgets.append(Typography(w.root(), height=w.height(), variable=var_lap_times, font=fonts[2]))
+    if num_widgets > 2:
+        widgets.insert(0, SpeedTrendMeter(w.root(), "CTkLabel", height=w.height(), variable=var_speed_trend,
+                                          font=fonts[1]))
+        context_manager.layout([widgets], 0, window_index)
 
 
 def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) -> None:
@@ -431,7 +433,7 @@ def main() -> int:
         ]
     uim.layout(layout)
     for i in range(min(cfg.num_external_screens, len(_get_monitors()) - 1)):
-        add_secondary_window(uim, i + 1, var_lap_times, var_speed)
+        add_secondary_window(uim, i + 1, var_lap_times, var_speed, var_speed_trend)
     root.grid_rowconfigure(2, weight=1)
     initialize_main()
 
