@@ -382,12 +382,12 @@ class Window(_Generic[T]):
 class ContextManager(object):
     def __init__(self, *windows: Window) -> None:
         root_window = None
-        self._windows: list[Window] = []
+        self._windows: dict[int, Window] = {}
         for window in windows:
             if window.is_true_root():
                 root_window = window
             else:
-                self._windows.append(window)
+                self.add_window(window)
         if not root_window:
             raise LookupError("No root window")
         self._root_window: Window = root_window
@@ -396,11 +396,26 @@ class ContextManager(object):
     def num_windows(self) -> int:
         return len(self._windows) + 1
 
+    def _allocate_window(self) -> int:
+        allocated_slots = self._windows.keys()
+        if len(allocated_slots) == 0:
+            return 0
+        max_allocated_slot = max(allocated_slots)
+        sparse_slots = set(range(max_allocated_slot)) - allocated_slots
+        return min(sparse_slots) if len(sparse_slots) > 0 else max_allocated_slot + 1
+
     def add_window(self, window: Window) -> int:
-        try:
-            return len(self._windows)
-        finally:
-            self._windows.append(window)
+        self._windows[index := self._allocate_window()] = window
+        return index
+
+    def remove_window(self, index: int) -> None:
+        self._windows.pop(index)
+
+    def index_of_window(self, window: Window) -> int:
+        for k, v in self._windows.items():
+            if v == window:
+                return k
+        return -1
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
         self.set(key, widget)
