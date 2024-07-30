@@ -215,10 +215,16 @@ class FrequencyGenerator(object, metaclass=_ABCMeta):
 
 class _RuntimeData(object):
     def __init__(self) -> None:
-        self.root_window: Window | None = None
+        self.protected_pot: Window | None = None
         self.start_time: int = int(_time())
         self.comm: _Server | None = None
         self.comm_stream: _Server | None = None
+
+    @_override
+    def __setattr__(self, key: str, value: _Any) -> None:
+        if not key.startswith("protected") or not hasattr(self, key) or getattr(self, key) is None:
+            return super().__setattr__(key, value)
+        raise AttributeError(f"{key} is protected and cannot be reassigned")
 
     def comm_notify(self, d: _DataContainer | dict[str, _Any]) -> None:
         if self.comm:
@@ -255,47 +261,58 @@ class Window(_Generic[T]):
                  runtime_data: T,
                  on_refresh: _Callable[[_Self], None] = lambda _: None,
                  title: str = "LEADS",
-                 fullscreen: bool = True,
+                 fullscreen: bool = False,
                  no_title_bar: bool = True,
                  theme_mode: _Literal["system", "light", "dark"] = "system",
-                 display: int = 0,
-                 yield_focus: bool = False) -> None:
-        if runtime_data.root_window:
-            self._root: _CTkToplevel = _CTkToplevel(root := runtime_data.root_window.root())
-            if yield_focus:
-                self._root.bind("<Leave>", lambda _: root.focus_force())
+                 display: int = 0) -> None:
+        self._refresh_rate: int = refresh_rate
+        self._runtime_data: T = runtime_data
+        self._on_refresh: _Callable[[Window], None] = on_refresh
+        self._frequency_generators: dict[str, FrequencyGenerator] = {}
+        self._display: int = display
+
+        pot = runtime_data.protected_pot
+        popup = False
+
+        if pot:
+            self._master: _CTkToplevel = _CTkToplevel(pot._master)
+            popup = display == pot._display
+            if not popup:
+                self._master.bind("<Leave>", lambda _: pot._master.focus_force())
+            self.show()
         else:
-            self._root: _CTk = _CTk()
-            runtime_data.root_window = self
+            self._master: _CTk = _CTk()
+            runtime_data.protected_pot = self
         screen = _get_monitors()[display]
-        self._root.title(title)
-        self._root.wm_iconbitmap()
-        self._root.iconphoto(True, _PhotoImage(master=self._root, file=f"{_ASSETS_PATH}/logo.png"))
-        self._root.overrideredirect(no_title_bar)
+        self._master.title(title)
+        self._master.wm_iconbitmap()
+        self._master.iconphoto(True, _PhotoImage(master=self._master, file=f"{_ASSETS_PATH}/logo.png"))
+        self._master.overrideredirect(no_title_bar)
         _set_appearance_mode(theme_mode)
         self._screen_width: int = screen.width
         self._screen_height: int = screen.height
         self._width: int = self._screen_width if fullscreen else width
         self._height: int = self._screen_height if fullscreen else height
 
-        x_offset = int((self._screen_width - self._width) * .5) + screen.x
-        y_offset = int((self._screen_height - self._height) * .5)
-        self._root.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
+        x, y = int((self._screen_width - self._width) * .5) + screen.x, int((self._screen_height - self._height) * .5)
+        if popup:
+            x = int((pot._width - self._width) * .5 + pot._master.winfo_rootx())
+            y = int((pot._height - self._height) * .5 + pot._master.winfo_rooty())
+        self._master.geometry(f"{self._width}x{self._height}+{x}+{y}")
+        self._master.resizable(False, False)
 
-        self._refresh_rate: int = refresh_rate
-        self._runtime_data: T = runtime_data
-        self._on_refresh: _Callable[[Window], None] = on_refresh
-        self._frequency_generators: dict[str, FrequencyGenerator] = {}
-
-        self._active: bool = isinstance(self._root, _CTkToplevel)
+        self._active: bool = isinstance(self._master, _CTkToplevel)
         self._performance_checker: PerformanceChecker = PerformanceChecker()
         self._last_interval: float = 0
 
     def root(self) -> _CTk:
-        return self._root
+        return self._master
 
-    def is_true_root(self) -> bool:
-        return isinstance(self._root, _CTk)
+    def is_pot(self) -> bool:
+        return isinstance(self._master, _CTk)
+
+    def screen_index(self) -> int:
+        return self._display
 
     def screen_width(self) -> int:
         return self._screen_width
@@ -316,19 +333,19 @@ class Window(_Generic[T]):
         return self._performance_checker.net_delay()
 
     def refresh_rate(self) -> int:
-        return self._refresh_rate if isinstance(self._root, _CTk) else self._runtime_data.root_window.refresh_rate()
+        return self._refresh_rate if isinstance(self._master, _CTk) else self._runtime_data.protected_pot.refresh_rate()
 
     def runtime_data(self) -> T:
         return self._runtime_data
 
     def set_on_refresh(self, on_refresh: _Callable[[_Self], None]) -> None:
-        if isinstance(self._root, _CTkToplevel):
+        if isinstance(self._master, _CTkToplevel):
             raise NotImplementedError
         self._on_refresh = on_refresh
 
     def add_frequency_generator(self, tag: str, frequency_generator: FrequencyGenerator) -> None:
-        if isinstance(self._root, _CTkToplevel):
-            return self._runtime_data.root_window.add_frequency_generator(tag, frequency_generator)
+        if isinstance(self._master, _CTkToplevel):
+            return self._runtime_data.protected_pot.add_frequency_generator(tag, frequency_generator)
         self._frequency_generators[tag] = frequency_generator
 
     def remove_frequency_generator(self, tag: str) -> None:
@@ -338,22 +355,22 @@ class Window(_Generic[T]):
             pass
 
     def clear_frequency_generators(self) -> None:
-        if isinstance(self._root, _CTkToplevel):
-            return self._runtime_data.root_window.clear_frequency_generators()
+        if isinstance(self._master, _CTkToplevel):
+            return self._runtime_data.protected_pot.clear_frequency_generators()
         self._frequency_generators.clear()
 
     def active(self) -> bool:
-        return self._active if isinstance(self._root, _CTk) else self._runtime_data.root_window.active()
-
-    def hide(self) -> None:
-        self._root.withdraw()
-        self._active = False
+        return self._active
 
     def show(self) -> None:
-        self._root.deiconify()
-        self._active = True
-        if isinstance(self._root, _CTkToplevel):
-            return
+        try:
+            if isinstance(self._master, _CTkToplevel):
+                pot = self._runtime_data.protected_pot
+                if self._display == pot._display:
+                    self._master.transient(pot._master)
+                return
+        finally:
+            self._active = True
 
         def wrapper() -> None:
             self._on_refresh(self)
@@ -362,39 +379,54 @@ class Window(_Generic[T]):
                     self.remove_frequency_generator(tag)
             self._performance_checker.record_frame(self._last_interval)
             if self._active:
-                self._root.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
+                self._master.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
                 self._last_interval = ni
 
-        self._root.after(1, wrapper)
-        self._root.mainloop()
+        self._master.after(1, wrapper)
+        self._master.mainloop()
 
     def kill(self) -> None:
+        self._master.destroy()
         self._active = False
-        self._root.destroy()
 
 
 class ContextManager(object):
     def __init__(self, *windows: Window) -> None:
-        root_window = None
-        self._windows: list[Window] = []
+        pot = None
+        self._windows: dict[int, Window] = {}
         for window in windows:
-            if window.is_true_root():
-                root_window = window
+            if window.is_pot():
+                pot = window
             else:
-                self._windows.append(window)
-        if not root_window:
+                self.add_window(window)
+        if not pot:
             raise LookupError("No root window")
-        self._root_window: Window = root_window
+        self._pot: Window = pot
         self._widgets: dict[str, _Widget] = {}
 
     def num_windows(self) -> int:
         return len(self._windows) + 1
 
+    def _allocate_window(self) -> int:
+        allocated_slots = self._windows.keys()
+        if len(allocated_slots) == 0:
+            return 0
+        max_allocated_slot = max(allocated_slots)
+        sparse_slots = set(range(max_allocated_slot)) - allocated_slots
+        return min(sparse_slots) if len(sparse_slots) > 0 else max_allocated_slot + 1
+
     def add_window(self, window: Window) -> int:
-        try:
-            return len(self._windows)
-        finally:
-            self._windows.append(window)
+        self._windows[index := self._allocate_window()] = window
+        return index
+
+    def remove_window(self, index: int) -> None:
+        self._windows.pop(index).kill()
+
+    def index_of_window(self, window: Window) -> int:
+        for k, v in self._windows.items():
+            if v == window:
+                return k
+        return -1
 
     def __setitem__(self, key: str, widget: _Widget) -> None:
         self.set(key, widget)
@@ -434,10 +466,10 @@ class ContextManager(object):
                 widget.grid(row=i, column=j * s, sticky="NSEW", columnspan=s, ipadx=p, ipady=p, padx=p, pady=p)
 
     def window(self, index: int = -1) -> Window:
-        return self._root_window if index < 0 else self._windows[index]
+        return self._pot if index < 0 else self._windows[index]
 
     def show(self) -> None:
-        self._root_window.show()
+        self._pot.show()
 
     def kill(self) -> None:
-        self._root_window.kill()
+        self._pot.kill()

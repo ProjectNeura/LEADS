@@ -23,7 +23,7 @@ from leads_video import get_camera
 
 
 class CustomRuntimeData(RuntimeData):
-    m1_mode: int = 0
+    debug_window_index: int = -1
     control_system_switch_changed: bool = False
 
 
@@ -116,17 +116,32 @@ class CommCallback(Callback):
 
 
 def add_secondary_window(context_manager: ContextManager, display: int, var_lap_times: _StringVar,
-                         var_speed: _DoubleVar) -> None:
-    root_window = context_manager.window()
-    w = Window(0, 0, root_window.refresh_rate(), root_window.runtime_data(), display=display, yield_focus=True)
+                         var_speed: _DoubleVar, var_speed_trend: _DoubleVar) -> None:
+    pot = context_manager.window()
+    w = Window(0, 0, pot.refresh_rate(), pot.runtime_data(), fullscreen=True, display=display)
     window_index = context_manager.add_window(w)
     num_widgets = int(w.width() / w.height())
-    widgets = [Speedometer(w.root(), "CTkLabel", height=w.height(), variable=var_speed, style=1,
-                           font=(("Arial", int(w.width() * .1)),) * 3, next_style_on_click=False)]
-    if num_widgets >= 2:
-        widgets.append(Typography(w.root(), height=w.height(), variable=var_lap_times,
-                                  font=("Arial", int(w.width() * .04))))
-    context_manager.layout([widgets], 0, window_index)
+    fonts = (("Arial", int(w.width() * .2)), ("Arial", int(w.width() * .1)), ("Arial", int(w.width() * .025)))
+    widgets = [Speedometer(w.root(), "CTkLabel", height=w.height(), variable=var_speed, style=1, font=fonts)]
+    if num_widgets > 1:
+        widgets.append(Typography(w.root(), height=w.height(), variable=var_lap_times, font=fonts[2]))
+    if num_widgets > 2:
+        widgets.insert(0, SpeedTrendMeter(w.root(), "CTkLabel", height=w.height(), variable=var_speed_trend,
+                                          font=fonts[1]))
+        context_manager.layout([widgets], 0, window_index)
+
+
+def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) -> None:
+    pot = context_manager.window()
+    rd = pot.runtime_data()
+    if rd.debug_window_index > 0:
+        context_manager.remove_window(rd.debug_window_index)
+        rd.debug_window_index = -1
+        return
+    w = Window(pot.width(), pot.height(), pot.refresh_rate(), rd)
+    rd.debug_window_index = context_manager.add_window(w)
+    context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug)]], 0,
+                           rd.debug_window_index)
 
 
 def main() -> int:
@@ -151,6 +166,8 @@ def main() -> int:
     var_speed_trend = _DoubleVar(root, 0)
     var_g_force = GForceVar(root, 0, 0)
     var_esc = _StringVar(root, "STANDARD")
+
+    var_debug = _StringVar(root, "")
 
     class LeftIndicator(FrequencyGenerator):
         @_override
@@ -278,6 +295,8 @@ def main() -> int:
             st = ctx.speed_trend()
             var_speed_trend.set(st)
             var_g_force.set((d.lateral_acceleration, d.forward_acceleration))
+            debug_messages = L.history_messages()
+            var_debug.set(f"DEBUG CONSOLE [TAB]\n\n{"\n".join(debug_messages[-min(len(debug_messages), 6):])}")
             if w.runtime_data().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
@@ -414,14 +433,14 @@ def main() -> int:
         ]
     uim.layout(layout)
     for i in range(min(cfg.num_external_screens, len(_get_monitors()) - 1)):
-        add_secondary_window(uim, i + 1, var_lap_times, var_speed)
+        add_secondary_window(uim, i + 1, var_lap_times, var_speed, var_speed_trend)
     root.grid_rowconfigure(2, weight=1)
     initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
-        if isinstance(key, _Key):
-            return
-        match key.char:
+        match key if isinstance(key, _Key) else key.char:
+            case _Key.tab:
+                toggle_debug_window(uim, var_debug)
             case "1":
                 make_system_switch(ctx, SystemLiteral.DTCS, w.runtime_data())()
             case "2":
