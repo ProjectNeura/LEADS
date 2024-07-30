@@ -58,15 +58,15 @@ Even with extraordinary details and animation, we still manages to provide you w
 LEADS inherently supports dark mode. You can simply change your system preference and LEADS will follow.
 
 </details>
-
-![demo](docs/assets/demo-1.gif)
-
 <details>
 <summary>Secondary screens</summary>
 
 ![demo](docs/assets/demo-2.gif)
 
 </details>
+
+![demo](docs/assets/demo-1.gif)
+
 </details>
 
 <details>
