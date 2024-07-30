@@ -294,11 +294,11 @@ class Window(_Generic[T]):
         self._width: int = self._screen_width if fullscreen else width
         self._height: int = self._screen_height if fullscreen else height
 
-        x_offset = int((self._screen_width - self._width) * .5) + screen.x
-        y_offset = int((self._screen_height - self._height) * .5)
+        x, y = int((self._screen_width - self._width) * .5) + screen.x, int((self._screen_height - self._height) * .5)
         if popup:
-            x_offset, y_offset = pot._master.winfo_rootx(), pot._master.winfo_rooty()
-        self._master.geometry(f"{self._width}x{self._height}+{x_offset}+{y_offset}")
+            x = int((pot._width - self._width) * .5 + pot._master.winfo_rootx())
+            y = int((pot._height - self._height) * .5 + pot._master.winfo_rooty())
+        self._master.geometry(f"{self._width}x{self._height}+{x}+{y}")
         self._master.resizable(False, False)
 
         self._active: bool = isinstance(self._master, _CTkToplevel)
