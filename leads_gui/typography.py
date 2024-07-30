@@ -35,8 +35,8 @@ class Typography(TextBased, VariableControlled):
         font = self._font
         if (target_font_size := h - 28) < font[1]:
             font = (font[0], target_font_size)
-        canvas.collect("d0", canvas.create_text(w * .5, h * .5, text=v, justify="center", fill=self._text_color,
-                                                font=font))
+        canvas.collect("d0", canvas.create_text(w * .5, h * .5, width=w, text=v, justify="center",
+                                                fill=self._text_color, font=font))
 
     @_override
     def raw_renderer(self, canvas: CanvasBased) -> None:
