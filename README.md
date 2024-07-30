@@ -60,8 +60,13 @@ LEADS inherently supports dark mode. You can simply change your system preferenc
 </details>
 
 ![demo](docs/assets/demo-1.gif)
+
+<details>
+<summary>Secondary screens</summary>
+
 ![demo](docs/assets/demo-2.gif)
 
+</details>
 </details>
 
 <details>
