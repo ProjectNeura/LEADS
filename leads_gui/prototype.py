@@ -420,7 +420,7 @@ class ContextManager(object):
         return index
 
     def remove_window(self, index: int) -> None:
-        self._windows.pop(index)
+        self._windows.pop(index).kill()
 
     def index_of_window(self, window: Window) -> int:
         for k, v in self._windows.items():
