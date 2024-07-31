@@ -76,16 +76,46 @@ configuration.
 <summary>Powerful ESC system</summary>
 <details>
 <summary>DTCS (Dynamic Traction Control System)</summary>
+
+DTCS helps you control the amount of rear wheel slip by detecting and comparing the speed difference between all wheels.
+It allows a certain amount of drift while ensuring grip.
+
 </details>
 <details>
 <summary>ABS (Anti-lock Braking System)</summary>
+
+ABS allows the driver to safely step on the brakes to the bottom without locking the brakes. Although this may increase
+braking distances, it ensures you always have grip.
+
 </details>
 <details>
 <summary>EBI (Emergency Braking Intervention)</summary>
+
+EBI is available on most modern family cars. It actively applies the brakes at the limit of the braking distance. This
+system greatly reduces the probability of rear-end collisions.
+
 </details>
 <details>
 <summary>ATBS (Automatic Trail Braking System)</summary>
+
+ATBS monitors the steering angle and adjusts the brakes in time to ensure that the front of the car obtains the
+corresponding downforce. Its intervention will avoid under-steer (pushing the head) or oversteer (drifting).
+
 </details>
+<details>
+<summary>Manual mode</summary>
+
+It is not surprising that some racing events do not allow control of the vehicle beyond the driver. Therefore, we
+provide a manual mode where all assistance is forcibly disabled. You can simply set configuration `manual_mode` to
+`True` to enable this mode.
+
+![demo-manual.png](docs/assets/demo-manual.png)
+
+</details>
+
+All 4 systems have 4 calibrations: standard, aggressive, sport, and off. Their intervention comes later than the
+previous respectively.
+
 </details>
 
 <details>
