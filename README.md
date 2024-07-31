@@ -180,7 +180,7 @@ command, see [Environment Setup](#environment-setup).
 pip install "leads[standard]"
 ```
 
-If your platform does not support GPIO, use profile "no-gpio.
+If your platform does not support GPIO, use profile "no-gpio".
 
 ```shell
 pip install "leads[no-gpio]"
