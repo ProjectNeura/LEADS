@@ -163,7 +163,11 @@ communication barriers.
 </details>
 
 <details>
-<summary>Scene reproduction with recorded data</summary>
+<summary>Time machine with recorded data</summary>
+
+Having the data saved by our data platform, you can easily run LEADS on a laptop and travel back to the time when the
+data was recorded.
+
 </details>
 
 <details>
@@ -216,6 +220,14 @@ the framework in your project.
 ```shell
 leads-vec run
 ```
+
+#### Replay
+
+```shell
+leads-vec replay
+```
+
+Replaying requires "main.csv" under the data directory. It as well accepts all optional arguments listed below.
 
 #### Optional Arguments
 
