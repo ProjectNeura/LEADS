@@ -31,7 +31,7 @@ LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.pr
 ## Why LEADS?
 
 <details>
-<summary>Robust Framework</summary>
+<summary>Robust framework and good compatibility</summary>
 
 LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually provide
 promising safety, but still, always keep our
@@ -48,7 +48,7 @@ LEADS inherently supports dark mode. You can simply change your system preferenc
 
 </details>
 <details>
-<summary>Performance</summary>
+<summary>High performance</summary>
 
 Even with extraordinary details and animation, we still manages to provide you with incredible performance.
 
