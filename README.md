@@ -55,7 +55,8 @@ Even with extraordinary details and animation, we still manages to provide you w
 | Test Platform              | Maximum Refresh Rate (FPS) |
 |----------------------------|----------------------------|
 | Macbook Pro (M3)           | 260                        |
-| Raspberry Pi 4 Model B 8GB | 120                        |
+| Raspberry Pi 5 8GB         | 100                        |
+| Raspberry Pi 4 Model B 8GB | 60                         |
 
 </details>
 <details>
