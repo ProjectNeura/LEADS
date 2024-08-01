@@ -64,23 +64,23 @@ command, see [Environment Setup](#environment-setup).
 pip install "leads[standard]"
 ```
 
-If your platform does not support GPIO, use profile "no-gpio.
-
-```shell
-pip install "leads[no-gpio]"
-```
-
 If you only want the framework, run the following.
 
 ```shell
 pip install leads
 ```
 
-#### Verify
+This table lists all installation profiles.
 
-```shell
-leads-vec info
-```
+| Profile              | Content                                                    | For                                              | All Platforms |
+|----------------------|------------------------------------------------------------|--------------------------------------------------|---------------|
+| leads                | Only the framework                                         | LEADS Framework                                  | &check;       |
+| "leads[standard]"    | The framework and necessary dependencies                   | LEADS Framework                                  | &check;       |
+| "leads[gpio]"        | Everything "leads[standard]" has plug `lgpio`              | LEADS Framework                                  | &cross;       |
+| "leads[vec]"         | Everything "leads[gpio]" has plus `pynput`                 | LEADS VeC                                        | &cross;       |
+| "leads[vec-no-gpio]" | Everything "leads[standard]" has plus `pynput`             | LEADS VeC (if you are not using any GPIO device) | &check;       |
+| "leads[vec-rc]"      | Everything "leads[standard]" has plus `"fastapi[standard]` | LEADS VeC Remote Analyst                         | &check;       |
+| "leads[vec-dp]"      | Everything "leads[standard]" has plus `matplotlib`         | LEADS VeC Data Processor                         | &check;       |
 
 ### Arduino
 
@@ -98,6 +98,12 @@ the framework in your project.
 
 ```shell
 leads-vec run
+```
+
+#### Verify
+
+```shell
+leads-vec info
 ```
 
 #### Optional Arguments
@@ -233,12 +239,6 @@ Similar to [Magnify Font Sizes](#magnify-font-sizes), but instead of manually de
 automatically calculate the best factor to keep the original proportion as designed.
 
 ### Remote Analyst
-
-The remote analyst requires additional dependencies. Install them through the following command.
-
-```shell
-pip install "leads[all]"
-```
 
 ```shell
 leads-vec-rc

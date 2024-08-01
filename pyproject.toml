@@ -16,17 +16,14 @@ dependencies = ["numpy", "pandas"]
 
 [project.optional-dependencies]
 standard = [
-    "Pillow", "PySDL2", "customtkinter", "gpiozero", "lgpio", "opencv-python-headless", "pynmea2", "pynput",
-    "pysdl2-dll", "pyserial", "screeninfo"
+    "Pillow", "PySDL2", "customtkinter", "gpiozero", "opencv-python-headless", "pynmea2", "pysdl2-dll", "pyserial",
+    "screeninfo"
 ]
-no-gpio = [
-    "Pillow", "PySDL2", "customtkinter", "gpiozero", "opencv-python-headless", "pynmea2", "pynput", "pysdl2-dll",
-    "pyserial", "screeninfo"
-]
-all = [
-    "Pillow", "PySDL2", "customtkinter", "fastapi[standard]", "gpiozero", "lgpio", "opencv-python-headless", "pynmea2",
-    "pynput", "pysdl2-dll", "pyserial", "screeninfo"
-]
+gpio = ["leads[standard]", "lgpio"]
+vec = ["leads[gpio]", "pynput"]
+vec-no-gpio = ["leads[standard]", "pynput"]
+vec-rc = ["leads[standard]", "fastapi[standard]"]
+vec-dp = ["leads[standard]", "matplotlib"]
 
 [tool.hatch.build.targets.sdist]
 only-include = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation",
