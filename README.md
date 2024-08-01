@@ -485,7 +485,7 @@ Note that a purely empty file could cause an error.
 
 | Index                  | Type    | Usage                                                     | Used By      | Default       |
 |------------------------|---------|-----------------------------------------------------------|--------------|---------------|
-| `w_debug_level`        | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, Remote | `"DEBUG"`     |
+| `w_debug_level`        | `str`   | `"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`                  | Main, RC, DP | `"DEBUG"`     |
 | `data_seq_size`        | `int`   | Buffer size of history data                               | Main         | `100`         |
 | `width`                | `int`   | Window width                                              | Main         | `720`         |
 | `height`               | `int`   | Window height                                             | Main         | `480`         |
@@ -500,12 +500,12 @@ Note that a purely empty file could cause an error.
 | `font_size_medium`     | `int`   | Medium font size                                          | Main         | `28`          |
 | `font_size_large`      | `int`   | Large font size                                           | Main         | `42`          |
 | `font_size_x_large`    | `int`   | Extra large font size                                     | Main         | `56`          |
-| `comm_addr`            | `str`   | Communication server address                              | Remote       | `"127.0.0.1"` |
-| `comm_port`            | `int`   | The port on which the communication system runs on        | Main, Remote | `16900`       |
+| `comm_addr`            | `str`   | Communication server address                              | RC           | `"127.0.0.1"` |
+| `comm_port`            | `int`   | The port on which the communication system runs on        | Main, RC     | `16900`       |
 | `comm_stream`          | `bool`  | `True`: enable streaming; `False`: disable streaming      | Main         | `False`       |
-| `comm_stream_port`     | `bool`  | The port on which the streaming system runs on            | Main, Remote | `16901`       |
-| `data_dir`             | `str`   | The directory for the data recording system               | Remote       | `"data"`      |
-| `save_data`            | `bool`  | `True`: save data; `False`: discard data                  | Remote       | `False`       |
+| `comm_stream_port`     | `bool`  | The port on which the streaming system runs on            | Main, RC     | `16901`       |
+| `data_dir`             | `str`   | The directory for the data recording system               | RC, DP       | `"data"`      |
+| `save_data`            | `bool`  | `True`: save data; `False`: discard data                  | RC           | `False`       |
 
 ## Devices Module
 
