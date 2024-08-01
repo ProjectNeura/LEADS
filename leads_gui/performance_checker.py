@@ -11,8 +11,8 @@ class PerformanceChecker(object):
         self._refresh_rate: int = _require_config().refresh_rate
         self._interval: float = 1 / self._refresh_rate
         self._predicted_offset: float = 0
-        self._delay_seq: _deque[float] = _deque(maxlen=self._refresh_rate * 10)
-        self._net_delay_seq: _deque[float] = _deque(maxlen=self._refresh_rate * 10)
+        self._delay_seq: _deque[float] = _deque((.001,), maxlen=self._refresh_rate * 10)
+        self._net_delay_seq: _deque[float] = _deque((.001,), maxlen=self._refresh_rate * 10)
         self._last_frame: float = _time()
 
     def fps(self) -> float:
