@@ -128,7 +128,7 @@ def add_secondary_window(context_manager: ContextManager, display: int, var_lap_
     if num_widgets > 2:
         widgets.insert(0, SpeedTrendMeter(w.root(), "CTkLabel", height=w.height(), variable=var_speed_trend,
                                           font=fonts[1]))
-        context_manager.layout([widgets], 0, window_index)
+    context_manager.layout([widgets], 0, window_index)
 
 
 def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) -> None:
