@@ -214,9 +214,9 @@ def main() -> int:
         if cfg.comm_stream:
             manager["comm_stream_status"] = _Label(root, text="STM OFFLINE", text_color="gray",
                                                    font=("Arial", cfg.font_size_small))
-        i = 0
+        j = 0
         for system in SystemLiteral:
-            i += 1
+            j += 1
             system_lower = system.lower()
             manager[f"{system_lower}_status"] = _Label(root, text=f"{system} READY", text_color="green",
                                                        font=("Arial", cfg.font_size_small))
