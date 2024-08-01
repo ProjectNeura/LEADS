@@ -172,6 +172,10 @@ data was recorded.
 
 <details>
 <summary>AI-enhanced data analysis and driver training</summary>
+
+Powered by rich datasets, our ambition is to change car racing as a whole, just as AlphaGo changed Go. This blueprint
+has never been such easy as today thanks to AI.
+
 </details>
 
 ## Installation
