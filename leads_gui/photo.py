@@ -1,13 +1,14 @@
+from base64 import b64decode as _b64decode
+from io import BytesIO as _BytesIO
 from tkinter import Misc as _Misc, Event as _Event
 from typing import Callable as _Callable, override as _override
 
-from PIL.Image import Image as _Image
+from PIL.Image import Image as _Image, open as _open
 from PIL.ImageTk import PhotoImage as _PhotoImage
 from customtkinter import Variable as _Variable, StringVar as _StringVar
 
 from leads_gui.prototype import CanvasBased, VariableControlled
 from leads_gui.types import Color as _Color
-from leads_video import base64_decode_image as _base64_decode_image
 
 
 class ImageVariable(_Variable):
@@ -50,7 +51,7 @@ class Photo(CanvasBased, VariableControlled):
         w, h, hc, vc, limit = canvas.meta()
         if image := self._variable.get():
             if isinstance(image, str):
-                image = _base64_decode_image(image)
+                image = _open(_BytesIO(_b64decode(image)))
             self._image = _PhotoImage(image.resize((w, h)))
             canvas.collect("d0", canvas.create_image(hc, vc, image=self._image))
 
