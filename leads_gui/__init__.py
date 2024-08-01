@@ -13,7 +13,6 @@ from customtkinter import set_default_color_theme as _set_default_color_theme
 
 from leads import LEADS as _LEADS, Controller as _Controller
 from leads_gui.prototype import *
-from leads_gui.config import *
 from leads_gui.icons import *
 from leads_gui.accelerometer import *
 from leads_gui.speedometer import *

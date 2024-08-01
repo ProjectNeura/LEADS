@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
 from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL, VISUAL_HEADER_FULL
-from leads_gui import Config
+from leads_vec_rc.config import Config
 
 config: Config = require_config()
 if not exists(config.data_dir):

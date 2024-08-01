@@ -7,7 +7,7 @@ from customtkinter import set_default_color_theme as _set_default_color_theme
 
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, release as _release
-from leads_gui import Config as _Config
+from leads_vec.config import Config
 
 
 def run(config: str | None, devices: str, main: str, register: _Literal["systemd", "config", "reverse_proxy"] | None,
@@ -26,14 +26,14 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
                     _L.error("Aborted")
                     return 1
             with open("config.json", "w") as f:
-                f.write(str(_Config({})))
+                f.write(str(Config({})))
             _L.debug("Configuration file saved to \"config.json\"")
         case "reverse_proxy":
             from ._bootloader import start_frpc as _start_frpc
 
             _start_frpc()
             _L.debug("`frpc` started")
-    config = _load_config(config, _Config) if config else _Config({})
+    config = _load_config(config, Config) if config else Config({})
     _L.debug("Configuration loaded:", str(config))
     if t := theme:
         _set_default_color_theme(t)
