@@ -2,7 +2,7 @@ from typing import override
 
 from leads import device, MAIN_CONTROLLER, mark_device, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, \
     REAR_VIEW_CAMERA, require_config
-from leads_gui import Config
+from leads_vec.config import Config
 from leads_video import LowLatencyBase64Camera
 
 import_error: ImportError | None = None

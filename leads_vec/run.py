@@ -3,15 +3,13 @@ from os.path import abspath as _abspath
 from os.path import exists as _exists
 from typing import Literal as _Literal
 
-from customtkinter import set_default_color_theme as _set_default_color_theme
-
 from leads import register_controller as _register_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER, \
     L as _L, load_config as _load_config, register_config as _register_config, release as _release
-from leads_gui import Config as _Config
+from leads_vec.config import Config
 
 
 def run(config: str | None, devices: str, main: str, register: _Literal["systemd", "config", "reverse_proxy"] | None,
-        theme: str | None, magnify_font_sizes: float, emu: bool, auto_mfs: bool, ignore_import_error: bool) -> int:
+        magnify_font_sizes: float, emu: bool, auto_mfs: bool, ignore_import_error: bool) -> int:
     match register:
         case "systemd":
             from ._bootloader import register_leads_vec as _create_service
@@ -26,17 +24,15 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
                     _L.error("Aborted")
                     return 1
             with open("config.json", "w") as f:
-                f.write(str(_Config({})))
+                f.write(str(Config({})))
             _L.debug("Configuration file saved to \"config.json\"")
         case "reverse_proxy":
             from ._bootloader import start_frpc as _start_frpc
 
             _start_frpc()
             _L.debug("`frpc` started")
-    config = _load_config(config, _Config) if config else _Config({})
+    config = _load_config(config, Config) if config else Config({})
     _L.debug("Configuration loaded:", str(config))
-    if t := theme:
-        _set_default_color_theme(t)
     if (f := magnify_font_sizes) != 1:
         config.magnify_font_sizes(f)
     if auto_mfs:

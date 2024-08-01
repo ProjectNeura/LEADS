@@ -3,8 +3,8 @@ from os.path import abspath as _abspath, exists as _exists
 from subprocess import run as _run
 
 from leads import L as _L
-from leads_gui import Config as _Config
 from leads_gui.system import get_system_kernel as _get_system_kernel
+from leads_vec.config import Config
 
 
 def register_leads_vec() -> None:
@@ -15,7 +15,7 @@ def register_leads_vec() -> None:
         if not _exists("/usr/local/leads"):
             _mkdirs("/usr/local/leads")
         with open("/usr/local/leads/config.json", "w") as f:
-            f.write(str(_Config({})))
+            f.write(str(Config({})))
     _chmod("/usr/local/leads/config.json", 0x644)
     _chmod(script := f"{_abspath(__file__)[:-10]}leads-vec.service.sh", 0o755)
     if not _exists(user_systemd := f"/home/{(username := _get_login())}/.config/systemd/user"):

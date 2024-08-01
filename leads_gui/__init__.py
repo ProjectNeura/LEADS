@@ -11,9 +11,10 @@ from os.path import abspath as _abspath
 from typing import Callable as _Callable, Any as _Any
 from customtkinter import set_default_color_theme as _set_default_color_theme
 
-from leads import LEADS as _LEADS, Controller as _Controller
-from leads_gui.prototype import *
+from leads import LEADS as _LEADS, Controller as _Controller, set_on_register_config as _set_on_register_config
+from leads.types import OnRegister as _OnRegister
 from leads_gui.config import *
+from leads_gui.prototype import *
 from leads_gui.icons import *
 from leads_gui.accelerometer import *
 from leads_gui.speedometer import *
@@ -23,6 +24,18 @@ from leads_gui.performance_checker import *
 from leads_gui.photo import *
 
 _set_default_color_theme(f"{_abspath(__file__)[:-11]}assets/leads-theme.json")
+
+
+def _on_register_config(chain: _OnRegister[Config]) -> _OnRegister[Config]:
+    def _(cfg: Config) -> None:
+        chain(cfg)
+        if cfg.theme:
+            _set_default_color_theme(cfg.theme)
+
+    return _
+
+
+_set_on_register_config(_on_register_config)
 
 
 def initialize(window: Window,
