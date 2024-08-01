@@ -40,6 +40,7 @@ Repository = "https://github.com/ProjectNeura/LEADS"
 
 [project.scripts]
 leads-vec-rc = "leads_vec_rc:__entry__"
+leads-vec-dp = "leads_vec_dp:__entry__"
 
 [project.gui-scripts]
 leads-vec = "leads_vec:__entry__"
