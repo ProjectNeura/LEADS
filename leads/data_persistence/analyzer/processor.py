@@ -10,7 +10,7 @@ from matplotlib.pyplot import figure as _figure, scatter as _scatter, show as _s
 
 from leads.data import dlat2meters, dlon2meters, format_duration
 from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, mileage_invalid, latitude_invalid, \
-    longitude_invalid
+    longitude_invalid, latency_invalid
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER
 from .._computational import sqrt as _sqrt
 
@@ -38,6 +38,9 @@ class Processor(object):
         self._gps_invalid_rows: list[int] = []
         self._min_lat: float | None = None
         self._min_lon: float | None = None
+        # visual
+        self._min_latency: float | None = None
+        self._max_latency: float | None = None
 
         # process variables
         self._laps: list[tuple[int, int, int, float, float]] = []
@@ -69,8 +72,7 @@ class Processor(object):
             t = int(row["t"])
             speed = row["speed"]
             mileage = row["mileage"]
-            if time_invalid(t) or speed_invalid(
-                    speed) or mileage_invalid(mileage):
+            if time_invalid(t) or speed_invalid(speed) or mileage_invalid(mileage):
                 self._invalid_rows.append(i)
                 return
             if self._start_time is None:
@@ -94,6 +96,15 @@ class Processor(object):
                     self._min_lon = lon
                 self._gps_valid_count += 1
             self._valid_rows_count += 1
+            # visual
+            latencies = [row[key] for key in ("front_view_latency", "left_view_latency", "right_view_latency",
+                                              "rear_view_latency") if key in row.keys()]
+            latency = min(latencies)
+            if not latency_invalid(latency) and (self._min_latency is None or latency < self._min_latency):
+                self._min_latency = latency
+            latency = max(latencies)
+            if not latency_invalid(latency) and (self._max_latency is None or latency > self._max_latency):
+                self._max_latency = latency
 
         self.foreach(unit, False)
         if self._valid_rows_count == 0:
@@ -107,7 +118,7 @@ class Processor(object):
         return f"[{", ".join(map(str, seq[:limit]))}, and {diff} others]" if (diff := len(seq) - limit) > 0 else str(
             seq)
 
-    def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str, str]:
+    def baking_results(self) -> tuple[str, str, str, str, str, str, str, str, str, str, str, str, str, str]:
         """
         Get the results of the baking process.
         :return: the results in sentences
@@ -129,7 +140,9 @@ class Processor(object):
             f"v\u2098\u2090\u2093: {self._max_speed:.2f} KM / H",
             f"v\u2090\u1D65\u1D4D: {self._avg_speed:.2f} KM / H",
             f"GPS Hit Rate: {100 * self._gps_valid_count / self._valid_rows_count:.2f}%",
-            f"GPS Skipped Rows: {Processor._hide_others(self._gps_invalid_rows, 5)}"
+            f"GPS Skipped Rows: {Processor._hide_others(self._gps_invalid_rows, 5)}",
+            "Min Video Latency: N/A" if self._min_latency is None else f"Min Video Latency: {self._min_latency:.2f} MS",
+            "Max Video Latency: N/A" if self._max_latency is None else f"Max Video Latency: {self._max_latency:.2f} MS"
         )
 
     def erase_unit_cache(self) -> None:
