@@ -23,7 +23,7 @@ gpio = ["leads[standard]", "lgpio"]
 vec = ["leads[gpio]", "pynput"]
 vec-no-gpio = ["leads[standard]", "pynput"]
 vec-rc = ["leads[standard]", "fastapi[standard]"]
-vec-dp = ["leads[standard]", "matplotlib"]
+vec-dp = ["leads[standard]", "matplotlib", "pyyaml"]
 
 [tool.hatch.build.targets.sdist]
 only-include = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation",

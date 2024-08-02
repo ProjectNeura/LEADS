@@ -197,15 +197,15 @@ pip install leads
 
 This table lists all installation profiles.
 
-| Profile              | Content                                                    | For                                              | All Platforms |
-|----------------------|------------------------------------------------------------|--------------------------------------------------|---------------|
-| leads                | Only the framework                                         | LEADS Framework                                  | &check;       |
-| "leads[standard]"    | The framework and necessary dependencies                   | LEADS Framework                                  | &check;       |
-| "leads[gpio]"        | Everything "leads[standard]" has plug `lgpio`              | LEADS Framework                                  | &cross;       |
-| "leads[vec]"         | Everything "leads[gpio]" has plus `pynput`                 | LEADS VeC                                        | &cross;       |
-| "leads[vec-no-gpio]" | Everything "leads[standard]" has plus `pynput`             | LEADS VeC (if you are not using any GPIO device) | &check;       |
-| "leads[vec-rc]"      | Everything "leads[standard]" has plus `"fastapi[standard]` | LEADS VeC Remote Analyst                         | &check;       |
-| "leads[vec-dp]"      | Everything "leads[standard]" has plus `matplotlib`         | LEADS VeC Data Processor                         | &check;       |
+| Profile              | Content                                                         | For                                              | All Platforms |
+|----------------------|-----------------------------------------------------------------|--------------------------------------------------|---------------|
+| leads                | Only the framework                                              | LEADS Framework                                  | &check;       |
+| "leads[standard]"    | The framework and necessary dependencies                        | LEADS Framework                                  | &check;       |
+| "leads[gpio]"        | Everything "leads[standard]" has plug `lgpio`                   | LEADS Framework                                  | &cross;       |
+| "leads[vec]"         | Everything "leads[gpio]" has plus `pynput`                      | LEADS VeC                                        | &cross;       |
+| "leads[vec-no-gpio]" | Everything "leads[standard]" has plus `pynput`                  | LEADS VeC (if you are not using any GPIO device) | &check;       |
+| "leads[vec-rc]"      | Everything "leads[standard]" has plus `"fastapi[standard]`      | LEADS VeC Remote Analyst                         | &check;       |
+| "leads[vec-dp]"      | Everything "leads[standard]" has plus `matplotlib` and `pyyaml` | LEADS VeC Data Processor                         | &check;       |
 
 ### Arduino
 
