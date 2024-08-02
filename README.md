@@ -400,7 +400,7 @@ To learn about the configuration file, read [Configurations](#configurations).
 leads-vec-dp path/to/the/workflow.yml
 ```
 
-To learn more about workflows, read [Workflows](https://leads-docs.projectneura.org/en/latest/vec/index.html#workflows).
+To learn more about workflows, read [Workflows](#workflows).
 
 ## Environment Setup
 
@@ -504,6 +504,58 @@ Note that a purely empty file could cause an error.
 | `comm_stream_port`     | `bool`  | Port on which the streaming system runs on                                            | Main, Remote | `16901`       |
 | `data_dir`             | `str`   | Directory for the data recording system                                               | Remote       | `"data"`      |
 | `save_data`            | `bool`  | `True`: save data; `False`: discard data                                              | Remote       | `False`       |
+
+## Workflows
+
+This only applies to LEADS VeC Data Processor. Please find a more detailed version
+[here](https://leads-docs.projectneura.org/en/latest/vec/index.html#workflows).
+
+```yaml
+dataset: "data/main.csv"
+inferences:
+  repeat: 100  # default: 1
+  enhanced: true  # default: false
+  assume_initial_zeros: true  # default: false
+  methods:
+    - safe-speed
+    - speed-by-acceleration
+    - speed-by-mileage
+    - speed-by-gps-ground-speed
+    - speed-by-gps-position
+    - forward-acceleration-by-speed
+    - milage-by-speed
+    - milage-by-gps-position
+    - visual-data-realignment-by-latency
+
+jobs:
+  - name: Task 1
+    uses: bake
+  - name: Task 2
+    uses: process
+    with:
+      lap_time_assertions: # default: []
+        - 120  # lap 1 duration (seconds)
+        - 180  # lap 2 duration (seconds)
+      vehicle_hit_box: 5  # default: 3
+      min_lap_time: 60  # default: 30 (seconds)
+  - name: Draw Lap 5
+    uses: draw-lap
+    with:
+      lap_index: 4  # default: -1
+  - name: Suggest on Lap 5
+    uses: suggest-on-lap
+    with:
+      lap_index: 4
+  - name: Draw Comparison of Laps
+    uses: draw-comparison-of-laps
+    with:
+      width: 0.5  # default: 0.3
+  - name: Extract Video
+    uses: extract-video
+    with:
+      file: rear-view.mp4  # destination to save the video
+      tag: rear  # front, left, right, or rear
+```
 
 ## Devices Module
 
