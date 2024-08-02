@@ -66,7 +66,7 @@ def run(target: str) -> int:
             case "draw-lap":
                 processor.draw_lap(**_optional_kwargs(job, "with"))
             case "suggest-on-lap":
-                _L.info(*processor.suggest_on_lap(**_optional_kwargs(job, "with")), sep="\n")
+                _L.info(*processor.suggest_on_lap(job["with"]["lap_index"]), sep="\n")
             case "draw-comparison-of-laps":
                 processor.draw_comparison_of_laps(**_optional_kwargs(job, "with"))
             case "extract-video":
