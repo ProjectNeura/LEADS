@@ -29,7 +29,7 @@ def _decode_frame(row: dict[str, _Any], tag: _VideoTag) -> _Image:
     return _open(_BytesIO(_b64decode(frame)))
 
 
-def extract_video(file: str, dataset: _CSVDataset, tag: _VideoTag) -> None:
+def extract_video(dataset: _CSVDataset, file: str, tag: _VideoTag) -> None:
     if not file.endswith(".mp4"):
         file += ".mp4"
     prev_row = None
