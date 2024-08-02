@@ -245,7 +245,7 @@ class VisualDataRealignmentByLatency(Inference):
         original_target = target.copy()
         t_0, t = target["t"], base["t"]
         for channel in self._channels:
-            if (new_latency := t_0 - t + base[f"{channel}_view_latency"]) > 0:
+            if (new_latency := t - t_0 - base[f"{channel}_view_latency"]) < 0:
                 continue
             target[f"{channel}_view_base64"] = base[f"{channel}_view_base64"]
             target[f"{channel}_view_latency"] = new_latency
