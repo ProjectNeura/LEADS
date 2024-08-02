@@ -6,3 +6,4 @@ if not _find_spec("uvicorn"):
     raise ImportError("Please install `uvicorn` to run this module\n>>>pip install \"fastapi[standard]\"")
 
 from leads_vec_rc.__entry__ import __entry__
+from leads_vec_rc.config import *

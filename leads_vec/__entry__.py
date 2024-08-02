@@ -28,7 +28,6 @@ def __entry__() -> None:
     parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py", help="specify a main module")
     parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
                         help="register a service")
-    parser.add_argument("-t", "--theme", default=None, help="specify a theme")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=1, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--auto-mfs", action=_BooleanOptionalAction, default=False,
@@ -60,5 +59,5 @@ def __entry__() -> None:
             args.emu = False
             _L.debug("Replay mode enabled")
         _exit(run(parse_path(args.config), parse_path(args.devices), parse_path(args.main), args.register,
-                  parse_path(args.theme), args.magnify_font_sizes, args.emu, args.auto_mfs, args.ignore_import_error))
+                  args.magnify_font_sizes, args.emu, args.auto_mfs, args.ignore_import_error))
     _exit()
