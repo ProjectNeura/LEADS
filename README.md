@@ -555,6 +555,10 @@ jobs:
     with:
       file: rear-view.mp4  # destination to save the video
       tag: rear  # front, left, right, or rear
+  - name: Save
+    uses: save-as
+    with:
+      file: data/new.csv
 ```
 
 ## Devices Module

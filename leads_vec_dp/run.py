@@ -71,6 +71,9 @@ def run(target: str) -> int:
                 processor.draw_comparison_of_laps(**_optional_kwargs(job, "with"))
             case "extract-video":
                 _extract_video(dataset, file := job["with"]["file"], job["with"]["tag"])
-                _L.info(f"Video saved to {file}")
+                _L.info(f"Video saved as {file}")
+            case "save-as":
+                dataset.save(file := job["with"]["file"])
+                _L.info(f"Dataset saved as {file}")
 
     return 0
