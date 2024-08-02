@@ -4,6 +4,8 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
     override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
     Generator as _Generator, Any as _Any
 
+from numpy import nan as _nan
+
 from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, VisualHeaderFull as _VisualHeaderFull
 from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
     DataFrame as _DataFrame, TextFileReader as _TextFileReader
@@ -218,7 +220,7 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
             except StopIteration:
                 break
             for i in range(len(chunk)):
-                r = chunk.iloc[i].to_dict()
+                r = chunk.iloc[i].replace(_nan, None).to_dict()
                 if self._contains_index:
                     r.pop("index")
                 yield r
