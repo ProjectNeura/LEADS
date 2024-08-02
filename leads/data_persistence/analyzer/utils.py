@@ -28,6 +28,10 @@ def longitude_invalid(o: _Any) -> bool:
     return not isinstance(o, int | float) or o != o or not -180 < o < 180
 
 
+def latency_invalid(o: _Any) -> bool:
+    return not isinstance(o, int | float) or o != o
+
+
 def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
     """
     Calculate the distance between two locations on the Earth.
