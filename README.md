@@ -394,6 +394,14 @@ If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#configurations).
 
+### Data Processor
+
+```shell
+leads-vec-dp path/to/the/workflow.yml
+```
+
+To learn more about workflows, read [Workflows](https://leads-docs.projectneura.org/en/latest/vec/index.html#workflows).
+
 ## Environment Setup
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
