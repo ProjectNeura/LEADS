@@ -1,7 +1,7 @@
 from base64 import b64decode as _b64decode
 from binascii import Error as _BinasciiError
 from io import BytesIO as _BytesIO
-from typing import Any as _Any
+from typing import Any as _Any, Literal as _Literal
 
 from PIL.Image import Image as _Image, open as _open, UnidentifiedImageError as _UnidentifiedImageError
 from cv2 import VideoWriter as _VideoWriter, VideoWriter_fourcc as _VideoWriter_fourcc, cvtColor as _cvtColor, \
@@ -11,7 +11,6 @@ from numpy import array as _array
 from leads import has_device as _has_device, get_device as _get_device
 from leads.data_persistence import CSVDataset as _CSVDataset
 from leads_video.camera import Camera
-from leads_video.types import VideoTag as _VideoTag
 
 
 def get_camera(tag: str, required_type: type[Camera] = Camera) -> Camera | None:
@@ -23,15 +22,16 @@ def get_camera(tag: str, required_type: type[Camera] = Camera) -> Camera | None:
     return cam
 
 
-def _decode_frame(row: dict[str, _Any], tag: _VideoTag) -> _Image:
+def _decode_frame(row: dict[str, _Any], tag: str) -> _Image:
     if not (frame := row[tag]):
         raise ValueError
     return _open(_BytesIO(_b64decode(frame)))
 
 
-def extract_video(file: str, dataset: _CSVDataset, tag: _VideoTag) -> None:
+def extract_video(dataset: _CSVDataset, file: str, tag: _Literal["front", "left", "right", "rear"]) -> None:
     if not file.endswith(".mp4"):
         file += ".mp4"
+    tag = f"{tag}_view_base64"
     prev_row = None
     resolution = None
     fps = 0

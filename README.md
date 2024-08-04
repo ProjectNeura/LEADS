@@ -189,23 +189,23 @@ command, see [Environment Setup](#environment-setup).
 pip install "leads[standard]"
 ```
 
-If your platform does not support GPIO, use profile "no-gpio".
-
-```shell
-pip install "leads[no-gpio]"
-```
-
 If you only want the framework, run the following.
 
 ```shell
 pip install leads
 ```
 
-#### Verify
+This table lists all installation profiles.
 
-```shell
-leads-vec info
-```
+| Profile              | Content                                                         | For                                              | All Platforms |
+|----------------------|-----------------------------------------------------------------|--------------------------------------------------|---------------|
+| leads                | Only the framework                                              | LEADS Framework                                  | &check;       |
+| "leads[standard]"    | The framework and necessary dependencies                        | LEADS Framework                                  | &check;       |
+| "leads[gpio]"        | Everything "leads[standard]" has plug `lgpio`                   | LEADS Framework                                  | &cross;       |
+| "leads[vec]"         | Everything "leads[gpio]" has plus `pynput`                      | LEADS VeC                                        | &cross;       |
+| "leads[vec-no-gpio]" | Everything "leads[standard]" has plus `pynput`                  | LEADS VeC (if you are not using any GPIO device) | &check;       |
+| "leads[vec-rc]"      | Everything "leads[standard]" has plus `"fastapi[standard]`      | LEADS VeC Remote Analyst                         | &check;       |
+| "leads[vec-dp]"      | Everything "leads[standard]" has plus `matplotlib` and `pyyaml` | LEADS VeC Data Processor                         | &check;       |
 
 ### Arduino
 
@@ -223,6 +223,12 @@ the framework in your project.
 
 ```shell
 leads-vec run
+```
+
+#### Verify
+
+```shell
+leads-vec info
 ```
 
 #### Replay
@@ -356,12 +362,6 @@ automatically calculate the best factor to keep the original proportion as desig
 
 ### Remote Analyst
 
-The remote analyst requires additional dependencies. Install them through the following command.
-
-```shell
-pip install "leads[all]"
-```
-
 ```shell
 leads-vec-rc
 ```
@@ -393,6 +393,14 @@ leads-vec-rc -c path/to/the/config/file.json
 If not specified, all configurations will be default values.
 
 To learn about the configuration file, read [Configurations](#configurations).
+
+### Data Processor
+
+```shell
+leads-vec-dp path/to/the/workflow.yml
+```
+
+To learn more about workflows, read [Workflows](#workflows).
 
 ## Environment Setup
 
@@ -496,6 +504,62 @@ Note that a purely empty file could cause an error.
 | `comm_stream_port`     | `bool`  | Port on which the streaming system runs on                                            | Main, Remote | `16901`       |
 | `data_dir`             | `str`   | Directory for the data recording system                                               | Remote       | `"data"`      |
 | `save_data`            | `bool`  | `True`: save data; `False`: discard data                                              | Remote       | `False`       |
+
+## Workflows
+
+This only applies to LEADS VeC Data Processor. Please find a more detailed version
+[here](https://leads-docs.projectneura.org/en/latest/vec/index.html#workflows).
+
+```yaml
+dataset: "data/main.csv"
+inferences:
+  repeat: 100  # default: 1
+  enhanced: true  # default: false
+  assume_initial_zeros: true  # default: false
+  methods:
+    - safe-speed
+    - speed-by-acceleration
+    - speed-by-mileage
+    - speed-by-gps-ground-speed
+    - speed-by-gps-position
+    - forward-acceleration-by-speed
+    - milage-by-speed
+    - milage-by-gps-position
+    - visual-data-realignment-by-latency
+
+jobs:
+  - name: Task 1
+    uses: bake
+  - name: Task 2
+    uses: process
+    with:
+      lap_time_assertions: # default: []
+        - 120  # lap 1 duration (seconds)
+        - 180  # lap 2 duration (seconds)
+      vehicle_hit_box: 5  # default: 3
+      min_lap_time: 60  # default: 30 (seconds)
+  - name: Draw Lap 5
+    uses: draw-lap
+    with:
+      lap_index: 4  # default: -1
+  - name: Suggest on Lap 5
+    uses: suggest-on-lap
+    with:
+      lap_index: 4
+  - name: Draw Comparison of Laps
+    uses: draw-comparison-of-laps
+    with:
+      width: 0.5  # default: 0.3
+  - name: Extract Video
+    uses: extract-video
+    with:
+      file: rear-view.mp4  # destination to save the video
+      tag: rear  # front, left, right, or rear
+  - name: Save
+    uses: save-as
+    with:
+      file: data/new.csv
+```
 
 ## Devices Module
 

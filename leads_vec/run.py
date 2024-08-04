@@ -17,6 +17,7 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
             _create_service()
             _L.debug("Service registered")
             _L.debug(f"Service script is located at \"{_abspath(__file__)[:-6]}_bootloader/leads-vec.service.sh\"")
+            return 0
         case "config":
             if _exists("config.json"):
                 r = input("\"config.json\" already exists. Overwrite? (Y/n) >>>").lower()
@@ -26,6 +27,7 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
             with open("config.json", "w") as f:
                 f.write(str(Config({})))
             _L.debug("Configuration file saved to \"config.json\"")
+            return 0
         case "reverse_proxy":
             from ._bootloader import start_frpc as _start_frpc
 

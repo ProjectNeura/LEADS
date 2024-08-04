@@ -245,7 +245,7 @@ class VisualDataRealignmentByLatency(Inference):
         original_target = target.copy()
         t_0, t = target["t"], base["t"]
         for channel in self._channels:
-            if (new_latency := t_0 - t + base[f"{channel}_view_latency"]) > 0:
+            if (new_latency := t - t_0 - base[f"{channel}_view_latency"]) < 0:
                 continue
             target[f"{channel}_view_base64"] = base[f"{channel}_view_base64"]
             target[f"{channel}_view_latency"] = new_latency
@@ -272,8 +272,9 @@ class InferredDataset(CSVDataset):
         for key in inferred.keys():
             raw[key] = inferred[key]
 
-    def _complete(self, inferences: tuple[Inference, ...], enhanced: bool, backward: bool) -> None:
+    def _complete(self, inferences: tuple[Inference, ...], enhanced: bool, backward: bool) -> int:
         num_rows = len(self._raw_data)
+        num_affected_rows = 0
         for i in range(num_rows - 1, -1, -1) if backward else range(num_rows):
             for inference in inferences:
                 p, f = inference.depth()
@@ -287,7 +288,9 @@ class InferredDataset(CSVDataset):
                             InferredDataset.merge(row, self._inferred_data[j])
                         d.append(row)
                     if (r := inference.complete(*d, backward=backward)) is not None:
+                        num_affected_rows += 1
                         InferredDataset.merge(self._inferred_data[i], r)
+        return num_affected_rows
 
     @_override
     def load(self) -> None:
@@ -311,20 +314,20 @@ class InferredDataset(CSVDataset):
             injection["mileage"] = 0
         InferredDataset.merge(row, injection)
 
-    def complete(self, *inferences: Inference, enhanced: bool = False, assume_initial_zeros: bool = False) -> None:
+    def complete(self, *inferences: Inference, enhanced: bool = False, assume_initial_zeros: bool = False) -> int:
         """
         Infer the missing values in the dataset.
         :param inferences: the inferences to apply
         :param enhanced: True: use inferred data to infer other data; False: use only raw data to infer other data
         :param assume_initial_zeros: True: reasonably set any missing data in the first row to zero; False: no change
+        :return: the number of affected rows
         """
         for inference in inferences:
             if not set(rh := inference.header()).issubset(ah := self.read_header()):
                 raise KeyError(f"Inference {inference} requires header {rh} but the dataset only contains {ah}")
         if assume_initial_zeros:
             self.assume_initial_zeros()
-        self._complete(inferences, enhanced, False)
-        self._complete(inferences, enhanced, True)
+        return self._complete(inferences, enhanced, False) + self._complete(inferences, enhanced, True)
 
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:

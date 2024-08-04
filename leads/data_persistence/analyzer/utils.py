@@ -9,23 +9,27 @@ def time_invalid(o: _Any) -> bool:
 
 
 def speed_invalid(o: _Any) -> bool:
-    return not isinstance(o, int | float) or o != o or o < 0
+    return not isinstance(o, int | float) or o < 0
 
 
 def acceleration_invalid(o: _Any) -> bool:
-    return not isinstance(o, int | float) or o != o
+    return not isinstance(o, int | float)
 
 
 def mileage_invalid(o: _Any) -> bool:
-    return not isinstance(o, int | float) or o != o
+    return not isinstance(o, int | float)
 
 
 def latitude_invalid(o: _Any) -> bool:
-    return not isinstance(o, int | float) or o != o or not -90 < o < 90
+    return not isinstance(o, int | float) or not -90 < o < 90
 
 
 def longitude_invalid(o: _Any) -> bool:
-    return not isinstance(o, int | float) or o != o or not -180 < o < 180
+    return not isinstance(o, int | float) or not -180 < o < 180
+
+
+def latency_invalid(o: _Any) -> bool:
+    return not isinstance(o, int | float)
 
 
 def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:

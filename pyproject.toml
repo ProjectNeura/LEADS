@@ -16,25 +16,22 @@ dependencies = ["numpy", "pandas"]
 
 [project.optional-dependencies]
 standard = [
-    "Pillow", "PySDL2", "customtkinter", "gpiozero", "lgpio", "opencv-python-headless", "pynmea2", "pynput",
-    "pysdl2-dll", "pyserial", "screeninfo"
+    "Pillow", "PySDL2", "customtkinter", "gpiozero", "opencv-python-headless", "pynmea2", "pysdl2-dll", "pyserial",
+    "screeninfo"
 ]
-no-gpio = [
-    "Pillow", "PySDL2", "customtkinter", "gpiozero", "opencv-python-headless", "pynmea2", "pynput", "pysdl2-dll",
-    "pyserial", "screeninfo"
-]
-all = [
-    "Pillow", "PySDL2", "customtkinter", "fastapi[standard]", "gpiozero", "lgpio", "opencv-python-headless", "pynmea2",
-    "pynput", "pysdl2-dll", "pyserial", "screeninfo"
-]
+gpio = ["leads[standard]", "lgpio"]
+vec = ["leads[gpio]", "pynput"]
+vec-no-gpio = ["leads[standard]", "pynput"]
+vec-rc = ["leads[standard]", "fastapi[standard]"]
+vec-dp = ["leads[standard]", "matplotlib", "pyyaml"]
 
 [tool.hatch.build.targets.sdist]
 only-include = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation",
-    "leads_gpio", "leads_gui", "leads_video", "leads_vec", "leads_vec_rc", "design", "docs"]
+    "leads_gpio", "leads_gui", "leads_video", "leads_vec", "leads_vec_rc", "leads_vec_dp", "design", "docs"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["leads", "leads_arduino", "leads_audio", "leads_can", "leads_comm_serial", "leads_emulation", "leads_gpio",
-    "leads_gui", "leads_video", "leads_vec", "leads_vec_rc"]
+    "leads_gui", "leads_video", "leads_vec", "leads_vec_rc", "leads_vec_dp"]
 
 [project.urls]
 Homepage = "https://leads.projectneura.org"
@@ -43,6 +40,7 @@ Repository = "https://github.com/ProjectNeura/LEADS"
 
 [project.scripts]
 leads-vec-rc = "leads_vec_rc:__entry__"
+leads-vec-dp = "leads_vec_dp:__entry__"
 
 [project.gui-scripts]
 leads-vec = "leads_vec:__entry__"
