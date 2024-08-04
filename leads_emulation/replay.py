@@ -42,7 +42,7 @@ class ReplayController(_Controller, _Generic[T]):
         self._dataset.close()
 
 
-class EmulatedCamera(_Camera):
+class ReplayCamera(_Camera):
     def __init__(self, channel: _Literal["front", "left", "right", "rear"],
                  resolution: tuple[int, int] | None = None) -> None:
         super().__init__(-1, resolution)
