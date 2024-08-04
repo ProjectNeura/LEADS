@@ -28,10 +28,10 @@ def _decode_frame(row: dict[str, _Any], tag: str) -> _Image:
     return _open(_BytesIO(_b64decode(frame)))
 
 
-def extract_video(dataset: _CSVDataset, file: str, tag: _Literal["front", "left", "right", "rear"]) -> None:
+def extract_video(dataset: _CSVDataset, file: str, channel: _Literal["front", "left", "right", "rear"]) -> None:
     if not file.endswith(".mp4"):
         file += ".mp4"
-    tag = f"{tag}_view_base64"
+    channel = f"{channel}_view_base64"
     prev_row = None
     resolution = None
     fps = 0
@@ -39,9 +39,9 @@ def extract_video(dataset: _CSVDataset, file: str, tag: _Literal["front", "left"
     for row in dataset:
         if not resolution:
             try:
-                frame = _decode_frame(row, tag)
+                frame = _decode_frame(row, channel)
                 cache = _cvtColor(_array(frame), _COLOR_RGB2BGR)
-                resolution = _decode_frame(row, tag).size
+                resolution = _decode_frame(row, channel).size
             except (ValueError, _BinasciiError, _UnidentifiedImageError):
                 pass
         if prev_row:
@@ -54,7 +54,7 @@ def extract_video(dataset: _CSVDataset, file: str, tag: _Literal["front", "left"
     writer = _VideoWriter(file, _VideoWriter_fourcc(*"mp4v"), fps, resolution)
     for row in dataset:
         try:
-            writer.write(cache := _cvtColor(_array(_decode_frame(row, tag)), _COLOR_RGB2BGR))
+            writer.write(cache := _cvtColor(_array(_decode_frame(row, channel)), _COLOR_RGB2BGR))
         except (ValueError, _BinasciiError, _UnidentifiedImageError):
             writer.write(cache)
     writer.release()
