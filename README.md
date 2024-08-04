@@ -502,7 +502,7 @@ Note that a purely empty file could cause an error.
 | `comm_port`            | `int`   | Port on which the communication system runs on                                        | Main, Remote | `16900`       |
 | `comm_stream`          | `bool`  | `True`: enable streaming; `False`: disable streaming                                  | Main         | `False`       |
 | `comm_stream_port`     | `bool`  | Port on which the streaming system runs on                                            | Main, Remote | `16901`       |
-| `data_dir`             | `str`   | Directory for the data recording system                                               | Remote       | `"data"`      |
+| `data_dir`             | `str`   | Directory for the data recording system                                               | Main, Remote | `"data"`      |
 | `save_data`            | `bool`  | `True`: save data; `False`: discard data                                              | Remote       | `False`       |
 
 ## Workflows
