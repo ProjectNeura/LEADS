@@ -67,3 +67,7 @@ class ReplayCamera(_Camera):
     @_override
     def read_pil(self) -> _Image | None:
         return self._pil
+
+    @_override
+    def close(self) -> None:
+        self._pil = None
