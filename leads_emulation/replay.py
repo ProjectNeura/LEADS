@@ -48,7 +48,6 @@ class ReplayCamera(_Camera):
         super().__init__(-1, resolution)
         self._channel: _Literal["front", "left", "right", "rear"] = channel
         self._controller: ReplayController | None = None
-        self._pil: _Image | None = None
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
@@ -59,15 +58,14 @@ class ReplayCamera(_Camera):
 
     @_override
     def read(self) -> _ndarray | None:
-        if not isinstance(dc := self._controller.current_data_container(), _VisualDataContainer):
-            raise TypeError("Emulated cameras require visual data containers")
-        self._pil = _open(_BytesIO(_b64decode(getattr(dc, f"{self._channel}_view_base64"))))
-        return _array(self._pil)
+        return _array(self.read_pil())
 
     @_override
     def read_pil(self) -> _Image | None:
-        return self._pil
+        if not isinstance(dc := self._controller.current_data_container(), _VisualDataContainer):
+            raise TypeError("Emulated cameras require visual data containers")
+        return _open(_BytesIO(_b64decode(getattr(dc, f"{self._channel}_view_base64"))))
 
     @_override
     def close(self) -> None:
-        self._pil = None
+        pass
