@@ -7,7 +7,7 @@ from PIL.Image import open as _open, Image as _Image
 from numpy import ndarray as _ndarray, array as _array
 
 from leads import Controller as _Controller, DataContainer as _DataContainer, get_controller as _get_controller, \
-    VisualDataContainer as _VisualDataContainer
+    VisualDataContainer as _VisualDataContainer, Device as _Device
 from leads.data_persistence import CSVDataset as _CSVDataset
 from leads_video import Camera as _Camera
 
@@ -52,7 +52,7 @@ class ReplayCamera(_Camera):
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        super().initialize(*parent_tags)
+        _Device.initialize(self, *parent_tags)
         if not isinstance(controller := _get_controller(parent_tags[-1]), ReplayController):
             raise TypeError("Emulated cameras must be initialized with a replay controller")
         self._controller = controller
