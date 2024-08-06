@@ -184,3 +184,6 @@ class RightIndicator(Indicator):
         super().write(LEDGroupCommand(
             LEDCommand.BLINK, Transition("right2left", 100)
         ) if payload else LEDGroupCommand(LEDCommand.OFF, Entire()))
+
+
+_: None = None
