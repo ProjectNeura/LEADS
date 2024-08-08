@@ -52,7 +52,7 @@ class Photo(CanvasBased, VariableControlled):
         if image := self._variable.get():
             if isinstance(image, str):
                 image = _open(_BytesIO(_b64decode(image)))
-            self._image = _PhotoImage(image.resize((w, h)))
+            self._image = _PhotoImage(image.resize((int(w), int(h))))
             canvas.collect("d0", canvas.create_image(hc, vc, image=self._image))
 
     @_override
