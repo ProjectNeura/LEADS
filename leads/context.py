@@ -24,7 +24,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         :param num_laps_timed: number of timed laps retained
         """
         if initial_data:
-            _check_data_type(initial_data, DataContainer)
+            _check_data_type(initial_data)
         else:
             initial_data = DataContainer()
         self._initial_data_type: type[DataContainer] = type(initial_data)

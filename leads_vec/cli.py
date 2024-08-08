@@ -164,7 +164,7 @@ def main() -> int:
     var_speed = _DoubleVar(root, 0)
     var_voltage = _StringVar(root, "")
     var_speed_trend = _DoubleVar(root, 0)
-    var_g_force = GForceVar(root, 0, 0)
+    var_g_force = GForceVar(root)
     var_esc = _StringVar(root, "STANDARD")
 
     var_debug = _StringVar(root, "")
@@ -201,12 +201,11 @@ def main() -> int:
         manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
-                                    Typography(root, theme_key="CTkButton", variable=var_voltage,
+                                    Typography(root, variable=var_voltage,
                                                font=("Arial", cfg.font_size_medium - 4)),
-                                    SpeedTrendMeter(root, theme_key="CTkButton", variable=var_speed_trend,
+                                    SpeedTrendMeter(root, variable=var_speed_trend,
                                                     font=("Arial", cfg.font_size_medium - 4)),
-                                    GForceMeter(root, theme_key="CTkButton", variable=var_g_force,
-                                                font=("Arial", cfg.font_size_medium - 4))
+                                    GForceMeter(root, variable=var_g_force, font=("Arial", cfg.font_size_medium - 4))
                                     ).lock_ratio(cfg.m_ratio)
 
         manager["comm_status"] = _Label(root, text="COMM OFFLINE", text_color="gray",
@@ -346,7 +345,7 @@ def main() -> int:
             else:
                 w.remove_frequency_generator("left_indicator")
                 w.remove_frequency_generator("direction_indicator_sound")
-                uim["left"].configure(image=Left(cfg.font_size_large, None))
+                uim["left"].configure(image=Left(cfg.font_size_large))
 
         @_override
         def right_indicator(self, e: Event, state: bool) -> None:
@@ -358,7 +357,7 @@ def main() -> int:
             else:
                 w.remove_frequency_generator("right_indicator")
                 w.remove_frequency_generator("direction_indicator_sound")
-                uim["right"].configure(image=Right(cfg.font_size_large, None))
+                uim["right"].configure(image=Right(cfg.font_size_large))
 
         @_override
         def hazard(self, e: Event, state: bool) -> None:
