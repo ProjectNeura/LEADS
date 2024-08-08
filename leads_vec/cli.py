@@ -189,19 +189,16 @@ def main() -> int:
 
     def render(manager: ContextManager) -> None:
         m1_widgets = (
-            Typography(root, theme_key="CTkButton", variable=var_lap_times,
-                       font=("Arial", cfg.font_size_small)),
-            Typography(root, theme_key="CTkButton", variable=var_gps,
-                       font=("Arial", cfg.font_size_small)),
-            Typography(root, theme_key="CTkButton", variable=var_info,
-                       font=("Arial", cfg.font_size_small - 4))
+            Typography(root, "CTkButton", variable=var_lap_times, font=("Arial", cfg.font_size_small)),
+            Typography(root, "CTkButton", variable=var_gps, font=("Arial", cfg.font_size_small)),
+            Typography(root, "CTkButton", variable=var_info, font=("Arial", cfg.font_size_small - 4))
         )
         if has_device(REAR_VIEW_CAMERA):
-            m1_widgets += (Photo(root, theme_key="CTkButton", variable=var_rear_view),)
+            m1_widgets += (Photo(root, "CTkButton", variable=var_rear_view),)
         manager["m1"] = ProxyCanvas(root, "CTkButton", *m1_widgets).lock_ratio(cfg.m_ratio)
         manager["m2"] = Speedometer(root, variable=var_speed).lock_ratio(cfg.m_ratio)
         manager["m3"] = ProxyCanvas(root, "CTkButton",
-                                    Typography(root, variable=var_voltage,
+                                    Typography(root, "CTkButton", variable=var_voltage,
                                                font=("Arial", cfg.font_size_medium - 4)),
                                     SpeedTrendMeter(root, variable=var_speed_trend,
                                                     font=("Arial", cfg.font_size_medium - 4)),
