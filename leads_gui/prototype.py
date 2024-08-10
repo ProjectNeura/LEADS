@@ -13,7 +13,8 @@ from customtkinter import CTk as _CTk, CTkCanvas as _CTkCanvas, get_appearance_m
 from numpy import lcm as _lcm
 from screeninfo import get_monitors as _get_monitors
 
-from leads import require_config as _require_config, DataContainer as _DataContainer
+from leads import require_config as _require_config, DataContainer as _DataContainer, \
+    initialize_main as _initialize_main
 from leads.comm import Server as _Server
 from leads_gui.performance_checker import PerformanceChecker
 from leads_gui.system import _ASSETS_PATH
@@ -372,17 +373,21 @@ class Window(_Generic[T]):
         finally:
             self._active = True
 
-        def wrapper() -> None:
-            self._on_refresh(self)
-            for tag, fg in self._frequency_generators.items():
-                if not fg.attempt():
-                    self.remove_frequency_generator(tag)
-            self._performance_checker.record_frame(self._last_interval)
+        def wrapper(init: bool) -> None:
+            if not init:
+                self._on_refresh(self)
+                for tag, fg in self._frequency_generators.items():
+                    if not fg.attempt():
+                        self.remove_frequency_generator(tag)
+                self._performance_checker.record_frame(self._last_interval)
+            elif getattr(self._master, "_window_exists"):
+                _initialize_main()
+                init = False
             if self._active:
-                self._master.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper)
+                self._master.after(int((ni := self._performance_checker.next_interval()) * 1000), wrapper, init)
                 self._last_interval = ni
 
-        self._master.after(1, wrapper)
+        self._master.after(1, wrapper, True)
         self._master.mainloop()
 
     def kill(self) -> None:

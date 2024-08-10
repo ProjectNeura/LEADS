@@ -9,10 +9,9 @@ from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyC
 from screeninfo import get_monitors as _get_monitors
 
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
-    ESCMode, get_controller, MAIN_CONTROLLER, L, EventListener, DataPushedEvent, UpdateEvent, has_device, \
-    GPS_RECEIVER, get_device, InterventionEvent, SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, \
-    initialize_main, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, \
-    RIGHT_VIEW_CAMERA
+    ESCMode, L, EventListener, DataPushedEvent, UpdateEvent, has_device, GPS_RECEIVER, get_device, InterventionEvent, \
+    SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, \
+    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses, ConnectionBase
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
@@ -244,7 +243,7 @@ def main() -> int:
         manager["esc"] = _CTkSegmentedButton(root, values=["STANDARD", "AGGRESSIVE", "SPORT", "OFF"], variable=var_esc,
                                              command=switch_esc_mode, font=("Arial", cfg.font_size_small))
 
-    uim = initialize(w, render, ctx, get_controller(MAIN_CONTROLLER))
+    uim = initialize(w, render, ctx)
 
     w.runtime_data().comm = start_server(create_server(cfg.comm_port, CommCallback(ctx, uim)), True)
     if cfg.comm_stream:
@@ -431,7 +430,6 @@ def main() -> int:
     for i in range(min(cfg.num_external_screens, len(_get_monitors()) - 1)):
         add_secondary_window(uim, i + 1, var_lap_times, var_speed, var_speed_trend)
     root.grid_rowconfigure(2, weight=1)
-    initialize_main()
 
     def on_press(key: _Key | _KeyCode) -> None:
         match key if isinstance(key, _Key) else key.char:
