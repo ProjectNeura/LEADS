@@ -7,8 +7,8 @@ from leads.registry import require_context
 
 
 def mark_device(device: Device, system: str, *related: str, append: bool = True) -> None:
-    setattr(device, "__sft_marker__", getattr(device, "__sft_marker__") + [system, *related] if append and hasattr(
-        device, "__sft_marker__") else [system, *related])
+    setattr(device, "__sft_marker__", list(set(getattr(device, "__sft_marker__") + [
+        system, *related] if append and hasattr(device, "__sft_marker__") else [system, *related])))
 
 
 def read_device_marker(device: Device) -> list[str] | None:

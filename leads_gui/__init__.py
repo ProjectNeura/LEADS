@@ -11,7 +11,8 @@ from os.path import abspath as _abspath
 from typing import Callable as _Callable, Any as _Any
 from customtkinter import set_default_color_theme as _set_default_color_theme
 
-from leads import LEADS as _LEADS, Controller as _Controller, set_on_register_config as _set_on_register_config
+from leads import LEADS as _LEADS, set_on_register_config as _set_on_register_config, \
+    get_controller as _get_controller, MAIN_CONTROLLER as _MAIN_CONTROLLER
 from leads.types import OnRegister as _OnRegister
 from leads_gui.config import *
 from leads_gui.prototype import *
@@ -40,8 +41,8 @@ _set_on_register_config(_on_register_config)
 
 def initialize(window: Window,
                render: _Callable[[ContextManager], None],
-               leads: _LEADS[_Any],
-               main_controller: _Controller) -> ContextManager:
+               leads: _LEADS[_Any]) -> ContextManager:
+    main_controller = _get_controller(_MAIN_CONTROLLER)
     ctx = ContextManager(window)
     render(ctx)
 
