@@ -133,14 +133,14 @@ def add_secondary_window(context_manager: ContextManager, display: int, var_lap_
 def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) -> None:
     pot = context_manager.window()
     rd = pot.runtime_data()
-    if rd.debug_window_index > 0:
-        context_manager.remove_window(rd.debug_window_index)
-        rd.debug_window_index = -1
+    if rd.debug_window_index < 0:
+        w = Window(pot.width(), pot.height(), pot.refresh_rate(), rd)
+        rd.debug_window_index = context_manager.add_window(w)
+        context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug)]], 0,
+                               rd.debug_window_index)
         return
-    w = Window(pot.width(), pot.height(), pot.refresh_rate(), rd)
-    rd.debug_window_index = context_manager.add_window(w)
-    context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug)]], 0,
-                           rd.debug_window_index)
+    context_manager.remove_window(rd.debug_window_index)
+    rd.debug_window_index = -1
 
 
 def main() -> int:
