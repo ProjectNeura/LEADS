@@ -29,7 +29,7 @@ class VeCController(Controller):
     @override
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
-        mark_device(self, "")
+        mark_device(self, "", append=False)
         if not has_controller("pc"):
             mark_device(self, "POWER", "BATT", "MOTOR", "BRAKE")
         if not has_controller("wsc"):
