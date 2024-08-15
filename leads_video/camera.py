@@ -1,7 +1,7 @@
 from base64 import b64encode as _b64encode
 from io import BytesIO as _BytesIO
 from threading import Thread as _Thread
-from time import time as _time
+from time import time as _time, sleep as _sleep
 from typing import override as _override
 
 from PIL.Image import fromarray as _fromarray, Image as _Image
@@ -102,6 +102,7 @@ class Base64Camera(LowLatencyCamera):
     def run2(self) -> None:
         while True:
             self.loop2()
+            _sleep(.002)
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
