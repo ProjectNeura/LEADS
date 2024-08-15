@@ -1,5 +1,7 @@
+from base64 import b64encode as _b64encode
+from io import BytesIO as _BytesIO
 from threading import Thread as _Thread
-from time import time as _time
+from time import time as _time, sleep as _sleep
 from typing import override as _override
 
 from PIL.Image import fromarray as _fromarray, Image as _Image
@@ -7,7 +9,6 @@ from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device, ShadowDevice as _ShadowDevice
-from leads_video.base64 import base64_encode
 
 
 class Camera(_Device):
@@ -84,13 +85,30 @@ class LowLatencyCamera(Camera, _ShadowDevice):
 class Base64Camera(LowLatencyCamera):
     def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         super().__init__(port, resolution)
+        self._shadow_thread2: _Thread | None = None
+        self._pil: _Image | None = None
         self._base64: str = ""
 
     @_override
     def loop(self) -> None:
         super().loop()
-        if self._frame is not None:
-            self._base64 = base64_encode(self._frame)
+
+    def loop2(self) -> None:
+        if (local_frame := self._frame) is not None:
+            self._pil = _fromarray(local_frame)
+            self._pil.save(buffer := _BytesIO(), "JPEG", quality=25)
+            self._base64 = _b64encode(buffer.getvalue()).decode()
+
+    def run2(self) -> None:
+        while True:
+            self.loop2()
+            _sleep(.002)
+
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
+        self._shadow_thread2 = _Thread(name=f"{id(self)} shadow2", target=self.run2, daemon=True)
+        self._shadow_thread2.start()
 
     @_override
     def read(self) -> str:
@@ -100,26 +118,17 @@ class Base64Camera(LowLatencyCamera):
     def read_numpy(self) -> _ndarray | None:
         return self._frame
 
+    @_override
+    def read_pil(self) -> _Image | None:
+        return self._pil
 
-class LowLatencyBase64Camera(Base64Camera):
-    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
-        super().__init__(port, resolution)
-        self._shadow_thread2: _Thread | None = None
 
+class LightweightBase64Camera(Base64Camera):
     @_override
     def loop(self) -> None:
-        LowLatencyCamera.loop(self)
-
-    def loop2(self) -> None:
-        if (local_frame := self._frame) is not None:
-            self._base64 = base64_encode(local_frame)
-
-    def run2(self) -> None:
-        while True:
-            self.loop2()
+        super().loop()
+        super().loop2()
 
     @_override
     def initialize(self, *parent_tags: str) -> None:
-        super().initialize(*parent_tags)
-        self._shadow_thread2 = _Thread(name=f"{id(self)} shadow2", target=self.run2, daemon=True)
-        self._shadow_thread2.start()
+        LowLatencyCamera.initialize(self, *parent_tags)
