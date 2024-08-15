@@ -82,34 +82,15 @@ class LowLatencyCamera(Camera, _ShadowDevice):
         return self._frame
 
 
-class Base64Camera(LowLatencyCamera):
+class LowLatencyBase64Camera(LowLatencyCamera):
     def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         super().__init__(port, resolution)
+        self._shadow_thread2: _Thread | None = None
         self._base64: str = ""
 
     @_override
     def loop(self) -> None:
         super().loop()
-        if self._frame is not None:
-            self._base64 = base64_encode(self._frame)
-
-    @_override
-    def read(self) -> str:
-        return self._base64
-
-    @_override
-    def read_numpy(self) -> _ndarray | None:
-        return self._frame
-
-
-class LowLatencyBase64Camera(Base64Camera):
-    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
-        super().__init__(port, resolution)
-        self._shadow_thread2: _Thread | None = None
-
-    @_override
-    def loop(self) -> None:
-        LowLatencyCamera.loop(self)
 
     def loop2(self) -> None:
         if (local_frame := self._frame) is not None:
@@ -124,3 +105,26 @@ class LowLatencyBase64Camera(Base64Camera):
         super().initialize(*parent_tags)
         self._shadow_thread2 = _Thread(name=f"{id(self)} shadow2", target=self.run2, daemon=True)
         self._shadow_thread2.start()
+
+    @_override
+    def read(self) -> str:
+        return self._base64
+
+    @_override
+    def read_numpy(self) -> _ndarray | None:
+        return self._frame
+
+
+class Base64Camera(LowLatencyBase64Camera):
+    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
+        super().__init__(port, resolution)
+        self._base64: str = ""
+
+    @_override
+    def loop(self) -> None:
+        super().loop()
+        super().loop2()
+
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        LowLatencyCamera.initialize(self, *parent_tags)
