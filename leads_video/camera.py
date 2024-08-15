@@ -1,3 +1,5 @@
+from base64 import b64encode as _b64encode
+from io import BytesIO as _BytesIO
 from threading import Thread as _Thread
 from time import time as _time
 from typing import override as _override
@@ -7,7 +9,6 @@ from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device, ShadowDevice as _ShadowDevice
-from leads_video.base64 import base64_encode
 
 
 class Camera(_Device):
@@ -81,10 +82,11 @@ class LowLatencyCamera(Camera, _ShadowDevice):
         return self._frame
 
 
-class LowLatencyBase64Camera(LowLatencyCamera):
+class Base64Camera(LowLatencyCamera):
     def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         super().__init__(port, resolution)
         self._shadow_thread2: _Thread | None = None
+        self._pil: _Image | None = None
         self._base64: str = ""
 
     @_override
@@ -93,7 +95,9 @@ class LowLatencyBase64Camera(LowLatencyCamera):
 
     def loop2(self) -> None:
         if (local_frame := self._frame) is not None:
-            self._base64 = base64_encode(local_frame)
+            self._pil = _fromarray(local_frame)
+            self._pil.save(buffer := _BytesIO(), "JPEG", quality=25)
+            self._base64 = _b64encode(buffer.getvalue()).decode()
 
     def run2(self) -> None:
         while True:
@@ -113,17 +117,6 @@ class LowLatencyBase64Camera(LowLatencyCamera):
     def read_numpy(self) -> _ndarray | None:
         return self._frame
 
-
-class Base64Camera(LowLatencyBase64Camera):
-    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
-        super().__init__(port, resolution)
-        self._base64: str = ""
-
     @_override
-    def loop(self) -> None:
-        super().loop()
-        super().loop2()
-
-    @_override
-    def initialize(self, *parent_tags: str) -> None:
-        LowLatencyCamera.initialize(self, *parent_tags)
+    def read_pil(self) -> _Image | None:
+        return self._pil
