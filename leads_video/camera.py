@@ -120,3 +120,14 @@ class Base64Camera(LowLatencyCamera):
     @_override
     def read_pil(self) -> _Image | None:
         return self._pil
+
+
+class LightweightBase64Camera(Base64Camera):
+    @_override
+    def loop(self) -> None:
+        super().loop()
+        super().loop2()
+
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        LowLatencyCamera.initialize(self, *parent_tags)
