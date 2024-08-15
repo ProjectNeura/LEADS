@@ -49,14 +49,13 @@ class Camera(_Device):
     def read(self) -> _ndarray | None:
         ret, frame = self._video_capture.read()
         self._birth = _time()
-        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB).transpose(
-            2, 0, 1) if ret else None
+        return _cvtColor(self.transform(frame) if self._resolution else frame, _COLOR_BGR2RGB) if ret else None
 
     def read_numpy(self) -> _ndarray | None:
         return self.read()
 
     def read_pil(self) -> _Image | None:
-        return None if (frame := self.read_numpy()) is None else _fromarray(frame.transpose(1, 2, 0))
+        return None if (frame := self.read_numpy()) is None else _fromarray(frame)
 
     def latency(self) -> float:
         return _time() - self._birth
