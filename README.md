@@ -20,7 +20,7 @@ ability to adapt to any type of hardware component if you are willing to write s
 
 This document will guide you through LEADS VeC. You will find a detailed version
 [here](https://leads-docs.projectneura.org/en/latest/vec). If you are confused with the difference between LEADS and
-LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.projectneura.org#ecology).
+LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.projectneura.org).
 
 :link: [Home](https://leads.projectneura.org)
 
