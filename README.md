@@ -335,6 +335,14 @@ leads-vec -r reverse_proxy run
 
 This will start the corresponding reverse proxy program as a subprocess in the background.
 
+##### Customize the Splash Screen
+
+```shell
+leads-vec -r splash_screen run
+```
+
+This will replace the splash and lock screen with LEADS' logo.
+
 ##### Magnify Font Sizes
 
 ```shell

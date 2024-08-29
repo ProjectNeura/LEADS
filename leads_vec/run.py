@@ -33,6 +33,14 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
 
             _start_frpc()
             _L.debug("`frpc` started")
+        case "splash_screen":
+            from ._bootloader import register_splash_screen as _register_splash_screen, \
+                register_lock_screen as _register_lock_screen
+
+            _register_splash_screen()
+            _L.debug("Replaced splash screen")
+            _register_lock_screen()
+            _L.debug("Replaced lock screen")
     config = _load_config(config, Config) if config else Config({})
     _L.debug("Configuration loaded:", str(config))
     if (f := magnify_font_sizes) != 1:

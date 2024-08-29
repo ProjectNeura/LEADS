@@ -26,8 +26,8 @@ def __entry__() -> None:
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
     parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py", help="specify a devices module")
     parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py", help="specify a main module")
-    parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy"), default=None,
-                        help="register a service")
+    parser.add_argument("-r", "--register", choices=("systemd", "config", "reverse_proxy", "splash_screen"),
+                        default=None, help="register a service")
     parser.add_argument("-mfs", "--magnify-font-sizes", type=float, default=1, help="magnify font sizes by a factor")
     parser.add_argument("--emu", action=_BooleanOptionalAction, default=False, help="use emulator")
     parser.add_argument("--auto-mfs", action=_BooleanOptionalAction, default=False,
