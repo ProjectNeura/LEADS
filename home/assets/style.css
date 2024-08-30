@@ -1,25 +1,24 @@
 body, html {
+    z-index: -1;
+    height: 100%;
     margin: 0;
     padding: 0;
-    height: 100%;
     font-family: Arial, sans-serif;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
 }
 
 .background {
     position: fixed;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    background: url("background.jpeg") no-repeat center center/cover;
-    z-index: -1;
-    transition: filter 0.3s;
+    top: 0;
+    left: 0;
+    transition: background 1s ease, filter 1s ease;
 }
 
 .content {
     position: fixed;
-    top: 40%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -34,12 +33,13 @@ body, html {
     width: 100%;
     opacity: 0;
     transition: opacity 0.5s, transform 0.5s;
-    font-size: 2rem; /* Larger text */
-    color: white; /* White text color for contrast */
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); /* Shadow for better readability */
-    padding: 20px;
-    border-radius: 10px; /* Rounded corners */
-    box-sizing: border-box; /* Include padding in width/height */
+    color: white;
+    box-sizing: border-box;
+}
+
+.line p {
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 .line.visible {
@@ -52,6 +52,43 @@ body, html {
     transform: translate(-50%, -50%) translateY(-100%);
 }
 
+h1 {
+    font-size: 4rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+p {
+    font-size: 1.5rem;
+}
+
 a {
-    text-decoration: none;
+    color: #FAD12B
+}
+
+.sticky-footer {
+    position: fixed;
+    right: 48px;
+    bottom: 0;
+    width: 100%;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    background-color: #FAD12B;
+}
+
+.sticky-footer b {
+    height: 48px;
+    line-height: 48px;
+    color: white;
+}
+
+.sticky-footer img {
+    position: fixed;
+    right: 0;
+    width: 48px;
+    height: 48px;
+    background: #90ACC7;
 }
