@@ -1,6 +1,8 @@
-from typing import override as _override
+from typing import override as _override, Literal as _Literal
 
 from serial import Serial as _Serial
+from serial.serialutil import SerialException
+from serial.tools.list_ports import comports as _comports
 
 from leads import Controller as _Controller, SFT as _SFT, L as _L
 from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
@@ -13,11 +15,12 @@ class ArduinoProto(_Controller, _Entity):
     - Any arduino connected through a USB (serial) port
     """
 
-    def __init__(self, port: str, baud_rate: int = 9600) -> None:
+    def __init__(self, port: str | _Literal["auto"], baud_rate: int = 9600) -> None:
         _Controller.__init__(self)
         _Entity.__init__(self, -1, _ArduinoCallback(self))
         self._serial: _Serial = _Serial()
-        self._serial.port = port
+        self._port_list: list[str] | None = [p[0] for p in _comports()] if port == "auto" else None
+        self._serial.port = self._port_list.pop(0) if port == "auto" else port
         self._serial.baudrate = baud_rate
         self._connection: _SerialConnection | None = None
 
@@ -37,11 +40,21 @@ class ArduinoProto(_Controller, _Entity):
 
     @_override
     def run(self) -> None:
-        self._callback.on_initialize(self)
-        self._serial.open()
-        self._callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port))
-        self._connection = connection
-        self._stage(connection)
+        try:
+            self._callback.on_initialize(self)
+            self._serial.open()
+            self._connection.send(b"ic")
+            msg = self._connection.receive()
+            if msg is None or not msg.startswith(self.tag().encode()):
+                raise ConnectionError("Unmatched identity")
+            self._callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port))
+            self._connection = connection
+            self._stage(connection)
+        except (SerialException, ConnectionError):
+            if not self._port_list:
+                raise ConnectionError("Connection failed")
+            self._serial.port = self._port_list.pop(0)
+            self.run()
 
     @_override
     def write(self, payload: bytes) -> None:

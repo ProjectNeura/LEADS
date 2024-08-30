@@ -1,4 +1,4 @@
-from typing import override as _override
+from typing import override as _override, Literal as _Literal
 
 from serial import Serial as _Serial
 
@@ -38,7 +38,7 @@ class SerialConnection(_ConnectionBase):
             return
 
     @_override
-    def send(self, msg: bytes) -> None:
+    def send(self, msg: bytes | _Literal[b"disconnect"]) -> None:
         self._require_open_serial().write(msg + self._separator)
 
     @_override
