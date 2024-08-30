@@ -37,6 +37,11 @@ body, html {
     box-sizing: border-box;
 }
 
+.line p {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
 .line.visible {
     opacity: 1;
     transform: translate(-50%, -50%) translateY(0);
@@ -57,6 +62,10 @@ h2 {
 
 p {
     font-size: 1.5rem;
+}
+
+a {
+    color: #FAD12B
 }
 
 .sticky-footer {
