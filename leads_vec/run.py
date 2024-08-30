@@ -41,6 +41,7 @@ def run(config: str | None, devices: str, main: str, register: _Literal["systemd
             _L.debug("Replaced splash screen")
             _register_lock_screen()
             _L.debug("Replaced lock screen")
+            return 0
     config = _load_config(config, Config) if config else Config({})
     _L.debug("Configuration loaded:", str(config))
     if (f := magnify_font_sizes) != 1:
