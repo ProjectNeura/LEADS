@@ -23,15 +23,22 @@ class SystemFailureTracer(object):
         self.on_device_fail: _Callable[[Device, str | Exception], None] = lambda _, __: None
         self.on_device_recover: _Callable[[Device], None] = lambda _: None
         self._system_failures: dict[str, int] = {}
+        self._device_failures: dict[str, int] = {}
 
     def system_ok(self, system: str) -> bool:
-        return self._system_failures[system] < 1
+        return system not in self._system_failures or self._system_failures[system] < 1
+
+    def device_ok(self, tag: str) -> bool:
+        return tag not in self._device_failures or self._device_failures[tag] < 1
 
     def fail(self, device: Device, error: str | Exception) -> None:
         if isinstance(error, Exception):
             error = repr(error)
         if not (systems := read_device_marker(device)):
             raise RuntimeWarning(f"No system marked for device {device}")
+        if (tag := device.tag()) not in self._device_failures:
+            self._device_failures[tag] = 0
+        self._device_failures[tag] += 1
         self.on_device_fail(device, error)
         L.error(f"{device} error: {error}")
         for system in systems:
@@ -44,8 +51,12 @@ class SystemFailureTracer(object):
     def recover(self, device: Device) -> None:
         if not (systems := read_device_marker(device)):
             raise RuntimeWarning(f"System not marked for device {device}")
-        self.on_device_recover(device)
-        L.debug(f"{device} recovered")
+        if (tag := device.tag()) in self._device_failures:
+            self._device_failures[tag] -= 1
+        if self._device_failures[tag] < 1:
+            self._device_failures.pop(tag)
+            self.on_device_recover(device)
+            L.debug(f"{device} recovered")
         for system in systems:
             if system not in self._system_failures:
                 continue
