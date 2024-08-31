@@ -240,7 +240,7 @@ class VisualDataRealignmentByLatency(Inference):
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         if backward:
-            return None
+            return
         target, base = rows
         original_target = target.copy()
         t_0, t = target["t"], base["t"]
