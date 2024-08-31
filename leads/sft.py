@@ -24,8 +24,8 @@ class SystemFailureTracer(object):
         self.on_device_recover: _Callable[[Device], None] = lambda _: None
         self._system_failures: dict[str, int] = {}
 
-    def num_system_failures(self, system: str) -> int:
-        return self._system_failures[system]
+    def system_ok(self, system: str) -> bool:
+        return self._system_failures[system] < 1
 
     def fail(self, device: Device, error: str | Exception) -> None:
         if isinstance(error, Exception):
