@@ -26,12 +26,14 @@ class AutoIdentity(object, metaclass=_ABCMeta):
     def establish_connection(self, service: _Service, serial: _Serial, remainder: bytes = b"",
                              separator: bytes = b";") -> SerialConnection:
         try:
+            if not serial.port:
+                raise ConnectionError("No available port")
             serial.open()
             if self.check_identity(connection := SerialConnection(service, serial, serial.port, remainder, separator)):
                 return connection
             raise ValueError("Unexpected identity")
         except (_SerialException, ValueError) as e:
-            if not self._retry or serial.port is None:
+            if not self._retry:
                 raise ConnectionError(f"Unable to establish connection due to {repr(e)}")
             serial.port = self.suggest_next_port(serial.port)
             return self.establish_connection(service, serial)
