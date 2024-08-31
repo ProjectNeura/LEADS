@@ -22,7 +22,10 @@ class SystemFailureTracer(object):
         self.on_recover: _Callable[[SuspensionEvent], None] = lambda _: None
         self.on_device_fail: _Callable[[Device, str | Exception], None] = lambda _, __: None
         self.on_device_recover: _Callable[[Device], None] = lambda _: None
-        self._system_failure: dict[str, int] = {}
+        self._system_failures: dict[str, int] = {}
+
+    def num_system_failures(self, system: str) -> int:
+        return self._system_failures[system]
 
     def fail(self, device: Device, error: str | Exception) -> None:
         if isinstance(error, Exception):
@@ -32,9 +35,9 @@ class SystemFailureTracer(object):
         self.on_device_fail(device, error)
         L.error(f"{device} error: {error}")
         for system in systems:
-            if system not in self._system_failure:
-                self._system_failure[system] = 0
-            self._system_failure[system] += 1
+            if system not in self._system_failures:
+                self._system_failures[system] = 0
+            self._system_failures[system] += 1
             self.on_fail(e := SuspensionEvent(context := require_context(), system, error))
             context.suspend(e)
 
@@ -44,12 +47,12 @@ class SystemFailureTracer(object):
         self.on_device_recover(device)
         L.debug(f"{device} recovered")
         for system in systems:
-            if system not in self._system_failure:
+            if system not in self._system_failures:
                 continue
-            self._system_failure[system] -= 1
-            if self._system_failure[system] > 0:
+            self._system_failures[system] -= 1
+            if self._system_failures[system] > 0:
                 continue
-            self._system_failure.pop(system)
+            self._system_failures.pop(system)
             self.on_recover(SuspensionEvent(require_context(), system, "Recovered"))
 
 
