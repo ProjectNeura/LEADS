@@ -2,9 +2,11 @@ from typing import TypeVar as _TypeVar, Any as _Any, override as _override, Lite
 
 from leads.context import Context
 from leads.data import DataContainer
+from leads.dt import has_device
 from leads.event import EventListener, Event, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
 from leads.plugin import Plugin
+from leads.sft import SFT
 
 T = _TypeVar("T", bound=DataContainer)
 
@@ -12,12 +14,10 @@ T = _TypeVar("T", bound=DataContainer)
 class LEADS(Context[T]):
     def __init__(self, initial_data: T | None = None, data_seq_size: int = 100, num_laps_timed: int = 3) -> None:
         super().__init__(initial_data, data_seq_size, num_laps_timed)
-        self._plugins: dict[tuple[str, ...], Plugin] = {}
+        self._plugins: dict[str, Plugin] = {}
         self._event_listener: EventListener = EventListener()
 
-    def plugin(self, key: str | tuple[str, ...], plugin: Plugin | None = None) -> Plugin | None:
-        if isinstance(key, str):
-            key = key,
+    def plugin(self, key: str, plugin: Plugin | None = None) -> Plugin | None:
         if plugin is None:
             return self._plugins[key]
         self._plugins[key] = plugin
@@ -31,18 +31,20 @@ class LEADS(Context[T]):
     def suspend(self, event: SuspensionEvent) -> None:
         self._event_listener.pre_suspend(event)
 
-    def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
+    def _acquire_data(self, name: str, key: str, mandatory: bool = True) -> _Any | None:
         try:
             return getattr(self.data(), name)
         except AttributeError:
             if mandatory:
-                for system in systems:
-                    self.suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
+                self.suspend(SuspensionEvent(self, key, f"No data for `{name}`"))
 
     def _do_plugin_callback(self, method: _Literal["pre_push", "post_push", "pre_update", "post_update"]) -> None:
         for key, plugin in self._plugins.items():
             if plugin.enabled():
-                getattr(plugin, method)(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
+                for tag in plugin.required_devices():
+                    if not has_device(tag) or not SFT.device_ok(tag):
+                        self.suspend(SuspensionEvent(self, key, f"Device {tag} not ok"))
+                getattr(plugin, method)(self, {d: self._acquire_data(d, key) for d in plugin.required_data()})
 
     @_override
     def push(self, data: T) -> None:

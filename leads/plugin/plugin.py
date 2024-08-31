@@ -6,20 +6,15 @@ from leads.registry import require_context
 
 
 class Plugin(object):
-    def __init__(self, required_data: tuple[str, ...] = ()) -> None:
+    def __init__(self, required_data: tuple[str, ...] = (), required_devices: tuple[str, ...] = ()) -> None:
         """
         :param required_data: required data entries
+        :param required_devices: required device tags
         """
         super().__init__()
         self._required_data: tuple[str, ...] = required_data
-        self.state: dict[str, _Any] = {}
+        self._required_devices: tuple[str, ...] = required_devices
         self._enabled: bool = True
-
-    def __getitem__(self, key: str) -> _Any:
-        return self.state[key]
-
-    def __setitem__(self, key: str, value: _Any) -> None:
-        self.state[key] = value
 
     def enabled(self, enabled: bool | None = None) -> bool | None:
         if enabled is None:
@@ -28,6 +23,9 @@ class Plugin(object):
 
     def required_data(self) -> tuple[str, ...]:
         return self._required_data
+
+    def required_devices(self) -> tuple[str, ...]:
+        return self._required_devices
 
     def on_load(self, context: Context) -> None: ...
 

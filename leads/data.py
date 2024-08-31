@@ -25,7 +25,8 @@ class DataContainer(Serializable):
                  latitude: float = 0,
                  longitude: float = 0,
                  throttle: float = 0,
-                 brake: float = 0) -> None:
+                 brake: float = 0,
+                 **kwargs) -> None:
         self._time_stamp: int = int(_time() * 1000)
         self.voltage: float = voltage
         self.speed: float = speed
@@ -41,6 +42,9 @@ class DataContainer(Serializable):
 
         self.throttle: float = throttle
         self.brake: float = brake
+
+        for k, v in kwargs.items():
+            setattr(self, k, v)
 
     @_override
     def __str__(self) -> str:
@@ -98,10 +102,11 @@ class VisualDataContainer(DataContainer):
                  right_view_base64: str = "",
                  right_view_latency: int = 0,
                  rear_view_base64: str = "",
-                 rear_view_latency: int = 0) -> None:
+                 rear_view_latency: int = 0,
+                 **kwargs) -> None:
         super().__init__(voltage, speed, front_wheel_speed, rear_wheel_speed, forward_acceleration,
                          lateral_acceleration, mileage, gps_valid, gps_ground_speed, latitude, longitude, throttle,
-                         brake)
+                         brake, **kwargs)
         self.front_view_base64: str = front_view_base64
         self.front_view_latency: int = front_view_latency
         self.left_view_base64: str = left_view_base64
