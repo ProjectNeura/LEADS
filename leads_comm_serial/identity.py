@@ -30,6 +30,8 @@ class AutoIdentity(object, metaclass=_ABCMeta):
             if self.check_identity(connection := SerialConnection(service, serial, serial.port)):
                 return connection
             raise ValueError("Unexpected identity")
-        except (_SerialException, ConnectionError, ValueError):
+        except (_SerialException, ConnectionError, ValueError) as e:
+            if not self._retry:
+                raise ConnectionError("Unable to establish connection") from e
             serial.port = self.suggest_next_port(serial.port)
             return self.establish_connection(service, serial)
