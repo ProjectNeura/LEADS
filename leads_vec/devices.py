@@ -13,9 +13,9 @@ from leads_video import Base64Camera, get_camera
 config: Config = require_config()
 GPS_ONLY: int = config.get("gps_only", False)
 BAUD_RATE: int = config.get("baud_rate", 9600)
-POWER_CONTROLLER_PORT: str = config.get("power_controller_port", "COM4")
-WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "COM3")
-GPS_RECEIVER_PORT: str = config.get("gps_receiver_port", "COM5")
+POWER_CONTROLLER_PORT: str = config.get("power_controller_port", "auto")
+WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "auto")
+GPS_RECEIVER_PORT: str = config.get("gps_receiver_port", "auto")
 FRONT_WHEEL_DIAMETER: float = config.get("front_wheel_diameter", 20)  # 20 inches
 REAR_WHEEL_DIAMETER: float = config.get("rear_wheel_diameter", 20)  # 20 inches
 NUM_DIVISIONS: int = config.get("num_divisions", 1)
