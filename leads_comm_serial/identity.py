@@ -23,14 +23,15 @@ class AutoIdentity(object, metaclass=_ABCMeta):
     def check_identity(self, connection: SerialConnection) -> bool:
         raise NotImplementedError
 
-    def establish_connection(self, service: _Service, serial: _Serial) -> SerialConnection:
+    def establish_connection(self, service: _Service, serial: _Serial, remainder: bytes = b"",
+                             separator: bytes = b";") -> SerialConnection:
         try:
             serial.open()
-            if self.check_identity(connection := SerialConnection(service, serial, serial.port)):
+            if self.check_identity(connection := SerialConnection(service, serial, serial.port, remainder, separator)):
                 return connection
             raise ValueError("Unexpected identity")
         except (_SerialException, ValueError) as e:
             if not self._retry or serial.port is None:
-                raise ConnectionError("Unable to establish connection") from e
+                raise ConnectionError(f"Unable to establish connection due to {repr(e)}")
             serial.port = self.suggest_next_port(serial.port)
             return self.establish_connection(service, serial)
