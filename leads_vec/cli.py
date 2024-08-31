@@ -136,7 +136,8 @@ def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) 
     if rd.debug_window_index < 0:
         w = Window(pot.width(), pot.height(), pot.refresh_rate(), rd)
         rd.debug_window_index = context_manager.add_window(w)
-        context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug)]], 0,
+        context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug,
+                                            font=("Arial", int(pot.height() * .022)))]], 0,
                                rd.debug_window_index)
         return
     context_manager.remove_window(rd.debug_window_index)
