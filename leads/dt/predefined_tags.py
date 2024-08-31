@@ -21,3 +21,6 @@ FRONT_VIEW_CAMERA: str = "frvc"
 LEFT_VIEW_CAMERA: str = "lfvc"
 RIGHT_VIEW_CAMERA: str = "rtvc"
 REAR_VIEW_CAMERA: str = "revc"
+
+POWER_CONTROLLER: str = "pc"
+WHEEL_SPEED_CONTROLLER: str = "wsc"
