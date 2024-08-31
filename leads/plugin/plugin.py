@@ -12,14 +12,7 @@ class Plugin(object):
         """
         super().__init__()
         self._required_data: tuple[str, ...] = required_data
-        self.state: dict[str, _Any] = {}
         self._enabled: bool = True
-
-    def __getitem__(self, key: str) -> _Any:
-        return self.state[key]
-
-    def __setitem__(self, key: str, value: _Any) -> None:
-        self.state[key] = value
 
     def enabled(self, enabled: bool | None = None) -> bool | None:
         if enabled is None:
