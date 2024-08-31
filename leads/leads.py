@@ -40,9 +40,9 @@ class LEADS(Context[T]):
     def _do_plugin_callback(self, method: _Literal["pre_push", "post_push", "pre_update", "post_update"]) -> None:
         for key, plugin in self._plugins.items():
             if plugin.enabled():
-                for system in plugin.required_systems():
-                    if not SFT.system_ok(system):
-                        self.suspend(SuspensionEvent(self, system, f"System {system} not ok"))
+                for tag in plugin.required_devices():
+                    if not SFT.device_ok(tag):
+                        self.suspend(SuspensionEvent(self, key, f"Device {tag} not ok"))
                 getattr(plugin, method)(self, {d: self._acquire_data(d, key) for d in plugin.required_data()})
 
     @_override
