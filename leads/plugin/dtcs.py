@@ -2,7 +2,7 @@ from typing import Any as _Any, override as _override
 
 from leads.constant import SystemLiteral, ESCMode
 from leads.context import Context
-from leads.dt import WHEEL_SPEED_CONTROLLER
+from leads.dt import WHEEL_SPEED_CONTROLLER, THROTTLE_PEDAL, BRAKE_PEDAL
 from leads.event import InterventionEvent, InterventionExitEvent
 from leads.plugin.plugin import ESCPlugin
 
@@ -28,7 +28,8 @@ def do_dtcs(context: Context,
 
 class DTCS(ESCPlugin):
     def __init__(self) -> None:
-        super().__init__(("front_wheel_speed", "rear_wheel_speed"), (WHEEL_SPEED_CONTROLLER,))
+        super().__init__(("front_wheel_speed", "rear_wheel_speed"),
+                         (WHEEL_SPEED_CONTROLLER, THROTTLE_PEDAL, BRAKE_PEDAL))
 
     @_override
     def pre_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
