@@ -26,7 +26,7 @@ def do_abs(context: Context,
 
 class ABS(ESCPlugin):
     def __init__(self) -> None:
-        super(ABS, self).__init__(("front_wheel_speed", "rear_wheel_speed"))
+        super().__init__(("front_wheel_speed", "rear_wheel_speed"))
 
     @_override
     def pre_update(self, context: Context, kwargs: dict[str, _Any]) -> None:
