@@ -13,12 +13,10 @@ T = _TypeVar("T", bound=DataContainer)
 class LEADS(Context[T]):
     def __init__(self, initial_data: T | None = None, data_seq_size: int = 100, num_laps_timed: int = 3) -> None:
         super().__init__(initial_data, data_seq_size, num_laps_timed)
-        self._plugins: dict[tuple[str, ...], Plugin] = {}
+        self._plugins: dict[str, Plugin] = {}
         self._event_listener: EventListener = EventListener()
 
-    def plugin(self, key: str | tuple[str, ...], plugin: Plugin | None = None) -> Plugin | None:
-        if isinstance(key, str):
-            key = key,
+    def plugin(self, key: str, plugin: Plugin | None = None) -> Plugin | None:
         if plugin is None:
             return self._plugins[key]
         self._plugins[key] = plugin
@@ -32,13 +30,12 @@ class LEADS(Context[T]):
     def suspend(self, event: SuspensionEvent) -> None:
         self._event_listener.pre_suspend(event)
 
-    def _acquire_data(self, name: str, *systems: str, mandatory: bool = True) -> _Any | None:
+    def _acquire_data(self, name: str, key: str, mandatory: bool = True) -> _Any | None:
         try:
             return getattr(self.data(), name)
         except AttributeError:
             if mandatory:
-                for system in systems:
-                    self.suspend(SuspensionEvent(self, system, f"No data for `{name}`"))
+                self.suspend(SuspensionEvent(self, key, f"No data for `{name}`"))
 
     def _do_plugin_callback(self, method: _Literal["pre_push", "post_push", "pre_update", "post_update"]) -> None:
         for key, plugin in self._plugins.items():
@@ -46,7 +43,7 @@ class LEADS(Context[T]):
                 for system in plugin.required_systems():
                     if not SFT.system_ok(system):
                         self.suspend(SuspensionEvent(self, system, f"System {system} not ok"))
-                getattr(plugin, method)(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
+                getattr(plugin, method)(self, {d: self._acquire_data(d, key) for d in plugin.required_data()})
 
     @_override
     def push(self, data: T) -> None:
