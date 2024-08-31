@@ -2,6 +2,7 @@ from typing import TypeVar as _TypeVar, Any as _Any, override as _override, Lite
 
 from leads.context import Context
 from leads.data import DataContainer
+from leads.dt import has_device
 from leads.event import EventListener, Event, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
 from leads.plugin import Plugin
@@ -41,7 +42,7 @@ class LEADS(Context[T]):
         for key, plugin in self._plugins.items():
             if plugin.enabled():
                 for tag in plugin.required_devices():
-                    if not SFT.device_ok(tag):
+                    if not has_device(tag) or not SFT.device_ok(tag):
                         self.suspend(SuspensionEvent(self, key, f"Device {tag} not ok"))
                 getattr(plugin, method)(self, {d: self._acquire_data(d, key) for d in plugin.required_data()})
 
