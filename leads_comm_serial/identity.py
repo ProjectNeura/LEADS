@@ -12,13 +12,12 @@ class AutoIdentity(object, metaclass=_ABCMeta):
         self._retry: bool = retry
         self._tried_ports: list[str] = []
 
-    def suggest_next_port(self, tried_port: str | None = None) -> str:
+    def suggest_next_port(self, tried_port: str | None = None) -> str | None:
         if tried_port:
             self._tried_ports.append(tried_port)
         for port, _, __ in _comports():
             if port not in self._tried_ports:
                 return port
-        raise ConnectionError("No available port")
 
     @_abstractmethod
     def check_identity(self, connection: SerialConnection) -> bool:
@@ -30,8 +29,8 @@ class AutoIdentity(object, metaclass=_ABCMeta):
             if self.check_identity(connection := SerialConnection(service, serial, serial.port)):
                 return connection
             raise ValueError("Unexpected identity")
-        except (_SerialException, ConnectionError, ValueError) as e:
-            if not self._retry:
+        except (_SerialException, ValueError) as e:
+            if not self._retry or serial.port is None:
                 raise ConnectionError("Unable to establish connection") from e
             serial.port = self.suggest_next_port(serial.port)
             return self.establish_connection(service, serial)
