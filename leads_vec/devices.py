@@ -4,7 +4,7 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
-    SFT, read_device_marker, has_controller
+    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 from leads_vec.config import Config
@@ -30,9 +30,9 @@ class VeCController(Controller):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
         mark_device(self, "", append=False)
-        if not has_controller("pc"):
+        if not has_controller(POWER_CONTROLLER):
             mark_device(self, "POWER", "BATT", "MOTOR", "BRAKE")
-        if not has_controller("wsc"):
+        if not has_controller(WHEEL_SPEED_CONTROLLER):
             mark_device(self, "WSC", "ESC")
         if not has_device(ODOMETER):
             mark_device(self, "WSC")
@@ -55,9 +55,9 @@ class VeCController(Controller):
             "gps_ground_speed": gps[1],
             "latitude": gps[2],
             "longitude": gps[3],
-            **self.device("pc").read()
+            **self.device(POWER_CONTROLLER).read()
         }
-        wsc = {"speed": gps[0]} if GPS_ONLY else self.device("wsc").read()
+        wsc = {"speed": gps[0]} if GPS_ONLY else self.device(WHEEL_SPEED_CONTROLLER).read()
         visual = {}
         if has_device(FRONT_VIEW_CAMERA):
             cam = get_camera(FRONT_VIEW_CAMERA, Base64Camera)
@@ -78,7 +78,7 @@ class VeCController(Controller):
         return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
 
 
-@controller("pc", MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
+@controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
 class PowerController(ArduinoMicro):
     @override
     def initialize(self, *parent_tags: str) -> None:
@@ -94,7 +94,7 @@ class PowerController(ArduinoMicro):
         super().write(str(payload).encode())
 
 
-@device(VOLTAGE_SENSOR, "pc")
+@device(VOLTAGE_SENSOR, POWER_CONTROLLER)
 class BatteryVoltageSensor(VoltageSensor):
     @override
     def initialize(self, *parent_tags: str) -> None:
@@ -102,7 +102,7 @@ class BatteryVoltageSensor(VoltageSensor):
         super().initialize(*parent_tags)
 
 
-@controller("wsc", MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
+@controller(WHEEL_SPEED_CONTROLLER, MAIN_CONTROLLER, (WHEEL_SPEED_CONTROLLER_PORT, BAUD_RATE))
 class WheelSpeedController(ArduinoMicro):
     @override
     def initialize(self, *parent_tags: str) -> None:
@@ -130,7 +130,8 @@ class AverageOdometer(ConcurrentOdometer):
         return super().read() / 3
 
 
-@device(*(((LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, CENTER_REAR_WHEEL_SPEED_SENSOR), "wsc",
+@device(*(((LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, CENTER_REAR_WHEEL_SPEED_SENSOR),
+           WHEEL_SPEED_CONTROLLER,
            [(FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER), (FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER),
             (REAR_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER)])))
 class WheelSpeedSensors(WheelSpeedSensor):
