@@ -5,6 +5,7 @@ from leads.data import DataContainer
 from leads.event import EventListener, Event, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
     InterventionExitEvent
 from leads.plugin import Plugin
+from leads.sft import SFT
 
 T = _TypeVar("T", bound=DataContainer)
 
@@ -37,11 +38,14 @@ class LEADS(Context[T]):
         except AttributeError:
             if mandatory:
                 for system in systems:
-                    self.suspend(SuspensionEvent(self, system, f"no data for `{name}`"))
+                    self.suspend(SuspensionEvent(self, system, f"No data for `{name}`"))
 
     def _do_plugin_callback(self, method: _Literal["pre_push", "post_push", "pre_update", "post_update"]) -> None:
         for key, plugin in self._plugins.items():
             if plugin.enabled():
+                for system in plugin.required_systems():
+                    if not SFT.system_ok(system):
+                        self.suspend(SuspensionEvent(self, system, f"System {system} not ok"))
                 getattr(plugin, method)(self, {d: self._acquire_data(d, *key) for d in plugin.required_data()})
 
     @_override
