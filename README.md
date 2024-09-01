@@ -154,6 +154,8 @@ performance.
 LEADS VeC Remote Analyst is designed so that the pit crew can track the vehicle. It consists of a local web server and a
 frontend website.
 
+![leads-vec-rc.png](docs/assets/leads-vec-rc.png)
+
 </details>
 
 With the LEADS, what the driver sees and feels is all shared with the pit crew in real time through our data link. The
