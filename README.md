@@ -592,10 +592,6 @@ paradigm. A more detailed explanation can be found [here](https://leads-docs.pro
 
 ### Main
 
-#### Pin Configuration
-
-![pin-config](docs/assets/pin-config.png)
-
 ### Remote Analyst
 
 ![comm-flowchart](docs/assets/comm-flowchart.png)
