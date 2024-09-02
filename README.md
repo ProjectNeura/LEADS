@@ -590,8 +590,6 @@ paradigm. A more detailed explanation can be found [here](https://leads-docs.pro
 
 ## Architecture
 
-### Main
-
 ### Remote Analyst
 
 ![comm-flowchart](docs/assets/comm-flowchart.png)
