@@ -40,7 +40,8 @@ class ArduinoProto(_Controller, _Entity, _AutoIdentity):
     @_override
     def check_identity(self, connection: _SerialConnection) -> bool:
         connection.send(b"ic")
-        return (msg := connection.receive()) and msg.startswith(self.tag().encode())
+        return (msg := connection.receive()) and (msg.startswith(self.tag().encode()) or any(
+            msg.startswith(d.tag().encode()) for d in self.devices()))
 
     @_override
     def run(self) -> None:
