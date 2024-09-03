@@ -2,19 +2,15 @@ from typing import override as _override, Literal as _Literal
 
 from serial import Serial as _Serial
 
-from leads.comm import ConnectionBase as _ConnectionBase, Service as _Service
+from leads.comm import ConnectionBase as _ConnectionBase
 
 
 class SerialConnection(_ConnectionBase):
-    def __init__(self,
-                 service: _Service,
-                 serial: _Serial,
-                 port: str,
-                 remainder: bytes = b"",
+    def __init__(self, serial: _Serial, port: str, remainder: bytes = b"",
                  separator: bytes = b";") -> None:
-        super().__init__(service, remainder, separator)
+        super().__init__(remainder, separator)
+        serial.port = port
         self._serial: _Serial = serial
-        self._port: str = port
 
     @_override
     def closed(self) -> bool:
