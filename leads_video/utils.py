@@ -15,7 +15,7 @@ from leads_video.camera import Camera
 
 def get_camera(tag: str, required_type: type[Camera] = Camera) -> Camera | None:
     if not _has_device(tag):
-        return None
+        return
     cam = _get_device(tag)
     if not isinstance(cam, required_type):
         raise TypeError(f"Device \"{tag}\" is supposed to be a camera")

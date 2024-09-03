@@ -1,4 +1,4 @@
-from typing import override as _override
+from typing import override as _override, Literal as _Literal
 
 from pynmea2 import parse as _parse
 from pynmea2.types.talker import TalkerSentence as _TalkerSentence
@@ -6,21 +6,23 @@ from serial import Serial as _Serial
 
 from leads import Device as _Device, SFT as _SFT
 from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
-from leads_comm_serial import SerialConnection as _SerialConnection
+from leads_comm_serial import SerialConnection as _SerialConnection, AutoIdentity as _AutoIdentity, SerialConnection
 
 
-class NMEAGPSReceiver(_Device, _Entity):
+class NMEAGPSReceiver(_Device, _Entity, _AutoIdentity):
     """
     Supports:
     - Any USB (serial) GPS receiver with NMEA 0183 output
     """
-    def __init__(self, port: str, baud_rate: int = 9600) -> None:
+
+    def __init__(self, port: str | _Literal["auto"], baud_rate: int = 9600) -> None:
         _Device.__init__(self, port)
         _Entity.__init__(self, -1, _NMEAGPSCallback(self))
+        _AutoIdentity.__init__(self, port == "auto")
         self._serial: _Serial = _Serial()
-        self._serial.port = port
         self._serial.baudrate = baud_rate
         self._connection: _SerialConnection | None = None
+        self._serial.port = self.suggest_next_port() if port == "auto" else port
         self._valid: bool = False
         self._ground_speed: float = 0
         self._latitude: float = 0
@@ -36,6 +38,14 @@ class NMEAGPSReceiver(_Device, _Entity):
     def initialize(self, *parent_tags: str) -> None:
         super().initialize(*parent_tags)
         self.start(True)
+
+    @_override
+    def check_identity(self, connection: SerialConnection) -> bool:
+        try:
+            _parse(connection.receive().decode())
+            return True
+        except ValueError:
+            return False
 
     @_override
     def update(self, data: _TalkerSentence) -> None:
@@ -66,11 +76,9 @@ class NMEAGPSReceiver(_Device, _Entity):
     @_override
     def run(self) -> None:
         self._callback.on_initialize(self)
-        self._serial.open()
-        self._callback.on_connect(self, connection := _SerialConnection(self, self._serial, self._serial.port,
-                                                                        separator=b"\n"))
-        self._connection = connection
-        self._stage(connection)
+        self._connection = self.establish_connection(self, self._serial, separator=b"\n")
+        self._callback.on_connect(self, self._connection)
+        self._stage(self._connection)
 
     @_override
     def close(self) -> None:

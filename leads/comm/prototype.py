@@ -110,6 +110,9 @@ class ConnectionBase(metaclass=_ABCMeta):
         self._remainder: bytes = remainder
         self._separator: bytes = separator
 
+    def drop_remainder(self) -> None:
+        self._remainder = b""
+
     def use_remainder(self) -> bytes:
         """
         Parse the remainder queue.
