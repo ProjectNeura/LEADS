@@ -31,6 +31,7 @@ class AutoIdentity(object, metaclass=_ABCMeta):
             serial.open()
             if self.check_identity(connection := SerialConnection(service, serial, serial.port, remainder, separator)):
                 return connection
+            serial.close()
             raise ValueError("Unexpected identity")
         except (_SerialException, ValueError) as e:
             if not self._retry:
