@@ -34,7 +34,8 @@ class ArduinoProto(_Controller, _Entity, _AutoIdentity):
     @_override
     def update(self, data: str) -> None:
         for d in self.devices():
-            d.update(data)
+            if data.startswith(f"{d.tag()}:"):
+                d.update(data[len(d.tag()) + 1:])
 
     @_override
     def check_identity(self, connection: _SerialConnection) -> bool:
