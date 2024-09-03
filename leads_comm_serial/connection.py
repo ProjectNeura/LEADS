@@ -6,9 +6,8 @@ from leads.comm import ConnectionBase as _ConnectionBase
 
 
 class SerialConnection(_ConnectionBase):
-    def __init__(self, serial: _Serial, port: str, remainder: bytes = b"", separator: bytes = b";") -> None:
+    def __init__(self, serial: _Serial, remainder: bytes = b"", separator: bytes = b";") -> None:
         super().__init__(remainder, separator)
-        serial.port = port
         self._serial: _Serial = serial
 
     @_override

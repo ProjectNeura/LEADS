@@ -8,8 +8,10 @@ from leads_comm_serial.connection import SerialConnection
 
 
 class AutoIdentity(object, metaclass=_ABCMeta):
-    def __init__(self, retry: bool = False) -> None:
+    def __init__(self, retry: bool = False, remainder: bytes = b"", seperator: bytes = b";") -> None:
         self._retry: bool = retry
+        self._remainder: bytes = remainder
+        self._seperator: bytes = seperator
         self._tried_ports: list[str] = []
 
     def suggest_next_port(self, tried_port: str | None = None) -> str | None:
@@ -23,8 +25,7 @@ class AutoIdentity(object, metaclass=_ABCMeta):
     def check_identity(self, connection: SerialConnection) -> bool:
         raise NotImplementedError
 
-    def establish_connection(self, service: _Service, serial: _Serial, remainder: bytes = b"",
-                             separator: bytes = b";") -> SerialConnection:
+    def establish_connection(self, serial: _Serial) -> SerialConnection:
         try:
             if not serial.port:
                 raise ConnectionError("No available port")

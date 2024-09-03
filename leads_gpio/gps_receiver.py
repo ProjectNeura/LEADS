@@ -18,7 +18,7 @@ class NMEAGPSReceiver(_Device, _Entity, _AutoIdentity):
     def __init__(self, port: str | _Literal["auto"], baud_rate: int = 9600) -> None:
         _Device.__init__(self, port)
         _Entity.__init__(self, -1, _NMEAGPSCallback(self))
-        _AutoIdentity.__init__(self, port == "auto")
+        _AutoIdentity.__init__(self, port == "auto", seperator=b"\n")
         self._serial: _Serial = _Serial()
         self._serial.baudrate = baud_rate
         self._connection: _SerialConnection | None = None
@@ -76,7 +76,7 @@ class NMEAGPSReceiver(_Device, _Entity, _AutoIdentity):
     @_override
     def run(self) -> None:
         self._callback.on_initialize(self)
-        self._connection = self.establish_connection(self, self._serial, separator=b"\n")
+        self._connection = self.establish_connection(self._serial)
         self._callback.on_connect(self, self._connection)
         self._stage(self._connection)
 

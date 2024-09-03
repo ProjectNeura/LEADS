@@ -46,7 +46,7 @@ class ArduinoProto(_Controller, _Entity, _AutoIdentity):
     @_override
     def run(self) -> None:
         self._callback.on_initialize(self)
-        self._connection = self.establish_connection(self, self._serial)
+        self._connection = self.establish_connection(self._serial)
         self._callback.on_connect(self, self._connection)
         self._stage(self._connection)
 
