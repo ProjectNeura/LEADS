@@ -177,8 +177,8 @@ class ConnectionBase(metaclass=_ABCMeta):
 
 
 class Connection(ConnectionBase):
-    def __init__(self, socket: _socket, address: tuple[str, int], remainder: bytes = b"",
-                 separator: bytes = b";", on_close: _Callable[[_Self], None] = lambda _: None) -> None:
+    def __init__(self, socket: _socket, address: tuple[str, int], remainder: bytes = b"", separator: bytes = b";",
+                 on_close: _Callable[[_Self], None] = lambda _: None) -> None:
         super().__init__(remainder, separator)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
