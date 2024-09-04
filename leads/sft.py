@@ -19,7 +19,7 @@ class SystemFailureTracer(object):
     def __init__(self) -> None:
         super().__init__()
         self.on_fail: _Callable[[SuspensionEvent], None] = lambda _: None
-        self.on_recover: _Callable[[SuspensionEvent], None] = lambda _: None
+        self.on_recover: _Callable[[SuspensionExitEvent], None] = lambda _: None
         self.on_device_fail: _Callable[[Device, str | Exception], None] = lambda _, __: None
         self.on_device_recover: _Callable[[Device], None] = lambda _: None
         self._system_failures: dict[str, int] = {}
