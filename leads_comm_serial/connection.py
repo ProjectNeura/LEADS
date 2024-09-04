@@ -42,7 +42,7 @@ class SerialConnection(_ConnectionBase):
         self.disconnect()
         self._require_open_serial(False).close()
 
-    def suspect(self, timeout: int = 3) -> _Self:
+    def suspect(self, timeout: int = 1) -> _Self:
         self._serial.timeout = timeout
         return self
 
