@@ -11,6 +11,12 @@ from leads.sft import SFT
 T = _TypeVar("T", bound=DataContainer)
 
 
+class _SuspensionException(Exception):
+    def __init__(self, event: SuspensionEvent) -> None:
+        super().__init__()
+        self.event = event
+
+
 class LEADS(Context[T]):
     def __init__(self, initial_data: T | None = None, data_seq_size: int = 100, num_laps_timed: int = 3) -> None:
         super().__init__(initial_data, data_seq_size, num_laps_timed)
@@ -39,15 +45,18 @@ class LEADS(Context[T]):
             return getattr(self.data(), name)
         except AttributeError:
             if mandatory:
-                self.suspend(SuspensionEvent(self, key, f"No data for `{name}`"))
+                raise _SuspensionException(SuspensionEvent(self, key, f"No data for `{name}`"))
 
     def _do_plugin_callback(self, method: _Literal["pre_push", "post_push", "pre_update", "post_update"]) -> None:
         for key, plugin in self._plugins.items():
             if plugin.enabled():
-                for tag in plugin.required_devices():
-                    if not has_device(tag) or not SFT.device_ok(tag):
-                        self.suspend(SuspensionEvent(self, key, f"Device {tag} not ok"))
-                getattr(plugin, method)(self, {d: self._acquire_data(d, key) for d in plugin.required_data()})
+                try:
+                    for tag in plugin.required_devices():
+                        if not has_device(tag) or not SFT.device_ok(tag):
+                            raise _SuspensionException(SuspensionEvent(self, key, f"Device {tag} not ok"))
+                    getattr(plugin, method)(self, {d: self._acquire_data(d, key) for d in plugin.required_data()})
+                except _SuspensionException as e:
+                    self.suspend(e.event)
 
     @_override
     def push(self, data: T) -> None:
