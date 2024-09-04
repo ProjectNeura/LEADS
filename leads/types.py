@@ -6,7 +6,8 @@ type OnRegister[T] = _Callable[[T], None]
 type OnRegisterChain[T] = _Callable[[OnRegister[T]], OnRegister[T]]
 type SupportedConfigValue = bool | int | float | str | None
 type SupportedConfig = SupportedConfigValue | tuple[SupportedConfig, ...]
+type DefaultHeaderFull = tuple[str, str, str, str, str, str, str, str, str, str, str, str, str, str, str]
 type VisualHeader = tuple[
     str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str]
 type VisualHeaderFull = tuple[
-    str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str]
+    str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str]
