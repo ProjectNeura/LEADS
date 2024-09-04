@@ -1,9 +1,9 @@
-#include "LEADS.h"  // LEADS>=1.1.0
+#include "LEADS.h"
 
 const int PIN_VOT[] = {A0};
 
-Peer P{};
-VoltageSensor VOT{30000.0, 7500.0, ArrayList<int>(PIN_VOT)};
+Peer P{POWER_CONTROLLER};
+VoltageSensor VOT{ArrayList<int>(PIN_VOT, 1), 30000.0, 7500.0};
 
 void setup() {
     P.initializeAsRoot();
@@ -11,6 +11,7 @@ void setup() {
 }
 
 void loop() {
+    P.refresh();
     returnFloat(P, VOLTAGE_SENSOR, VOT.read());
     delay(100);
 }
