@@ -53,6 +53,10 @@ class SuspensionEvent(SystemEvent):
         self.fatal: bool = fatal
 
 
+class SuspensionExitEvent(SuspensionEvent):
+    pass
+
+
 class EventListener(CallbackChain):
     @_override
     def super(self, e: Event) -> None:
@@ -70,7 +74,7 @@ class EventListener(CallbackChain):
 
     def pre_suspend(self, event: SuspensionEvent) -> None: ...
 
-    def post_suspend(self, event: SuspensionEvent) -> None: ...
+    def post_suspend(self, event: SuspensionExitEvent) -> None: ...
 
     def brake_indicator(self, event: Event, state: bool) -> None: ...
 

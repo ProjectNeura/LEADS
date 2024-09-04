@@ -101,12 +101,10 @@ class Service(metaclass=_ABCMeta):
 
 
 class ConnectionBase(metaclass=_ABCMeta):
-    def __init__(self, service: Service, remainder: bytes, separator: bytes) -> None:
+    def __init__(self, remainder: bytes, separator: bytes) -> None:
         """
-        :param service: the service to which it belongs
         :param remainder: the message remained from the last connection
         """
-        self._service: Service = service
         self._remainder: bytes = remainder
         self._separator: bytes = separator
 
@@ -179,9 +177,9 @@ class ConnectionBase(metaclass=_ABCMeta):
 
 
 class Connection(ConnectionBase):
-    def __init__(self, service: Service, socket: _socket, address: tuple[str, int], remainder: bytes = b"",
-                 separator: bytes = b";", on_close: _Callable[[_Self], None] = lambda _: None) -> None:
-        super().__init__(service, remainder, separator)
+    def __init__(self, socket: _socket, address: tuple[str, int], remainder: bytes = b"", separator: bytes = b";",
+                 on_close: _Callable[[_Self], None] = lambda _: None) -> None:
+        super().__init__(remainder, separator)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
         self._on_close: _Callable[[Connection], None] = on_close

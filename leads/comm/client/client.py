@@ -21,7 +21,7 @@ class Client(Entity):
         """
         self._callback.on_initialize(self)
         self._socket.connect((server_address, self._port))
-        self._callback.on_connect(self, connection := Connection(self, self._socket, (server_address, self._port),
+        self._callback.on_connect(self, connection := Connection(self._socket, (server_address, self._port),
                                                                  separator=self._separator))
         self._connection = connection
         self._stage(connection)

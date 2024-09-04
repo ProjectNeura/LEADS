@@ -1,7 +1,7 @@
 from typing import Callable as _Callable
 
 from leads.dt import Device
-from leads.event import SuspensionEvent
+from leads.event import SuspensionEvent, SuspensionExitEvent
 from leads.logger import L
 from leads.registry import require_context
 
@@ -64,7 +64,8 @@ class SystemFailureTracer(object):
             if self._system_failures[system] > 0:
                 continue
             self._system_failures.pop(system)
-            self.on_recover(SuspensionEvent(require_context(), system, "Recovered"))
+            self.on_recover(e := SuspensionExitEvent(context := require_context(), system, "Recovered"))
+            context.suspend(e)
 
 
 SFT: SystemFailureTracer = SystemFailureTracer()

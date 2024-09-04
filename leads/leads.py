@@ -4,7 +4,7 @@ from leads.context import Context
 from leads.data import DataContainer
 from leads.dt import has_device
 from leads.event import EventListener, Event, DataPushedEvent, UpdateEvent, SuspensionEvent, InterventionEvent, \
-    InterventionExitEvent
+    InterventionExitEvent, SuspensionExitEvent
 from leads.plugin import Plugin
 from leads.sft import SFT
 
@@ -29,7 +29,10 @@ class LEADS(Context[T]):
 
     @_override
     def suspend(self, event: SuspensionEvent) -> None:
-        self._event_listener.pre_suspend(event)
+        if isinstance(event, SuspensionExitEvent):
+            self._event_listener.post_suspend(event)
+        else:
+            self._event_listener.pre_suspend(event)
 
     def _acquire_data(self, name: str, key: str, mandatory: bool = True) -> _Any | None:
         try:
