@@ -389,10 +389,10 @@ class Window(_Generic[T]):
 
         self._master.after(1, wrapper, True)
         self._master.mainloop()
+        self._active = False
 
     def kill(self) -> None:
         self._master.destroy()
-        self._active = False
 
 
 class ContextManager(object):
