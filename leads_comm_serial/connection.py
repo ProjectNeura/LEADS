@@ -27,7 +27,8 @@ class SerialConnection(_ConnectionBase):
         start = _time()
         try:
             msg = chunk = b""
-            while (timeout := self._serial.timeout) and _time() - start < timeout and self._separator not in chunk:
+            while not (
+                    (timeout := self._serial.timeout) and _time() - start > timeout) and self._separator not in chunk:
                 msg += (chunk := self._require_open_serial().read(chunk_size))
             return self.with_remainder(msg)
         except IOError:
