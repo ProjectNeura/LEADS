@@ -318,6 +318,8 @@ def main() -> int:
         @_override
         def pre_suspend(self, e: SuspensionEvent) -> None:
             self.super(e)
+            if not w.active():
+                return
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} SUSPD", text_color="gray")
             else:
@@ -340,6 +342,8 @@ def main() -> int:
         @_override
         def post_suspend(self, e: SuspensionExitEvent) -> None:
             self.super(e)
+            if not w.active():
+                return
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
             else:
