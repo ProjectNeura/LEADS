@@ -6,7 +6,8 @@ from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, 
 
 from numpy import nan as _nan
 
-from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, VisualHeaderFull as _VisualHeaderFull
+from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, \
+    VisualHeaderFull as _VisualHeaderFull, DefaultHeaderFull as _DefaultHeaderFull
 from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
     DataFrame as _DataFrame, TextFileReader as _TextFileReader
 
@@ -258,8 +259,8 @@ DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
     "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
 )
-DEFAULT_HEADER_FULL: tuple[str, str, str, str, str, str, str, str, str, str, str, str, str, str] = DEFAULT_HEADER + (
-    "throttle", "brake"
+DEFAULT_HEADER_FULL: _DefaultHeaderFull = DEFAULT_HEADER + (
+    "steering_position", "throttle", "brake"
 )
 VISUAL_HEADER_ONLY: tuple[str, str, str, str, str, str, str, str] = (
     "front_view_base64", "front_view_latency", "left_view_base64", "left_view_latency", "right_view_base64",

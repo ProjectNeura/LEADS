@@ -24,6 +24,7 @@ class DataContainer(Serializable):
                  gps_ground_speed: float = 0,
                  latitude: float = 0,
                  longitude: float = 0,
+                 steering_position: float = 0,
                  throttle: float = 0,
                  brake: float = 0,
                  **kwargs) -> None:
@@ -40,6 +41,7 @@ class DataContainer(Serializable):
         self.latitude: float = latitude
         self.longitude: float = longitude
 
+        self.steering_position: float = steering_position
         self.throttle: float = throttle
         self.brake: float = brake
 
@@ -93,6 +95,7 @@ class VisualDataContainer(DataContainer):
                  gps_ground_speed: float = 0,
                  latitude: float = 0,
                  longitude: float = 0,
+                 steering_position: float = 0,
                  throttle: float = 0,
                  brake: float = 0,
                  front_view_base64: str = "",
@@ -105,8 +108,8 @@ class VisualDataContainer(DataContainer):
                  rear_view_latency: int = 0,
                  **kwargs) -> None:
         super().__init__(voltage, speed, front_wheel_speed, rear_wheel_speed, forward_acceleration,
-                         lateral_acceleration, mileage, gps_valid, gps_ground_speed, latitude, longitude, throttle,
-                         brake, **kwargs)
+                         lateral_acceleration, mileage, gps_valid, gps_ground_speed, latitude, longitude,
+                         steering_position, throttle, brake, **kwargs)
         self.front_view_base64: str = front_view_base64
         self.front_view_latency: int = front_view_latency
         self.left_view_base64: str = left_view_base64
