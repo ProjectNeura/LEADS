@@ -10,8 +10,8 @@ from screeninfo import get_monitors as _get_monitors
 
 from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, GPSSpeedCorrection, \
     ESCMode, L, EventListener, DataPushedEvent, UpdateEvent, has_device, GPS_RECEIVER, get_device, InterventionEvent, \
-    SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, SFT, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, \
-    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA
+    SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, \
+    FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, SuspensionExitEvent
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses, ConnectionBase
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
 from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
@@ -320,12 +320,44 @@ def main() -> int:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} SUSPD", text_color="gray")
+            else:
+                match e.system:
+                    case "BATT":
+                        uim["battery_fault"].configure(image=Battery(color=Color.RED))
+                    case "BRAKE":
+                        uim["brake_fault"].configure(image=Brake(color=Color.RED))
+                    case "ESC":
+                        uim["esc_fault"].configure(image=ESC(color=Color.RED))
+                    case "GPS":
+                        uim["gps_fault"].configure(image=Satellite(color=Color.RED))
+                    case "LIGHT":
+                        uim["light_fault"].configure(image=Light(color=Color.RED))
+                    case "MOTOR":
+                        uim["motor_fault"].configure(image=Motor(color=Color.RED))
+                    case "WSC":
+                        uim["wsc_fault"].configure(image=Speed(color=Color.RED))
 
         @_override
-        def post_suspend(self, e: SuspensionEvent) -> None:
+        def post_suspend(self, e: SuspensionExitEvent) -> None:
             self.super(e)
             if e.system in SystemLiteral:
                 uim[f"{e.system.lower()}_status"].configure(text=f"{e.system} READY", text_color="green")
+            else:
+                match e.system:
+                    case "BATT":
+                        uim["battery_fault"].configure(image=None)
+                    case "BRAKE":
+                        uim["brake_fault"].configure(image=None)
+                    case "ESC":
+                        uim["esc_fault"].configure(image=None)
+                    case "GPS":
+                        uim["gps_fault"].configure(image=None)
+                    case "LIGHT":
+                        uim["light_fault"].configure(image=None)
+                    case "MOTOR":
+                        uim["motor_fault"].configure(image=None)
+                    case "WSC":
+                        uim["wsc_fault"].configure(image=None)
 
         @_override
         def brake_indicator(self, event: Event, state: bool) -> None:
@@ -370,43 +402,6 @@ def main() -> int:
     uim["motor_fault"] = _Label(root, text="")
     uim["wsc_fault"] = _Label(root, text="")
 
-    def on_fail(e: SuspensionEvent) -> None:
-        match e.system:
-            case "BATT":
-                uim["battery_fault"].configure(image=Battery(color=Color.RED))
-            case "BRAKE":
-                uim["brake_fault"].configure(image=Brake(color=Color.RED))
-            case "ESC":
-                uim["esc_fault"].configure(image=ESC(color=Color.RED))
-            case "GPS":
-                uim["gps_fault"].configure(image=Satellite(color=Color.RED))
-            case "LIGHT":
-                uim["light_fault"].configure(image=Light(color=Color.RED))
-            case "MOTOR":
-                uim["motor_fault"].configure(image=Motor(color=Color.RED))
-            case "WSC":
-                uim["wsc_fault"].configure(image=Speed(color=Color.RED))
-
-    SFT.on_fail = on_fail
-
-    def on_recover(e: SuspensionEvent) -> None:
-        match e.system:
-            case "BATT":
-                uim["battery_fault"].configure(image=None)
-            case "BRAKE":
-                uim["brake_fault"].configure(image=None)
-            case "ESC":
-                uim["esc_fault"].configure(image=None)
-            case "GPS":
-                uim["gps_fault"].configure(image=None)
-            case "LIGHT":
-                uim["light_fault"].configure(image=None)
-            case "MOTOR":
-                uim["motor_fault"].configure(image=None)
-            case "WSC":
-                uim["wsc_fault"].configure(image=None)
-
-    SFT.on_recover = on_recover
     meters = ["m1", "m2", "m3"]
     buttons = ["left", "time_lap", "hazard", "right"]
     fault_lights = ["battery_fault", "brake_fault", "esc_fault", "gps_fault", "light_fault", "motor_fault", "wsc_fault"]
