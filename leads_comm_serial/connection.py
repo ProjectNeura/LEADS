@@ -1,4 +1,5 @@
-from typing import override as _override, Literal as _Literal
+from time import time as _time
+from typing import override as _override, Literal as _Literal, Self as _Self
 
 from serial import Serial as _Serial
 
@@ -23,9 +24,10 @@ class SerialConnection(_ConnectionBase):
     def receive(self, chunk_size: int = 1) -> bytes | None:
         if self._remainder != b"":
             return self.use_remainder()
+        start = _time()
         try:
             msg = chunk = b""
-            while self._separator not in chunk:
+            while (timeout := self._serial.timeout) and _time() - start < timeout and self._separator not in chunk:
                 msg += (chunk := self._require_open_serial().read(chunk_size))
             return self.with_remainder(msg)
         except IOError:
@@ -39,3 +41,11 @@ class SerialConnection(_ConnectionBase):
     def close(self) -> None:
         self.disconnect()
         self._require_open_serial(False).close()
+
+    def suspect(self, timeout: int = 1) -> _Self:
+        self._serial.timeout = timeout
+        return self
+
+    def trust(self) -> _Self:
+        self._serial.timeout = None
+        return self
