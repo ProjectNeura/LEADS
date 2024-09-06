@@ -11,15 +11,15 @@ _lock: _Lock = _Lock()
 
 
 class AutoIdentity(object, metaclass=_ABCMeta):
-    def __init__(self, retry: bool = False, remainder: bytes = b"", seperator: bytes = b";") -> None:
+    def __init__(self, retry: bool = False, remainder: bytes = b"", separator: bytes = b";") -> None:
         self._retry: bool = retry
         self._remainder: bytes = remainder
-        self._seperator: bytes = seperator
+        self._separator: bytes = separator
         self._tried_ports: list[str] = []
         _instances[self] = None
 
     def meta(self) -> tuple[bool, bytes, bytes]:
-        return self._retry, self._remainder, self._seperator
+        return self._retry, self._remainder, self._separator
 
     def suggest_next_port(self, tried_port: str | None = None) -> str | None:
         if tried_port:
