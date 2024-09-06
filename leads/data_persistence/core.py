@@ -255,9 +255,10 @@ class CSVDataset(_Iterable[dict[str, _Any]]):
             self._csv.close()
 
 
-DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str] = (
+DEFAULT_HEADER: tuple[str, str, str, str, str, str, str, str, str, str, str, str, str, str, str, str] = (
     "t", "voltage", "speed", "front_wheel_speed", "rear_wheel_speed", "forward_acceleration", "lateral_acceleration",
-    "mileage", "gps_valid", "gps_ground_speed", "latitude", "longitude"
+    "front_proximity", "left_proximity", "right_proximity", "rear_proximity", "mileage", "gps_valid",
+    "gps_ground_speed", "latitude", "longitude"
 )
 DEFAULT_HEADER_FULL: _DefaultHeaderFull = DEFAULT_HEADER + (
     "steering_position", "throttle", "brake"
