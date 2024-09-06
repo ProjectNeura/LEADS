@@ -11,15 +11,15 @@ _lock: _Lock = _Lock()
 
 
 class AutoIdentity(object, metaclass=_ABCMeta):
-    def __init__(self, retry: bool = False, remainder: bytes = b"", seperator: bytes = b";") -> None:
+    def __init__(self, retry: bool = False, remainder: bytes = b"", separator: bytes = b";") -> None:
         self._retry: bool = retry
         self._remainder: bytes = remainder
-        self._seperator: bytes = seperator
+        self._separator: bytes = separator
         self._tried_ports: list[str] = []
         _instances[self] = None
 
     def meta(self) -> tuple[bool, bytes, bytes]:
-        return self._retry, self._remainder, self._seperator
+        return self._retry, self._remainder, self._separator
 
     def suggest_next_port(self, tried_port: str | None = None) -> str | None:
         if tried_port:
@@ -43,7 +43,7 @@ class AutoIdentity(object, metaclass=_ABCMeta):
             elif serial.port not in _available_ports:
                 raise ValueError("Port taken")
             serial.open()
-            connection = SerialConnection(serial).suspect()
+            connection = SerialConnection(serial, self._remainder, self._separator).suspect()
             if port or self.check_identity(connection):
                 return connection.trust()
             for instance in _instances.keys():
@@ -79,6 +79,7 @@ def _detect_ports() -> None:
         serial.open()
         connection = SerialConnection(serial).suspect()
         for instance in _instances.keys():
+            connection._remainder = b""
             connection._separator = instance.meta()[2]
             if instance.check_identity(connection):
                 _instances[instance] = port
