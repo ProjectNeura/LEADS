@@ -43,7 +43,7 @@ class AutoIdentity(object, metaclass=_ABCMeta):
             elif serial.port not in _available_ports:
                 raise ValueError("Port taken")
             serial.open()
-            connection = SerialConnection(serial).suspect()
+            connection = SerialConnection(serial, self._remainder, self._separator).suspect()
             if port or self.check_identity(connection):
                 return connection.trust()
             for instance in _instances.keys():
@@ -79,6 +79,7 @@ def _detect_ports() -> None:
         serial.open()
         connection = SerialConnection(serial).suspect()
         for instance in _instances.keys():
+            connection._remainder = b""
             connection._separator = instance.meta()[2]
             if instance.check_identity(connection):
                 _instances[instance] = port
