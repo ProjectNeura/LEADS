@@ -24,6 +24,8 @@ LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.pr
 
 :link: [Home](https://leads.projectneura.org)
 
+:link: [News](https://x.com/ProjectNeura)
+
 :link: [Docs](https://leads-docs.projectneura.org)
 
 :link: [LEADS VeC Remote Analyst Online Dashboard](https://leads-vec-rc.projectneura.org)
