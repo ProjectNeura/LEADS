@@ -12,6 +12,7 @@ class Device(object):
 
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""
+        self._tag_locked: bool = False
         self._parent_tags: tuple[str, ...] = ()
         self._pins: tuple[int | str, ...] = pins
 
@@ -29,12 +30,20 @@ class Device(object):
     def tag(self, tag: str | None = None) -> str | None:
         """
         Set or get the tag of the device.
+        The tag will not be set if it is locked.
         :param tag: the tag or None if getter mode
         :return: the tag or None if setter mode
         """
         if tag is None:
             return self._tag
-        self._tag = tag
+        if not self._tag_locked:
+            self._tag = tag
+
+    def lock_tag(self) -> None:
+        """
+        Lock the tag of the device.
+        """
+        self._tag_locked = True
 
     def parent_tags(self) -> tuple[str, ...]:
         """

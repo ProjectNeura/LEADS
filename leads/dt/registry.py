@@ -57,6 +57,7 @@ def register_controller(tag: str, c: Controller, parent: str | None = None) -> N
         _controllers[parent].device(tag, c)
     else:
         c.tag(tag)
+        c.lock_tag()
     _controllers[tag] = c
 
 

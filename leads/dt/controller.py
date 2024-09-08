@@ -15,6 +15,7 @@ class Controller(Device):
     def _attach_device(self, tag: str, device: Device) -> None:
         self._devices[tag] = device
         device.tag(tag)
+        device.lock_tag()
 
     def devices(self) -> list[Device]:
         """
