@@ -30,7 +30,7 @@ class Service(metaclass=_ABCMeta):
     def port(self) -> int:
         """
         Get the port that the service listens on or connects to.
-        :return:
+        :return: the port
         """
         return self._port
 
@@ -104,11 +104,15 @@ class ConnectionBase(metaclass=_ABCMeta):
     def __init__(self, remainder: bytes, separator: bytes) -> None:
         """
         :param remainder: the message remained from the last connection
+        :param separator: the symbol that splits the stream into messages
         """
         self._remainder: bytes = remainder
         self._separator: bytes = separator
 
     def drop_remainder(self) -> None:
+        """
+        Clear the current remainder.
+        """
         self._remainder = b""
 
     def use_remainder(self) -> bytes:
