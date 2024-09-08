@@ -20,9 +20,20 @@ class ConfigTemplate(Serializable):
         self.refresh()
 
     def fix_dict(self, d: dict[str, _Any]) -> dict[str, _SupportedConfig]:
+        """
+        Fix the types of every element in the dictionary.
+        :param d: the input dictionary
+        :return: the fixed dictionary
+        """
         return {k: self.fix_type(v) for k, v in d.items()}
 
     def fix_type(self, value: _Any) -> _SupportedConfig:
+        """
+        Replace lists with tuples and check for illegal types.
+        :param value: the input value
+        :return: the fixed value where
+        :exception TypeError: the type of the value is illegal
+        """
         if isinstance(value, (tuple, list)):
             return tuple(self.fix_type(i) for i in value)
         if not isinstance(value, (bool, int, float, str, type(None))):

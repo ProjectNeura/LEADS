@@ -35,6 +35,7 @@ class Client(Entity):
         """
         Send the message to the server.
         :param msg: the message to send
+        :exception IOError: no connection
         """
         if not self._connection:
             raise IOError("Client must be running to perform this operation")

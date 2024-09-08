@@ -56,10 +56,11 @@ class Service(metaclass=_ABCMeta):
         Register the multithread worker.
         :param args: args passed to `run()`
         :param kwargs: kwargs passed to `run()`
+        :exception RuntimeError: duplicated registration
         """
         self._lock.acquire()
         if self._main_thread:
-            raise RuntimeWarning("A service can only run once")
+            raise RuntimeError("A service can only run once")
         try:
             self._main_thread = _Thread(name=f"service{hash(self)}", target=self._run, daemon=True, args=args,
                                         kwargs=kwargs)
@@ -214,6 +215,7 @@ class Connection(ConnectionBase):
         Check if the socket is active and return it.
         :param mandatory: True: an open socket is required; False: a closed socket is acceptable
         :return: the socket object
+        :exception IOError: the socket is closed
         """
         if mandatory and self.closed():
             raise IOError("An open socket is required")
