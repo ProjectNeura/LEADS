@@ -40,6 +40,9 @@ class Device(object):
             self._tag = tag
 
     def lock_tag(self) -> None:
+        """
+        Lock the tag of the device.
+        """
         self._tag_locked = True
 
     def parent_tags(self) -> tuple[str, ...]:
