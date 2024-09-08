@@ -30,6 +30,7 @@ class Device(object):
     def tag(self, tag: str | None = None) -> str | None:
         """
         Set or get the tag of the device.
+        The tag will not be set if it is locked.
         :param tag: the tag or None if getter mode
         :return: the tag or None if setter mode
         """
