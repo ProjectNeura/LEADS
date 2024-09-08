@@ -12,6 +12,7 @@ class Device(object):
 
     def __init__(self, *pins: int | str) -> None:
         self._tag: str = ""
+        self._tag_locked: bool = False
         self._parent_tags: tuple[str, ...] = ()
         self._pins: tuple[int | str, ...] = pins
 
@@ -34,7 +35,11 @@ class Device(object):
         """
         if tag is None:
             return self._tag
-        self._tag = tag
+        if not self._tag_locked:
+            self._tag = tag
+
+    def lock_tag(self) -> None:
+        self._tag_locked = True
 
     def parent_tags(self) -> tuple[str, ...]:
         """
