@@ -11,6 +11,11 @@ class Server(Entity):
     """
 
     def __init__(self, port: int, callback: Callback, separator: bytes) -> None:
+        """
+        :param port: the port on which the server listens
+        :param callback: the callback interface
+        :param separator: the symbol that splits the stream into messages
+        """
         super().__init__(port, callback)
         self._connections: list[Connection] = []
         self._separator: bytes = separator

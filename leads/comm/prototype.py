@@ -29,8 +29,7 @@ class Service(metaclass=_ABCMeta):
 
     def port(self) -> int:
         """
-        Get the port that the service listens on or connects to.
-        :return: the port
+        :return: the port that the service listens on or connects to
         """
         return self._port
 
@@ -183,6 +182,13 @@ class ConnectionBase(metaclass=_ABCMeta):
 class Connection(ConnectionBase):
     def __init__(self, socket: _socket, address: tuple[str, int], remainder: bytes = b"", separator: bytes = b";",
                  on_close: _Callable[[_Self], None] = lambda _: None) -> None:
+        """
+        :param socket: the socket used for this connection (must be open)
+        :param address: [address, port]
+        :param remainder: the message remained from the last connection
+        :param separator: the symbol that splits the stream into messages
+        :param on_close: callback method when the connection is closed
+        """
         super().__init__(remainder, separator)
         self._socket: _socket = socket
         self._address: tuple[str, int] = address
@@ -263,7 +269,7 @@ class Callback(CallbackChain):
 class Entity(Service, metaclass=_ABCMeta):
     def __init__(self, port: int, callback: Callback) -> None:
         """
-        :param port: the port on which the service listens
+        :param port: the port that the service listens on or connects to
         :param callback: the callback interface
         """
         super().__init__(port)
@@ -271,7 +277,7 @@ class Entity(Service, metaclass=_ABCMeta):
 
     def set_callback(self, callback: Callback) -> None:
         """
-        :param callback: the callback methods
+        :param callback: the callback interface
         """
         callback.bind_chain(self._callback)
         self._callback = callback

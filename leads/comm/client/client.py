@@ -9,6 +9,11 @@ class Client(Entity):
     """
 
     def __init__(self, port: int, callback: Callback, separator: bytes) -> None:
+        """
+        :param port: the port to which the client connects
+        :param callback: the callback interface
+        :param separator: the symbol that splits the stream into messages
+        """
         super().__init__(port, callback)
         self._connection: Connection | None = None
         self._separator: bytes = separator
