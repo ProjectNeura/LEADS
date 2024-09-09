@@ -1,5 +1,8 @@
 #include "Accelerometer.h"
 
+String Acceleration::toString() {
+    return String(yaw) + "," + pitch + "," + roll + "," + forwardAcceleration + "," + lateralAcceleration + "," + verticalAcceleration;
+}
 void Accelerometer::initialize(const ArrayList<String> &parentTags) {
     Device<Acceleration>::initialize(parentTags);
     _rvc.begin(&Serial1);
