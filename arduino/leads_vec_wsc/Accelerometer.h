@@ -3,6 +3,7 @@
 
 
 struct Acceleration {
+    float yaw = 0, pitch = 0, roll = 0;
     float forwardAcceleration = 0, lateralAcceleration = 0, verticalAcceleration = 0;
 };
 
