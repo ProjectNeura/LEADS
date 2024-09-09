@@ -1,4 +1,4 @@
-#include "LEADS.h"  // LEADS>=1.1.0
+#include "Accelerometer.h"
 
 const int PIN_LFWSS[] = {2};
 const int PIN_RFWSS[] = {3};
