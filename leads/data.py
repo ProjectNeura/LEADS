@@ -17,8 +17,12 @@ class DataContainer(Serializable):
                  speed: float = 0,
                  front_wheel_speed: float = 0,
                  rear_wheel_speed: float = 0,
+                 yaw: float = 0,
+                 pitch: float = 0,
+                 roll: float = 0,
                  forward_acceleration: float = 0,
                  lateral_acceleration: float = 0,
+                 vertical_acceleration: float = 0,
                  front_proximity: float = -1,
                  left_proximity: float = -1,
                  right_proximity: float = -1,
@@ -37,8 +41,12 @@ class DataContainer(Serializable):
         self.speed: float = speed
         self.front_wheel_speed: float = front_wheel_speed
         self.rear_wheel_speed: float = rear_wheel_speed
+        self.yaw: float = yaw
+        self.pitch: float = pitch
+        self.roll: float = roll
         self.forward_acceleration: float = forward_acceleration
         self.lateral_acceleration: float = lateral_acceleration
+        self.vertical_acceleration: float = vertical_acceleration
         self.front_proximity: float = front_proximity
         self.left_proximity: float = left_proximity
         self.right_proximity: float = right_proximity
@@ -96,8 +104,12 @@ class VisualDataContainer(DataContainer):
                  speed: float = 0,
                  front_wheel_speed: float = 0,
                  rear_wheel_speed: float = 0,
+                 yaw: float = 0,
+                 pitch: float = 0,
+                 roll: float = 0,
                  forward_acceleration: float = 0,
                  lateral_acceleration: float = 0,
+                 vertical_acceleration: float = 0,
                  front_proximity: float = -1,
                  left_proximity: float = -1,
                  right_proximity: float = -1,
@@ -119,10 +131,10 @@ class VisualDataContainer(DataContainer):
                  rear_view_base64: str = "",
                  rear_view_latency: int = 0,
                  **kwargs) -> None:
-        super().__init__(voltage, speed, front_wheel_speed, rear_wheel_speed, forward_acceleration,
-                         lateral_acceleration, front_proximity, left_proximity, right_proximity, rear_proximity,
-                         mileage, gps_valid, gps_ground_speed, latitude, longitude, steering_position, throttle, brake,
-                         **kwargs)
+        super().__init__(voltage, speed, front_wheel_speed, rear_wheel_speed, yaw, pitch, roll, forward_acceleration,
+                         lateral_acceleration, vertical_acceleration, front_proximity, left_proximity, right_proximity,
+                         rear_proximity, mileage, gps_valid, gps_ground_speed, latitude, longitude, steering_position,
+                         throttle, brake, **kwargs)
         self.front_view_base64: str = front_view_base64
         self.front_view_latency: int = front_view_latency
         self.left_view_base64: str = left_view_base64
