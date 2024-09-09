@@ -12,7 +12,6 @@ class CANBus(_Controller, _Listener):
         self._bus: _Bus | None = None
         self._notifier: _Notifier | None = None
 
-    @_override
     def on_message_received(self, msg: _Message) -> None:
         for device in self.devices():
             device.update(msg)
