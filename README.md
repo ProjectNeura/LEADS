@@ -39,6 +39,8 @@ LEADS framework ensures that its applications, including LEADS VeC, have extreme
 promising safety, but still, always keep our
 [Safety Instructions](https://leads-docs.projectneura.org/en/latest/vec/safety-instructions.html) in mind.
 
+![leads-framework](docs/assets/leads-framework.png)
+
 </details>
 
 <details>
@@ -67,11 +69,11 @@ Even with extraordinary details and animation, we still manages to provide you w
 LEADS supports an unlimited number of displays. You can enable a specific number of displays simply through a
 configuration.
 
-![demo](docs/assets/demo-2.gif)
+![demo-2](docs/assets/demo-2.gif)
 
 </details>
 
-![demo](docs/assets/demo-1.gif)
+![demo-1](docs/assets/demo-1.gif)
 
 </details>
 
@@ -112,7 +114,7 @@ It is not surprising that some racing events do not allow control of the vehicle
 provide a manual mode where all assistance is forcibly disabled. You can simply set configuration `manual_mode` to
 `True` to enable this mode.
 
-![demo-manual.png](docs/assets/demo-manual.png)
+![demo-manual](docs/assets/demo-manual.png)
 
 </details>
 
@@ -156,7 +158,7 @@ performance.
 LEADS VeC Remote Analyst is designed so that the pit crew can track the vehicle. It consists of a local web server and a
 frontend website.
 
-![leads-vec-rc.png](docs/assets/leads-vec-rc.png)
+![leads-vec-rc](docs/assets/leads-vec-rc.png)
 
 </details>
 
