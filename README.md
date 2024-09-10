@@ -182,6 +182,8 @@ data was recorded.
 Powered by rich datasets, our ambition is to change car racing as a whole, just as AlphaGo changed Go. This blueprint
 has never been such easy as today thanks to AI.
 
+![lap-analysis](docs/assets/lap-analysis.png)
+
 </details>
 
 ## Installation
