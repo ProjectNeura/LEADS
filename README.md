@@ -6,6 +6,8 @@
 ![GitHub Release](https://img.shields.io/github/v/release/ProjectNeura/LEADS)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/ProjectNeura/LEADS)
 
+![pv](docs/assets/pv.png)
+
 LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the
 instrumentation, control, and analysis system for racing cars. It is written in well-organized Python and C/C++ with
 impressive performance. It is not only out-of-the-box ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec))
