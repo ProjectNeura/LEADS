@@ -37,8 +37,8 @@ LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.pr
 <details>
 <summary>Robust framework and good compatibility</summary>
 
-LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually provide
-promising safety, but still, always keep our
+The LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually
+provide promising safety, but still, always keep our
 [Safety Instructions](https://leads-docs.projectneura.org/en/latest/vec/safety-instructions.html) in mind.
 
 ![leads-framework](docs/assets/leads-framework.png)
