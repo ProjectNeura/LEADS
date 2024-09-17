@@ -8,9 +8,9 @@
 
 ![pv](docs/assets/pv.png)
 
-LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the
-instrumentation, control, and analysis system for racing cars. It is written in well-organized Python and C/C++ with
-impressive performance. It is not only out-of-the-box ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec))
+LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of instrumentation,
+control, and analysis systems for racing cars. It is written in well-organized Python and C/C++ and has impressive
+performance.It is not only out-of-the-box ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec))
 but also fully customizable. It provides multiple abstract layers that allow users to pull out the components and
 rearrange them into a new project. You can either configure the existing executable module `leads_vec` and
 `leads_vec_rc` simply through a JSON file or write your own codes based on the framework as easily as building a LEGO.
