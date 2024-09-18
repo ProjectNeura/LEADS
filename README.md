@@ -21,8 +21,7 @@ Arduino instead. However, as it is a high-level system running on a host compute
 ability to adapt to any type of hardware component if you are willing to write some codes.
 
 This document will guide you through LEADS VeC. You will find a detailed version
-[here](https://leads-docs.projectneura.org/en/latest/vec). If you are confused with the difference between LEADS and
-LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.projectneura.org).
+[here](https://leads-docs.projectneura.org/en/latest/vec).
 
 :link: [Home](https://leads.projectneura.org)
 
@@ -35,11 +34,57 @@ LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.pr
 ## Why LEADS?
 
 <details>
+<summary>Rich ecology</summary>
+
+<details>
+
+<summary>LEADS</summary>
+
+In a narrow sense, LEADS refers to the LEADS framework, which consists of an abstract skeleton and implementations for
+various businesses.
+
+</details>
+
+<details>
+
+<summary>LEADS VeC</summary>
+
+LEADS VeC composes a set of executable modules that are designed for the VeC (Villanova Electric Car) Project. These
+modules are customizable and configurable to a certain extent, yet they have limitations due to some assumptions of use
+cases. Compared to the LEADS framework, it sits closer to users and allows users to quickly test their ideas.
+
+</details>
+
+<details>
+
+<summary>Accessories</summary>
+
+Accessories contribute a huge portion to the richness of the LEADS ecosystem. These accessories include plugins that
+directly interact with the core programs, such as [Project Thor](https://github.com/ProjectNeura/Thor), and standalone
+applications that communicate with LEADS through the data link, such as
+[LEADS Jarvis](https://github.com/ProjectNeura/LEADS-Jarvis).
+
+</details>
+
+As stated in its name, LEADS tries to keep a modular structure with a small granularity so that users have more
+flexibility in dependencies and keep the system lightweight. To do so, we split LEADS into multiple packages according
+to the programming language, platform, features, and dependencies, but generally, these packages are grouped into 3
+types: LEADS (LEADS framework), LEADS VeC, and accessories.
+
+![ecology](docs/assets/ecology.png)
+
+</details>
+
+<details>
 <summary>Robust framework and good compatibility</summary>
 
 The LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually
 provide promising safety, but still, always keep our
 [Safety Instructions](https://leads-docs.projectneura.org/en/latest/vec/safety-instructions.html) in mind.
+
+Most of the codes are written in Python and the dependencies are carefully chosen so that LEADS runs everywhere Python
+runs. In addition, on platforms like Arduino where we must use other programming languages, we try hard to keep
+consistency.
 
 ![leads-framework](docs/assets/leads-framework.png)
 
