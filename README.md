@@ -125,7 +125,7 @@ configuration.
 </details>
 
 <details>
-<summary>Powerful ESC system</summary>
+<summary>Powerful ESC systems</summary>
 <details>
 <summary>DTCS (Dynamic Traction Control System)</summary>
 
