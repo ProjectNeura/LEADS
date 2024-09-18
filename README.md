@@ -137,7 +137,7 @@ It allows a certain amount of drift while ensuring grip.
 <summary>ABS (Anti-lock Braking System)</summary>
 
 ABS allows the driver to safely step on the brakes to the bottom without locking the brakes. Although this may increase
-braking distances, it ensures you always have grip.
+braking distances, it ensures you always have the grip.
 
 </details>
 <details>
@@ -151,7 +151,7 @@ system greatly reduces the probability of rear-end collisions.
 <summary>ATBS (Automatic Trail Braking System)</summary>
 
 ATBS monitors the steering angle and adjusts the brakes in time to ensure that the front of the car obtains the
-corresponding downforce. Its intervention will avoid under-steer (pushing the head) or oversteer (drifting).
+corresponding downforce. Its intervention will avoid under-steers (pushing the head) or over-steers (drifting).
 
 </details>
 <details>
@@ -165,8 +165,9 @@ provide a manual mode where all assistance is forcibly disabled. You can simply 
 
 </details>
 
-All 4 systems have 4 calibrations: standard, aggressive, sport, and off. Their intervention comes later than the
-previous respectively.
+Plugins can be easily customized and installed in LEADS. It also comes with several existing ones including 4 ESC
+plugins that realize 4 ESC systems. All 4 systems have 4 calibrations: standard, aggressive, sport, and off. Their
+intervention comes later than the previous respectively.
 
 </details>
 
