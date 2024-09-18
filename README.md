@@ -105,7 +105,7 @@ Even with extraordinary details and animation, we still manages to provide you w
 
 | Test Platform              | Maximum Frame Rate (FPS) |
 |----------------------------|--------------------------|
-| Macbook Pro (M3)           | 260                      |
+| Apple MacBook Pro (M3)     | 260                      |
 | Raspberry Pi 5 8GB         | 100                      |
 | Raspberry Pi 4 Model B 8GB | 60                       |
 
