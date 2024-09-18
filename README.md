@@ -103,11 +103,11 @@ LEADS inherently supports dark mode. You can simply change your system preferenc
 
 Even with extraordinary details and animation, we still manages to provide you with incredible performance.
 
-| Test Platform              | Maximum Refresh Rate (FPS) |
-|----------------------------|----------------------------|
-| Macbook Pro (M3)           | 260                        |
-| Raspberry Pi 5 8GB         | 100                        |
-| Raspberry Pi 4 Model B 8GB | 60                         |
+| Test Platform              | Maximum Frame Rate (FPS) |
+|----------------------------|--------------------------|
+| Macbook Pro (M3)           | 260                      |
+| Raspberry Pi 5 8GB         | 100                      |
+| Raspberry Pi 4 Model B 8GB | 60                       |
 
 </details>
 <details>
