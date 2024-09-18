@@ -179,7 +179,7 @@ server and can connect to multiple clients. All data collected through LEADS can
 anywhere far from the vehicle within an unnoticeable time, and that is not the end of the data's travel.
 
 We are a big fan of data collection. With our data persistence technologies, all data are saved in popular formats such
-as CSV, and processed in an intuitive way by LEADS VeC Data Processor.
+as CSV and processed in an intuitive way by LEADS VeC Data Processor.
 
 During the development of LEADS, we have accumulated massive amounts of real-world data that can be made into public
 road datasets.
