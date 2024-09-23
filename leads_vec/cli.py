@@ -250,6 +250,20 @@ def main() -> int:
     if cfg.comm_stream:
         enable_comm_stream(uim, cfg.comm_stream_port)
 
+    class IdleUpdate(FrequencyGenerator):
+        @_override
+        def do(self) -> None:
+            var_info.set(f"VeC {__version__.upper()}\n\n"
+                         f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
+                         f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
+                         f"{(m := ctx.data().mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
+                         f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
+                         f"{(["NOT FOUND"] + my_ip_addresses())[-1]}:{w.runtime_data().comm.port()}")
+            debug_messages = L.history_messages()
+            var_debug.set(f"DEBUG CONSOLE [TAB]\n\n{"\n".join(debug_messages[-min(len(debug_messages), 6):])}")
+
+    w.add_frequency_generator("idle_update", IdleUpdate(1000))
+
     class CustomListener(EventListener):
         @_override
         def pre_push(self, e: DataPushedEvent) -> None:
@@ -280,19 +294,11 @@ def main() -> int:
                             f"LAT {d.latitude:.5f}\nLON {d.longitude:.5f}")
             if cam := get_camera(REAR_VIEW_CAMERA):
                 var_rear_view.set(cam.read_pil())
-            var_info.set(f"VeC {__version__.upper()}\n\n"
-                         f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                         f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
-                         f"{(m := d.mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
-                         f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
-                         f"{(["NOT FOUND"] + my_ip_addresses())[-1]}:{w.runtime_data().comm.port()}")
             var_speed.set(d.speed)
             var_voltage.set(f"{d.voltage:.1f} V")
             st = ctx.speed_trend()
             var_speed_trend.set(st)
             var_g_force.set((d.lateral_acceleration, d.forward_acceleration))
-            debug_messages = L.history_messages()
-            var_debug.set(f"DEBUG CONSOLE [TAB]\n\n{"\n".join(debug_messages[-min(len(debug_messages), 6):])}")
             if w.runtime_data().control_system_switch_changed:
                 for system in SystemLiteral:
                     system_lowercase = system.lower()
