@@ -327,8 +327,8 @@ class Window(_Generic[T]):
     def height(self) -> int:
         return self._height
 
-    def fps(self) -> float:
-        return self._performance_checker.fps()
+    def frame_rate(self) -> float:
+        return self._performance_checker.frame_rate()
 
     def net_delay(self) -> float:
         return self._performance_checker.net_delay()
