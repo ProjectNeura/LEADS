@@ -257,7 +257,7 @@ def main() -> int:
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                          f"{format_duration(duration := _time() - w.runtime_data().start_time)}\n"
                          f"{(m := ctx.data().mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
-                         f"{cfg.refresh_rate} - {w.fps():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
+                         f"{cfg.refresh_rate} - {w.frame_rate():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
                          f"{(["NOT FOUND"] + my_ip_addresses())[-1]}:{w.runtime_data().comm.port()}")
             debug_messages = L.history_messages()
             var_debug.set(f"DEBUG CONSOLE [TAB]\n\n{"\n".join(debug_messages[-min(len(debug_messages), 6):])}")
