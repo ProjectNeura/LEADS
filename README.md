@@ -41,7 +41,8 @@ This document will guide you through LEADS VeC. You will find a detailed version
 <summary>LEADS</summary>
 
 In a narrow sense, LEADS refers to the LEADS framework, which consists of an abstract skeleton and implementations for
-various businesses.
+various businesses. The framework includes a context that interacts with the physical car, a device tree system, a
+communication system, a GUI system, and many specifically defined devices.
 
 </details>
 
