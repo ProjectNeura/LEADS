@@ -16,7 +16,7 @@ class PerformanceChecker(object):
         self._model: _poly1d | None = None
         self._last_frame: float = _time()
 
-    def fps(self) -> float:
+    def frame_rate(self) -> float:
         return 1 / _average(self._delay_seq)
 
     def net_delay(self) -> float:
