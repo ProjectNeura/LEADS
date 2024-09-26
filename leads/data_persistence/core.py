@@ -30,18 +30,19 @@ def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
 
 
 class DataPersistence(_Sequence[T], _Generic[T]):
-    def __init__(self, max_size: int = -1, chunk_scale: int = 1, compressor: _Compressor[T] = mean_compressor) -> None:
+    def __init__(self, max_size: int = -1, equivalent_chunk_size: int = 1,
+                 compressor: _Compressor[T] = mean_compressor) -> None:
         """
         :param max_size: maximum cached size
-        :param chunk_scale: chunk scaling factor (compression)
+        :param equivalent_chunk_size: the size to which the compressor always down-samples
         :param compressor: compressor interface
         """
         self._max_size: int = max_size
-        self._chunk_scale: int = chunk_scale
+        self._equivalent_chunk_size: int = equivalent_chunk_size
         self._compressor: _Compressor[T] = compressor
         self._data: list[T] = []
         self._chunk: list[T] = []
-        self._chunk_size: int = chunk_scale
+        self._chunk_size: int = equivalent_chunk_size
 
     @_override
     def __len__(self) -> int:
@@ -53,10 +54,10 @@ class DataPersistence(_Sequence[T], _Generic[T]):
 
     @_override
     def __str__(self) -> str:
-        return str(self._data)
+        return str(self.to_list())
 
     def to_list(self) -> list[T]:
-        return self._data.copy()
+        return self._data + self._chunk
 
     def _push_to_data(self, element: T) -> None:
         self._data.append(element)
@@ -71,7 +72,7 @@ class DataPersistence(_Sequence[T], _Generic[T]):
             return self._push_to_data(element)
         self._chunk.append(element)
         if len(self._chunk) >= self._chunk_size:
-            for e in self._compressor(self._chunk, self._chunk_scale):
+            for e in self._compressor(self._chunk, self._equivalent_chunk_size):
                 self._push_to_data(e)
             self._chunk.clear()
 
