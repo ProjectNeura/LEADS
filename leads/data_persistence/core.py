@@ -24,9 +24,7 @@ def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
     chunk_size = int(len(sequence) / target_size)
     if chunk_size < 2:
         return sequence
-    r = []
-    for i in range(target_size - 1):
-        r.append(_mean(sequence[i * chunk_size: (i + 1) * chunk_size]))
+    r = [_mean(sequence[i * chunk_size: (i + 1) * chunk_size]) for i in range(target_size - 1)]
     r.append(_mean(sequence[(target_size - 1) * chunk_size:]))
     return r
 

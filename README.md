@@ -6,12 +6,14 @@
 ![GitHub Release](https://img.shields.io/github/v/release/ProjectNeura/LEADS)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/ProjectNeura/LEADS)
 
-LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of the
-instrumentation, control, and analysis system for racing cars. It is written in well-organized Python and C/C++ with
-impressive performance. It is not only out-of-the-box ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec))
-but also fully customizable. It provides multiple abstract layers that allow users to pull out the components and
-rearrange them into a new project. You can either configure the existing executable module `leads_vec` and
-`leads_vec_rc` simply through a JSON file or write your own codes based on the framework as easily as building a LEGO.
+![pv](docs/assets/pv.png)
+
+LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of instrumentation,
+control, and analysis systems for racing cars. It is written in well-organized Python and C/C++ and has impressive
+performance.It is not only out-of-the-box but also fully customizable. It provides multiple abstract layers that allow
+users to pull out the components and rearrange them into a new project. You can either configure the existing executable
+modules ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec)) simply through a JSON file or write your own
+codes based on the framework as easily as building a LEGO.
 
 The hardware components chosen for this project are geared towards amateur developers. It uses neither a CAN bus
 (although it is supported) nor any dedicated circuit board, but generic development kits such as Raspberry Pi and
@@ -19,8 +21,7 @@ Arduino instead. However, as it is a high-level system running on a host compute
 ability to adapt to any type of hardware component if you are willing to write some codes.
 
 This document will guide you through LEADS VeC. You will find a detailed version
-[here](https://leads-docs.projectneura.org/en/latest/vec). If you are confused with the difference between LEADS and
-LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.projectneura.org).
+[here](https://leads-docs.projectneura.org/en/latest/vec).
 
 :link: [Home](https://leads.projectneura.org)
 
@@ -33,11 +34,60 @@ LEADS VeC, check out our definition of the LEADS ecology [here](https://leads.pr
 ## Why LEADS?
 
 <details>
+<summary>Rich ecology</summary>
+
+<details>
+
+<summary>LEADS</summary>
+
+In a narrow sense, LEADS refers to the LEADS framework, which consists of an abstract skeleton and implementations for
+various businesses. The framework includes a context that interacts with the physical car, a device tree system, a
+communication system, a GUI system, and many specifically defined devices.
+
+</details>
+
+<details>
+
+<summary>LEADS VeC</summary>
+
+LEADS VeC composes a set of executable modules that are designed for the VeC (Villanova Electric Car) Project. These
+modules are customizable and configurable to a certain extent, yet they have limitations due to some assumptions of use
+cases. Compared to the LEADS framework, it sits closer to users and allows users to quickly test their ideas.
+
+</details>
+
+<details>
+
+<summary>Accessories</summary>
+
+Accessories contribute a huge portion to the richness of the LEADS ecosystem. These accessories include plugins that
+directly interact with the core programs, such as [Project Thor](https://github.com/ProjectNeura/Thor), and standalone
+applications that communicate with LEADS through the data link, such as
+[LEADS Jarvis](https://github.com/ProjectNeura/LEADS-Jarvis).
+
+</details>
+
+As stated in its name, LEADS tries to keep a modular structure with a small granularity so that users have more
+flexibility in dependencies and keep the system lightweight. To do so, we split LEADS into multiple packages according
+to the programming language, platform, features, and dependencies, but generally, these packages are grouped into 3
+types: LEADS (LEADS framework), LEADS VeC, and accessories.
+
+![ecology](docs/assets/ecology.png)
+
+</details>
+
+<details>
 <summary>Robust framework and good compatibility</summary>
 
-LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually provide
-promising safety, but still, always keep our
+The LEADS framework ensures that its applications, including LEADS VeC, have extremely high standards. They usually
+provide promising safety, but still, always keep our
 [Safety Instructions](https://leads-docs.projectneura.org/en/latest/vec/safety-instructions.html) in mind.
+
+Most of the codes are written in Python and the dependencies are carefully chosen so that LEADS runs everywhere Python
+runs. In addition, on platforms like Arduino where we must use other programming languages, we try hard to keep
+consistency.
+
+![leads-framework](docs/assets/leads-framework.png)
 
 </details>
 
@@ -54,11 +104,11 @@ LEADS inherently supports dark mode. You can simply change your system preferenc
 
 Even with extraordinary details and animation, we still manages to provide you with incredible performance.
 
-| Test Platform              | Maximum Refresh Rate (FPS) |
-|----------------------------|----------------------------|
-| Macbook Pro (M3)           | 260                        |
-| Raspberry Pi 5 8GB         | 100                        |
-| Raspberry Pi 4 Model B 8GB | 60                         |
+| Test Platform              | Maximum Frame Rate (FPS) |
+|----------------------------|--------------------------|
+| Apple MacBook Pro (M3)     | 260                      |
+| Raspberry Pi 5 8GB         | 100                      |
+| Raspberry Pi 4 Model B 8GB | 60                       |
 
 </details>
 <details>
@@ -67,16 +117,16 @@ Even with extraordinary details and animation, we still manages to provide you w
 LEADS supports an unlimited number of displays. You can enable a specific number of displays simply through a
 configuration.
 
-![demo](docs/assets/demo-2.gif)
+![demo-2](docs/assets/demo-2.gif)
 
 </details>
 
-![demo](docs/assets/demo-1.gif)
+![demo-1](docs/assets/demo-1.gif)
 
 </details>
 
 <details>
-<summary>Powerful ESC system</summary>
+<summary>Powerful ESC systems</summary>
 <details>
 <summary>DTCS (Dynamic Traction Control System)</summary>
 
@@ -88,7 +138,7 @@ It allows a certain amount of drift while ensuring grip.
 <summary>ABS (Anti-lock Braking System)</summary>
 
 ABS allows the driver to safely step on the brakes to the bottom without locking the brakes. Although this may increase
-braking distances, it ensures you always have grip.
+braking distances, it ensures you always have the grip.
 
 </details>
 <details>
@@ -102,7 +152,7 @@ system greatly reduces the probability of rear-end collisions.
 <summary>ATBS (Automatic Trail Braking System)</summary>
 
 ATBS monitors the steering angle and adjusts the brakes in time to ensure that the front of the car obtains the
-corresponding downforce. Its intervention will avoid under-steer (pushing the head) or oversteer (drifting).
+corresponding downforce. Its intervention will avoid under-steers (pushing the head) or over-steers (drifting).
 
 </details>
 <details>
@@ -112,12 +162,13 @@ It is not surprising that some racing events do not allow control of the vehicle
 provide a manual mode where all assistance is forcibly disabled. You can simply set configuration `manual_mode` to
 `True` to enable this mode.
 
-![demo-manual.png](docs/assets/demo-manual.png)
+![demo-manual](docs/assets/demo-manual.png)
 
 </details>
 
-All 4 systems have 4 calibrations: standard, aggressive, sport, and off. Their intervention comes later than the
-previous respectively.
+Plugins can be easily customized and installed in LEADS. It also comes with several existing ones including 4 ESC
+plugins that realize 4 ESC systems. All 4 systems have 4 calibrations: standard, aggressive, sport, and off. Their
+intervention comes later than the previous respectively.
 
 </details>
 
@@ -129,7 +180,7 @@ server and can connect to multiple clients. All data collected through LEADS can
 anywhere far from the vehicle within an unnoticeable time, and that is not the end of the data's travel.
 
 We are a big fan of data collection. With our data persistence technologies, all data are saved in popular formats such
-as CSV, and processed in an intuitive way by LEADS VeC Data Processor.
+as CSV and processed in an intuitive way by LEADS VeC Data Processor.
 
 During the development of LEADS, we have accumulated massive amounts of real-world data that can be made into public
 road datasets.
@@ -156,7 +207,7 @@ performance.
 LEADS VeC Remote Analyst is designed so that the pit crew can track the vehicle. It consists of a local web server and a
 frontend website.
 
-![leads-vec-rc.png](docs/assets/leads-vec-rc.png)
+![leads-vec-rc](docs/assets/leads-vec-rc.png)
 
 </details>
 
@@ -179,6 +230,8 @@ data was recorded.
 
 Powered by rich datasets, our ambition is to change car racing as a whole, just as AlphaGo changed Go. This blueprint
 has never been such easy as today thanks to AI.
+
+![lap-analysis](docs/assets/lap-analysis.png)
 
 </details>
 
