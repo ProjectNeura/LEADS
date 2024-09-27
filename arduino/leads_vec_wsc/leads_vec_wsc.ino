@@ -12,7 +12,7 @@ WheelSpeedSensor RFWSS{ArrayList<int>(PIN_RFWSS, 1), [](float ws) {returnFloat(P
 WheelSpeedSensor LRWSS{ArrayList<int>(PIN_LRWSS, 1), [](float ws) {returnFloat(P, LEFT_REAR_WHEEL_SPEED_SENSOR, ws);}};
 WheelSpeedSensor RRWSS{ArrayList<int>(PIN_RRWSS, 1), [](float ws) {returnFloat(P, RIGHT_REAR_WHEEL_SPEED_SENSOR, ws);}};
 WheelSpeedSensor CRWSS{ArrayList<int>(PIN_CRWSS, 1), [](float ws) {returnFloat(P, CENTER_REAR_WHEEL_SPEED_SENSOR, ws);}};
-Accelerometer ACCL{[](Acceleration acceleration) {returnString(acceleration.toString());}};
+Accelerometer ACCL{[](Acceleration acceleration) {returnString(P, ACCELEROMETER, acceleration.toString());}};
 
 void setup() {
     P.initializeAsRoot();

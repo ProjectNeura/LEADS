@@ -8,8 +8,8 @@ from numpy import nan as _nan
 
 from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, \
     VisualHeaderFull as _VisualHeaderFull, DefaultHeaderFull as _DefaultHeaderFull, DefaultHeader as _DefaultHeader
-from ._computational import array as _array, norm as _norm, read_csv as _read_csv, DataFrame as _DataFrame, \
-    TextFileReader as _TextFileReader, sum_up as _sum_up, diff as _diff
+from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
+    DataFrame as _DataFrame, TextFileReader as _TextFileReader
 
 T = _TypeVar("T", bound=_SupportsFloat)
 
