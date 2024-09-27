@@ -24,8 +24,8 @@ INFERENCE_METHODS: dict[str, type[_Inference]] = {
     "speed-by-gps-ground-speed": _SpeedInferenceByGPSGroundSpeed,
     "speed-by-gps-position": _SpeedInferenceByGPSPosition,
     "forward-acceleration-by-speed": _ForwardAccelerationInferenceBySpeed,
-    "milage-by-speed": _MileageInferenceBySpeed,
-    "milage-by-gps-position": _MileageInferenceByGPSPosition,
+    "mileage-by-speed": _MileageInferenceBySpeed,
+    "mileage-by-gps-position": _MileageInferenceByGPSPosition,
     "visual-data-realignment-by-latency": _VisualDataRealignmentByLatency
 }
 

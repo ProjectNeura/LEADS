@@ -588,8 +588,8 @@ inferences:
     - speed-by-gps-ground-speed
     - speed-by-gps-position
     - forward-acceleration-by-speed
-    - milage-by-speed
-    - milage-by-gps-position
+    - mileage-by-speed
+    - mileage-by-gps-position
     - visual-data-realignment-by-latency
 
 jobs:
