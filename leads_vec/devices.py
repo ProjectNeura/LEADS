@@ -4,8 +4,8 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
-    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER
-from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor
+    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER
+from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 from leads_vec.config import Config
 from leads_video import Base64Camera, get_camera
@@ -57,7 +57,9 @@ class VeCController(Controller):
             "longitude": gps[3],
             **self.device(POWER_CONTROLLER).read()
         }
-        wsc = {"speed": gps[0]} if GPS_ONLY else self.device(WHEEL_SPEED_CONTROLLER).read()
+        wsc = self.device(WHEEL_SPEED_CONTROLLER).read()
+        if GPS_ONLY:
+            wsc["speed"] = gps[1]
         visual = {}
         if has_device(FRONT_VIEW_CAMERA):
             cam = get_camera(FRONT_VIEW_CAMERA, Base64Camera)
@@ -113,9 +115,9 @@ class WheelSpeedController(ArduinoMicro):
     def read(self) -> dict[str, float]:
         lfws = self.device(LEFT_FRONT_WHEEL_SPEED_SENSOR).read()
         rfws = self.device(RIGHT_FRONT_WHEEL_SPEED_SENSOR).read()
-        front_wheel_speed = (lfws + rfws) * .5
         return {"speed": min(lfws, rfws, rws := self.device(CENTER_REAR_WHEEL_SPEED_SENSOR).read()),
-                "front_wheel_speed": front_wheel_speed, "rear_wheel_speed": rws}
+                "front_wheel_speed": (lfws + rfws) * .5, "rear_wheel_speed": rws,
+                **self.device(ACCELEROMETER).read().to_dict()}
 
 
 @device(ODOMETER, MAIN_CONTROLLER)
@@ -135,6 +137,14 @@ class AverageOdometer(ConcurrentOdometer):
            [(FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER), (FRONT_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER),
             (REAR_WHEEL_DIAMETER, NUM_DIVISIONS, ODOMETER)])))
 class WheelSpeedSensors(WheelSpeedSensor):
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        mark_device(self, "WSC", "ESC")
+        super().initialize(*parent_tags)
+
+
+@device(ACCELEROMETER, WHEEL_SPEED_CONTROLLER)
+class Accele(Accelerometer):
     @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "WSC", "ESC")
