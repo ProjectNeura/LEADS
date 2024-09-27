@@ -20,7 +20,7 @@ class WheelSpeedSensor(_Device):
     See LEADS-Arduino.
 
     Supports:
-    - Any hall effect sensor (switch)
+    - Any Hall effect sensor (switch)
     """
 
     def __init__(self, wheel_diameter: float, num_divisions: int = 1, odometer_tag: str | None = None) -> None:
