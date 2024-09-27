@@ -1,6 +1,17 @@
+from dataclasses import dataclass as _dataclass
 from typing import override as _override
 
-from leads import Device as _Device
+from leads import Device as _Device, Serializable as _Serializable
+
+
+@_dataclass
+class Acceleration(_Serializable):
+    yaw: float
+    pitch: float
+    roll: float
+    forward_acceleration: float
+    lateral_acceleration: float
+    vertical_acceleration: float
 
 
 class Accelerometer(_Device):
@@ -18,5 +29,5 @@ class Accelerometer(_Device):
         self._yaw, self._pitch, self._roll, self._fa, self._la, self._va = tuple(map(float, data.split(',')))
 
     @_override
-    def read(self) -> tuple[float, float, float, float, float, float]:
-        return self._yaw, self._pitch, self._roll, self._fa, self._la, self._va
+    def read(self) -> Acceleration:
+        return Acceleration(self._yaw, self._pitch, self._roll, self._fa, self._la, self._va)
