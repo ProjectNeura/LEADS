@@ -2,79 +2,100 @@ from operator import add as _add, sub as _sub, mul as _mul, truediv as _truediv,
     le as _le, gt as _gt, ge as _ge
 from typing import TextIO as _TextIO, TypeVar as _TypeVar, Generic as _Generic, Sequence as _Sequence, \
     override as _override, Self as _Self, Iterator as _Iterator, Callable as _Callable, Iterable as _Iterable, \
-    Generator as _Generator, Any as _Any
+    Generator as _Generator, Any as _Any, SupportsFloat as _SupportsFloat
 
 from numpy import nan as _nan
 
 from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, \
     VisualHeaderFull as _VisualHeaderFull, DefaultHeaderFull as _DefaultHeaderFull, DefaultHeader as _DefaultHeader
-from ._computational import mean as _mean, array as _array, norm as _norm, read_csv as _read_csv, \
-    DataFrame as _DataFrame, TextFileReader as _TextFileReader
+from ._computational import array as _array, norm as _norm, read_csv as _read_csv, DataFrame as _DataFrame, \
+    TextFileReader as _TextFileReader, sum_up as _sum_up, diff as _diff
 
-T = _TypeVar("T")
+T = _TypeVar("T", bound=_SupportsFloat)
 
 
-def mean_compressor(sequence: list[T], target_size: int) -> list[T]:
+def weighed_sum(elements: _Sequence[T], indexes: _Sequence[float], a: int = 0, b: int | None = None) -> T:
+    return _sum_up(_array(elements[a: b]) * _diff(_array(indexes[a: b + 1]))) if b else (_sum_up(_array(
+        elements[a: -1]) * _diff(_array(indexes[a:]))) + elements[-1])
+
+
+def weighed_mean(elements: _Sequence[T], indexes: _Sequence[float], a: int = 0, b: int | None = None) -> T:
+    return weighed_sum(elements, indexes, a, b) / (indexes[b] - indexes[a]) if b else weighed_sum(
+        elements, indexes, a, b) / (indexes[-1] - indexes[a] + 1)
+
+
+def mean_compressor(sequence: dict[T, float], target_size: int) -> dict[T, float]:
     """
     A compression method that reduces data memory usage by averaging adjacent numbers and merging them.
     :param sequence: the sequence to compress
-    :param target_size: expected size
+    :param target_size: the expected size
     :return: the compressed sequence
     """
+    elements, indexes = tuple(sequence.keys()), tuple(sequence.values())
     chunk_size = int(len(sequence) / target_size)
     if chunk_size < 2:
         return sequence
-    r = [_mean(sequence[i * chunk_size: (i + 1) * chunk_size]) for i in range(target_size - 1)]
-    r.append(_mean(sequence[(target_size - 1) * chunk_size:]))
+    r = {weighed_mean(elements, indexes, i * chunk_size, (i + 1) * chunk_size): indexes[i * chunk_size] for i in range(
+        target_size - 1)}
+    r[weighed_mean(elements, indexes, (target_size - 1) * chunk_size)] = indexes[(target_size - 1) * chunk_size]
     return r
 
 
 class DataPersistence(_Sequence[T], _Generic[T]):
-    def __init__(self, max_size: int = -1, equivalent_chunk_size: int = 1,
-                 compressor: _Compressor[T] = mean_compressor) -> None:
+    def __init__(self, max_size: int = -1, crop_ratio: int = 2, compressor: _Compressor[T] = mean_compressor) -> None:
         """
-        :param max_size: maximum cached size
-        :param equivalent_chunk_size: the size to which the compressor always down-samples
-        :param compressor: compressor interface
+        :param max_size: the maximum cached size
+        :param crop_ratio: new size = max size / crop ratio
+        :param compressor: the compressor interface
         """
+        if max_size % crop_ratio != 0:
+            raise ValueError("Max size must be divisible by crop ratio")
         self._max_size: int = max_size
-        self._equivalent_chunk_size: int = equivalent_chunk_size
+        self._crop_ratio: int = crop_ratio
+        self._new_size: int = max_size // crop_ratio
         self._compressor: _Compressor[T] = compressor
-        self._data: list[T] = []
-        self._chunk: list[T] = []
-        self._chunk_size: int = equivalent_chunk_size
+        self._chunk: dict[T, float] = {}
+        self._size: int = 0
 
     @_override
     def __len__(self) -> int:
-        return len(self._data)
+        return self._size
 
     @_override
-    def __getitem__(self, item: int | slice) -> T | list[T]:
-        return self._data[item]
+    def __getitem__(self, index: int) -> T | list[T]:
+        if index < 0:
+            index += len(self)
+        if self._max_size < 2:
+            return index
+        last = None
+        for e, i in self._chunk.items():
+            if i == index:
+                return i
+            if i > index:
+                return last
+            last = e
 
     @_override
     def __str__(self) -> str:
         return str(self.to_list())
 
-    def to_list(self) -> list[T]:
-        return self._data + self._chunk
+    def sum(self) -> T:
+        return weighed_sum(tuple(self._chunk.keys()), tuple(self._chunk.values()))
 
-    def _push_to_data(self, element: T) -> None:
-        self._data.append(element)
-        if self._max_size < 2:
-            return
-        if len(self._data) >= self._max_size:
-            self._data = self._compressor(self._data, int(len(self._data) * .5))
-            self._chunk_size *= 2
+    def indexes(self) -> list[float]:
+        return list(self._chunk.values())
+
+    def weights(self) -> list[float]:
+        return list(_diff(self._chunk.values())) + [1]
+
+    def to_list(self) -> list[T]:
+        return list(self._chunk.keys())
 
     def append(self, element: T) -> None:
-        if self._chunk_size == 1:
-            return self._push_to_data(element)
-        self._chunk.append(element)
-        if len(self._chunk) >= self._chunk_size:
-            for e in self._compressor(self._chunk, self._equivalent_chunk_size):
-                self._push_to_data(e)
-            self._chunk.clear()
+        if 1 < self._max_size < len(self._chunk) + 1:
+            self._chunk = self._compressor(self._chunk, self._new_size)
+        self._chunk[element] = self._size
+        self._size += 1
 
 
 E = _TypeVar("E")
