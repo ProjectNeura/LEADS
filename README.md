@@ -18,7 +18,7 @@ codes based on the framework as easily as building a LEGO.
 The hardware components chosen for this project are geared towards amateur developers. It uses neither a CAN bus
 (although it is supported) nor any dedicated circuit board, but generic development kits such as Raspberry Pi and
 Arduino instead. However, as it is a high-level system running on a host computer, the software framework has the
-ability to adapt to any type of hardware component if you are willing to write some codes.
+ability to adapt to any type of hardware component with extra effort.
 
 This document will guide you through LEADS VeC. You will find a detailed version
 [here](https://leads-docs.projectneura.org/en/latest/vec).
