@@ -107,6 +107,10 @@ class Vector(_Sequence[E], _Iterable[E], _Generic[E]):
         self._coordinates: tuple[E, ...] = coordinates
 
     @_override
+    def __hash__(self) -> int:
+        return hash(self._coordinates)
+
+    @_override
     def __len__(self) -> int:
         return self._d
 
