@@ -6,7 +6,7 @@ from typing import override as _override
 
 from PIL.Image import fromarray as _fromarray, Image as _Image, open as _open
 from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB, \
-    imencode as _imencode, COLOR_RGB2BGR as _COLOR_RGB2BGR
+    imencode as _imencode, COLOR_RGB2BGR as _COLOR_RGB2BGR, IMWRITE_JPEG_QUALITY as _IMWRITE_JPEG_QUALITY
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device, ShadowDevice as _ShadowDevice
@@ -96,7 +96,7 @@ class Base64Camera(LowLatencyCamera):
 
     def loop2(self) -> None:
         if (local_frame := self._frame) is not None:
-            _, local_frame = _imencode(".jpg", _cvtColor(local_frame, _COLOR_RGB2BGR))
+            _, local_frame = _imencode(".jpg", _cvtColor(local_frame, _COLOR_RGB2BGR), (_IMWRITE_JPEG_QUALITY, 90))
             self._bytes = local_frame.tobytes()
             self._base64 = _b64encode(self._bytes).decode()
 

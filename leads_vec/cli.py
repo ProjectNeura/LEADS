@@ -18,7 +18,7 @@ from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, 
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
     ESC, Satellite, Motor, Speed, Photo, Light, ImageVariable
 from leads_vec.__version__ import __version__
-from leads_video import get_camera
+from leads_video import get_camera, Base64Camera
 
 
 class CustomRuntimeData(RuntimeData):
@@ -72,7 +72,7 @@ def enable_comm_stream(context_manager: ContextManager, port: int) -> None:
             if rd.comm_stream.num_connections() < 1:
                 _sleep(.01)
             for tag in FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA:
-                if (cam := get_camera(tag)) and (frame := cam.read_pil()):
+                if (cam := get_camera(tag, Base64Camera)) and (frame := cam.read()):
                     rd.comm_stream_notify(tag, frame)
 
     _Thread(name="comm streamer", target=_, daemon=True).start()
