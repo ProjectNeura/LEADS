@@ -4,8 +4,9 @@ from threading import Thread as _Thread
 from time import time as _time, sleep as _sleep
 from typing import override as _override
 
-from PIL.Image import fromarray as _fromarray, Image as _Image
-from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB
+from PIL.Image import fromarray as _fromarray, Image as _Image, open as _open
+from cv2 import VideoCapture as _VideoCapture, cvtColor as _cvtColor, COLOR_BGR2RGB as _COLOR_BGR2RGB, \
+    imencode as _imencode, COLOR_RGB2BGR as _COLOR_RGB2BGR
 from numpy import ndarray as _ndarray, pad as _pad, array as _array
 
 from leads import Device as _Device, ShadowDevice as _ShadowDevice
@@ -86,7 +87,7 @@ class Base64Camera(LowLatencyCamera):
     def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
         super().__init__(port, resolution)
         self._shadow_thread2: _Thread | None = None
-        self._pil: _Image | None = None
+        self._bytes: bytes = b""
         self._base64: str = ""
 
     @_override
@@ -95,9 +96,9 @@ class Base64Camera(LowLatencyCamera):
 
     def loop2(self) -> None:
         if (local_frame := self._frame) is not None:
-            self._pil = _fromarray(local_frame)
-            self._pil.save(buffer := _BytesIO(), "JPEG", quality=25)
-            self._base64 = _b64encode(buffer.getvalue()).decode()
+            _, local_frame = _imencode(".jpg", _cvtColor(local_frame, _COLOR_RGB2BGR))
+            self._bytes = local_frame.tobytes()
+            self._base64 = _b64encode(self._bytes).decode()
 
     def run2(self) -> None:
         while True:
@@ -120,7 +121,7 @@ class Base64Camera(LowLatencyCamera):
 
     @_override
     def read_pil(self) -> _Image | None:
-        return self._pil
+        return _open(_BytesIO(self._bytes)) if self._bytes else None
 
 
 class LightweightBase64Camera(Base64Camera):
