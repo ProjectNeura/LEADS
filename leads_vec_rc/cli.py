@@ -65,7 +65,8 @@ class CommCallback(Callback):
         self.super(service=service, msg=msg)
         try:
             self.current_data = d = loads(msg.decode())
-            acceleration_record.append(Vector(d["forward_acceleration"], d["lateral_acceleration"]))
+            acceleration_record.append(Vector(d["forward_acceleration"], d["lateral_acceleration"],
+                                              d["vertical_acceleration"]))
             gps_record.append(Vector(d["latitude"], d["longitude"]))
             if config.save_data:
                 try_create_csv(d)
