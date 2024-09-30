@@ -84,8 +84,9 @@ class LowLatencyCamera(Camera, _ShadowDevice):
 
 
 class Base64Camera(LowLatencyCamera):
-    def __init__(self, port: int, resolution: tuple[int, int] | None = None) -> None:
+    def __init__(self, port: int, resolution: tuple[int, int] | None = None, quality: int = 90) -> None:
         super().__init__(port, resolution)
+        self._quality: int = quality
         self._shadow_thread2: _Thread | None = None
         self._bytes: bytes = b""
         self._base64: str = ""
@@ -96,7 +97,8 @@ class Base64Camera(LowLatencyCamera):
 
     def loop2(self) -> None:
         if (local_frame := self._frame) is not None:
-            _, local_frame = _imencode(".jpg", _cvtColor(local_frame, _COLOR_RGB2BGR), (_IMWRITE_JPEG_QUALITY, 90))
+            _, local_frame = _imencode(".jpg", _cvtColor(local_frame, _COLOR_RGB2BGR),
+                                       (_IMWRITE_JPEG_QUALITY, self._quality))
             self._bytes = local_frame.tobytes()
             self._base64 = _b64encode(self._bytes).decode()
 
