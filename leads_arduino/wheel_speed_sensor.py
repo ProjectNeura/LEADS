@@ -56,7 +56,7 @@ class WheelSpeedSensor(_Device):
         if self._accelerometer and self._last_acceleration:
             a = self._accelerometer.read().linear().forward_acceleration
             v = (a + self._last_acceleration) * 1.8 * (t - self._last_valid)
-            if abs(ws - self._wheel_speed - v) / abs(v) > 1.5:
+            if abs((ws - self._wheel_speed - v) / (v + .0000000001)) > 1.5:
                 return
             self._last_acceleration = a
         self._wheel_speed = ws
