@@ -17,8 +17,8 @@ Acceleration Accelerometer::read() {
     r.yaw = heading.yaw;
     r.pitch = heading.pitch;
     r.roll = heading.roll;
-    r.forwardAcceleration = heading.x_accel;
-    r.lateralAcceleration = heading.y_accel;
+    r.forwardAcceleration = heading.y_accel;
+    r.lateralAcceleration = heading.x_accel;
     r.verticalAcceleration = heading.z_accel;
     _onUpdate(r);
     return r;
