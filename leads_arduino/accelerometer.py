@@ -24,7 +24,6 @@ class Acceleration(_Serializable):
 
     def linear(self) -> _Self:
         fg = rotation_matrix(self.yaw, self.pitch, self.roll).T @ _array([0, 0, 9.8067])
-        print(fg, self)
         return Acceleration(self.yaw, self.pitch, self.roll, self.forward_acceleration + fg[0],
                             self.lateral_acceleration + fg[1], self.vertical_acceleration - fg[2])
 
