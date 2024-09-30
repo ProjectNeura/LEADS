@@ -53,10 +53,10 @@ class SystemFailureTracer(object):
             raise RuntimeWarning(f"System not marked for device {device}")
         if (tag := device.tag()) in self._device_failures:
             self._device_failures[tag] -= 1
-        if self._device_failures[tag] < 1:
-            self._device_failures.pop(tag)
-            self.on_device_recover(device)
-            L.debug(f"{device} recovered")
+            if self._device_failures[tag] < 1:
+                self._device_failures.pop(tag)
+                self.on_device_recover(device)
+                L.debug(f"{device} recovered")
         for system in systems:
             if system not in self._system_failures:
                 continue
