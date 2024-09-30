@@ -1,7 +1,19 @@
 from dataclasses import dataclass as _dataclass
-from typing import override as _override
+from typing import override as _override, Self as _Self
+
+from numpy import ndarray as _ndarray, sin as _sin, cos as _cos, array as _array, deg2rad as _deg2rad
 
 from leads import Device as _Device, Serializable as _Serializable
+
+
+def rotation_matrix(yaw: float, pitch: float, roll: float) -> _ndarray:
+    yaw, pitch, roll = _deg2rad(yaw), _deg2rad(pitch), _deg2rad(roll)
+    sy, cy, sp, cp, sr, cr = _sin(yaw), _cos(yaw), _sin(pitch), _cos(pitch), _sin(roll), _cos(roll)
+    return _array([[cy, -sy, 0], [sy, cy, 0], [0, 0, 1]]) @ _array([[cp, 0, sp], [0, 1, 0], [-sp, 0, cp]]) @ _array(
+        [[1, 0, 0], [0, cr, -sr], [0, sr, cr]])
+
+
+_G: _ndarray = _array([0, 0, 9.8067])
 
 
 @_dataclass
@@ -12,6 +24,11 @@ class Acceleration(_Serializable):
     forward_acceleration: float
     lateral_acceleration: float
     vertical_acceleration: float
+
+    def linear(self) -> _Self:
+        fg = rotation_matrix(self.yaw, self.pitch, self.roll).T @ _G
+        return Acceleration(self.yaw, self.pitch, self.roll, self.forward_acceleration + fg[0],
+                            self.lateral_acceleration + fg[1], self.vertical_acceleration - fg[2])
 
 
 class Accelerometer(_Device):

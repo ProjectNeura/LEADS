@@ -5,7 +5,7 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
     SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER
-from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer
+from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer, Acceleration
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 from leads_vec.config import Config
 from leads_video import Base64Camera, get_camera
@@ -144,11 +144,15 @@ class WheelSpeedSensors(WheelSpeedSensor):
 
 
 @device(ACCELEROMETER, WHEEL_SPEED_CONTROLLER)
-class Accele(Accelerometer):
+class LinearAccelerometer(Accelerometer):
     @override
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "WSC", "ESC")
         super().initialize(*parent_tags)
+
+    @override
+    def read(self) -> Acceleration:
+        return super().read().linear()
 
 
 @device(GPS_RECEIVER, MAIN_CONTROLLER, (GPS_RECEIVER_PORT,))
