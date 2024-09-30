@@ -13,6 +13,9 @@ def rotation_matrix(yaw: float, pitch: float, roll: float) -> _ndarray:
         [[1, 0, 0], [0, cr, -sr], [0, sr, cr]])
 
 
+_G: _ndarray = _array([0, 0, 9.8067])
+
+
 @_dataclass
 class Acceleration(_Serializable):
     yaw: float
@@ -23,7 +26,7 @@ class Acceleration(_Serializable):
     vertical_acceleration: float
 
     def linear(self) -> _Self:
-        fg = rotation_matrix(self.yaw, self.pitch, self.roll).T @ _array([0, 0, 9.8067])
+        fg = rotation_matrix(self.yaw, self.pitch, self.roll).T @ _G
         return Acceleration(self.yaw, self.pitch, self.roll, self.forward_acceleration + fg[0],
                             self.lateral_acceleration + fg[1], self.vertical_acceleration - fg[2])
 
