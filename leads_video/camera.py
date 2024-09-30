@@ -95,11 +95,13 @@ class Base64Camera(LowLatencyCamera):
     def loop(self) -> None:
         super().loop()
 
+    @staticmethod
+    def encode(frame: _ndarray, quality: int = 100) -> bytes:
+        return _imencode(".jpg", _cvtColor(frame, _COLOR_RGB2BGR), (_IMWRITE_JPEG_QUALITY, quality))[1].tobytes()
+
     def loop2(self) -> None:
-        if (local_frame := self._frame) is not None:
-            _, local_frame = _imencode(".jpg", _cvtColor(local_frame, _COLOR_RGB2BGR),
-                                       (_IMWRITE_JPEG_QUALITY, self._quality))
-            self._bytes = local_frame.tobytes()
+        if (frame := self._frame) is not None:
+            self._bytes = Base64Camera.encode(frame, self._quality)
             self._base64 = _b64encode(self._bytes).decode()
 
     def run2(self) -> None:

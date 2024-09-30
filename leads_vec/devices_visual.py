@@ -14,19 +14,19 @@ except ImportError as e:
 config: Config = require_config()
 CAMERA_RESOLUTION: tuple[int, int] | None = config.get("camera_resolution")
 CAMERA_TAGS: list[str] = []
-CAMERA_ARGS: list[tuple[int, tuple[int, int] | None]] = []
+CAMERA_ARGS: list[tuple[int, tuple[int, int] | None, int]] = []
 if (port := config.get("front_view_camera_port")) is not None:
     CAMERA_TAGS.append(FRONT_VIEW_CAMERA)
-    CAMERA_ARGS.append((port, CAMERA_RESOLUTION))
+    CAMERA_ARGS.append((port, CAMERA_RESOLUTION, 25))
 if (port := config.get("left_view_camera_port")) is not None:
     CAMERA_TAGS.append(LEFT_VIEW_CAMERA)
-    CAMERA_ARGS.append((port, CAMERA_RESOLUTION))
+    CAMERA_ARGS.append((port, CAMERA_RESOLUTION, 25))
 if (port := config.get("right_view_camera_port")) is not None:
     CAMERA_TAGS.append(RIGHT_VIEW_CAMERA)
-    CAMERA_ARGS.append((port, CAMERA_RESOLUTION))
+    CAMERA_ARGS.append((port, CAMERA_RESOLUTION, 25))
 if (port := config.get("rear_view_camera_port")) is not None:
     CAMERA_TAGS.append(REAR_VIEW_CAMERA)
-    CAMERA_ARGS.append((port, CAMERA_RESOLUTION))
+    CAMERA_ARGS.append((port, CAMERA_RESOLUTION, 25))
 
 
 @device(CAMERA_TAGS, MAIN_CONTROLLER, CAMERA_ARGS)

@@ -1,3 +1,4 @@
+from base64 import b64encode
 from datetime import datetime as _datetime
 from threading import Thread as _Thread
 from time import time as _time, sleep as _sleep
@@ -72,8 +73,8 @@ def enable_comm_stream(context_manager: ContextManager, port: int) -> None:
             if rd.comm_stream.num_connections() < 1:
                 _sleep(.01)
             for tag in FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA:
-                if (cam := get_camera(tag, Base64Camera)) and (frame := cam.read()):
-                    rd.comm_stream_notify(tag, frame)
+                if (cam := get_camera(tag)) and (frame := cam.read_numpy()) is not None:
+                    rd.comm_stream_notify(tag, b64encode(Base64Camera.encode(frame)))
 
     _Thread(name="comm streamer", target=_, daemon=True).start()
 
