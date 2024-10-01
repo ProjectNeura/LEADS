@@ -107,6 +107,7 @@ Even with extraordinary details and animation, we still manages to provide you w
 | Test Platform              | Maximum Frame Rate (FPS) |
 |----------------------------|--------------------------|
 | Apple MacBook Pro (M3)     | 260                      |
+| Orange Pi 5 Pro 8GB        | 160                      |
 | Raspberry Pi 5 8GB         | 100                      |
 | Raspberry Pi 4 Model B 8GB | 60                       |
 
@@ -239,8 +240,8 @@ has never been such easy as today thanks to AI.
 
 ### Python
 
-Note that LEADS requires **Python >= 3.12**. To set up the environment on a Raspberry Pi by only a single line of
-command, see [Environment Setup](#environment-setup).
+Note that LEADS requires **Python >= 3.12**. To set up the environment on Ubuntu by only a single line of command, see
+[Environment Setup](#environment-setup).
 
 ```shell
 pip install "leads[standard]"
@@ -470,10 +471,9 @@ To learn more about workflows, read [Workflows](#workflows).
 ## Environment Setup
 
 This section helps you set up the identical environment we have for the VeC project. A more detailed guide of
-reproduction is available [here](https://leads-docs.projectneura.org/en/latest/vec/user-manual.html), but first of all,
-we run an Ubuntu on a Raspberry Pi 4 Model B 8GB. After the OS is set up, just run the one-line commands listed below.
-You may also choose to clone the repository or download the scripts from
-[releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
+reproduction is available [here](https://leads-docs.projectneura.org/en/latest/vec/user-manual.html). After the OS is
+set up, just run the one-line commands listed below. You may also choose to clone the repository or download the scripts
+from [releases](https://github.com/ProjectNeura/LEADS/releases) (only stable releases provide scripts).
 
 These scripts currently only support `apt` as the package manager.
 
