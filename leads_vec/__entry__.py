@@ -54,10 +54,14 @@ def __entry__() -> None:
                 f"LEADS VeC Version: {__version__}",
                 sep="\n")
     else:
-        if args.action == "replay":
-            args.devices = f"{MODULE_PATH}/replay.py"
-            args.emu = False
-            _L.debug("Replay mode enabled")
+        match args.action:
+            case "replay":
+                args.devices = f"{MODULE_PATH}/replay.py"
+                args.emu = False
+                _L.debug("Replay mode enabled")
+            case "benchmark":
+                args.main = f"{MODULE_PATH}/benchmark.py"
+                _L.debug("Benchmark mode enabled")
         _exit(run(parse_path(args.config), parse_path(args.devices), parse_path(args.main), args.register,
                   args.magnify_font_sizes, args.emu, args.auto_mfs, args.ignore_import_error))
     _exit()
