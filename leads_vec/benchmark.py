@@ -84,6 +84,12 @@ def main() -> int:
     L.info("Video test complete")
     for k, v in report.items():
         L.info(f"{k}: {v:.3f}")
+    baseline = {"frame rate": 30, "net delay": 1.062, "video capture": 17.898, "video capture and encoding": 16.657,
+                "video capture and Base64 encoding": 16.658, "video capture and PIL": 16.668}
+    score = 0
+    for k, v in report.items():
+        score += v / baseline[k]
+    L.info("Score:", str(score / len(report)))
     return 0
 
 
