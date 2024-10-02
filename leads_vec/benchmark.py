@@ -7,7 +7,7 @@ from PIL.Image import open
 from customtkinter import CTkLabel, DoubleVar
 from cv2 import VideoCapture, imencode, IMWRITE_JPEG_QUALITY
 
-from leads import L
+from leads import L, require_config
 from leads_gui import RuntimeData, Window, ContextManager, Speedometer
 
 
@@ -25,7 +25,7 @@ def video_tester(container: Callable[[], None]) -> float:
 
 def video_test() -> dict[str, float]:
     r = {}
-    vc = VideoCapture(1)
+    vc = VideoCapture(require_config().get("benchmark_camera_port", 0))
     if not vc.isOpened():
         L.error("No camera available")
         return r
