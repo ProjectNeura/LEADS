@@ -5,7 +5,7 @@ from typing import Callable
 
 from PIL.Image import open
 from customtkinter import CTkLabel, DoubleVar
-from cv2 import VideoCapture, imencode, IMWRITE_JPEG_QUALITY
+from cv2 import VideoCapture, imencode, IMWRITE_JPEG_QUALITY, CAP_PROP_FPS
 
 from leads import L, require_config
 from leads_gui import RuntimeData, Window, ContextManager, Speedometer
@@ -26,6 +26,7 @@ def video_tester(container: Callable[[], None]) -> float:
 def video_test() -> dict[str, float]:
     r = {}
     vc = VideoCapture(require_config().get("benchmark_camera_port", 0))
+    r["camera fps"] = vc.get(CAP_PROP_FPS)
     if not vc.isOpened():
         L.error("No camera available")
         return r
@@ -84,12 +85,13 @@ def main() -> int:
     L.info("Video test complete")
     for k, v in report.items():
         L.info(f"{k}: {v:.3f}")
-    baseline = {"gui": 30, "video capture": 30, "video capture + encoding": 30, "video capture + Base64 encoding": 30,
-                "video capture + PIL": 30}
+    camera_fps = report.pop("camera fps")
+    baseline = {"gui": 30, "video capture": camera_fps, "video capture + encoding": camera_fps,
+                "video capture + Base64 encoding": camera_fps, "video capture + PIL": camera_fps}
     score = 0
     for k, v in report.items():
         score += v / baseline[k]
-    L.info("Score:", str(score / len(report)))
+    L.info(f"Score: {100 * score / len(report):.2f}%")
     return 0
 
 
