@@ -5,7 +5,8 @@ from os.path import abspath as _abspath
 from sys import exit as _exit, version as _version
 from warnings import filterwarnings as _filterwarnings
 
-from leads import L as _L
+from leads import L as _L, register_controller as _register_controller, Controller as _Controller, \
+    MAIN_CONTROLLER as _MAIN_CONTROLLER
 from leads_gui.system import get_system_kernel as _get_system_kernel
 from leads_vec.run import run
 
@@ -22,7 +23,7 @@ def __entry__() -> None:
     parser = _ArgumentParser(prog="LEADS VeC", description="Lightweight Embedded Assisted Driving System VeC",
                              epilog="Project Neura: https://projectneura.org\n"
                                     "GitHub: https://github.com/ProjectNeura/LEADS")
-    parser.add_argument("action", choices=("info", "replay", "run"))
+    parser.add_argument("action", choices=("info", "replay", "benchmark", "run"))
     parser.add_argument("-c", "--config", default=None, help="specify a configuration file")
     parser.add_argument("-d", "--devices", default=f"{MODULE_PATH}/devices.py", help="specify a devices module")
     parser.add_argument("-m", "--main", default=f"{MODULE_PATH}/cli.py", help="specify a main module")
@@ -54,10 +55,16 @@ def __entry__() -> None:
                 f"LEADS VeC Version: {__version__}",
                 sep="\n")
     else:
-        if args.action == "replay":
-            args.devices = f"{MODULE_PATH}/replay.py"
-            args.emu = False
-            _L.debug("Replay mode enabled")
+        match args.action:
+            case "replay":
+                args.devices = f"{MODULE_PATH}/replay.py"
+                args.emu = False
+                _L.debug("Replay mode enabled")
+            case "benchmark":
+                _register_controller(_MAIN_CONTROLLER, _Controller())
+                args.devices = f"{MODULE_PATH}/benchmark.py"
+                args.main = f"{MODULE_PATH}/benchmark.py"
+                _L.debug("Benchmark mode enabled")
         _exit(run(parse_path(args.config), parse_path(args.devices), parse_path(args.main), args.register,
                   args.magnify_font_sizes, args.emu, args.auto_mfs, args.ignore_import_error))
     _exit()
