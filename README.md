@@ -297,6 +297,12 @@ leads-vec replay
 
 Replaying requires "main.csv" under the data directory. It as well accepts all optional arguments listed below.
 
+#### Benchmark
+
+```shell
+leads-vec benchmark
+```
+
 #### Optional Arguments
 
 Run the following to get a list of all the supported arguments.
