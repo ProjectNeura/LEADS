@@ -182,10 +182,13 @@ def main() -> int:
     class DirectionIndicatorSound(FrequencyGenerator):
         @_override
         def do(self) -> None:
-            if self._loops % 2 == 1:
-                DIRECTION_INDICATOR_ON.play()
-            else:
-                DIRECTION_INDICATOR_OFF.play()
+            try:
+                if self._loops % 2 == 1:
+                    DIRECTION_INDICATOR_ON.play()
+                else:
+                    DIRECTION_INDICATOR_OFF.play()
+            except RuntimeError as e:
+                L.error(repr(e))
 
     def render(manager: ContextManager) -> None:
         m1_widgets = (
@@ -227,7 +230,10 @@ def main() -> int:
 
         def time_lap() -> None:
             ctx.time_lap()
-            CONFIRM.play()
+            try:
+                CONFIRM.play()
+            except RuntimeError as e:
+                L.error(repr(e))
 
         manager["time_lap"] = _Button(root, text="", image=Stopwatch(), command=time_lap)
         manager["hazard"] = _Button(root, text="", image=Hazard(), command=lambda: ctx.hazard(not ctx.hazard()))
@@ -237,7 +243,10 @@ def main() -> int:
                 manager["esc"].configure(selected_color="green", selected_hover_color="green")
             else:
                 manager["esc"].configure(selected_color="red", selected_hover_color="red")
-                WARNING.play()
+                try:
+                    WARNING.play()
+                except RuntimeError as e:
+                    L.error(repr(e))
             ctx.esc_mode(esc_mode)
             w.runtime_data().control_system_switch_changed = True
 
