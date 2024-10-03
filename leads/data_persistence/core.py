@@ -9,17 +9,20 @@ from numpy import nan as _nan
 from leads.types import Compressor as _Compressor, VisualHeader as _VisualHeader, \
     VisualHeaderFull as _VisualHeaderFull, DefaultHeaderFull as _DefaultHeaderFull, DefaultHeader as _DefaultHeader
 from ._computational import array as _array, norm as _norm, read_csv as _read_csv, DataFrame as _DataFrame, \
-    TextFileReader as _TextFileReader, sum_up as _sum_up, diff as _diff
+    TextFileReader as _TextFileReader, diff as _diff, ndarray as _ndarray
 
 T = _TypeVar("T", bound=_SupportsFloat)
 
 
-def weighed_sum(elements: _Sequence[T], indexes: _Sequence[float], a: int = 0, b: int | None = None) -> T:
-    return _sum_up(_array(elements[a: b]) * _diff(_array(indexes[a: b + 1]))) if b else (_sum_up(_array(
-        elements[a: -1]) * _diff(_array(indexes[a:]))) + elements[-1])
+def weighed_sum(elements: tuple[T, ...], indexes: tuple[float, ...], a: int = 0, b: int | None = None) -> T:
+    e = _array(elements[a: b if b else -1])
+    w = _diff(_array(indexes[a: b + 1] if b else indexes[a:] + (1,)))
+    if len(e.shape) > 1:
+        w = w.reshape((-1, 1))
+    return Vector(*tuple(s)) if isinstance(s := (e * w).sum(0, keepdims=True)[0], _ndarray) else float(s)
 
 
-def weighed_mean(elements: _Sequence[T], indexes: _Sequence[float], a: int = 0, b: int | None = None) -> T:
+def weighed_mean(elements: tuple[T, ...], indexes: tuple[float, ...], a: int = 0, b: int | None = None) -> T:
     return weighed_sum(elements, indexes, a, b) / (indexes[b] - indexes[a]) if b else weighed_sum(
         elements, indexes, a, b) / (indexes[-1] - indexes[a] + 1)
 

@@ -21,7 +21,7 @@ if not exists(config.data_dir):
 
 time_stamp_record: DataPersistence[int] = DataPersistence(2000)
 speed_record: DataPersistence[float] = DataPersistence(2000)
-acceleration_record: DataPersistence[float] = DataPersistence(2000)
+acceleration_record: DataPersistence[Vector[float]] = DataPersistence(2000)
 voltage_record: DataPersistence[float] = DataPersistence(2000)
 gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
 csv: CSV | None = None
