@@ -370,7 +370,9 @@ This will generate a default "config.json" file under the current directory.
 leads-vec -r systemd run
 ```
 
-This will register a user Systemd service to start the program.
+This will register a user Systemd service to start the program. The service script is usually located at
+"/usr/local/leads/venv/python3.12/site-packages/leads_vec/_bootloader/leads-vec.service.sh". Edit the file to customize
+the arguments.
 
 To enable auto-start at boot, run the following.
 
@@ -504,7 +506,7 @@ If you are using a GPIO board that is not a Raspberry Pi, you need to set the en
 export GPIOZERO_PIN_FACTORY=mock
 ```
 
-If you have registered the Systemd service, this line should be added to "leads-vec.service.sh" as well.
+If you have registered the Systemd service, this line should be added to "leads-vec.service.sh" as well like shown.
 
 ```shell
 # adjust the arguments according to your needs
