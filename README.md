@@ -506,7 +506,7 @@ If you are using a GPIO board that is not a Raspberry Pi, you need to set the en
 export GPIOZERO_PIN_FACTORY=mock
 ```
 
-If you have registered the Systemd service, this line should be added to "leads-vec.service.sh" as well like shown.
+If you have registered the Systemd service, this line should be added to the service script as well like shown.
 
 ```shell
 # adjust the arguments according to your needs
