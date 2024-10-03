@@ -37,7 +37,8 @@ def mean_compressor(sequence: dict[T, float], target_size: int) -> dict[T, float
         return sequence
     r = {weighed_mean(elements, indexes, i * chunk_size, (i + 1) * chunk_size): indexes[i * chunk_size] for i in range(
         target_size - 1)}
-    r[weighed_mean(elements, indexes, (target_size - 1) * chunk_size)] = indexes[(target_size - 1) * chunk_size]
+    k = weighed_mean(elements, indexes, (target_size - 1) * chunk_size)
+    r[Vector(*k) if isinstance(k, Vector) else k] = indexes[(target_size - 1) * chunk_size]
     return r
 
 
