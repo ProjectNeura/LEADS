@@ -495,8 +495,22 @@ dependencies of LEADS for you.
 bash "setup.sh$(wget -O setup.sh https://raw.githubusercontent.com/ProjectNeura/LEADS/main/scripts/setup.sh)" && rm setup.sh || rm setup.sh
 ```
 
-This will create a shortcut to save you from typing `python-leads -m leads_vec ...`, instead, you will just need to call
-`leads-vec ...`.
+#### GPIOZero Compatibility
+
+If you are using a GPIO board that is not a Raspberry Pi, you need to set the environment variable
+`GPIOZERO_PIN_FACTORY` to `mock`.
+
+```shell
+export GPIOZERO_PIN_FACTORY=mock
+```
+
+If you have registered the Systemd service, this line should be added to "leads-vec.service.sh" as well.
+
+```shell
+# adjust the arguments according to your needs
+export GPIOZERO_PIN_FACTORY=mock
+leads-vec -c /usr/local/leads/config.json run
+```
 
 ### Python
 
