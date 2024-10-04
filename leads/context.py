@@ -3,8 +3,6 @@ from collections import deque as _deque
 from time import time as _time
 from typing import TypeVar as _TypeVar, Generic as _Generic
 
-from numpy import diff as _diff, average as _average, array as _array
-
 from leads.constant import ESCMode
 from leads.data import DataContainer
 
@@ -83,7 +81,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         return [self._lap_time_seq[i] - self._lap_time_seq[i - 1] for i in range(1, len(self._lap_time_seq))]
 
     def speed_trend(self) -> float:
-        return float(_average(_diff(_array(self._speed_seq)))) if len(self._speed_seq) > 1 else 0
+        return (self._speed_seq[-1] - self._speed_seq[0]) / len(self._speed_seq) if len(self._speed_seq) > 1 else 0
 
     def brake_indicator(self, brake_indicator: bool | None = None) -> bool | None:
         if brake_indicator is None:
