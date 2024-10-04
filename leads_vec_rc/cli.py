@@ -11,19 +11,19 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from leads import require_config, L, DataContainer
 from leads.comm import Service, Client, start_client, create_client, Callback, Connection, ConnectionBase
-from leads.data_persistence import DataPersistence, Vector, CSV, DEFAULT_HEADER_FULL, VISUAL_HEADER_FULL
+from leads.data_persistence import DataPersistence, CSV, DEFAULT_HEADER_FULL, VISUAL_HEADER_FULL
 from leads_vec_rc.config import Config
 
 config: Config = require_config()
 if not exists(config.data_dir):
     L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
     makedirs(config.data_dir)
+CAR_WIDTH: float = config.get("car_width", 2)
+CAR_LENGTH: float = config.get("car_width", 1)
+CAR_MASS: float = config.get("car_mass", 400)
+CAR_CENTER_OF_MASS: float = config.get("car_center_of_mass", .25)
 
 time_stamp_record: DataPersistence[int] = DataPersistence(2000)
-speed_record: DataPersistence[float] = DataPersistence(2000)
-acceleration_record: DataPersistence[Vector[float]] = DataPersistence(2000)
-voltage_record: DataPersistence[float] = DataPersistence(2000)
-gps_record: DataPersistence[Vector[float]] = DataPersistence(2000)
 csv: CSV | None = None
 
 
@@ -33,7 +33,7 @@ def try_create_csv(data: dict[str, Any]) -> None:
         return
     csv = CSV(f"{config.data_dir}/{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.csv",
               VISUAL_HEADER_FULL if set(VISUAL_HEADER_FULL).issubset(data.keys()) else DEFAULT_HEADER_FULL,
-              time_stamp_record, voltage_record, speed_record)
+              time_stamp_record)
     register(csv.close)
 
 
@@ -64,17 +64,22 @@ class CommCallback(Callback):
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
         try:
-            self.current_data = d = loads(msg.decode())
-            acceleration_record.append(Vector(d["forward_acceleration"], d["lateral_acceleration"],
-                                              d["vertical_acceleration"]))
-            gps_record.append(Vector(d["latitude"], d["longitude"]))
+            d = loads(msg.decode())
+            mg = CAR_MASS * 2.451675
+            d["report_rate"] = 1000 * num_ts / (time_stamp_record[-1] - time_stamp_record[0]) if (num_ts := len(
+                time_stamp_record)) > 1 else 0
+            f_forward = CAR_MASS * d["forward_acceleration"] * CAR_CENTER_OF_MASS * .5 / CAR_WIDTH
+            f_lateral = CAR_MASS * d["lateral_acceleration"] * CAR_CENTER_OF_MASS * .5 / CAR_LENGTH
+            d["cfc_fl"] = mg - f_lateral - f_forward
+            d["cfc_fr"] = mg + f_lateral - f_forward
+            d["cfc_rl"] = mg - f_lateral + f_forward
+            d["cfc_rr"] = mg + f_lateral + f_forward
+            self.current_data = d
             if config.save_data:
                 try_create_csv(d)
                 csv.write_frame(*(d[key] for key in csv.header()))
             else:
                 time_stamp_record.append(int(d["t"]))
-                speed_record.append(d["speed"])
-                voltage_record.append(d["voltage"])
         except JSONDecodeError:
             pass
 
@@ -110,11 +115,6 @@ async def current() -> dict[str, Any]:
 @app.get("/time_stamp")
 async def time_stamp() -> list[int]:
     return time_stamp_record.to_list()
-
-
-@app.get("/speed")
-async def speed() -> list[float]:
-    return speed_record.to_list()
 
 
 @app.get("/time_lap")
