@@ -18,6 +18,10 @@ config: Config = require_config()
 if not exists(config.data_dir):
     L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
     makedirs(config.data_dir)
+CAR_WIDTH: float = config.get("car_width", 2)
+CAR_LENGTH: float = config.get("car_width", 1)
+CAR_MASS: float = config.get("car_mass", 400)
+CAR_CENTER_OF_MASS: float = config.get("car_center_of_mass", .25)
 
 time_stamp_record: DataPersistence[int] = DataPersistence(2000)
 speed_record: DataPersistence[float] = DataPersistence(2000)
@@ -64,7 +68,15 @@ class CommCallback(Callback):
     def on_receive(self, service: Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
         try:
-            self.current_data = d = loads(msg.decode())
+            d = loads(msg.decode())
+            mg = CAR_MASS * 2.451675
+            f_forward = CAR_MASS * d["forward_acceleration"] * CAR_CENTER_OF_MASS * .5 / CAR_WIDTH
+            f_lateral = CAR_MASS * d["lateral_acceleration"] * CAR_CENTER_OF_MASS * .5 / CAR_LENGTH
+            d["cfc_fl"] = mg - f_lateral - f_forward
+            d["cfc_fr"] = mg + f_lateral - f_forward
+            d["cfc_rl"] = mg - f_lateral + f_forward
+            d["cfc_rr"] = mg + f_lateral + f_forward
+            self.current_data = d
             acceleration_record.append(Vector(d["forward_acceleration"], d["lateral_acceleration"],
                                               d["vertical_acceleration"]))
             gps_record.append(Vector(d["latitude"], d["longitude"]))
