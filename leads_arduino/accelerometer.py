@@ -27,8 +27,14 @@ class Acceleration(_Serializable):
 
     def linear(self) -> _Self:
         fg = rotation_matrix(self.yaw, self.pitch, self.roll).T @ _G
-        return Acceleration(self.yaw, self.pitch, self.roll, self.forward_acceleration + fg[0],
-                            self.lateral_acceleration + fg[1], self.vertical_acceleration - fg[2])
+        return LinearAcceleration(self.yaw, self.pitch, self.roll, float(self.forward_acceleration + fg[0]),
+                                  float(self.lateral_acceleration + fg[1]), float(self.vertical_acceleration - fg[2]))
+
+
+class LinearAcceleration(Acceleration):
+    @_override
+    def linear(self) -> _Self:
+        return self
 
 
 class Accelerometer(_Device):
