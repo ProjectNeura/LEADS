@@ -107,7 +107,7 @@ Even with extraordinary details and animation, we still manages to provide you w
 | Test Platform              | Maximum Frame Rate (FPS) |
 |----------------------------|--------------------------|
 | Apple MacBook Pro (M3)     | 260                      |
-| Orange Pi 5 Pro 8GB        | 160                      |
+| Orange Pi 5 Pro 8GB        | 200                      |
 | Raspberry Pi 5 8GB         | 100                      |
 | Raspberry Pi 4 Model B 8GB | 60                       |
 
@@ -208,7 +208,7 @@ performance.
 LEADS VeC Remote Analyst is designed so that the pit crew can track the vehicle. It consists of a local web server and a
 frontend website.
 
-![leads-vec-rc](docs/assets/leads-vec-rc.png)
+![leads-vec-rc](docs/assets/leads-vec-rc.jpg)
 
 </details>
 
@@ -665,11 +665,11 @@ class MainController(RandomController):
 The devices module will be executed after configuration registration. Register your devices in this module using AOP
 paradigm. A more detailed explanation can be found [here](https://leads-docs.projectneura.org/en/latest/device.html).
 
-## Architecture
+## History Versions
 
-### Remote Analyst
+These versions are used in practical races:
 
-![comm-flowchart](docs/assets/comm-flowchart.png)
+1. Version [`0.9.5 (Villeneuve)`](https://github.com/ProjectNeura/LEADS/releases/tag/0.9.5) - 2024-10-05
 
 ## Collaborations
 
