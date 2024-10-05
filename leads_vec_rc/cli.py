@@ -47,6 +47,7 @@ class CommCallback(Callback):
         super().__init__()
         self.client: Client = start_client(config.comm_addr, create_client(config.comm_port, self), True)
         self.current_data: dict[str, Any] = DataContainer().to_dict()
+        self.current_data.update({"report_rate": 0, "cfc_fl": 0, "cfc_fr": 0, "cfc_rl": 0, "cfc_rr": 0})
 
     @override
     def on_connect(self, service: Service, connection: Connection) -> None:
