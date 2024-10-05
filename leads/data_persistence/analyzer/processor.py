@@ -99,12 +99,13 @@ class Processor(object):
             # visual
             latencies = [row[key] for key in ("front_view_latency", "left_view_latency", "right_view_latency",
                                               "rear_view_latency") if key in row.keys()]
-            latency = min(latencies)
-            if not latency_invalid(latency) and (self._min_latency is None or latency < self._min_latency):
-                self._min_latency = latency
-            latency = max(latencies)
-            if not latency_invalid(latency) and (self._max_latency is None or latency > self._max_latency):
-                self._max_latency = latency
+            if len(latencies) > 1:
+                latency = min(latencies)
+                if not latency_invalid(latency) and (self._min_latency is None or latency < self._min_latency):
+                    self._min_latency = latency
+                latency = max(latencies)
+                if not latency_invalid(latency) and (self._max_latency is None or latency > self._max_latency):
+                    self._max_latency = latency
 
         self.foreach(unit, False)
         if self._valid_rows_count == 0:
