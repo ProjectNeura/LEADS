@@ -667,9 +667,10 @@ paradigm. A more detailed explanation can be found [here](https://leads-docs.pro
 
 ## History Versions
 
-These versions are used in practical races:
+These versions were used in practical races:
 
-1. Version [`0.9.5 (Villeneuve)`](https://github.com/ProjectNeura/LEADS/releases/tag/0.9.5) - 2024-10-05
+1. [`0.9.5 (Villeneuve)`](https://github.com/ProjectNeura/LEADS/releases/tag/0.9.5) - 2024-10-05 University of Waterloo
+   EV Challenge
 
 ## Collaborations
 
