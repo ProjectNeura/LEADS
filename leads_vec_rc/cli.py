@@ -71,10 +71,10 @@ class CommCallback(Callback):
                 time_stamp_record)) > 1 else 0
             f_forward = CAR_MASS * d["forward_acceleration"] * CAR_CENTER_OF_MASS * .5 / CAR_WIDTH
             f_lateral = CAR_MASS * d["lateral_acceleration"] * CAR_CENTER_OF_MASS * .5 / CAR_LENGTH
-            d["cfc_fl"] = mg - f_lateral - f_forward
-            d["cfc_fr"] = mg + f_lateral - f_forward
-            d["cfc_rl"] = mg - f_lateral + f_forward
-            d["cfc_rr"] = mg + f_lateral + f_forward
+            d["cfc_fl"] = mg + f_lateral - f_forward
+            d["cfc_fr"] = mg - f_lateral - f_forward
+            d["cfc_rl"] = mg + f_lateral + f_forward
+            d["cfc_rr"] = mg - f_lateral + f_forward
             self.current_data = d
             if config.save_data:
                 try_create_csv(d)
