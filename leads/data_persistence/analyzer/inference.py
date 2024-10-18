@@ -132,6 +132,7 @@ class SpeedInferenceByGPSGroundSpeed(SpeedInferenceBase):
 class SpeedInferenceByGPSPosition(SpeedInferenceBase):
     """
     Infer the speed based on the GPS position.
+    This is equivalent to inferring the mileage based on GPS position and then inferring the speed based on the mileage.
 
     v = ds/dt
     """
@@ -161,6 +162,8 @@ class ForwardAccelerationInferenceBase(Inference, metaclass=_ABCMeta):
 class ForwardAccelerationInferenceBySpeed(ForwardAccelerationInferenceBase):
     """
     Infer the forward acceleration based on the speed.
+    Note that this is not always reliable because speed is a scalar, but forward acceleration is not. Accelerating in
+    reverse will still be counted as forward acceleration.
 
     a = dv/dt
     """
@@ -232,6 +235,10 @@ class MileageInferenceByGPSPosition(MileageInferenceBase):
 
 
 class VisualDataRealignmentByLatency(Inference):
+    """
+    Offset the delay introduced by camera recording and video encoding so that the sensor data and the picture of the
+    same frame match.
+    """
     def __init__(self, *channels: _Literal["front", "left", "right", "rear"]) -> None:
         super().__init__((0, 1), VISUAL_HEADER_ONLY)
         self._channels: tuple[_Literal["front", "left", "right", "rear"], ...] = channels if channels else (
