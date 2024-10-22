@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showLine(index) {
         if (index === 0 || index === 5 || index === 8) background.style.background = "#343751";
+        else if (index === 7) background.style.background = "#000000";
         else background.style.background = "url(\"assets/background-" + index + ".png\") no-repeat center center/cover";
         lines.forEach((line, i) => {
             line.classList.remove("visible", "exit");
