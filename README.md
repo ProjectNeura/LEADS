@@ -236,6 +236,22 @@ has never been such easy as today thanks to AI.
 
 </details>
 
+## Citation
+
+Should you find our work helpful to you, please cite our publication.
+
+```bibtex
+@misc{fu2024leadslightweightembeddedassisted,
+    title = {LEADS: Lightweight Embedded Assisted Driving System},
+    author = {Tianhao Fu and Querobin Mascarenhas and Andrew Forti},
+    year = {2024},
+    eprint = {2410.17554},
+    archivePrefix = {arXiv},
+    primaryClass = {cs.SE},
+    url = {https://arxiv.org/abs/2410.17554},
+}
+```
+
 ## Installation
 
 ### Python
