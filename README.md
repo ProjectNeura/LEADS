@@ -574,7 +574,7 @@ bash "uninstall.sh$(wget -O uninstall.sh https://raw.githubusercontent.com/Proje
 
 ## Configurations
 
-The configuration is a JSON file that has the following settings. You can have an empty configuration file like the
+The configuration file is a JSON file that has the following settings. You can have an empty configuration file like the
 following as all the settings are optional.
 
 ```json
@@ -607,6 +607,8 @@ Note that a purely empty file could cause an error.
 | `comm_stream_port`     | `bool`  | Port on which the streaming system runs on                                            | Main, Remote | `16901`       |
 | `data_dir`             | `str`   | Directory for the data recording system                                               | Main, Remote | `"data"`      |
 | `save_data`            | `bool`  | `True`: save data; `False`: discard data                                              | Remote       | `False`       |
+
+For device-related implicit configurations, please see the [devices module](leads_vec/devices.py).
 
 ## Workflows
 
