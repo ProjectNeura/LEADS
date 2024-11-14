@@ -2,6 +2,7 @@ from typing import Literal as _Literal, override as _override
 
 from serial import Serial as _Serial
 
+from leads import require_config
 from leads.comm import Entity, Callback, Service
 from leads.dt.device import Device
 from leads.logger import L
@@ -29,8 +30,10 @@ class SOBD(Device, Entity, _AutoIdentity):
 
     @_override
     def update(self, data: str) -> None:
-        # todo
-        pass
+        if data.startswith("dbl="):
+            require_config().w_debug_level = data[4:].upper()
+        else:
+            self.write("\n".join(L.history_messages()).encode())
 
     @_override
     def check_identity(self, connection: _SerialConnection) -> bool:
