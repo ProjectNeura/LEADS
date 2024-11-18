@@ -10,7 +10,7 @@ from leads_comm_serial import SerialConnection as _SerialConnection, AutoIdentit
 
 
 class SOBD(Device, Entity, _AutoIdentity):
-    def __init__(self, port: str | _Literal["auto"], baud_rate: int = 9600) -> None:
+    def __init__(self, port: str | _Literal["auto"], baud_rate: int = 9600, password: str = "") -> None:
         Device.__init__(self)
         Entity.__init__(self, -1, _SOBDCallback(self))
         _AutoIdentity.__init__(self, port == "auto")
@@ -18,6 +18,8 @@ class SOBD(Device, Entity, _AutoIdentity):
         self._serial.baudrate = baud_rate
         self._connection: _SerialConnection | None = None
         self._serial.port = self.suggest_next_port() if port == "auto" else port
+        self._password: str = password
+        self._locked: bool = password != ""
 
     @_override
     def port(self) -> str:
@@ -30,6 +32,13 @@ class SOBD(Device, Entity, _AutoIdentity):
 
     @_override
     def update(self, data: str) -> None:
+        if data.startswith("pwd="):
+            if data[4:] != self._password:
+                self.close()
+            else:
+                self._locked = False
+        if self._locked:
+            return
         if data.startswith("dbl="):
             require_config().w_debug_level = data[4:].upper()
         else:
