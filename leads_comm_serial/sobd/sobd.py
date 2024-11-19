@@ -2,21 +2,20 @@ from typing import Literal as _Literal, override as _override
 
 from serial import Serial as _Serial
 
-from leads import require_config
-from leads.comm import Entity, Callback, Service
-from leads.dt.device import Device
-from leads.logger import L
-from leads_comm_serial import SerialConnection as _SerialConnection, AutoIdentity as _AutoIdentity
+from leads import require_config as _require_config, Device as _Device, L as _L
+from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
+from leads_comm_serial.connection import SerialConnection
+from leads_comm_serial.identity import AutoIdentity
 
 
-class SOBD(Device, Entity, _AutoIdentity):
+class SOBD(_Device, _Entity, AutoIdentity):
     def __init__(self, port: str | _Literal["auto"], baud_rate: int = 9600, password: str = "") -> None:
-        Device.__init__(self)
-        Entity.__init__(self, -1, _SOBDCallback(self))
-        _AutoIdentity.__init__(self, port == "auto")
+        _Device.__init__(self)
+        _Entity.__init__(self, -1, _SOBDCallback(self))
+        AutoIdentity.__init__(self, port == "auto")
         self._serial: _Serial = _Serial()
         self._serial.baudrate = baud_rate
-        self._connection: _SerialConnection | None = None
+        self._connection: SerialConnection | None = None
         self._serial.port = self.suggest_next_port() if port == "auto" else port
         self._password: str = password
         self._locked: bool = password != ""
@@ -40,12 +39,12 @@ class SOBD(Device, Entity, _AutoIdentity):
         if self._locked:
             return
         if data.startswith("dbl="):
-            require_config().w_debug_level = data[4:].upper()
+            _require_config().w_debug_level = data[4:].upper()
         else:
-            self.write("\n".join(L.history_messages()).encode())
+            self.write("\n".join(_L.history_messages()).encode())
 
     @_override
-    def check_identity(self, connection: _SerialConnection) -> bool:
+    def check_identity(self, connection: SerialConnection) -> bool:
         connection.send(b"ic")
         return (msg := connection.receive()) and msg.startswith(self.tag().encode())
 
@@ -68,15 +67,15 @@ class SOBD(Device, Entity, _AutoIdentity):
             self._connection.close()
 
 
-class _SOBDCallback(Callback):
+class _SOBDCallback(_Callback):
     def __init__(self, sobd: SOBD) -> None:
         super().__init__()
         self._sobd: SOBD = sobd
 
     @_override
-    def on_receive(self, service: Service, msg: bytes) -> None:
+    def on_receive(self, service: _Service, msg: bytes) -> None:
         self.super(service=service, msg=msg)
         try:
             self._sobd.update(msg.decode())
         except UnicodeDecodeError:
-            L.debug(f"Discarding this message: {msg}")
+            _L.debug(f"Discarding this message: {msg}")
