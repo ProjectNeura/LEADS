@@ -5,3 +5,4 @@ if not _find_spec("serial"):
 
 from leads_comm_serial.connection import *
 from leads_comm_serial.identity import *
+from leads_comm_serial.sobd import *
