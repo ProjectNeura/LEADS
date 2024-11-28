@@ -6,6 +6,7 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
     SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer, Acceleration
+from leads_comm_serial import SOBD
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
 from leads_vec.config import Config
 from leads_video import Base64Camera, get_camera
@@ -13,6 +14,8 @@ from leads_video import Base64Camera, get_camera
 config: Config = require_config()
 GPS_ONLY: int = config.get("gps_only", False)
 BAUD_RATE: int = config.get("baud_rate", 9600)
+SOBD_PORT: int = config.get("sobd_port", "auto")
+SOBD_PASSWORD: int = config.get("sobd_password", "")
 POWER_CONTROLLER_PORT: str = config.get("power_controller_port", "auto")
 WHEEL_SPEED_CONTROLLER_PORT: str = config.get("wheel_speed_controller_port", "auto")
 GPS_RECEIVER_PORT: str = config.get("gps_receiver_port", "auto")
@@ -78,6 +81,14 @@ class VeCController(Controller):
             visual["rear_view_base64"] = cam.read()
             visual["rear_view_latency"] = int(cam.latency() * 1000)
         return DataContainer(**wsc, **general) if len(visual) < 1 else VisualDataContainer(**visual, **wsc, **general)
+
+
+@device("obd", MAIN_CONTROLLER, (SOBD_PORT, BAUD_RATE, SOBD_PASSWORD))
+class OBD(SOBD):
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        mark_device(self, "OBD")
+        super().initialize(*parent_tags)
 
 
 @controller(POWER_CONTROLLER, MAIN_CONTROLLER, (POWER_CONTROLLER_PORT, BAUD_RATE))
