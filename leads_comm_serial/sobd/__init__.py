@@ -1,1 +1,1 @@
-from leads_comm_serial.sobd import *
+from leads_comm_serial.sobd.sobd import *
