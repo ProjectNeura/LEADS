@@ -3,7 +3,7 @@ from typing import Literal as _Literal, override as _override
 from serial import Serial as _Serial
 
 from leads import require_config as _require_config, Device as _Device, L as _L
-from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service
+from leads.comm import Entity as _Entity, Callback as _Callback, Service as _Service, ConnectionBase as _ConnectionBase
 from leads_comm_serial.connection import SerialConnection
 from leads_comm_serial.identity import AutoIdentity
 
@@ -71,6 +71,11 @@ class _SOBDCallback(_Callback):
     def __init__(self, sobd: SOBD) -> None:
         super().__init__()
         self._sobd: SOBD = sobd
+
+    @_override
+    def on_connect(self, service: _Service, connection: _ConnectionBase) -> None:
+        _L.debug(f"SOBD connected on {self._sobd.port()}")
+
 
     @_override
     def on_receive(self, service: _Service, msg: bytes) -> None:
