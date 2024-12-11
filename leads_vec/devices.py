@@ -7,7 +7,7 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer, Acceleration
 from leads_comm_serial import SOBD
-from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
+from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition, CPUMonitor
 from leads_vec.config import Config
 from leads_video import Base64Camera, get_camera
 
@@ -172,6 +172,11 @@ class GPS(NMEAGPSReceiver):
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "GPS")
         super().initialize(*parent_tags)
+
+
+@device("cpu", MAIN_CONTROLLER)
+class CPU(CPUMonitor):
+    pass
 
 
 class Indicator(LEDGroup):
