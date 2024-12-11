@@ -7,6 +7,7 @@ if not _find_spec("pynmea2"):
 if not _find_spec("serial"):
     raise ImportError("Please install `pyserial` to run this module\n>>>pip install pyserial")
 
+from leads_gpio.cpu_monitor import *
 from leads_gpio.gps_receiver import *
 from leads_gpio.led import *
 from leads_gpio.led_group import *
