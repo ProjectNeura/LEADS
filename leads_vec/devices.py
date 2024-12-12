@@ -4,10 +4,11 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
-    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER
+    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER, require_context
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer, Acceleration
 from leads_comm_serial import SOBD
-from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition
+from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition, Button, \
+    ButtonCallback
 from leads_vec.config import Config
 from leads_video import Base64Camera, get_camera
 
@@ -211,6 +212,32 @@ class RightIndicator(Indicator):
         super().write(LEDGroupCommand(
             LEDCommand.BLINK, Transition("right2left", 100)
         ) if payload else LEDGroupCommand(LEDCommand.OFF, Entire()))
+
+
+@device("lib", MAIN_CONTROLLER)
+class LeftIndicatorButton(Button, ButtonCallback):
+    @override
+    def on_pressed(self) -> None:
+        ctx = require_context()
+        ctx.left_indicator(not ctx.left_indicator())
+
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
+        self.write(self)
+
+
+@device("rib", MAIN_CONTROLLER)
+class RightIndicatorButton(Button, ButtonCallback):
+    @override
+    def on_pressed(self) -> None:
+        ctx = require_context()
+        ctx.right_indicator(not ctx.right_indicator())
+
+    @override
+    def initialize(self, *parent_tags: str) -> None:
+        super().initialize(*parent_tags)
+        self.write(self)
 
 
 _: None = None
