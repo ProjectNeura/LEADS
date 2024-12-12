@@ -20,7 +20,7 @@ class PerformanceChecker(object):
         return 1 / _average(self._delay_seq)
 
     def net_delay(self) -> float:
-        return _average(self._net_delay_seq)
+        return float(_average(self._net_delay_seq))
 
     def record_frame(self, last_interval: float) -> None:
         # add .0000000001 to avoid zero division
