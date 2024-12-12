@@ -118,7 +118,7 @@ class CommCallback(Callback):
 def add_secondary_window(context_manager: ContextManager, display: int, var_lap_times: _StringVar,
                          var_speed: _DoubleVar, var_speed_trend: _DoubleVar) -> None:
     pot = context_manager.window()
-    w = Window(pot.root(), 0, 0, fullscreen=True, display=display)
+    w = Window(pot.root(), fullscreen=True, display=display)
     window_index = context_manager.add_window(w)
     num_widgets = int(w.width() / w.height())
     fonts = (("Arial", int(w.width() * .2)), ("Arial", int(w.width() * .1)), ("Arial", int(w.width() * .025)))
