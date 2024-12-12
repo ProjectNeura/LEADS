@@ -15,7 +15,7 @@ from leads import require_config as _require_config, DataContainer as _DataConta
     initialize_main as _initialize_main
 from leads.comm import Server as _Server
 from leads_gui.performance_checker import PerformanceChecker
-from leads_gui.system import _ASSETS_PATH
+from leads_gui.system import _ASSETS_PATH, get_system_kernel as _get_system_kernel
 from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
 
 
@@ -309,8 +309,11 @@ class Window(object):
             y = int((self._pot_master.winfo_height() - self._height) * .5 + self._pot_master.winfo_rooty())
             self._master.transient(self._pot_master)
         elif self._pot_master:
-            y += self._pot_master.winfo_screenheight() - self._screen_height - self._screen_y
-        self._master.geometry(f"{self._width}x{self._height}+{x}+{y}")
+            print(self._pot_master.winfo_screenheight(), self._screen_height, self._screen_y)
+            y += self._screen_y if _get_system_kernel() == "windows" else (self._pot_master.winfo_screenheight() -
+                                                                           self._screen_height - self._screen_y)
+        self._master.geometry(f"{self._width}x{self._height}{"-" if x < 0 else "+"}{abs(x)}{"-" if y < 0 else "+"}{abs(
+            y)}")
         self._master.resizable(False, False)
 
     def kill(self) -> None:
@@ -382,6 +385,7 @@ class Pot(Window, _Generic[T]):
     @_override
     def show(self) -> None:
         super().show()
+
         def wrapper(init: bool) -> None:
             if not init:
                 self._on_refresh(self)
