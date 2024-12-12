@@ -260,29 +260,24 @@ class Window(object):
                  display: int = 0,
                  popup: bool = False) -> None:
         self._pot_master: _Misc | None = master
-        self._display: int = display
         if master:
-            self._master = _CTkToplevel(master)
-            self.show()
+            self._master: _CTk | _CTkToplevel = _CTkToplevel(master)
         elif self.__class__ is not Pot:
             raise TypeError("Use `Pot` for root windows")
         else:
-            self._master: _CTk = _CTk()
+            self._master: _CTk | _CTkToplevel = _CTk()
+            popup = False
         screen = _get_monitors()[display]
-        self._master.title(title)
-        self._master.wm_iconbitmap()
-        self._master.iconphoto(True, _PhotoImage(master=self._master, file=f"{_ASSETS_PATH}/logo.png"))
-        self._master.overrideredirect(no_title_bar)
+        self._screen_x: int = screen.x
+        self._screen_y: int = screen.y
         self._screen_width: int = screen.width
         self._screen_height: int = screen.height
         self._width: int = self._screen_width if fullscreen else width
         self._height: int = self._screen_height if fullscreen else height
-        x, y = int((self._screen_width - self._width) * .5) + screen.x, int((self._screen_height - self._height) * .5)
-        if popup:
-            x = int((master.winfo_width() - self._width) * .5 + master.winfo_rootx())
-            y = int((master.winfo_height() - self._height) * .5 + master.winfo_rooty())
-        self._master.geometry(f"{self._width}x{self._height}+{x}+{y}")
-        self._master.resizable(False, False)
+        self._title: str = title
+        self._no_title_bar: bool = no_title_bar
+        self._display: int = display
+        self._popup: bool = popup
 
     def screen_index(self) -> int:
         return self._display
@@ -303,7 +298,20 @@ class Window(object):
         return self._master
 
     def show(self) -> None:
-        self._master.transient(self._pot_master)
+        self._master.title(self._title)
+        self._master.wm_iconbitmap()
+        self._master.iconphoto(True, _PhotoImage(master=self._master, file=f"{_ASSETS_PATH}/logo.png"))
+        self._master.overrideredirect(self._no_title_bar)
+        x, y = (int((self._screen_width - self._width) * .5) + self._screen_x,
+                int((self._screen_height - self._height) * .5))
+        if self._popup:
+            x = int((self._pot_master.winfo_width() - self._width) * .5 + self._pot_master.winfo_rootx())
+            y = int((self._pot_master.winfo_height() - self._height) * .5 + self._pot_master.winfo_rooty())
+            self._master.transient(self._pot_master)
+        elif self._pot_master:
+            y += self._pot_master.winfo_screenheight() - self._screen_height - self._screen_y
+        self._master.geometry(f"{self._width}x{self._height}+{x}+{y}")
+        self._master.resizable(False, False)
 
     def kill(self) -> None:
         self._master.destroy()
@@ -373,6 +381,7 @@ class Pot(Window, _Generic[T]):
 
     @_override
     def show(self) -> None:
+        super().show()
         def wrapper(init: bool) -> None:
             if not init:
                 self._on_refresh(self)
@@ -420,6 +429,7 @@ class ContextManager(object):
 
     def add_window(self, window: Window) -> int:
         self._windows[index := self._allocate_window()] = window
+        window.show()
         return index
 
     def remove_window(self, index: int) -> None:
