@@ -39,7 +39,7 @@ def _on_register_config(chain: _OnRegister[Config]) -> _OnRegister[Config]:
 _set_on_register_config(_on_register_config)
 
 
-def initialize(window: Window,
+def initialize(window: Pot,
                render: _Callable[[ContextManager], None],
                leads: _LEADS[_Any]) -> ContextManager:
     main_controller = _get_controller(_MAIN_CONTROLLER)
