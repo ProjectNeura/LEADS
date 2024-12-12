@@ -189,7 +189,7 @@ class Processor(object):
             return (dt := t - self._lap_start_time), (
                 ds := mileage - self._lap_start_mileage), 3600000 * ds / dt if dt else 0
 
-        def shared_post(duration: float, distance: float, avg_speed: float) -> None:
+        def shared_post(duration: int, distance: float, avg_speed: float) -> None:
             if self._max_lap_duration is None or duration > self._max_lap_duration:
                 self._max_lap_duration = duration
             if self._max_lap_distance is None or distance > self._max_lap_distance:

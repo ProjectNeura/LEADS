@@ -8,7 +8,7 @@ from customtkinter import CTkLabel, DoubleVar
 from cv2 import VideoCapture, imencode, IMWRITE_JPEG_QUALITY, CAP_PROP_FPS
 
 from leads import L, require_config
-from leads_gui import RuntimeData, Window, ContextManager, Speedometer
+from leads_gui import RuntimeData, Pot, ContextManager, Speedometer
 
 
 def video_tester(container: Callable[[], None]) -> float:
@@ -61,7 +61,7 @@ class Callbacks(object):
         self.t: float = time()
         self.speed: DoubleVar | None = None
 
-    def on_refresh(self, window: Window) -> None:
+    def on_refresh(self, window: Pot) -> None:
         self.speed.set((d := time() - self.t) * 20)
         if d > 10:
             window.kill()
@@ -72,7 +72,7 @@ def main() -> int:
     L.info("GUI test starting, this takes about 10 seconds")
     rd = RuntimeData()
     callbacks = Callbacks()
-    w = Window(800, 256, 30, rd, callbacks.on_refresh, "Benchmark", no_title_bar=False)
+    w = Pot(800, 256, 30, rd, callbacks.on_refresh, "Benchmark", no_title_bar=False)
     callbacks.speed = DoubleVar(w.root())
     uim = ContextManager(w)
     uim.layout([[CTkLabel(w.root(), text="Do NOT close the window", height=240),

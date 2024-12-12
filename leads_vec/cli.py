@@ -15,7 +15,7 @@ from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, 
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, SuspensionExitEvent
 from leads.comm import Callback, Service, start_server, create_server, my_ip_addresses, ConnectionBase
 from leads_audio import DIRECTION_INDICATOR_ON, DIRECTION_INDICATOR_OFF, WARNING, CONFIRM
-from leads_gui import RuntimeData, Window, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
+from leads_gui import RuntimeData, Window, Pot, GForceVar, FrequencyGenerator, Left, Color, Right, ContextManager, \
     Typography, Speedometer, ProxyCanvas, SpeedTrendMeter, GForceMeter, Stopwatch, Hazard, initialize, Battery, Brake, \
     ESC, Satellite, Motor, Speed, Photo, Light, ImageVariable
 from leads_vec.__version__ import __version__
@@ -118,7 +118,7 @@ class CommCallback(Callback):
 def add_secondary_window(context_manager: ContextManager, display: int, var_lap_times: _StringVar,
                          var_speed: _DoubleVar, var_speed_trend: _DoubleVar) -> None:
     pot = context_manager.window()
-    w = Window(0, 0, pot.refresh_rate(), pot.runtime_data(), fullscreen=True, display=display)
+    w = Window(pot.root(), 0, 0, fullscreen=True, display=display)
     window_index = context_manager.add_window(w)
     num_widgets = int(w.width() / w.height())
     fonts = (("Arial", int(w.width() * .2)), ("Arial", int(w.width() * .1)), ("Arial", int(w.width() * .025)))
@@ -135,14 +135,22 @@ def toggle_debug_window(context_manager: ContextManager, var_debug: _StringVar) 
     pot = context_manager.window()
     rd = pot.runtime_data()
     if rd.debug_window_index < 0:
-        w = Window(pot.width(), pot.height(), pot.refresh_rate(), rd)
+        w = Window(pot.root(), pot.width(), pot.height(), popup=True)
         rd.debug_window_index = context_manager.add_window(w)
-        context_manager.layout([[Typography(w.root(), width=pot.width(), height=pot.height(), variable=var_debug,
-                                            font=("Arial", int(pot.height() * .022)))]], 0,
-                               rd.debug_window_index)
-        return
-    context_manager.remove_window(rd.debug_window_index)
-    rd.debug_window_index = -1
+        context_manager.layout([
+            [Typography(w.root(), width=pot.width(), height=pot.height() * .9, variable=var_debug,
+                        font=("Arial", int(pot.height() * .022)))],
+            [_Button(w.root(), pot.width(), int(pot.height() * .1), text="CLOSE",
+                     command=lambda: toggle_debug_window(context_manager, var_debug))]
+        ], 0, rd.debug_window_index)
+    else:
+        context_manager.remove_window(rd.debug_window_index)
+        rd.debug_window_index = -1
+
+
+def set_debug_window(context_manager: ContextManager, var_debug: _StringVar, status: bool) -> None:
+    if status ^ context_manager.window().runtime_data().debug_window_index < 0:
+        toggle_debug_window(context_manager, var_debug)
 
 
 def main() -> int:
@@ -153,8 +161,8 @@ def main() -> int:
     ctx.plugin(SystemLiteral.ABS, ABS())
     ctx.plugin(SystemLiteral.EBI, EBI())
     ctx.plugin(SystemLiteral.ATBS, ATBS())
-    w = Window(cfg.width, cfg.height, cfg.refresh_rate, CustomRuntimeData(), fullscreen=cfg.fullscreen,
-               no_title_bar=cfg.no_title_bar, theme_mode=cfg.theme_mode)
+    w = Pot(cfg.width, cfg.height, cfg.refresh_rate, CustomRuntimeData(), fullscreen=cfg.fullscreen,
+            no_title_bar=cfg.no_title_bar, theme_mode=cfg.theme_mode)
     root = w.root()
     root.configure(cursor="dot")
     var_lap_times = _StringVar(root, "")
@@ -262,7 +270,10 @@ def main() -> int:
     class IdleUpdate(FrequencyGenerator):
         @_override
         def do(self) -> None:
-            cpu_temp = get_device("cpu").read()["temp"] if has_device("cpu") else "?"
+            cpu_temp = get_device("cpu").read()["temp"] if has_device("cpu") else 0
+            if cpu_temp > 90:
+                L.warn("! CPU OVERHEATING, PULL OVER RIGHT NOW !")
+                set_debug_window(uim, var_debug, True)
             var_info.set(f"VeC {__version__.upper()}\n\n"
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                          f"{format_duration(duration := _time() - w.runtime_data().start_time)} {cpu_temp} °C\n"

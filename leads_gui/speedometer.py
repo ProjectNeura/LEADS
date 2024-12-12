@@ -66,9 +66,9 @@ class Speedometer(TextBased, VariableControlled):
                                  f"#{f"{int(0x4d + 0xb2 * p):02x}" * 3}"))
             canvas.collect("d0", canvas.create_arc(x - r, y - r, x + r, y + r, start=-30, extent=240, width=4,
                                                    style=_ARC, outline=color))
-            canvas.collect("d1", canvas.create_line(*(x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
+            canvas.collect("d1", canvas.create_line((x, y) if self._style == 2 else (x - _cos(rad) * (r - 8),
                                                                                       y - _sin(rad) * (r - 8)),
-                                                    x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8), width=4,
+                                                    (x - _cos(rad) * (r + 8), y - _sin(rad) * (r + 8)), width=4,
                                                     fill=color))
             canvas.collect("d2", canvas.create_text(x, y * .95 if self._style == 1 else y + (r - font[1]) * .5,
                                                     text=str(int(v)), fill=self._text_color, font=font))
