@@ -1,7 +1,7 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from json import dumps as _dumps
 from time import time as _time
-from tkinter import Misc as _Misc, Event as _Event, PhotoImage as _PhotoImage
+from tkinter import Misc as _Misc, Event as _Event, PhotoImage as _PhotoImage, TclError as _TclError
 from typing import Callable as _Callable, Self as _Self, TypeVar as _TypeVar, Generic as _Generic, Any as _Any, \
     Literal as _Literal, override as _override
 
@@ -173,7 +173,10 @@ class VariableControlled(object):
 
         def unique(_, __, ___) -> None:
             if (v := self._variable.get()) != self._last_value:
-                callback()
+                try:
+                    callback()
+                except _TclError:
+                    self.detach()
                 self._last_value = v
 
         self._trace_cb_name = self._variable.trace_add("write", unique)
