@@ -270,7 +270,10 @@ def main() -> int:
     class IdleUpdate(FrequencyGenerator):
         @_override
         def do(self) -> None:
-            cpu_temp = get_device("cpu").read()["temp"] if has_device("cpu") else "?"
+            cpu_temp = get_device("cpu").read()["temp"] if has_device("cpu") else 0
+            if cpu_temp > 90:
+                L.warn("! CPU OVERHEATING, PULL OVER RIGHT NOW !")
+                set_debug_window(uim, var_debug, True)
             var_info.set(f"VeC {__version__.upper()}\n\n"
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
                          f"{format_duration(duration := _time() - w.runtime_data().start_time)} {cpu_temp} °C\n"
