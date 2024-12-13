@@ -15,7 +15,7 @@ from leads import require_config as _require_config, DataContainer as _DataConta
     initialize_main as _initialize_main
 from leads.comm import Server as _Server
 from leads_gui.performance_checker import PerformanceChecker
-from leads_gui.system import _ASSETS_PATH
+from leads_gui.system import _ASSETS_PATH, get_system_kernel as _get_system_kernel
 from leads_gui.types import Widget as _Widget, Color as _Color, Font as _Font
 
 
@@ -250,15 +250,8 @@ class RuntimeData(_RuntimeData):
 
 
 class Window(object):
-    def __init__(self,
-                 master: _Misc | None = None,
-                 width: int = 720,
-                 height: int = 480,
-                 title: str = "LEADS",
-                 fullscreen: bool = False,
-                 no_title_bar: bool = True,
-                 display: int = 0,
-                 popup: bool = False) -> None:
+    def __init__(self, master: _Misc | None = None, width: int = 720, height: int = 480, title: str = "LEADS",
+                 fullscreen: bool = False, no_title_bar: bool = True, display: int = 0, popup: bool = False) -> None:
         self._pot_master: _Misc | None = master
         if master:
             self._master: _CTk | _CTkToplevel = _CTkToplevel(master)
@@ -309,8 +302,11 @@ class Window(object):
             y = int((self._pot_master.winfo_height() - self._height) * .5 + self._pot_master.winfo_rooty())
             self._master.transient(self._pot_master)
         elif self._pot_master:
-            y += self._pot_master.winfo_screenheight() - self._screen_height - self._screen_y
-        self._master.geometry(f"{self._width}x{self._height}+{x}+{y}")
+            print(self._pot_master.winfo_screenheight(), self._screen_height, self._screen_y)
+            y += self._screen_y if _get_system_kernel() == "windows" else (self._pot_master.winfo_screenheight() -
+                                                                           self._screen_height - self._screen_y)
+        self._master.geometry(f"{self._width}x{self._height}{"-" if x < 0 else "+"}{abs(x)}{"-" if y < 0 else "+"}{abs(
+            y)}")
         self._master.resizable(False, False)
 
     def kill(self) -> None:
@@ -321,16 +317,9 @@ T = _TypeVar("T", bound=RuntimeData)
 
 
 class Pot(Window, _Generic[T]):
-    def __init__(self,
-                 width: int,
-                 height: int,
-                 refresh_rate: int,
-                 runtime_data: T,
-                 on_refresh: _Callable[[_Self], None] = lambda _: None,
-                 title: str = "LEADS",
-                 fullscreen: bool = False,
-                 no_title_bar: bool = True,
-                 theme_mode: _Literal["system", "light", "dark"] = "system",
+    def __init__(self, width: int, height: int, refresh_rate: int, runtime_data: T,
+                 on_refresh: _Callable[[_Self], None] = lambda _: None, title: str = "LEADS", fullscreen: bool = False,
+                 no_title_bar: bool = True, theme_mode: _Literal["system", "light", "dark"] = "system",
                  display: int = 0) -> None:
         Window.__init__(self, None, width, height, title, fullscreen, no_title_bar, display)
         self._refresh_rate: int = refresh_rate
@@ -382,6 +371,7 @@ class Pot(Window, _Generic[T]):
     @_override
     def show(self) -> None:
         super().show()
+
         def wrapper(init: bool) -> None:
             if not init:
                 self._on_refresh(self)
