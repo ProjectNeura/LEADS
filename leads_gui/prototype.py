@@ -250,15 +250,8 @@ class RuntimeData(_RuntimeData):
 
 
 class Window(object):
-    def __init__(self,
-                 master: _Misc | None = None,
-                 width: int = 720,
-                 height: int = 480,
-                 title: str = "LEADS",
-                 fullscreen: bool = False,
-                 no_title_bar: bool = True,
-                 display: int = 0,
-                 popup: bool = False) -> None:
+    def __init__(self, master: _Misc | None = None, width: int = 720, height: int = 480, title: str = "LEADS",
+                 fullscreen: bool = False, no_title_bar: bool = True, display: int = 0, popup: bool = False) -> None:
         self._pot_master: _Misc | None = master
         if master:
             self._master: _CTk | _CTkToplevel = _CTkToplevel(master)
@@ -324,16 +317,9 @@ T = _TypeVar("T", bound=RuntimeData)
 
 
 class Pot(Window, _Generic[T]):
-    def __init__(self,
-                 width: int,
-                 height: int,
-                 refresh_rate: int,
-                 runtime_data: T,
-                 on_refresh: _Callable[[_Self], None] = lambda _: None,
-                 title: str = "LEADS",
-                 fullscreen: bool = False,
-                 no_title_bar: bool = True,
-                 theme_mode: _Literal["system", "light", "dark"] = "system",
+    def __init__(self, width: int, height: int, refresh_rate: int, runtime_data: T,
+                 on_refresh: _Callable[[_Self], None] = lambda _: None, title: str = "LEADS", fullscreen: bool = False,
+                 no_title_bar: bool = True, theme_mode: _Literal["system", "light", "dark"] = "system",
                  display: int = 0) -> None:
         Window.__init__(self, None, width, height, title, fullscreen, no_title_bar, display)
         self._refresh_rate: int = refresh_rate
