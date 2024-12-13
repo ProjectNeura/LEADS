@@ -690,6 +690,10 @@ These versions were used in practical races:
 1. [`0.9.5 (Villeneuve)`](https://github.com/ProjectNeura/LEADS/releases/tag/0.9.5) - 2024-10-05 University of Waterloo
    EV Challenge
 
+## Download Trend
+
+![downloads](docs/assets/downloads.png)
+
 ## Collaborations
 
 ### Community
