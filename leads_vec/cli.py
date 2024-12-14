@@ -276,7 +276,7 @@ def main() -> int:
                 set_debug_window(uim, var_debug, True)
             var_info.set(f"VeC {__version__.upper()}\n\n"
                          f"{_datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n"
-                         f"{format_duration(duration := _time() - w.runtime_data().start_time)} {cpu_temp} °C\n"
+                         f"{format_duration(duration := _time() - w.runtime_data().start_time)} {cpu_temp:.1f} °C\n"
                          f"{(m := ctx.data().mileage):.1f} KM - {m * 3600 / duration:.1f} KM / H\n\n"
                          f"{cfg.refresh_rate} - {w.frame_rate():.2f} FPS - {w.net_delay() * 1000:.1f} MS\n"
                          f"{(["NOT FOUND"] + my_ip_addresses())[-1]}:{w.runtime_data().comm.port()}")
