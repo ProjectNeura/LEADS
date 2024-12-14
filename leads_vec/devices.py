@@ -219,7 +219,7 @@ class RightIndicator(Indicator):
         ) if payload else LEDGroupCommand(LEDCommand.OFF, Entire()))
 
 
-@device("lib", MAIN_CONTROLLER)
+@device("lib", MAIN_CONTROLLER, (16,))
 class LeftIndicatorButton(Button, ButtonCallback):
     @override
     def on_pressed(self) -> None:
@@ -232,7 +232,7 @@ class LeftIndicatorButton(Button, ButtonCallback):
         self.write(self)
 
 
-@device("rib", MAIN_CONTROLLER)
+@device("rib", MAIN_CONTROLLER, (20,))
 class RightIndicatorButton(Button, ButtonCallback):
     @override
     def on_pressed(self) -> None:
