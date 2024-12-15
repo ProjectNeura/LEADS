@@ -694,8 +694,6 @@ These versions were used in practical races:
 
 ![stats](https://repobeats.axiom.co/api/embed/f7f119d5a732dd39fe1b42d9aa07f022939b910c.svg)
 
-![downloads](docs/assets/downloads.png)
-
 ## Collaborations
 
 ### Community
