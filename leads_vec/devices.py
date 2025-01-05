@@ -4,7 +4,8 @@ from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SE
     Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
-    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER, require_context
+    SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER, require_context, \
+    ltm_get, ltm_set, distance_between
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer, Acceleration
 from leads_comm_serial import SOBD
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition, Button, \
@@ -54,7 +55,6 @@ class VeCController(Controller):
     @override
     def read(self) -> DataContainer:
         general = {
-            "mileage": self.device(ODOMETER).read(),
             "gps_valid": (gps := self.device(GPS_RECEIVER).read())[0],
             "gps_ground_speed": gps[1],
             "latitude": gps[2],
@@ -62,8 +62,12 @@ class VeCController(Controller):
             **self.device(POWER_CONTROLLER).read()
         }
         wsc = self.device(WHEEL_SPEED_CONTROLLER).read()
+        odometer = self.device(ODOMETER)
         if GPS_ONLY:
             wsc["speed"] = gps[1]
+            prev = require_context().data()
+            odometer.write(odometer.read() + distance_between(prev.latitude, prev.longitude, gps[2], gps[3]))
+        general["mileage"] = odometer.read()
         visual = {}
         if has_device(FRONT_VIEW_CAMERA):
             cam = get_camera(FRONT_VIEW_CAMERA, Base64Camera)
@@ -138,10 +142,17 @@ class AverageOdometer(ConcurrentOdometer):
     def initialize(self, *parent_tags: str) -> None:
         mark_device(self, "WSC")
         super().initialize(*parent_tags)
+        if config.use_ltm:
+            self.write(ltm_get("mileage"))
+
+    @override
+    def write(self, payload: float) -> None:
+        super().write(payload)
+        ltm_set("mileage", payload)
 
     @override
     def read(self) -> float:
-        return super().read() / 3
+        return super().read() if GPS_ONLY else super().read() / 3
 
 
 @device(*(((LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, CENTER_REAR_WHEEL_SPEED_SENSOR),
