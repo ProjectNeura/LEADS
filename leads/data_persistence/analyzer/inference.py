@@ -1,8 +1,9 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from typing import Any as _Any, override as _override, Generator as _Generator, Literal as _Literal
 
+from leads.data import distance_between
 from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, acceleration_invalid, \
-    mileage_invalid, latitude_invalid, longitude_invalid, distance_between
+    mileage_invalid, latitude_invalid, longitude_invalid
 from leads.data_persistence.core import CSVDataset, DEFAULT_HEADER, VISUAL_HEADER_ONLY
 
 
@@ -239,6 +240,7 @@ class VisualDataRealignmentByLatency(Inference):
     Offset the delay introduced by camera recording and video encoding so that the sensor data and the picture of the
     same frame match.
     """
+
     def __init__(self, *channels: _Literal["front", "left", "right", "rear"]) -> None:
         super().__init__((0, 1), VISUAL_HEADER_ONLY)
         self._channels: tuple[_Literal["front", "left", "right", "rear"], ...] = channels if channels else (

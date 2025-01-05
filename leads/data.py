@@ -2,7 +2,7 @@ from json import dumps as _dumps
 from time import time as _time
 from typing import override as _override, Any as _Any
 
-from numpy import radians as _radians, degrees as _degrees, cos as _cos
+from numpy import radians as _radians, degrees as _degrees, cos as _cos, sqrt as _sqrt
 
 
 class Serializable(object):
@@ -159,6 +159,18 @@ def dlon2meters(dlon: float, lat: float) -> float:
 
 def meters2dlon(meters: float, lat: float) -> float:
     return _degrees(meters / 6378137 / _cos(_radians(lat)))
+
+
+def distance_between(lat_0: float, lon_0: float, lat: float, lon: float) -> float:
+    """
+    Calculate the distance between two locations on the Earth.
+    :param lat_0: the latitude of the first location
+    :param lon_0: the longitude of the first location
+    :param lat: the latitude of the second location
+    :param lon: the longitude of the second location
+    :return:
+    """
+    return _sqrt(dlon2meters(lon - lon_0, .5 * (lat_0 + lat)) ** 2 + dlat2meters(lat - lat_0) ** 2)
 
 
 def format_duration(duration: float) -> str:
