@@ -5,7 +5,7 @@ if not _find_spec("nidaqmx"):
 
 from leads_gui.system import get_system_kernel as _get_system_kernel
 
-if _get_system_kernel() != "windows":
+if _get_system_kernel() not in ("windows", "linux"):
     raise ImportError("National Instruments bindings for Python only supports Windows environments")
 
 from leads_national_instruments.mydaq import *
