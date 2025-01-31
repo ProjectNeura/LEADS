@@ -9,4 +9,5 @@ class Config(_Config):
         self.comm_stream: bool = False
         self.comm_stream_port: int = 16901
         self.data_dir: str = "data"
+        self.use_ltm: bool = False
         super().__init__(base)

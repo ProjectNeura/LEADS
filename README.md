@@ -607,6 +607,7 @@ Note that a purely empty file could cause an error.
 | `comm_stream_port`     | `bool`  | Port on which the streaming system runs on                                            | Main, Remote | `16901`       |
 | `data_dir`             | `str`   | Directory for the data recording system                                               | Main, Remote | `"data"`      |
 | `save_data`            | `bool`  | `True`: save data; `False`: discard data                                              | Remote       | `False`       |
+| `use_ltm`              | `bool`  | `True`: use long-term memory; `False`: short-term memory only                         | Main         | `False`       |
 
 For device-related implicit configurations, please see the [devices module](leads_vec/devices.py).
 
