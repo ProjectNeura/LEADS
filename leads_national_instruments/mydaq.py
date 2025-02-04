@@ -1,3 +1,4 @@
+from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
 from typing import override as _override
 
 try:
@@ -9,21 +10,56 @@ except ImportError as _e:
 from leads import Controller as _Controller, Device as _Device, get_controller as _get_controller
 
 
-class AnalogInput(_Device):
+class MyDAQDevice(_Device, metaclass=_ABCMeta):
     def __init__(self, channel: str) -> None:
         super().__init__(channel)
 
+    @_abstractmethod
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        raise NotImplementedError
+
+
+class DigitalInput(MyDAQDevice):
     @_override
     def initialize(self, *parent_tags: str) -> None:
         controller = _get_controller(parent_tags[-1])
         if isinstance(controller, MyDAQ):
-            controller.task().ai_channels.add_ai_voltage_chan(self._pins[0])
+            controller.task().di_channels.add_di_chan(f"{controller.port()}/{self._pins[0]}")
+
+
+class DigitalOutput(MyDAQDevice):
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        controller = _get_controller(parent_tags[-1])
+        if isinstance(controller, MyDAQ):
+            controller.task().do_channels.add_do_chan(f"{controller.port()}/{self._pins[0]}")
+
+
+class AnalogInput(MyDAQDevice):
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        controller = _get_controller(parent_tags[-1])
+        if isinstance(controller, MyDAQ):
+            controller.task().ai_channels.add_ai_voltage_chan(f"{controller.port()}/{self._pins[0]}")
+
+
+class AnalogOutput(MyDAQDevice):
+    @_override
+    def initialize(self, *parent_tags: str) -> None:
+        controller = _get_controller(parent_tags[-1])
+        if isinstance(controller, MyDAQ):
+            controller.task().ao_channels.add_ao_voltage_chan(f"{controller.port()}/{self._pins[0]}")
 
 
 class MyDAQ(_Controller):
-    def __init__(self) -> None:
+    def __init__(self, port: str) -> None:
         super().__init__()
+        self._port: str = port
         self._task: _Task = _Task()
+
+    def port(self) -> str:
+        return self._port
 
     def task(self) -> _Task:
         return self._task
