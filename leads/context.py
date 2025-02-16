@@ -117,7 +117,7 @@ class Context(_Generic[T], metaclass=_ABCMeta):
         if hazard is None:
             return self._hazard
         self.left_indicator(False, True)
-        self.left_indicator(False, True)
+        self.right_indicator(False, True)
         self.left_indicator(hazard, True)
         self.right_indicator(hazard, True)
         self._hazard = hazard
