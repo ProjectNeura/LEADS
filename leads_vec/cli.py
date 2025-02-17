@@ -421,7 +421,6 @@ def main() -> int:
 
         @_override
         def hazard(self, e: Event, state: bool) -> None:
-            super().hazard(e, state)
             uim["hazard"].configure(image=Hazard(color=Color.RED if state else None))
 
     ctx.set_event_listener(CustomListener())
