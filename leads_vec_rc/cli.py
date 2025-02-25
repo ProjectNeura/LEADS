@@ -19,7 +19,7 @@ if not exists(config.data_dir):
     L.debug(f"Data directory not found. Creating \"{abspath(config.data_dir)}\"...")
     makedirs(config.data_dir)
 CAR_WIDTH: float = config.get("car_width", 2)
-CAR_LENGTH: float = config.get("car_width", 1)
+CAR_LENGTH: float = config.get("car_length", 1)
 CAR_MASS: float = config.get("car_mass", 400)
 CAR_CENTER_OF_MASS: float = config.get("car_center_of_mass", .25)
 
