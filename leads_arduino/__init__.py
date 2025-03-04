@@ -7,5 +7,6 @@ from leads_arduino.accelerometer import *
 from leads_arduino.arduino_proto import *
 from leads_arduino.arduino_nano import *
 from leads_arduino.arduino_micro import *
+from leads_arduino.pedal import *
 from leads_arduino.voltage_sensor import *
 from leads_arduino.wheel_speed_sensor import *
