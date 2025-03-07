@@ -1,16 +1,13 @@
-#include "Accelerometer.h"
+#include "BNO08x.h"
 
-String Acceleration::toString() {
-    return String(yaw) + "," + pitch + "," + roll + "," + forwardAcceleration + "," + lateralAcceleration + "," + verticalAcceleration;
-}
-Accelerometer::Accelerometer(OnAccelerometerUpdate onUpdate) : _onUpdate(onUpdate) {}
-void Accelerometer::initialize(const ArrayList<String> &parentTags) {
-    Device<Acceleration>::initialize(parentTags);
+BNO08x::BNO08x(OnAccelerometerUpdate onUpdate) : Accelerometer(onUpdate) {}
+void BNO08x::initialize(const ArrayList<String> &parentTags) {
+    Accelerometer::initialize(parentTags);
     Serial1.begin(115200);
     while (!Serial1) delay(10);
     if (!_rvc.begin(&Serial1)) delay(10);
 }
-Acceleration Accelerometer::read() {
+Acceleration BNO08x::read() {
     BNO08x_RVC_Data heading;
     Acceleration r = Acceleration();
     if (!_rvc.read(&heading)) return r;
