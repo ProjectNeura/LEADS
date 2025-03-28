@@ -4,6 +4,7 @@ about: Suggest an idea for this project
 title: ''
 labels: [ enhancement, question ]
 assignees: [ ATATC, qmascarenhas ]
+issue_type: Feature
 
 ---
 
