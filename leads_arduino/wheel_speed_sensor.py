@@ -13,7 +13,7 @@ def rpm2kmh(rpm: float, wheel_circumference: float) -> float:
     :param wheel_circumference: wheel circumference in centimeters
     :return: speed in kilometers per hour
     """
-    return rpm * wheel_circumference * .0006
+    return rpm * wheel_circumference * 6e-4
 
 
 class WheelSpeedSensor(_Device):
@@ -56,19 +56,20 @@ class WheelSpeedSensor(_Device):
         if self._accelerometer and self._last_acceleration:
             a = self._accelerometer.read().linear().forward_acceleration
             v = (a + self._last_acceleration) * 1.8 * (t - self._last_valid)
-            if abs((ws - self._wheel_speed - v) / (v + .0000000001)) > 1.5:
+            # add a small constant to avoid zero division
+            if abs((ws - self._wheel_speed - v) / (v + 1e-10)) > 1.5:
                 return
             self._last_acceleration = a
         self._wheel_speed = ws
         self._last_valid = t
         if self._odometer:
-            self._odometer.write(self._wheel_circumference * .00001)
+            self._odometer.write(self._wheel_circumference * 1e-5)
 
     @_override
     def read(self) -> float:
         """
         :return: speed in kilometers per hour
         """
-        # add .0000000001 to avoid zero division
-        r = rpm2kmh(60 / (.0000000001 + _time() - self._last_valid), self._wheel_circumference) / self._num_divisions
+        # add a small constant to avoid zero division
+        r = rpm2kmh(60 / (1e-10 + _time() - self._last_valid), self._wheel_circumference) / self._num_divisions
         return 0 if r < .1 else r if r < 5 else self._wheel_speed

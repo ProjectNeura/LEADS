@@ -23,9 +23,9 @@ class PerformanceChecker(object):
         return float(_average(self._net_delay_seq))
 
     def record_frame(self, last_interval: float) -> None:
-        # add .0000000001 to avoid zero division
+        # add a small constant to avoid zero division
         self._time_seq.append(t := _time())
-        self._delay_seq.append(delay := .0000000001 + t - self._last_frame)
+        self._delay_seq.append(delay := 1e-10 + t - self._last_frame)
         self._net_delay_seq.append(delay - last_interval)
         self._model = _poly1d(_polyfit(self._time_seq, self._net_delay_seq, 5))
         self._last_frame = t

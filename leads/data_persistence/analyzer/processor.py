@@ -226,7 +226,7 @@ class Processor(object):
             else:
                 path.append(p)
 
-        self.foreach(asserted_unit if asserted else unit, True, not asserted)
+        self.foreach(asserted_unit if asserted else unit, skip_gps_invalid_rows=not asserted)
 
     def suggest_on_lap(self, lap_index: int) -> tuple[str, str]:
         a, b, duration, distance, avg_speed = self._laps[lap_index]
@@ -276,7 +276,7 @@ class Processor(object):
             if self._max_lap_y is None or y > self._max_lap_y:
                 self._max_lap_y = y
 
-        self.foreach(unit, True, True)
+        self.foreach(unit, skip_gps_invalid_rows=True)
         far = max(self._max_lap_x, self._max_lap_y)
         self._lap_x.append(far)
         self._lap_y.append(far)
