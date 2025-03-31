@@ -58,7 +58,7 @@ class SafeSpeedInference(SpeedInferenceBase):
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         row = rows[0]
         if SpeedInferenceBase.skip(row):
-            return
+            return None
         speed = None
         if not speed_invalid(s := row["front_wheel_speed"]):
             speed = s
@@ -84,7 +84,7 @@ class SpeedInferenceByAcceleration(SpeedInferenceBase):
         if (SpeedInferenceBase.skip(target) or time_invalid(t_0) or
                 time_invalid(t) or speed_invalid(v_0) or
                 acceleration_invalid(a_0)):
-            return
+            return None
         a = target["forward_acceleration"]
         if acceleration_invalid(a):
             a = a_0
@@ -205,7 +205,7 @@ class MileageInferenceBySpeed(MileageInferenceBase):
         t_0, t, v_0, s_0 = base["t"], target["t"], base["speed"], base["mileage"]
         if (MileageInferenceBase.skip(target) or time_invalid(t_0) or time_invalid(t) or
                 speed_invalid(v_0) or mileage_invalid(s_0)):
-            return
+            return None
         v = target["speed"]
         if speed_invalid(v):
             v = v_0
@@ -249,7 +249,7 @@ class VisualDataRealignmentByLatency(Inference):
     @_override
     def complete(self, *rows: dict[str, _Any], backward: bool = False) -> dict[str, _Any] | None:
         if backward:
-            return
+            return None
         target, base = rows
         original_target = target.copy()
         t_0, t = target["t"], base["t"]

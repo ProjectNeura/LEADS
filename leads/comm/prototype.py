@@ -236,7 +236,7 @@ class Connection(ConnectionBase):
                 msg += (chunk := self._require_open_socket().recv(chunk_size))
             return self.with_remainder(msg)
         except IOError:
-            return
+            return None
 
     @_override
     def send(self, msg: bytes) -> None:

@@ -8,7 +8,7 @@ _ltm: dict[str, _SupportedConfigValue] = {}
 
 def _load_ltm() -> None:
     global _ltm
-    with open(f"{_abspath(__file__)[:-6]}_ltm/core", "r") as f:
+    with open(f"{_abspath(__file__)[:-6]}_ltm/core") as f:
         ltm_content = f.read()
         if not (ltm_content.startswith("{") and ltm_content.endswith("}")):
             ltm_content = "{}"

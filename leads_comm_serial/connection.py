@@ -31,7 +31,7 @@ class SerialConnection(_ConnectionBase):
                 msg += (chunk := self._require_open_serial().read(chunk_size))
             return self.with_remainder(msg)
         except IOError:
-            return
+            return None
 
     @_override
     def send(self, msg: bytes | _Literal[b"disconnect"]) -> None:
