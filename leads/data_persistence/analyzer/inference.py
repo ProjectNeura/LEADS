@@ -209,7 +209,7 @@ class MileageInferenceBySpeed(MileageInferenceBase):
         v = target["speed"]
         if speed_invalid(v):
             v = v_0
-        return {"mileage": s_0 + .00000125 * (v_0 + v) * (t - t_0) / 9}
+        return {"mileage": s_0 + 125e-8 * (v_0 + v) * (t - t_0) / 9}
 
 
 class MileageInferenceByGPSPosition(MileageInferenceBase):
