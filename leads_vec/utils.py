@@ -5,8 +5,8 @@ from leads.types import OnRegister as _OnRegister
 
 def register_plugins(plugins: dict[str, _Plugin] | None = None) -> None:
     if not plugins:
-        plugins = {_SystemLiteral.DTCS: _DTCS, _SystemLiteral.ABS: _ABS, _SystemLiteral.EBI: _EBI,
-                   _SystemLiteral.ATBS: _ATBS}
+        plugins = {_SystemLiteral.DTCS: _DTCS(), _SystemLiteral.ABS: _ABS(), _SystemLiteral.EBI: _EBI(),
+                   _SystemLiteral.ATBS: _ATBS()}
 
     def _on_register_context(chain: _OnRegister[_LEADS]) -> _OnRegister[_LEADS]:
         def _(ctx: _LEADS) -> None:
