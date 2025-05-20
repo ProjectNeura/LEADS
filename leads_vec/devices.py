@@ -11,6 +11,7 @@ from leads_comm_serial import SOBD
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition, Button, \
     ButtonCallback, CPUMonitor
 from leads_vec.config import Config
+from leads_vec.utils import register_plugins
 from leads_video import Base64Camera, get_camera
 
 config: Config = require_config()
@@ -27,6 +28,8 @@ NUM_DIVISIONS: int = config.get("num_divisions", 1)
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
 BRAKE_PEDAL_PIN: int = config.get("brake_pedal_pin", 3)
 VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
+
+register_plugins()
 
 
 @controller(MAIN_CONTROLLER)
