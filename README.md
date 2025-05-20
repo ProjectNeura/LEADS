@@ -10,7 +10,7 @@
 
 LEADS is a lightweight embedded assisted driving system. It is designed to simplify the development of instrumentation,
 control, and analysis systems for racing cars. It is written in well-organized Python and C/C++ and has impressive
-performance.It is not only out-of-the-box but also fully customizable. It provides multiple abstract layers that allow
+performance. It is not only out-of-the-box but also fully customizable. It provides multiple abstract layers that allow
 users to pull out the components and rearrange them into a new project. You can either configure the existing executable
 modules ([LEADS VeC](https://leads-docs.projectneura.org/en/latest/vec)) simply through a JSON file or write your own
 codes based on the framework as easily as building a LEGO.
@@ -83,7 +83,7 @@ The LEADS framework ensures that its applications, including LEADS VeC, have ext
 provide promising safety, but still, always keep our
 [Safety Instructions](https://leads-docs.projectneura.org/en/latest/vec/safety-instructions.html) in mind.
 
-Most of the codes are written in Python and the dependencies are carefully chosen so that LEADS runs everywhere Python
+Most of the codes are written in Python, and the dependencies are carefully chosen so that LEADS runs everywhere Python
 runs. In addition, on platforms like Arduino where we must use other programming languages, we try hard to keep
 consistency.
 
@@ -131,7 +131,7 @@ configuration.
 <details>
 <summary>DTCS (Dynamic Traction Control System)</summary>
 
-DTCS helps you control the amount of rear wheel slip by detecting and comparing the speed difference between all wheels.
+DTCS helps you control the amount of rear-wheel slip by detecting and comparing the speed difference between all wheels.
 It allows a certain amount of drift while ensuring grip.
 
 </details>
@@ -167,7 +167,7 @@ provide a manual mode where all assistance is forcibly disabled. You can simply 
 
 </details>
 
-Plugins can be easily customized and installed in LEADS. It also comes with several existing ones including 4 ESC
+Plugins can be easily customized and installed in LEADS. It also comes with several existing ones, including 4 ESC
 plugins that realize 4 ESC systems. All 4 systems have 4 calibrations: standard, aggressive, sport, and off. Their
 intervention comes later than the previous respectively.
 
@@ -230,7 +230,7 @@ data was recorded.
 <summary>AI-enhanced data analysis and driver training</summary>
 
 Powered by rich datasets, our ambition is to change car racing as a whole, just as AlphaGo changed Go. This blueprint
-has never been such easy as today thanks to AI.
+has never been so easy as today thanks to AI.
 
 ![lap-analysis](docs/assets/lap-analysis.png)
 
@@ -674,6 +674,9 @@ jobs:
 ```python
 from leads import controller, MAIN_CONTROLLER
 from leads_emulation import RandomController
+from leads_vec.utils import register_plugins
+
+register_plugins()  # required
 
 
 @controller(MAIN_CONTROLLER)
