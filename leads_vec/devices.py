@@ -1,11 +1,12 @@
 from typing import override
 
 from leads import device, controller, MAIN_CONTROLLER, LEFT_FRONT_WHEEL_SPEED_SENSOR, RIGHT_FRONT_WHEEL_SPEED_SENSOR, \
-    Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
+    LEADS, Controller, CENTER_REAR_WHEEL_SPEED_SENSOR, require_config, mark_device, ODOMETER, GPS_RECEIVER, \
     ConcurrentOdometer, LEFT_INDICATOR, RIGHT_INDICATOR, VOLTAGE_SENSOR, DataContainer, has_device, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, REAR_VIEW_CAMERA, VisualDataContainer, BRAKE_INDICATOR, \
     SFT, read_device_marker, has_controller, POWER_CONTROLLER, WHEEL_SPEED_CONTROLLER, ACCELEROMETER, require_context, \
-    ltm_get, ltm_set, distance_between
+    ltm_get, ltm_set, distance_between, SystemLiteral, DTCS, ABS, EBI, ATBS, set_on_register_context
+from leads.types import OnRegister as _OnRegister
 from leads_arduino import ArduinoMicro, WheelSpeedSensor, VoltageSensor, Accelerometer, Acceleration
 from leads_comm_serial import SOBD
 from leads_gpio import NMEAGPSReceiver, LEDGroup, LED, LEDGroupCommand, LEDCommand, Entire, Transition, Button, \
@@ -27,6 +28,20 @@ NUM_DIVISIONS: int = config.get("num_divisions", 1)
 THROTTLE_PEDAL_PIN: int = config.get("throttle_pedal_pin", 2)
 BRAKE_PEDAL_PIN: int = config.get("brake_pedal_pin", 3)
 VOLTAGE_SENSOR_PIN: int = config.get("voltage_sensor_pin", 4)
+
+
+def _on_register_context(chain: _OnRegister[LEADS]) -> _OnRegister[LEADS]:
+    def _(ctx: LEADS) -> None:
+        chain(ctx)
+        ctx.plugin(SystemLiteral.DTCS, DTCS())
+        ctx.plugin(SystemLiteral.ABS, ABS())
+        ctx.plugin(SystemLiteral.EBI, EBI())
+        ctx.plugin(SystemLiteral.ATBS, ATBS())
+
+    return _
+
+
+set_on_register_context(_on_register_context)
 
 
 @controller(MAIN_CONTROLLER)

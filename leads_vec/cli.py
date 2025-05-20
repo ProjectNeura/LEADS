@@ -9,7 +9,7 @@ from customtkinter import CTkButton as _Button, CTkLabel as _Label, DoubleVar as
 from pynput.keyboard import Listener as _Listener, Key as _Key, KeyCode as _KeyCode
 from screeninfo import get_monitors as _get_monitors
 
-from leads import LEADS, SystemLiteral, require_config, register_context, DTCS, ABS, EBI, ATBS, ESCMode, L, \
+from leads import LEADS, SystemLiteral, require_config, register_context, ESCMode, L, \
     EventListener, DataPushedEvent, UpdateEvent, has_device, GPS_RECEIVER, get_device, InterventionEvent, \
     SuspensionEvent, Event, LEFT_INDICATOR, RIGHT_INDICATOR, format_duration, BRAKE_INDICATOR, REAR_VIEW_CAMERA, \
     FRONT_VIEW_CAMERA, LEFT_VIEW_CAMERA, RIGHT_VIEW_CAMERA, SuspensionExitEvent
@@ -157,10 +157,6 @@ def main() -> int:
     cfg = require_config()
     ctx = LEADS(data_seq_size=cfg.data_seq_size, num_laps_timed=cfg.num_laps_timed)
     register_context(ctx)
-    ctx.plugin(SystemLiteral.DTCS, DTCS())
-    ctx.plugin(SystemLiteral.ABS, ABS())
-    ctx.plugin(SystemLiteral.EBI, EBI())
-    ctx.plugin(SystemLiteral.ATBS, ATBS())
     w = Pot(cfg.width, cfg.height, cfg.refresh_rate, CustomRuntimeData(), fullscreen=cfg.fullscreen,
             no_title_bar=cfg.no_title_bar, theme_mode=cfg.theme_mode)
     root = w.root()
