@@ -16,7 +16,7 @@ def register_leads_vec() -> None:
             _mkdirs("/usr/local/leads")
         with open("/usr/local/leads/config.json", "w") as f:
             f.write(str(Config({})))
-    _chmod("/usr/local/leads/config.json", 0x644)
+    _chmod("/usr/local/leads/config.json", 0o644)
     _chmod(script := f"{_abspath(__file__)[:-10]}leads-vec.service.sh", 0o755)
     if not _exists(user_systemd := f"/home/{(username := _get_login())}/.config/systemd/user"):
         _L.debug(f"User Systemd not found. Creating \"{user_systemd}\"...")
