@@ -60,4 +60,5 @@ def ltm_set(key: str, value: _SupportedConfigValue) -> None:
 
 
 _permission_ok: bool = _acquire_permission()
+L.debug(f"LTM permission {"OK" if _permission_ok else "NOT OK"}: {_PATH}")
 _load_ltm()
