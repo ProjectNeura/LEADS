@@ -1,5 +1,5 @@
 from json import loads as _loads, dumps as _dumps
-from os import chmod as _chmod, access as _access, W_OK as _W_OK
+from os import chmod as _chmod
 from os.path import abspath as _abspath, exists as _exists
 
 from leads.logger import L
@@ -11,15 +11,13 @@ _ltm: dict[str, _SupportedConfigValue] = {}
 
 
 def _acquire_permission() -> bool:
-    if _access(_PATH, _W_OK):
-        return True
     try:
         _chmod(_PATH, 0o666)
+        return True
     except Exception as e:
         L.debug(f"Attempted but failed to acquire permission: {repr(e)}")
-        L.debug(f"Try executing `sudo chmod {_PATH} 666` manually")
+        L.debug(f"Try executing `sudo chmod {_PATH} 666` manually or run LEADS as the root user")
         return False
-    return True
 
 
 def _load_ltm() -> None:
