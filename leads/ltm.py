@@ -1,23 +1,47 @@
 from json import loads as _loads, dumps as _dumps
-from os.path import abspath as _abspath
+from os import chmod as _chmod
+from os.path import abspath as _abspath, exists as _exists
 
+from leads.logger import L
 from leads.types import SupportedConfigValue as _SupportedConfigValue
+
+_PATH: str = f"{_abspath(__file__)[:-6]}_ltm/core"
 
 _ltm: dict[str, _SupportedConfigValue] = {}
 
 
+def _acquire_permission() -> bool:
+    try:
+        _chmod(_PATH, 0o666)
+    except Exception as e:
+        L.debug(f"Attempted but failed to acquire permission: {repr(e)}")
+        L.debug(f"Try executing `sudo chmod {_PATH} 666` manually")
+        return False
+    return True
+
+
 def _load_ltm() -> None:
     global _ltm
-    with open(f"{_abspath(__file__)[:-6]}_ltm/core") as f:
-        ltm_content = f.read()
-        if not (ltm_content.startswith("{") and ltm_content.endswith("}")):
-            ltm_content = "{}"
-        _ltm = _loads(ltm_content)
+    try:
+        if not _exists(_PATH):
+            with open(_PATH, "w") as f:
+                f.write("{}")
+            return
+        with open(_PATH) as f:
+            ltm_content = f.read()
+            if not (ltm_content.startswith("{") and ltm_content.endswith("}")):
+                ltm_content = "{}"
+            _ltm = _loads(ltm_content)
+    except Exception as e:
+        L.warn(f"Failed to load LTM: {repr(e)}")
 
 
 def _sync_ltm() -> None:
-    with open(f"{_abspath(__file__)[:-6]}_ltm/core", "w") as f:
-        f.write(_dumps(_ltm))
+    try:
+        with open(_PATH, "w") as f:
+            f.write(_dumps(_ltm))
+    except Exception as e:
+        L.warn(f"Attempted but failed to sync LTM: {repr(e)}")
 
 
 def ltm_get(key: str) -> _SupportedConfigValue:
@@ -29,4 +53,5 @@ def ltm_set(key: str, value: _SupportedConfigValue) -> None:
     _sync_ltm()
 
 
+_acquire_permission()
 _load_ltm()
