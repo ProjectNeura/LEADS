@@ -1,1 +1,1 @@
-__version__: str = "Schumacher"
+__version__: str = "Hamilton"
