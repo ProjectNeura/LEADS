@@ -19,7 +19,7 @@ def _acquire_permission() -> bool:
         return True
     except Exception as e:
         L.debug(f"Failed to acquire permission: {repr(e)}")
-        L.debug(f"Try executing `sudo chmod 666 {_PATH}` manually or run LEADS as the root user")
+        L.debug(f"For Linux users, try executing `sudo chmod 666 {_PATH}` manually or run LEADS as the root user")
         return False
 
 
