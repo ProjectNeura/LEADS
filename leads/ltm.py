@@ -13,11 +13,12 @@ _ltm: dict[str, _SupportedConfigValue] = {}
 def _acquire_permission() -> bool:
     if _access(_PATH, _R_OK) and _access(_PATH, _W_OK):
         return True
+    L.debug(f"Attempting to acquire permission for {_PATH}")
     try:
         _chmod(_PATH, 0o666)
         return True
     except Exception as e:
-        L.debug(f"Attempted but failed to acquire permission: {repr(e)}")
+        L.debug(f"Failed to acquire permission: {repr(e)}")
         L.debug(f"Try executing `sudo chmod 666 {_PATH}` manually or run LEADS as the root user")
         return False
 
