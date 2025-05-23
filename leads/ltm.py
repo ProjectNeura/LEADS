@@ -1,5 +1,5 @@
 from json import loads as _loads, dumps as _dumps
-from os import chmod as _chmod
+from os import chmod as _chmod, access as _access, W_OK as _W_OK
 from os.path import abspath as _abspath, exists as _exists
 
 from leads.logger import L
@@ -11,6 +11,8 @@ _ltm: dict[str, _SupportedConfigValue] = {}
 
 
 def _acquire_permission() -> bool:
+    if _access(_PATH, _W_OK):
+        return True
     try:
         _chmod(_PATH, 0o666)
     except Exception as e:
@@ -21,6 +23,8 @@ def _acquire_permission() -> bool:
 
 
 def _load_ltm() -> None:
+    if not _permission_ok:
+        return
     global _ltm
     try:
         if not _exists(_PATH):
@@ -33,10 +37,12 @@ def _load_ltm() -> None:
                 ltm_content = "{}"
             _ltm = _loads(ltm_content)
     except Exception as e:
-        L.warn(f"Failed to load LTM: {repr(e)}")
+        L.warn(f"Attempted but failed to load LTM: {repr(e)}")
 
 
 def _sync_ltm() -> None:
+    if not _permission_ok:
+        return
     try:
         with open(_PATH, "w") as f:
             f.write(_dumps(_ltm))
@@ -53,5 +59,5 @@ def ltm_set(key: str, value: _SupportedConfigValue) -> None:
     _sync_ltm()
 
 
-_acquire_permission()
+_permission_ok: bool = _acquire_permission()
 _load_ltm()
