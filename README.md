@@ -623,7 +623,7 @@ inferences:
   enhanced: true  # default: false
   assume_initial_zeros: true  # default: false
   clear: # default: []
-     - speed
+    - speed
   methods:
     - safe-speed
     - speed-by-acceleration
