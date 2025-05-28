@@ -1,5 +1,6 @@
 from abc import ABCMeta as _ABCMeta, abstractmethod as _abstractmethod
-from typing import Any as _Any, override as _override, Generator as _Generator, Literal as _Literal
+from typing import Any as _Any, override as _override, Generator as _Generator, Literal as _Literal, \
+    Sequence as _Sequence
 
 from leads.data import distance_between
 from leads.data_persistence.analyzer.utils import time_invalid, speed_invalid, acceleration_invalid, \
@@ -266,6 +267,13 @@ class InferredDataset(CSVDataset):
         super().__init__(file, chunk_size)
         self._raw_data: tuple[dict[str, _Any], ...] = ()
         self._inferred_data: list[dict[str, _Any]] = []
+        self._clear: set[str] = set()
+
+    def clear(self, entry: str) -> None:
+        self._clear.add(entry)
+
+    def clear_all(self, entries: _Sequence[str]) -> None:
+        self._clear = set(entries)
 
     @_override
     def __len__(self) -> int:
@@ -308,6 +316,8 @@ class InferredDataset(CSVDataset):
         super().load()
         raw_data = []
         for row in super().__iter__():
+            for clear_entry in self._clear:
+                row[clear_entry] = None
             raw_data.append(row)
         self._raw_data = tuple(raw_data)
         self._inferred_data = [{} for _ in range(len(raw_data))]
