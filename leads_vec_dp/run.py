@@ -40,6 +40,9 @@ def run(target: str) -> int:
     if "inferences" in target:
         dataset = _InferredDataset(target["dataset"])
         inferences = target["inferences"]
+        if "clear" in inferences:
+            dataset.clear_all(inferences["clear"])
+            inferences.pop("clear")
         methods = []
         for method in inferences["methods"]:
             methods.append(INFERENCE_METHODS[method]())

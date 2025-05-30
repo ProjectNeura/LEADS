@@ -622,6 +622,8 @@ inferences:
   repeat: 100  # default: 1
   enhanced: true  # default: false
   assume_initial_zeros: true  # default: false
+  clear: # default: []
+    - speed
   methods:
     - safe-speed
     - speed-by-acceleration
