@@ -6,7 +6,7 @@ from serial.tools.list_ports import comports as _comports
 
 from leads_comm_serial.connection import SerialConnection
 
-_available_ports: list[str] = [_p for _p, _, __ in _comports()]
+_available_ports: list[str] = [_p for _p, _, _ in _comports()]
 _lock: _Lock = _Lock()
 
 
