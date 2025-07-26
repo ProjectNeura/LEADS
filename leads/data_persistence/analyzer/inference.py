@@ -350,8 +350,8 @@ class InferredDataset(CSVDataset):
 
     @_override
     def __iter__(self) -> _Generator[dict[str, _Any], None, None]:
-        for i in range(len(self._raw_data)):
-            InferredDataset.merge(row := self._raw_data[i], self._inferred_data[i])
+        for i, row in enumerate(self._raw_data):
+            InferredDataset.merge(row, self._inferred_data[i])
             yield row
 
     @_override

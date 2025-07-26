@@ -44,8 +44,8 @@ def device(tag: str | _Sequence[str],
     def _(target: type[Device]) -> None:
         if not issubclass(target, Device):
             raise TypeError("Devices must inherit from `Device`")
-        for i in range(len(tag)):
-            _register_device(target, tag[i], _controllers[parent[i]], args[i], kwargs[i])
+        for i, t in enumerate(tag):
+            _register_device(target, t, _controllers[parent[i]], args[i], kwargs[i])
 
     return _
 
