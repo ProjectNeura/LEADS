@@ -2,7 +2,6 @@
 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ProjectNeura/LEADS)
 ![PyPI](https://img.shields.io/pypi/v/leads)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/leads)
 ![GitHub Release](https://img.shields.io/github/v/release/ProjectNeura/LEADS)
 ![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/ProjectNeura/LEADS)
 
