@@ -58,12 +58,9 @@ class Logger(object):
         return f"\033[{font}{f";{color}" if color else ""}{f";{background + 10}" if background else ""}m{msg}\033[0m"
 
     def print(self, msg: str, level: int) -> None:
-        self._lock.acquire()
-        try:
+        with self._lock:
             if self._debug_level <= level:
                 print(msg)
-        finally:
-            self._lock.release()
 
     def info(self, *msg: str, sep: str = " ", end: str = "\n",
              f: tuple[int, int | None, int | None] = (REGULAR, None, None)) -> None:

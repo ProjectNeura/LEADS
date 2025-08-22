@@ -25,8 +25,5 @@ class ConcurrentOdometer(Odometer):
 
     @_override
     def write(self, payload: float) -> None:
-        self._lock.acquire()
-        try:
+        with self._lock:
             super().write(payload)
-        finally:
-            self._lock.release()
