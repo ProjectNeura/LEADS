@@ -21,11 +21,8 @@ class _ThreadFlags(object):
 
     @active.setter
     def active(self, active: bool) -> None:
-        self._lock.acquire()
-        try:
+        with self._lock:
             self._active = active
-        finally:
-            self._lock.release()
 
 
 _thread_flags: _ThreadFlags = _ThreadFlags()

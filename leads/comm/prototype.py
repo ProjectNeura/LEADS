@@ -58,14 +58,11 @@ class Service(metaclass=_ABCMeta):
         :param kwargs: kwargs passed to `run()`
         :exception RuntimeError: duplicated registration
         """
-        self._lock.acquire()
         if self._main_thread:
             raise RuntimeError("A service can only run once")
-        try:
+        with self._lock:
             self._main_thread = _Thread(name=f"service{hash(self)}", target=self._run, daemon=True, args=args,
                                         kwargs=kwargs)
-        finally:
-            self._lock.release()
 
     def _parallel_run(self, *args, **kwargs) -> None:
         """

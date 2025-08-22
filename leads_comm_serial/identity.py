@@ -58,11 +58,8 @@ class AutoIdentity(object, metaclass=_ABCMeta):
             return self._establish_connection_no_lock(serial)
 
     def establish_connection(self, serial: _Serial) -> SerialConnection:
-        _lock.acquire()
-        try:
+        with _lock:
             return self._establish_connection_no_lock(serial)
-        finally:
-            _lock.release()
 
 
 _instances: dict[AutoIdentity, str | None] = {}
